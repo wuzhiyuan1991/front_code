@@ -1,0 +1,437 @@
+<style>
+    .admin-func-body {
+        padding: 20px;
+    }
+    .admin-func-body button.pull-left{
+        margin:20px 0 20px 9px;
+    }
+    .admin-func-body .my-table {
+        width:800px;
+        border:1px solid  #c8c8c8;
+    }
+    .admin-func-body .my-table tr .my-td {
+        padding:9px;
+        min-width: 265px;
+        margin-right:91px;
+    }
+
+    .admin-func-body tr .my-td .datepicker_main {
+        overflow: visible;
+    }
+
+    .admin-func-body tr .my-td .calendar-tools .text input {
+        font-size: 18px;
+    }
+    .admin-func-body tr .my-td .item_vertical_label:before {
+        content: '* ';
+        color: #ff4949;
+        font-family: inherit;
+    }
+    .clear-business-data {
+        /*padding: 20px;*/
+    }
+    .clear-data-title {
+        cursor: pointer;
+        height: 60px;
+        line-height: 60px;
+        padding: 0 20px;
+    }
+    .clear-data-title.opened {
+        background-color: #f2f2f2;
+    }
+    .clear-data-title a {
+        float: right;
+    }
+    .clear-data-title:hover {
+        background-color: #f2f2f2;
+    }
+    .super-admin-func .el-tabs__header {
+        height: 60px;
+        line-height: 60px;
+        margin-bottom: 0;
+        border-bottom: 2px solid #33a6ff;
+    }
+    .super-admin-func .el-tabs {
+        display: block;
+    }
+    .super-admin-func .el-tabs__item {
+        line-height: 60px;
+    }
+    .super-admin-func .action-bar {
+        padding: 10px 10px;
+    }
+    .super-admin-func span.desc-item {
+        display: inline-block;
+        width: 70px;
+        padding: 1px 0px;
+        margin-left: 5px;
+    }
+    .open-transition {
+        transition: all 0.1s ease-out;
+        max-height: 1000px;
+        padding: 20px;
+        opacity: 1;
+    }
+    .open-enter,
+    .open-leave{
+        max-height: 0;
+        opacity: 0;
+        padding: 0 20px;
+    }
+    .my-td .ivu-select{
+        width:100% !important;
+    }
+</style>
+<div class="businessMenuInfo" v-el:viewbox :class="{'business-menu':viewScllow}">
+    <iv-row type="flex" align="middle">
+        <iv-col class="super-admin-func" span="24">
+            <el-tabs @tab-click="doTabs" :top-type.sync="topSubMenu" class="scroll-tabs">
+
+                <!--超管功能-->
+                <el-tab-pane label="超管功能" class="clear-business-data">
+                    <!--清除检查系列数据-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem}" @click.prevent="isShowItem = !isShowItem">
+                            <strong slot="title"  class="checkRe">清除检查系列数据</strong>
+                            <a slot="extra">
+                                <span v-if="isShowItem"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowItem">
+                            <table border="1" class="my-table">
+                                <tr>
+                                    <td class="my-td">
+                                        <span class="item_vertical_label">公司</span>
+                                    </td>
+                                    <td class="my-td">
+                                        <span >部门</span>
+                                    </td>
+                                    <td class="my-td">
+                                        <span class="item_vertical_label">日期范围</span>
+                                    </td>
+                                    <td class="my-td">
+                                        <span>影响</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-td">
+                                        <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+                                        <!--<iv-input :value.sync= "mainModel.vo.compId" textonly></iv-input>-->
+                                    </td>
+                                    <td class="my-td">
+                                        <department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+                                    </td>
+                                    <td class="my-td">
+                                        <!--<date-picker format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.createDate" ></date-picker>-->
+                                        <!--<iv-input :value.sync= "mainModel.vo.createDate" textonly></iv-input>-->
+                                        <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="mainModel.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+                                    </td>
+                                    <td class="my-td">
+                                        <div style="width: 500px; font-size: 14px;">按公司和日期范围条件清空：检查计划、检查任务、检查记录、随机观察记录、隐患记录、委托记录、工作计划、工作记录等关系数据。注意：清空后数据不能还原，请谨慎操作！</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="overflow: hidden;">
+                                <vi-button class="pull-left ivu-btn btn" @click="doConfirmCallback('clearCheckData', '确定清除业务数据?')"><span>清除</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--清除培训系列数据-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowTrain}" @click.prevent="isShowTrain = !isShowTrain">
+                            <strong slot="title"  class="checkRe">清除培训系列数据</strong>
+                            <a slot="extra">
+                                <span v-if="isShowTrain"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowTrain">
+                            <table border="1" class="my-table">
+                                <tr>
+                                    <td class="my-td">
+                                        <span class="item_vertical_label">公司</span>
+                                    </td>
+                                    <td class="my-td">
+                                        <span >部门</span>
+                                    </td>
+                                    <td class="my-td">
+                                        <span class="item_vertical_label">日期范围</span>
+                                    </td>
+                                    <td class="my-td">
+                                        <span>影响</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-td">
+                                        <company-tree-select :id.sync="trainVO.compId"></company-tree-select>
+                                    </td>
+                                    <td class="my-td">
+                                        <department-tree-select :id.sync="trainVO.orgId" :comp-id.sync ="trainVO.compId" clearable></department-tree-select>
+                                    </td>
+                                    <td class="my-td">
+                                        <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="trainVO.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+                                    </td>
+                                    <td class="my-td">
+                                        <div style="width: 500px; font-size: 14px;">按公司和日期范围条件清空：培训计划、考试计划、培训记录、考试记录、错题记录、课程评论等关系数据。注意：清空后数据不能还原，请谨慎操作！</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="overflow: hidden;">
+                                <vi-button class="pull-left ivu-btn btn" @click="doConfirmCallback('clearTrainData', '确定清除培训业务数据?')"><span>清除</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--第三方注册-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowUserSign}" @click.prevent="isShowUserSign = !isShowUserSign">
+                            <strong slot="title">第三方注册/注销</strong>
+                            <a slot="extra" @click.prevent="isShowUserSign = !isShowUserSign">
+                                <span v-if="isShowUserSign"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowUserSign">
+                            <div style="overflow: hidden;">
+                                <vi-button class="ivu-btn btn" @click="registerBatch"><span>环信注册</span></vi-button>
+                                <vi-button class="ivu-btn btn" @click="removeBatch"><span>环信注销</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--强制所有移动端用户初始化数据-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem2}" @click.prevent="isShowItem2 = !isShowItem2">
+                            <strong slot="title"  class="checkRe">强制所有移动端用户初始化数据</strong>
+                            <a slot="extra">
+                                <span v-if="isShowItem2"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open"  v-show="isShowItem2">
+                            <table border="1" class="my-table" style="width: auto;">
+                                <tr>
+                                    <td class="my-td">
+                                        <span class="item_vertical_label">公司</span>
+                                    </td>
+                                    <td style="padding:9px; min-width: 110px; margin-right:91px;">
+                                        <span>操作</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-td">
+                                        <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+                                        <!--<iv-input :value.sync= "mainModel.vo.compId" textonly></iv-input>-->
+                                    </td>
+                                    <td style="padding:9px; min-width: 110px; margin-right:91px;">
+                                        <vi-button class="ivu-btn btn" @click="doConfirmCallback('initMobileData', '确定强制所有移动端用户初始化数据?')"><span>立即初始化</span></vi-button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--强制所有移动端用户重新登录-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem3}" @click.prevent="isShowItem3 = !isShowItem3">
+                            <strong slot="title">强制所有移动端用户重新登录</strong>
+                            <a slot="extra" @click.prevent="isShowItem3 = !isShowItem3">
+                                <span v-if="isShowItem3"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowItem3">
+                            <div style="overflow: hidden;">
+                                <vi-button class="ivu-btn btn" @click="doConfirmCallback('relploginAllMobile', '确定强制所有移动端用户重新登录?')"><span>强制登录</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--同步app最新强制更新版本-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem4}" @click.prevent="isShowItem4 = !isShowItem4">
+                            <strong slot="title">同步app最新强制更新版本</strong>
+                            <a slot="extra" @click.prevent="isShowItem4 = !isShowItem4">
+                                <span v-if="isShowItem4"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowItem4">
+                            <div style="overflow: hidden;">
+                                <vi-button class="ivu-btn btn" @click="doConfirmCallback('syncForcedAppVersion', '确定同步app最新强制更新版本?')"><span>立即同步</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--刷所有公司部门Attr3字段-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem5}" @click.prevent="isShowItem5 = !isShowItem5">
+                            <strong slot="title">刷所有公司部门Attr3字段</strong>
+                            <a slot="extra" @click.prevent="isShowItem5 = !isShowItem5">
+                                <span v-if="isShowItem5"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowItem5">
+                            <div style="overflow: hidden;">
+                                <vi-button class="ivu-btn btn" @click="doConfirmCallback('updateAllOrgAttr3', '确定刷所有公司部门Attr3字段')"><span>立即修改</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--强制所有移动端用户重新登录-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem6}" @click.prevent="isShowItem3 = !isShowItem3">
+                            <strong slot="title">下载服务器日志文件</strong>
+                            <a slot="extra" @click.prevent="isShowItem6 = !isShowItem6">
+                                <span v-if="isShowItem3"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowItem6">
+                            <div style="overflow: hidden;">
+                                <vi-button class="ivu-btn btn" @click="doConfirmCallback('downLog', '确定下载服务器日志文件?')"><span>下载</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--西部管道刷所有风险辨识的设备设施-->
+                    <div style="border-bottom: 1px solid #f2f2f2;">
+                        <div class="clear-data-title" :class="{'opened': isShowItem7}" @click.prevent="isShowItem7 = !isShowItem7">
+                            <strong slot="title">修复风险辨识的设备设施关联</strong>
+                            <a slot="extra" @click.prevent="isShowItem7 = !isShowItem7">
+                                <span v-if="isShowItem7"><Icon type="chevron-up"></Icon></span>
+                                <span v-else><Icon type="chevron-down"></Icon></span>
+                            </a>
+                        </div>
+                        <div class="admin-func-body" transition="open" v-show="isShowItem7">
+                            <div style="overflow: hidden;">
+                                <vi-button class="ivu-btn btn" @click="doConfirmCallback('updateRiskIdentificationEquipment', '确定修复风险辨识的设备设施关联')"><span>立即修复</span></vi-button>
+                            </div>
+                        </div>
+                    </div>
+
+                </el-tab-pane>
+
+                <!--历史记录-->
+                <el-tab-pane label="历史记录">
+                    <vue-bootstrap-table
+                        :columns="historyModel.columns"
+                        :values="histories"
+                        :show-pager="true"
+                        :show-empty-row="true"
+                        :page-size-opts="[20,50,100]"
+                    ></vue-bootstrap-table>
+                </el-tab-pane>
+
+                <!--错误数据列表-->
+                <el-tab-pane label="错误数据列表">
+                    <div class="action-bar">
+                        <vi-button class="ivu-btn btn" @click="getQuestions(1)"><span>刷新</span></vi-button>
+                    </div>
+                    <div v-for="question in questions" v-if="question.items.length > 0" style="margin-bottom: 30px;padding-top: 10px;border-top: 1px solid #000;">
+                        <div class="clear-data-title">
+                            <strong slot="title">{{question.title}}</strong>
+                            <vi-button style="float: right;margin-top: 6px;" class="ivu-btn btn" @click="doFix(question.code)"><span>解决</span></vi-button>
+                        </div>
+
+                        <ul style="padding: 0 10px 10px;">
+                            <li><span class="desc-item"><b>错误描述:</b></span>{{question.desc}}</li>
+                            <li><span class="desc-item"><b>解决方案:</b></span>{{question.fixDesc}}</li>
+                            <li><span class="desc-item"><b>数据来源:</b></span>{{question.tableName}}</li>
+                        </ul>
+                        <!--<vue-bootstrap-table-->
+
+
+                                <!--:show-pager="false"-->
+                                <!--:show-empty-row="false"-->
+                        <!--&gt;</vue-bootstrap-table>-->
+                        <lite-table :columns="questionModel.columns" :values="question.items"></lite-table>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+        </iv-col>
+    </iv-row>
+</div>
+
+<!--<div class="tab-container" style="height: 100%; overflow-x: hidden">-->
+    <!--<div class="main-panel">-->
+        <!--<div class="mp-header formTitle">-->
+            <!--<iv-row type="flex" align="middle" class="mp-header-item">-->
+                <!--<iv-col span="24">-->
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doShowSuperAdminFunc" :class="{active:mainModel.showSuperAdminFunc}">超管功能</vi-button>-->
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doShowHistroy" :class="{active:mainModel.showHistroy}">历史记录</vi-button>-->
+                <!--</iv-col>-->
+            <!--</iv-row>-->
+        <!--</div>-->
+        <!--<div class="mp-content super-admin-func">-->
+            <!--<div v-if="mainModel.showadmin-func-body" class="clear-business-data">-->
+                <!--<div>-->
+                    <!--<div class="clear-data-title" @click.prevent="isShowItem = !isShowItem">-->
+                        <!--<strong slot="title"  class="checkRe">清除检查系列数据</strong>-->
+                        <!--<a slot="extra">-->
+                            <!--<span v-if="isShowItem"><Icon type="chevron-up"></Icon></span>-->
+                            <!--<span v-else><Icon type="chevron-down"></Icon></span>-->
+                        <!--</a>-->
+                    <!--</div>-->
+                    <!--<div class="admin-func-body" v-show="isShowItem">-->
+                        <!--<table border="1" class="my-table">-->
+                            <!--<tr>-->
+                                <!--<td class="my-td">-->
+                                    <!--<span class="item__vertical_label">公司</span>-->
+                                <!--</td>-->
+                                <!--<td class="my-td">-->
+                                    <!--<span class="item__vertical_label">日期</span>-->
+                                <!--</td>-->
+                                <!--<td class="my-td">-->
+                                    <!--<span>影响</span>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="my-td">-->
+                                    <!--<company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>-->
+                                    <!--&lt;!&ndash;<iv-input :value.sync= "mainModel.vo.compId" textonly></iv-input>&ndash;&gt;-->
+                                <!--</td>-->
+                                <!--<td class="my-td">-->
+                                    <!--<date-picker format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.createDate" ></date-picker>-->
+                                    <!--&lt;!&ndash;<iv-input :value.sync= "mainModel.vo.createDate" textonly></iv-input>&ndash;&gt;-->
+                                <!--</td>-->
+                                <!--<td class="my-td">-->
+                                    <!--<div style="width: 500px; font-size: 14px;">按公司和创建时间节点的条件清空：检查计划、检查任务、检查记录、随机观察记录、隐患记录等关系数据。注意：清空后数据不能还原，请谨慎操作！</div>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                        <!--</table>-->
+                        <!--<div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;margin-bottom: 20px;">-->
+                            <!--<vi-button class="pull-left ivu-btn btn" @click="clearCheckData"><span>清除</span></vi-button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--<div class="clear-data-title" @click.prevent="isShowUserSign = !isShowUserSign">-->
+                        <!--<strong slot="title">第三方注册</strong>-->
+                        <!--<a slot="extra" @click.prevent="isShowUserSign = !isShowUserSign">-->
+                            <!--<span v-if="isShowUserSign"><Icon type="chevron-up"></Icon></span>-->
+                            <!--<span v-else><Icon type="chevron-down"></Icon></span>-->
+                        <!--</a>-->
+                    <!--</div>-->
+                    <!--<div class="businessCon" v-show="isShowUserSign">-->
+                        <!--<vi-button class="pull-left ivu-btn btn" @click="registerBatch"><span>环信注册</span></vi-button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div v-if="mainModel.showHistroy">-->
+                <!--<vue-bootstrap-table-->
+                        <!--:columns="historyModel.columns"-->
+                        <!--:values="histories"-->
+                        <!--:show-pager="true"-->
+                        <!--:show-empty-row="true"-->
+                        <!--:page-size-opts="[20,50,100]"-->
+                <!--&gt;</vue-bootstrap-table>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->

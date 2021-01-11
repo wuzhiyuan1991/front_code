@@ -1,0 +1,69 @@
+html, body, .u-body {
+    height: 100%;
+}
+
+.u-body {
+    background-color: #fff;
+    display: flex;
+}
+
+.p-h-box {
+    background: url(../img/v-play-bg.jpg) no-repeat 50% 50%/cover;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.p-h-header {
+    height: 60px;
+}
+
+.player-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.p-h-video {
+    /*height: calc(100% - 72px);*/
+    flex: 1;
+}
+
+.p-h-box {
+    padding: 0;
+}
+
+.p-h-r-ele {
+    position: static;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.p-h-r-cont {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.p-h-r-btns {
+    height: 40px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn-test-new {
+    width: 150px;
+    height: 40px;
+    color: #fff;
+    font-size: 16px;
+    background: #2f9af5;
+    line-height: 40px;
+    text-align: center;
+    text-decoration: none;
+}
+.btn-test-new:hover {
+    text-decoration: none;
+}

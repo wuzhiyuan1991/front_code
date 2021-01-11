@@ -1,0 +1,128 @@
+<Modal :visible.sync='visible && !isBackNode' :title="mainModel.title" :footer-hide="true"  @on-cancel="doClose">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <!-- 内部评审 -->
+            <el-form v-if=" parseInt(mainModel.vo.status)===2 || parseInt(mainModel.vo.status)===3 || parseInt(mainModel.vo.status)===4 || parseInt(mainModel.vo.status)===5 || parseInt(mainModel.vo.status)===6"
+                     class="fip-content-item-form" :model="mainModel.emerPlanHistory" style="margin-left:10px;"
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item label="处理结果" prop="result" >
+                    <i-select v-else :model.sync="mainModel.emerPlanHistory.result" :list="getDataDicList('iem_emer_plan_result')" ></i-select>
+                </el-form-item>
+                <el-form-item label="回退节点" prop="rollbackStep" v-if="mainModel.emerPlanHistory.result=='1' || mainModel.emerPlanHistory.result=='3'">
+                    <i-select v-else :model.sync="mainModel.emerPlanHistory.rollbackStep" :list="getList" ></i-select>
+                </el-form-item>
+                <el-form-item label="参与人员" prop="participant">
+                    <iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.participant" readonly=false :width="260"></iv-textarea>
+                </el-form-item>
+                <el-form-item label="过程详情备注描述" prop="remark" full-width>
+                    <iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.remark" readonly=false :width="260"></iv-textarea>
+                </el-form-item>
+                <el-form-item label="操作人" prop="user" full-width>
+                    <span v-if="mainModel.emerPlanHistory.user && mainModel.emerPlanHistory.user.name">{{mainModel.emerPlanHistory.user.name}}</span>
+                    <!--<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.user.name" readonly=false :width="380"></iv-textarea>-->
+                </el-form-item>
+                <el-form-item label="操作时间" prop="operateTime" full-width>
+                    <span>{{getOperateTime(mainModel.emerPlanHistory.operateTime)}}</span>
+                    <!--<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.operateTime" readonly=true :width="380"></iv-textarea>-->
+                </el-form-item>
+                <el-form-item label="附件资料"  full-width>
+                    <ul>
+                        <li v-for="(index, file) in mainModel.emerPlanHistory.fileList" class="cert-file-item" @click="doClickFile(index)">
+                            <div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+                            <Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <iv-button type="text" style="padding:0;color:#33A6FF" @click="uploadClicked" >上传</iv-button>
+                </el-form-item>
+            </el-form>
+
+            <!-- 没有这个页面报错   方案编制   -->
+            <el-form v-else class="fip-content-item-form" :model="mainModel.emerPlanHistory" style="margin-left:10px;"
+                     :rules="baseRules" v-ref:ruleform>
+                <el-form-item :label="$t('gb.common.code')" >
+                    <span v-if="mainModel.vo.code" >{{mainModel.vo.code}}</span>
+                    <!--<code-input :value.sync="mainModel.emerPlanHistory.code" readonly=false :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+                </el-form-item>
+                <el-form-item label="预案名称" prop="name">
+                    <iv-input :value.sync="mainModel.emerPlanHistory.name" style="width:260px;" readonly=false></iv-input>
+                </el-form-item>
+                <el-form-item label="预案类型" prop="type">
+                    <!--<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_type', mainModel.vo.type) }}</span>-->
+                    <i-select v-else :model.sync="mainModel.emerPlanHistory.type" :list="getDataDicList('iem_emer_plan_type')"  @on-select="doFileTypeChange"  clearable></i-select>
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+                    <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.emerPlanHistory.compId"></company-tree-select>
+                    <iv-input v-else :value="getDataDic('org', mainModel.emerPlanHistory.compId)['compName']"  style="width:260px;" textonly></iv-input>
+                </el-form-item>
+                <el-form-item label="修订频率(年)" prop="reviseFrequence">
+                    <iv-input :value.sync="mainModel.emerPlanHistory.reviseFrequence"  style="width:260px;" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+
+                <el-form-item v-if="mainModel.vo.isInitial == '0'" label="修订理由" prop="reviseType" >
+                    <iv-radio-group :model.sync="mainModel.emerPlanHistory.reviseType">
+                        <iv-radio value="1">
+                            <span>定期修订</span>
+                        </iv-radio>
+                        <iv-radio value="2">
+                            <span>不定期修订</span>
+                        </iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+
+                <el-form-item v-if="mainModel.emerPlanHistory.reviseType=='2'"  prop="reviseReasonList">
+                    <di>
+                        <iv-checkbox-group :model="mainModel.emerPlanHistory.reviseReasonList">
+                            <iv-checkbox value="1" :middle="isHalfCheck" :disabled="checkBox.disabled"   >制定预案所依据的法律、法规、规章、标准发生重大变化</iv-checkbox>
+                            <iv-checkbox value="2" :middle="isHalfCheck" :disabled="checkBox.disabled"   >应急指挥机构及其职责发生调整</iv-checkbox>
+                            <iv-checkbox value="3" :middle="isHalfCheck" :disabled="checkBox.disabled"   >安全生产面临的风险发生重大变化</iv-checkbox>
+                            <iv-checkbox value="4" :middle="isHalfCheck" :disabled="checkBox.disabled"  >重要应急资源发生重大变化</iv-checkbox>
+                            <iv-checkbox value="5" :middle="isHalfCheck" :disabled="checkBox.disabled"   >在预案演练或者应急救援中发现需要修订预案的重大问题</iv-checkbox>
+                            <iv-checkbox value="6" :middle="isHalfCheck" :disabled="checkBox.disabled"   >其他应当修订的情形</iv-checkbox>
+                        </iv-checkbox-group>
+                    </di>
+                </el-form-item>
+
+                <el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+                    <iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.remark" :readonly="mainModel.isReadOnly" :width="260"></iv-textarea>
+                </el-form-item>
+                <el-form-item label="操作时间"  full-width>
+                    <span>{{ mainModel.emerPlanHistory.operateTime }}</span>
+                </el-form-item>
+                <el-form-item label="版本号" prop="verNo">
+                    <iv-input :value.sync="mainModel.emerPlanHistory.verNo" style="width:260px;" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item label="附件资料" >
+                    <ul>
+                        <li v-for="(index, file) in mainModel.emerPlanHistory.fileList" class="cert-file-item" @click="doClickFile(index)">
+                            <div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+                            <Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <iv-button type="text" style="padding:0;" @click="uploadClicked" >上传</iv-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveSelectPoint" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+            <vi-button type="primary" v-if="hasAuth('rollback')" @click="doShowBack" class="pull-right">回退</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<back-node :visible.sync='isBackNode'  @close-model="closeModel" :vo="mainModel.vo" @do-save="saveBackNode" ></back-node>
+
+<!-----   文件相关  ----->
+<vue-file-upload
+        v-ref:uploader
+        style="display: none;"
+        :multi-selection="true"
+        :params="uploadModel.params"
+        @on-before-upload="doUploadBefore"
+        @on-success-upload="doUploadSuccess"
+        @on-upload-complete="onUploadComplete"
+        :filters="uploadModel.filters">
+</vue-file-upload>
+
+
+

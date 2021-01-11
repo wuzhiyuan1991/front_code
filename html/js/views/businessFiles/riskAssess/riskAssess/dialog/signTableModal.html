@@ -1,0 +1,30 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width="900" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="background-color: #fff;padding-bottom: 0;">
+            <div class="rel-info-panel-content-tabs" style="min-height: 550px;">
+                <div class="el-tabs" active-key="relTab">
+                    <div class="el-tabs__header">
+                        <div
+                                @click="doTabClick(tab.id)"
+                                class="el-tabs__item"
+                                :class="{'is-active': tab.id === checkedTabId}"
+                                v-for="tab in tabs">
+                            <b>{{tab.name}}</b>
+                        </div>
+                        <div v-if="showSendNotice" style="position: absolute;right: 0;top: 10px;">
+                            <a href="javascript:;" style="color: blue;font-size: 14px;" @click="sendBatchNotify">批量发送提醒</a>
+                        </div>
+                    </div>
+                    <div class="el-tabs__content" style="margin-top: 10px;">
+                        <lite-table show-page :columns="columns" :values="values" @on-click="onRowClicked"></lite-table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+        </div>
+        <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+    </div>
+</Modal>

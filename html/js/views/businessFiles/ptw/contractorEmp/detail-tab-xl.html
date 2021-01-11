@@ -1,0 +1,180 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button v-if="hasAuth('edit')" type="ghost" @click.stop="doShowContractorEmpFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+<!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+<!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="年龄" prop="age" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.age" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="证书" prop="certificate" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.certificate" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="证书编号" prop="certificateNo" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.certificateNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="承包商" prop="contractor.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.contractor" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowContractorSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="身份证号" prop="idNumber" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.idNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="性别" prop="sex" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.sex" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="联系电话" prop="telephone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.telephone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="工种" prop="workType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+							</div>
+
+				</el-tab-pane>
+				<el-tab-pane label="资料" key="basTab">
+					<div class="rip-item">
+						<el-form :model="mainModel.vo" class="rip-item-form">
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">基本信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('编码')">
+											<span>{{mainModel.vo.code}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('姓名')">
+											<span>{{mainModel.vo.name}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('状态')">
+											<span>{{mainModel.vo.disable}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('年龄')">
+											<span>{{mainModel.vo.age}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">详细信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('证书')">
+											<span>{{mainModel.vo.certificate}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('证书编号')">
+											<span>{{mainModel.vo.certificateNo}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('承包商')">
+											<span>{{mainModel.vo.contractorId}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('身份证号')">
+											<span>{{mainModel.vo.idNumber}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('备注')">
+											<span>{{mainModel.vo.remark}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('性别')">
+											<span>{{mainModel.vo.sex}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('联系电话')">
+											<span>{{mainModel.vo.telephone}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('工种')">
+											<span>{{mainModel.vo.workType}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>			
+						</el-form>
+					</div>	
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<div class="rip-item">
+				<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+			</div>
+        -->
+	</div>
+
+</div>
+
+<contractor-select-modal :visible.sync="selectModel.contractorSelectModel.visible" :filter-data="selectModel.contractorSelectModel.filterData" single-select @do-save="doSaveContractor"></contractor-select-modal>
+
+<contractoremp-form-modal
+		:visible.sync="formModel.contractorEmpFormModel.show"
+		@do-update="doUpdateContractorEmp"
+		:query-url="formModel.contractorEmpFormModel.queryUrl"
+		v-ref:contractoremp-form-modal>
+</contractoremp-form-modal>
+

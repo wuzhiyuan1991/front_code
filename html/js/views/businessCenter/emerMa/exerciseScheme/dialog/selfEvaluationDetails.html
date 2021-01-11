@@ -1,0 +1,121 @@
+<Modal :visible.sync='visible' :title='"详情"'  :footer-hide="true" width="900">
+    <div class="edit-pop-container">
+        <div class="selfEvaluationDetailTableTitle" v-if="mainModel.vo.status == '2'">
+            <div class="">评价人</div>
+            <div><img style="height: 50px;" :src="picFile[0].ctxPath" /></div>
+            <!--<div v-if="mainModel.vo.user">{{mainModel.vo.user.name}}</div>-->
+            <div >评价时间</div>
+            <div v-if="mainModel.vo">{{getOperateTime(mainModel.vo.submitTime)}}</div>
+        </div>
+        <div class="epc-content selfEvaluationDetailTable">
+            <div class="selfEvaluationDetailTableHead">
+                <div  class="selfEvaluationDetailTableHeadItem" style="border-right:1px solid #ddd;width:266px;">评价内容</div>
+                <div  class="selfEvaluationDetailTableHeadItem" style="width:584px;">答案集合</div>
+            </div>
+            <el-form style="width:850px;position: relative;">
+                <div style="z-index: 1;position: absolute;height: 100%;width: 1px;border-left: 1px solid #DDD;left: 265px;"></div>
+
+                <el-form-item  :class="getBgColor(index)"  :label='getLabelName(item, index)' v-for="(index,item) in mainModel.selfEvaluationQuestions" >
+                    <iv-radio-group :model.sync="item.values" v-if="item.type == '1'">
+                        <iv-radio  :value="opt.id" v-for="opt in item.selfEvaluationOpts" :disabled="mainModel.isReadOnly" >
+                            <span>{{opt.content}}</span>
+                        </iv-radio>
+                    </iv-radio-group>
+                    <iv-checkbox-group :model.sync="item.values" v-if="item.type == '2'">
+                        <iv-checkbox style="margin-left:0;margin-right:10px;" :value="opt.id" v-for="opt in item.selfEvaluationOpts" :middle="isHalfCheck" :disabled="mainModel.isReadOnly">{{opt.content}}</iv-checkbox>
+                    </iv-checkbox-group>
+                    <div v-if="item.type == '3'" class="selfEvaluationDetailTableText">
+                        <div v-if="mainModel.isReadOnly">{{item.values}}</div>
+                        <iv-textarea v-else :value.sync="item.values" style="min-height:120px;width:100%;font-size:14px;" class="inp"></iv-textarea>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+            <vi-button type="primary" v-show="mainModel.vo.status == '0' && !mainModel.isReadOnly" @click="doSubmitDetail(0)" class="pull-right">提交</vi-button>
+            <vi-button type="primary" v-show="mainModel.vo.status == '0' && !mainModel.isReadOnly" @click="doSubmitDetail(1)" class="pull-right">保存</vi-button>
+        </div>
+    </div>
+</Modal>
+<!-----   文件相关  ----->
+<vue-file-upload
+        v-ref:uploader
+        style="display: none;"
+        :multi-selection="true"
+        :params="uploadModel.params"
+        @on-before-upload="doUploadBefore"
+        @on-success-upload="doUploadSuccess"
+        @on-upload-complete="onUploadComplete"
+        :filters="uploadModel.filters">
+</vue-file-upload>
+
+
+
+<style>
+    .bgf91 {
+        background-color: #fff;
+    }
+    .bgff1 {
+        background-color: #fff;
+    }
+    .bgf91:hover , .bgff1:hover{
+        background-color: #f5f5f5;
+    }
+
+    .selfEvaluationDetailTableText textarea{
+        color:#666;
+        width:550px;
+        min-height: 120px;
+        font-size: 14px !important;
+        background: none;
+        border: none;
+    }
+    .selfEvaluationDetailTableText .ivu-textarea-wrapper{
+        width:550px !important;
+    }
+    .selfEvaluationDetailTable{
+        background: #fff !important;
+        min-height: 10px !important;
+        position: relative;
+    }
+    .selfEvaluationDetailTableTitle{
+        display: flex;
+        background: #fff;
+        align-items: center;
+        border:1px solid #ddd;
+    }
+    .selfEvaluationDetailTableTitle div{
+        margin-left: 23px;
+        padding: 5px 0;
+        font-size: 14px;
+    }
+    .selfEvaluationDetailTableHeadItem{
+        text-align: center;
+        padding:5px ;
+        font-size: 14px;
+        font-weight:600;
+    }
+    .selfEvaluationDetailTableHead{
+        display: flex;
+        background: #EEF3F5;
+        width: 850px;
+        border:1px solid #ddd;
+    }
+    .selfEvaluationDetailTable .el-form-item{
+        width:850px;
+        border:1px solid #ddd;
+        border-top:none;
+    }
+    .selfEvaluationDetailTable .el-form-item__label{
+        width:256px !important;
+        /*border-right: 1px solid #ddd;*/
+    }
+    .selfEvaluationDetailTable .el-form-item__content{
+        width: 564px;
+        display: inline-block;
+        margin-left: 15px !important;
+        padding-left:10px;
+        padding-right:10px;
+    }
+</style>

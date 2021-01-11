@@ -1,0 +1,287 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="main-panel-search-head">
+            <span style="color:red">* </span>属地公司
+            <div style="width:200px;margin-right:15px;margin-left:10px;" >
+                <!--<i-select :model.sync="searchVo.compId" :list="checkObjTypeList" @on-select="doCompChange" clearable>-->
+                <!--<i-option v-for="item in complist" :value="item.id">{{ item.name }}</i-option>-->
+                <!--</i-select>-->
+
+                <iv-tree-select :model.sync="searchVo.compId" :list="complist" id-attr="id" display-attr="name" @on-change="doDomChange">
+                    <iv-tree :model="complist" :serch-filterable="true"  id-attr="id" pid-attr="parentId" display-attr="name" :single-select="true" :allow-parent-checked="true"></iv-tree>
+                </iv-tree-select>
+                <!--<company-tree-select :id.sync="searchVo.compId"></company-tree-select>-->
+            </div>
+            <!--<span style="color:red">* </span>-->
+            属地
+            <div style="width:200px;margin-right:15px;margin-left:10px;" >
+                <iv-tree-select :model.sync="id"  @select-same="selectSame" clearable :list="domlist" id-attr="id" display-attr="name" @on-change="doDomChange">
+                    <iv-tree :model="domlist"  class="treeDepartment"     id-attr="id" pid-attr="parentId"  display-attr="name" :single-select="true" :allow-parent-checked="false"></iv-tree>
+                </iv-tree-select>
+                <!-- <i-select :model.sync="id" :list="domlist" @on-select="doDomChange" clearable>
+                    <i-option v-for="item in domlist" :value="item.id">{{ item.name }}</i-option>
+                </i-select> -->
+            </div>
+            <!--风险分类-->
+            <!--<div style="width:200px;margin-right:15px;margin-left:10px;"  >-->
+            <!--<i-select :model.sync="searchVo.checkObjType" :list="typelist" clearable  @on-select="doTypeChange">-->
+            <!--<i-option v-for="item in typelist" :value="item.check_obj_type">{{ getCheckRiskType(item.check_obj_type) }}</i-option>-->
+            <!--</i-select>-->
+            <!--</div>-->
+            <!--风险点-->
+            <!--<div style="width:200px;margin-right:15px;margin-left:10px;" >-->
+            <!--<i-select :model.sync="searchVo.riskPoint" :list="pointlist" clearable>-->
+            <!--<i-option v-for="item in pointlist" :value="item">{{ item }}</i-option>-->
+            <!--</i-select>-->
+            <!--</div>-->
+            <iv-col span="3" >
+                <iv-button @click="doSearch()">查询</iv-button>
+            </iv-col>
+        </div>
+
+
+        <!--<div class="mp-header formTitle  aaa">-->
+        <!--<iv-row $main-header-row-attr-default-display>-->
+
+        <!--<iv-col span="18">-->
+        <!--&lt;!&ndash;<all-classification $main-header-classification-attr-default :showdept="true"></all-classification>&ndash;&gt;-->
+        <!--&lt;!&ndash;<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>&ndash;&gt;-->
+        <!--</iv-col>-->
+        <!--<iv-col span="6">-->
+        <!--<div class="prelative addButton pull-right">-->
+        <!--<span v-if="mainModel.showOperateBtn" @click="doShow" style="cursor: pointer;position:relative;top:5px;padding: 0 10px; ">{{mainModel.operate}}</span>-->
+        <!--<vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>-->
+
+        <!--<iv-dropdown trigger="click" placement="bottom-end">-->
+        <!--<vi-button type="ghost" icon="chevron-down"></vi-button>-->
+        <!--<iv-dropdown-menu slot="list">-->
+        <!--<iv-dropdown-item>-->
+        <!--<div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>-->
+        <!--</iv-dropdown-item>-->
+        <!--&lt;!&ndash;<iv-dropdown-item>&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;$main-header-fileupload-tag-excel&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;$main-header-div-tag-download-excel&ndash;&gt;-->
+        <!--&lt;!&ndash;</iv-dropdown-item>&ndash;&gt;-->
+        <!--$main-header-dropdown-item-tag-common-display-->
+        <!--</iv-dropdown-menu>-->
+        <!--</iv-dropdown>-->
+        <!--</div>-->
+        <!--$main-header-refresh-button-->
+        <!--</iv-col>-->
+        <!--</iv-row>-->
+        <!--<iv-row $main-header-row-attr-default-hidden>-->
+        <!--<iv-col span="24">-->
+        <!--<vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}-->
+        <!--</vi-button>-->
+        <!--<vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>-->
+        <!--<vi-button v-if="hasAuth('audit')" type="text" class="mp-header-item-btn" @click="doAudit">{{$t("gb.common.examine")}}</vi-button>-->
+        <!--<vi-button v-if="hasAuth('notAudit')" type="text" class="mp-header-item-btn" @click="doNotAudit">{{$t("bc.ria.abandoned")}}</vi-button>-->
+        <!--<vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>-->
+        <!--</iv-col>-->
+        <!--</iv-row>-->
+        <!--</div>-->
+        <div class="mp-header" style="padding: 5px 0;height: 172px;" @click="doCloseDetail" v-if="mainModel.showFilter">
+            <div class="filterConAll" style="height: 162px;overflow: auto">
+                <div v-for="filterItem in filterList">
+                    <div class="filterCon" v-if="filterItem.show">
+                        <span class="filterTitle">{{filterItem.name}}</span>
+                        <div class="filterConPart">
+                            <span class="allFilter" :class="['noSelectFilter', -1==filterItem.filter ? 'selectFilter' : '']" @click="doClickAll(filterItem.interName,-1)">全部</span>
+                            <span v-if="filterItem.interName != 'riskLevel'" :class="['noSelectFilter', item.id==filterItem.filter ? 'selectFilter' : '']" @click="doClickAll(filterItem.interName,item.id)" class="allFilter" v-for="item in filterItem.list">
+                            {{item.value}}
+                        </span>
+                            <span v-if="filterItem.interName == 'riskLevel'" :class="['noSelectFilter', item.id==filterItem.filter ? 'selectFilter' : '']" @click="doClickAll(filterItem.interName,item.id,item.level)" class="allFilter" v-for="item in filterItem.list">
+                            {{item.level}}
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="mp-content riskAssess" :class="['mp-content-a', mainModel.showFilter ? 'mp-content-b' : '']">-->
+        <div style="position: relative;">
+            <div class="leftPoint" style="height: calc(100vh - 170px);overflow: auto;">
+                <ul class="leftPointUl">
+                    <li class="leftPointTitle">风险点 </li>
+                    <li  v-if="pointlist.length>0" class="leftPointLi" :class="{'leftPointLi-active':  -1 == checkedPointIndex}" @click="doPointSelect('', -1)">全部<span  v-if="pointlist.length>0">({{pointlist.length}})</span></li>
+                    <li class="leftPointLi" :class="{'leftPointLi-active': index === checkedPointIndex}" v-for="(index, item) in pointlist" @click="doPointSelect(item, index)" :title="item" >{{item}}</li>
+                </ul>
+            </div>
+            <div class="mp-content" style="padding-bottom: 5px;max-height: calc(100vh - 170px);overflow: auto;margin-left: 190px;position: relative;overflow-y: visible">
+                <!--<table border="1px solid #ddd" style="border-color:#ddd;table-layout : fixed ;position: absolute;">-->
+                    <!--<thead  style="background: #eef3f5;">-->
+                    <!--<tr>-->
+                        <!--<th  rowspan="2" colspan="1">属地*</th>-->
+                        <!--<th  rowspan="2" colspan="1">风险点分类*</th>-->
+                        <!--<th class="td180" rowspan="2" colspan="1">风险点*</th>-->
+                        <!--&lt;!&ndash;<th rowspan="3" colspan="1">重点关注类型</th>&ndash;&gt;-->
+                        <!--<th  rowspan="2" colspan="1">危害因素分类*</th>-->
+                        <!--<th rowspan="2" class="td400" style="text-align: center" colspan="4">风险场景*</th>-->
+                        <!--&lt;!&ndash;<th rowspan="1" colspan="7" >风险等级*</th>&ndash;&gt;-->
+                        <!--<th  rowspan="1" :colspan="(tabHead.riskLevel.count+3)" >风险等级*</th>-->
+                        <!--<th class="td120" rowspan="1" v-if="tabHead.contral.count>0" :colspan="(tabHead.contral.list[0].count * 2 +tabHead.contral.list[2].count +tabHead.contral.list[1].count)" >控制措施</th>-->
+                        <!--<th class="td120" rowspan="1" :colspan="(tabHead.standard.list[0].count * 4  + tabHead.standard.list[2].count)"   v-if="tabHead.standard.count>0" >管控标准*（检查项）</th>-->
+                        <!--<th  rowspan="2" colspan="1" >管控等级*</th>-->
+                        <!--<th  rowspan="2"  v-if="tabHead.emergencyPlan.count>0"  colspan="1" > 应急措施方案 </th>-->
+                        <!--<th  rowspan="2"  v-if="tabHead.hiddenDangerType.count>0" colspan="1"> 隐患类别</th>-->
+                        <!--<th  rowspan="2"  v-if="tabHead.hiddenDangerLevel.count>0" colspan="1"> 隐患级别</th>-->
+
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<th class="td80" rowspan="1" v-if="tabHead.riskLevel.count>0" colspan="1">第一维度</th>-->
+                        <!--<th class="td80" rowspan="1" v-if="tabHead.riskLevel.count>1" colspan="1">第二维度</th>-->
+                        <!--<th class="td80" rowspan="1" v-if="tabHead.riskLevel.count>2" colspan="1">第三维度</th>-->
+                        <!--<th class="td80" rowspan="1" v-if="tabHead.riskLevel.count>3" colspan="1">第四维度</th>-->
+                        <!--<th class="td80" rowspan="1" v-if="tabHead.riskLevel.count>4" colspan="1">第五维度</th>-->
+                        <!--<th class="td80" rowspan="1" colspan="1">风险得分</th>-->
+                        <!--<th class="td120" rowspan="1" colspan="1">风险等级（场景）</th>-->
+                        <!--<th class="td120" rowspan="1" colspan="1">风险等级（风险点）</th>-->
+                        <!--<th class="td400" rowspan="1" v-if="tabHead.contral.list[0].count>0"  colspan="2">内容</th>-->
+                        <!--<th rowspan="1" v-if="tabHead.contral.list[1].count>0"  style="color:red;" >类型</th>-->
+                        <!--<th  rowspan="1" v-if="tabHead.contral.list[2].count>0"  style="color:red;" >层级</th>-->
+                        <!--<th  rowspan="1" class="td400" v-if="tabHead.standard.list[0].count>0" colspan="4">内容</th>-->
+                        <!--&lt;!&ndash;<th class="td80" rowspan="1" v-if="tabHead.standard.list[1].count>0" style="color:red;" >否决项</th>&ndash;&gt;-->
+                        <!--<th class="th" rowspan="1" v-if="tabHead.standard.list[2].count>0" style="color:red;" >类型</th>-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                <!--</table>-->
+                <table  border="1px solid #ddd" style="border-color:#ddd;">
+                    <thead  style="background: #eef3f5;">
+                    <tr>
+                        <th  rowspan="2" colspan="1">属地*</th>
+                        <th  rowspan="2" colspan="1">风险点分类*</th>
+                        <th class="td180" rowspan="2" colspan="1">风险点*</th>
+                        <!--<th rowspan="3" colspan="1">重点关注类型</th>-->
+                        <th  rowspan="2" colspan="1">危害因素分类*</th>
+                        <th rowspan="2" class="td400" style="text-align: center" colspan="4">风险场景*</th>
+                        <!--<th rowspan="1" colspan="7" >风险等级*</th>-->
+                        <th  rowspan="1" :colspan="(tabHead.riskLevel.count+3)" >风险等级*</th>
+                        <th class="td120" rowspan="1" v-if="tabHead.contral.count>0" :colspan="(tabHead.contral.list[0].count * 2 +tabHead.contral.list[2].count +tabHead.contral.list[1].count)" >控制措施</th>
+                        <th class="td120" rowspan="1" :colspan="(tabHead.standard.list[0].count * 4  + tabHead.standard.list[2].count)"   v-if="tabHead.standard.count>0" >管控标准*（检查项）</th>
+                        <th  rowspan="2" colspan="1" >管控等级*</th>
+                        <th  rowspan="2"  v-if="tabHead.emergencyPlan.count>0"  colspan="1" > 应急措施方案 </th>
+                        <th  rowspan="2"  v-if="tabHead.hiddenDangerType.count>0" colspan="1"> 隐患类别</th>
+                        <th  rowspan="2"  v-if="tabHead.hiddenDangerLevel.count>0" colspan="1"> 隐患级别</th>
+
+                    </tr>
+                    <tr>
+                        <th  rowspan="1" v-if="tabHead.riskLevel.count>0" colspan="1"><span v-if="titleList && titleList.length>0">{{titleList[0].name || '第一维度'}}</span><span v-else>第一维度</span></th>
+                        <th  rowspan="1" v-if="tabHead.riskLevel.count>1" colspan="1"><span v-if="titleList && titleList.length>0">{{titleList[1].name || '第二维度'}}</span><span v-else>第二维度</span></th>
+                        <th  rowspan="1" v-if="tabHead.riskLevel.count>2" colspan="1"><span v-if="titleList && titleList.length>0">{{titleList[2].name || '第三维度'}}</span><span v-else>第三维度</span></th>
+                        <th  rowspan="1" v-if="tabHead.riskLevel.count>3" colspan="1"><span v-if="titleList && titleList.length>0">{{titleList[3].name || '第四维度'}}</span><span v-else>第四维度</span></th>
+                        <th  rowspan="1" v-if="tabHead.riskLevel.count>4" colspan="1"><span v-if="titleList && titleList.length>0">{{titleList[4].name || '第五维度'}}</span><span v-else>第五维度</span></th>
+                        <th class="td80" rowspan="1" colspan="1">风险得分</th>
+                        <th class="td120" rowspan="1" colspan="1">风险等级（场景）</th>
+                        <th class="td120" rowspan="1" colspan="1">风险等级（风险点）</th>
+                        <th class="td400" rowspan="1" v-if="tabHead.contral.list[0].count>0"  colspan="2">内容</th>
+                        <th rowspan="1" v-if="tabHead.contral.list[1].count>0"  style="color:red;" >类型</th>
+                        <th  rowspan="1" v-if="tabHead.contral.list[2].count>0"  style="color:red;" >层级</th>
+                        <th  rowspan="1" v-if="tabHead.standard.list[0].count>0" colspan="4">内容</th>
+                        <!--<th class="td80" rowspan="1" v-if="tabHead.standard.list[1].count>0" style="color:red;" >否决项</th>-->
+                        <th class="th" rowspan="1" v-if="tabHead.standard.list[2].count>0" style="color:red;" >类型</th>
+                    </tr>
+                    </thead>
+
+                    <!--<tr  v-for="(tirsIndex,tirs) in lists">-->
+                    <tbody  id="risktbody">
+                  
+                    </tbody>
+                </table>
+                <!--<tbody v-for="(items) in lists">-->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<style>
+    .leftPointTitle{
+        text-align: center;
+        color: #666;
+        font-size: 16px;
+        font-weight: 600;
+        /* padding-bottom: 10px; */
+        /* margin-bottom: 10px; */
+        /* margin-top: 10px; */
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        height: 57px;
+        line-height: 55px;
+        background: #ddd;
+    }
+
+    .leftPointUl{
+        /*max-height: 700px;*/
+        /*overflow-y: auto;*/
+    }
+    .leftPointLi-active{
+        background: #56b5ff!important;
+        color: #fff;
+        text-align: center;
+        display: block;
+        /* width: 160px; */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 5px;
+    }
+    .leftPointLi{
+        text-align: center;
+        display: block;
+        /* width: 160px; */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 5px;
+        text-align: left;
+        padding-left: 10px;
+    }
+    .leftPointLi:hover{
+        cursor: pointer;
+        /*color:#fff;*/
+        background: #EEEEEE;
+    }
+    .leftPoint{
+        position: absolute;
+        left: 0;
+        top: 0;
+        border: 1px solid #ddd;
+        width: 180px;
+        max-height: 700px;
+        text-align: center;
+        height: 700px;
+        background: #fff;
+        z-index:5;
+    }
+    .main-panel-search-head{
+        display: flex;
+        padding:10px;
+        align-items: center;
+    }
+    table{
+        border:1px solid #ddd !important;
+    }
+    td, th{
+        padding: 5px;
+        min-height: 40px;
+        min-width: 150px;
+        max-with:400px;
+        text-align: center
+    }
+    .td180{
+        min-width:190px !important;
+    }
+    .td80{
+        min-width:80px !important;
+    }
+    .td120{
+        min-width:120px !important;
+    }
+    .td400{
+        min-width:330px !important;
+    }
+</style>
+

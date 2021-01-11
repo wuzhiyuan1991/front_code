@@ -1,0 +1,236 @@
+<div class="edit-pop-container">
+    <!--epc-content-row-space 控制每一行的间距-->
+    <div class="epc-content epc-content-row-space">
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform id="rules1">
+            <!--<el-form-item :label="$t('gb.common.subjectObj')" prop="checkObjectId">-->
+            <!--<iv-input display-type="popselect" :value.sync="mainModel.vo.checkObjectName"  @click="selectCheckObject" ></iv-input>-->
+            <!--</el-form-item>-->
+
+            <el-form-item :label="$t('gb.common.checkUser')" class="small-info-box">
+                <input-select :disabled="selectUserModel.disabled" :value="mainModel.vo.user" class="small-hide-add" id-field="id" display-field="name"
+                              @click="mainModel.showUserSelectModal = true"></input-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.problemFinder')" prop="problemFinder">
+                <iv-input type="text" :value.sync="mainModel.vo.problemFinder"></iv-input>
+            </el-form-item>
+
+            $hook
+            <el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+                <company-tree-select v-if="!!mainModel.opType" :disabled="isUpdateOpType" :id.sync="mainModel.vo.compId"></company-tree-select>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+                <iv-input v-if="isUpdateOpType && mainModel.isFromRecord" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" disabled></iv-input>
+                <department-tree-select allow-parent-checked v-else :id.sync="mainModel.vo.orgId" :comp-id.sync="mainModel.vo.compId"></department-tree-select>
+            </el-form-item>
+            <el-form-item label="属地" prop="dominationAreaId">
+                <!-- <input-select
+                        :value="mainModel.vo.dominationArea"
+                        :clearable="!isUpdateOpType || !mainModel.isFromRecord"
+                        id-field="id"
+                        display-field="name"
+                        :disabled="isUpdateOpType && mainModel.isFromRecord"
+                        @click="doShowDominationAreaSelectModal"
+                        @do-clear-input="doClearDominationArea"
+                ></input-select> -->
+                <cascade-input-select
+                        :value="mainModel.vo.dominationArea"
+                        :cascade-id="mainModel.vo.orgId"
+                        :textonly="mainModel.isReadOnly"
+                        :cleanable="!isUpdateOpType || !mainModel.isFromRecord"
+                        :disabled="isUpdateOpType && mainModel.isFromRecord"
+                        @click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())"
+                ></cascade-input-select>
+
+            </el-form-item>
+
+            <el-form-item label="检查对象" prop="checkObj.id">
+                <!--<input-select :value="mainModel.vo.checkObj" clearable id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="doShowCheckObjSelectModal"></input-select>-->
+                <cascade-input-select
+                        type="checkObject"
+                        :value="mainModel.vo.checkObj"
+                        :cascade-id="mainModel.vo.dominationArea.id"
+                        :textonly="mainModel.isReadOnly"
+                        cleanable
+                        no-disabled
+                        @click="(!mainModel.isReadOnly) && (doShowCheckObjSelectModal())"
+                ></cascade-input-select>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.problemDesc')" prop="problem">
+                <input-search  :input-val.sync="mainModel.vo.problem"  is-text="true" url="/pool/problems"></input-search>
+            </el-form-item>
+            <el-form-item label="发现渠道" prop="discoveryChannel" v-if="mainModel.enableDiscoveryChannel">
+                <iv-input type="textarea" :value.sync="mainModel.vo.discoveryChannel"></iv-input>
+            </el-form-item>
+            <el-form-item label="ERP工单号" prop="attr2" v-if="!isErpDisable">
+                <iv-input  :value.sync="mainModel.vo.attr2"></iv-input>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.latentDefect')" prop="latentDefect">
+                <iv-input type="textarea" :value.sync="mainModel.vo.latentDefect"></iv-input>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.recMeasure')" prop="danger">
+                <iv-input type="textarea" :value.sync="mainModel.vo.danger"></iv-input>
+            </el-form-item>
+            <!-- <el-form-item label="检查依据" prop="legalRegulationId" >
+				<iv-input :value.sync="mainModel.vo.legalRegulation.name" type="textarea" readonly  @click="doShowLegalRegulationSelectModal" style="cursor: pointer;"></iv-input>
+				<Icon type="plus" @click="doShowLegalRegulationSelectModal" title="选择检查依据" style="cursor: pointer;top: 7px; width: 32px; height: 32px; line-height: 32px; font-size: 16px; text-align: center; color: #9ea7b4; position: absolute; right: 0; z-index: 1"></Icon>
+			</el-form-item> -->
+            <el-form-item label="隐患类别" prop="hiddenDangerType">
+                <i-select :model.sync="mainModel.vo.hiddenDangerType" :list="getDataDicList('hidden_danger_type')" clearable>
+                    <i-option v-for="s in getDataDicList('hidden_danger_type')" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.type')" prop="type">
+                <i-select :model.sync="mainModel.vo.type" :list="mainModel.checkItemTypes" :disabled="selectModel.disabled">
+                    <i-option v-for="s in mainModel.checkItemTypes" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item  v-if="mainModel.enableHSEType" label="HSE类型" prop="hseType">
+                <i-select :model.sync="mainModel.vo.hseType" :list="getDataDicList('random_observe_hse_type')" v-if="!mainModel.isReadOnly">
+                    <i-option v-for="item in getDataDicList('random_observe_hse_type')" :value="item.id">
+                        {{item.value}}
+                    </i-option>
+                </i-select>
+                <span v-else>{{getDataDic('random_observe_hse_type', mainModel.vo.hseType)}}</span>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.businessSource')" prop="bizType">
+                <i-select :model.sync="mainModel.vo.bizType" :list="mainModel.poolBizSourceType" clearable>
+                    <i-option v-for="s in mainModel.poolBizSourceType" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="问题产生原因" prop="problemReason">
+                <i-select :model.sync="mainModel.vo.problemReason" :list="getDataDicList('pool_problem_reason')" clearable>
+                    <i-option v-for="s in getDataDicList('pool_problem_reason')" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.riskGrade')" prop="riskModelId">
+                <risk-model :model.sync="riskModel" cleanable></risk-model>
+            </el-form-item>
+
+            <el-form-item label="风险判定类型" prop="riskJudgementType" v-if="isShowXBGDField">
+                <i-select clearable :model.sync="mainModel.vo.riskJudgementType" :list="getDataDicList('pool_second_level')" :disabled="selectModel.disabled">
+                    <i-option v-for="s in mainModel.riskJudgementTypeList" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="专业" prop="specialty" v-if="showSpecialty">
+                <i-select :model.sync="mainModel.vo.specialty" :list="getDataDicList('specialty')" :disabled="selectModel.disabled">
+                    <i-option v-for="s in getDataDicList('specialty')" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="检查依据" prop="checkBasis">
+                <iv-input type="textarea" :value.sync="mainModel.vo.checkBasis"></iv-input>
+            </el-form-item>
+
+            <el-form-item  label="一级分类" prop="firstLevel" v-if="isShowXBGDField">
+                <i-select clearable :model.sync="mainModel.vo.firstLevel" :list="getDataDicList('pool_first_level')" :disabled="selectModel.disabled">
+                    <i-option v-for="s in getDataDicList('pool_first_level')" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item  label="二级分类" prop="secondLevel" v-if="isShowXBGDField">
+                <i-select clearable :model.sync="mainModel.vo.secondLevel" :list="getDataDicList('pool_second_level')" :disabled="selectModel.disabled">
+                    <i-option v-for="s in getDataDicList('pool_second_level')" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item  label="低老坏分类" prop="lowOldBadLevel" v-if="isShowXBGDField">
+                <i-select clearable :model.sync="mainModel.vo.lowOldBadLevel" :list="getDataDicList('pool_low_old_bad_level')" :disabled="selectModel.disabled">
+                    <i-option v-for="s in getDataDicList('pool_low_old_bad_level')" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="负责人" v-if="isShowXBGDField" class="small-info-box">
+                <input-select clearable :value="mainModel.vo.userPrincipal" id-field="id" display-field="name"
+                              @click="mainModel.showUserSelectModal = true"></input-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.picture')">
+                <!--<lite-box v-for="(index,pic) in mainModel.vo.pictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.pictures)"-->
+                          <!--@click="doPic(pic.fileId)">-->
+                    <!--<img :src="convertPicPath(pic.fileId)">-->
+                <!--</lite-box>-->
+                <image-view :images=" mainModel.vo.pictures" @on-close="doDeleteFile"></image-view>
+
+                <vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload" class="file_upload"
+                                 :filters="pictures.filters" v-if="mainModel.vo.pictures.length < 9"></vue-file-upload>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.video')">
+                <lite-box v-for="(index,video) in mainModel.vo.videos" @on-close="doDeleteFile(video.fileId,index,mainModel.vo.videos)"
+                          @click="doPlay(video)">
+                    <img :src="convertPath()">
+                </lite-box>
+                <vue-file-upload :params="videos.params" v-if="mainModel.vo.videos.length < 1" :filters="videos.filters"
+                                 @on-success-upload="doVideosSuccessUpload" class="file_upload"></vue-file-upload>
+            </el-form-item>
+
+
+
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>
+
+<!-------  人员选择  ------->
+<user-select-modal
+        single-select
+        :visible.sync="mainModel.showUserSelectModal"
+        @do-save="doSaveUser"
+></user-select-modal>
+
+<!--属地选择器-->
+<dominationarea-select-modal
+        single-selectp
+        :visible.sync="selectModel.dominationAreaSelectModel.visible"
+        :filter-data="selectModel.dominationAreaSelectModel.filterData"
+        @do-save="doSaveDominationArea"
+></dominationarea-select-modal>
+
+<!--检查对象选择器-->
+<check-object-select-modal
+        :visible.sync="checkObjectSelectModel.visible"
+        :comp-id="mainModel.vo.compId"
+        :org-id="mainModel.vo.orgId"
+        :domination-area="mainModel.vo.dominationArea"
+        :is-comp-disable="false"
+        :show-type-btn="false"
+        @do-save="doSaveCheckObject"
+></check-object-select-modal>
+
+<!-- <check-basis-select-modal
+		single-select
+		:visible.sync="checkBasis.visible"
+		:filter-data="checkBasis.filterData"
+		@do-save="doSaveLegalRegulations"
+></check-basis-select-modal> -->
+
+<!--// 部门和属地混合树-->
+<!-- <dependency-tree
+        :visible.sync="selectModel.dominationAreaSelectModel.visible"
+        :id.sync="mainModel.vo.dominationArea.id"
+         :comp-id.sync="mainModel.vo.compId"
+         :org-id="mainModel.vo.orgId"
+        @do-cancel="selectModel.dominationAreaSelectModel.visible=false"
+         @do-save="doSaveDominationArea"  clearable>
+</dependency-tree> -->
+<style>
+    .el-form .ivu-checkbox-wrapper{
+         display: inline-block !important;
+     }
+</style>

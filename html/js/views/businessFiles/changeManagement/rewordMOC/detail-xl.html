@@ -1,0 +1,399 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			
+				
+				
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost"
+					@click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="min-height:400px;" :model="mainModel.vo" is-label-vertical
+				:rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="项目名称" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="变更性质" prop="nature" class="small-info-box">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('smoc_change_management_nature', mainModel.vo.nature) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.nature" :list="getDataDicList('smoc_change_management_nature')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="变更类型" prop="changeMode" class="small-info-box">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('smoc_change_management_change_mode', mainModel.vo.changeMode) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.changeMode" :list="getDataDicList('smoc_change_management_change_mode')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="变更范围" prop="deadLine" class="small-info-box">
+
+
+						<div style="display: flex;" v-if="!mainModel.isReadOnly">
+							<!--<iv-input :value.sync="mainModel.vo.mocRange" style="width: 110px; :textonly="mainModel.isReadOnly"></iv-input>-->
+
+							<div style="width: 110px;" >
+								<i-select style="width: 110px;" :model.sync="mainModel.vo.scope"
+									:list="getDataDicList('smoc_change_management_scope')"></i-select>
+							</div>
+							<div v-if="mainModel.vo.scope!='0'" style="width: 150px;" id='changeDeadline'>
+
+								<date-picker style="width: 150px;" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+									:selected-date.sync="mainModel.vo.deadLine" clearable></date-picker>
+							</div>
+						</div>
+
+						<iv-input v-if="mainModel.vo.scope!='0'&&mainModel.isReadOnly"
+							:value="formatYMD(mainModel.vo.deadLine)" textonly class="inp">
+						</iv-input>
+						<iv-input v-if="mainModel.vo.scope=='0'&& mainModel.isReadOnly" value="永久变更" textonly
+							class="inp">
+						</iv-input>
+
+
+					</el-form-item>
+					<el-form-item label="开始时间" prop="startTime" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" :end="mainModel.vo.endTime" type="datetime"
+							format="yyyy-MM-dd HH:mm:ss" :selected-date.sync="mainModel.vo.startTime" clearable>
+						</date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startTime" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="结束时间" prop="model" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" :begin="mainModel.vo.startTime" type="datetime"
+							format="yyyy-MM-dd HH:mm:ss" :selected-date.sync="mainModel.vo.endTime" clearable>
+						</date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endTime" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="申请人/负责人" prop="applicant.id" class="small-info-box">
+						<input-select :value.sync="mainModel.vo.applicant" id-field="id" display-field="name"
+							:textonly="mainModel.isReadOnly" clearable
+							@click="(!mainModel.isReadOnly) && (doSelectUser(1))"></input-select>
+					</el-form-item>
+				</iv-row>
+
+
+				<iv-row class="bip-content-item">
+
+					<el-form-item label="审批人" prop="approvers" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :values="mainModel.vo.approvers" @click="doSelectUser(2)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.approvers">{{item.name}}{{(index+1)==mainModel.vo.approvers.length?'':','}}</span>
+					</el-form-item>
+					<el-form-item label="评估人" prop="assessors" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :values="mainModel.vo.assessors" @click="doSelectUser(4)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.assessors">{{item.name}}{{(index+1)==mainModel.vo.assessors.length?'':','}}</span>
+					</el-form-item>
+					<el-form-item label="验收人" prop="acceptors" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :values="mainModel.vo.acceptors" @click="doSelectUser(5)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.acceptors">{{item.name}}{{(index+1)==mainModel.vo.acceptors.length?'':','}}</span>
+					</el-form-item>
+					<el-form-item label="培训负责人" prop="trainers" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :values="mainModel.vo.trainers" @click="doSelectUser(6)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.trainers">{{item.name}}{{(index+1)==mainModel.vo.trainers.length?'':','}}</span>
+					</el-form-item>
+					
+				
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="状态" prop="status" class="small-info-box">
+						<span >{{ getDataDic('smoc_change_management_status', mainModel.vo.status) }}</span>
+						<!-- <i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('smoc_change_management_status')" clearable></i-select> -->
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId"  class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="模板" prop="smocTemplate" class="small-info-box">
+						
+						<input-select :value.sync="mainModel.vo.smocTemplate" id-field="id" display-field="name"
+							:textonly="mainModel.opType!='create'" clearable
+							@click="(mainModel.opType=='create') && (doSelectTemp())"></input-select>
+						
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="变更说明" prop="illustrate" class="small-info-box-2span">
+						<!--<iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<iv-input type="textarea" :rows="2" class="display-all-line" :value.sync="mainModel.vo.illustrate"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+
+			</el-form>
+		</div>
+	</div>
+
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs :active-name.sync="mainModel.activeTabName" @tab-click="changeTab">
+				<el-tab-pane label="申请/评估">
+
+					<div class="rip-item">
+						<simple-card :show-content.sync="cardModel.showContent">
+							<p slot="title"><i class="basicPng"></i><span>危害辨识</span></p>
+							<a slot="extra" @click.prevent="cardModel.showContent = !cardModel.showContent;">
+								<span v-if="cardModel.showContent">
+									<Icon type="arrow-up-b"></Icon>收起
+								</span>
+								<span v-else>
+									<Icon type="arrow-down-b"></Icon>展开
+								</span>
+							</a>
+						
+
+
+							<simple-card class="rip-item-sub" v-for="(index, group) in groups1" v-ref:groupcrad>
+								<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+									<div class="left" style="width: 300px;">{{group.name}}</div>
+								
+								</div>
+
+								<vue-bootstrap-table :setting="tableModel.checkBasisTableModel"	
+									 :page-size-opts='[2000]' :values="group.riskItems"
+									show-pager="false">
+
+								</vue-bootstrap-table>
+
+							</simple-card>
+							<!--</group-partial>-->
+						</simple-card>
+					</div>
+
+					<div class="rip-item">
+						<simple-card>
+							<p slot="title"><i class="basicPng"></i><span>评估意见</span></p>
+					
+							
+							<vue-bootstrap-table :setting="tableModel.pgyjModel" 
+								:values="mainModel.pgyjValues"  @on-data-loaded="doLoadTableData" :page-size-opts='[2000]' show-pager="false" v-ref:pgyj>
+							</vue-bootstrap-table>
+						</simple-card>
+					</div>
+
+					<div class="rip-item">
+
+						<simple-card>
+							<p slot="title"><i class="basicPng"></i><span>审批意见</span></p>
+						
+							<vue-bootstrap-table :setting="tableModel.spyjModel" 
+								:values="mainModel.pgyjValues" :page-size-opts='[2000]' show-pager="false" v-ref:spyj>
+							</vue-bootstrap-table>
+						</simple-card>
+
+
+
+					</div>
+
+
+				</el-tab-pane>
+
+
+
+				<el-tab-pane label="变更实施">
+
+					<div class="rip-item">
+
+						<simple-card :show-content.sync="cardModel.showContent">
+							<p slot="title"><i class="basicPng"></i><span>实施记录</span></p>
+						
+						
+
+
+							<simple-card class="rip-item-sub" v-for="(index, group) in groups2">
+								<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+									<div class="left" style="width: 300px;">{{group.name}}</div>
+									
+								</div>
+
+								<vue-bootstrap-table :setting="tableModel.checkModel"	@on-click-cell="doTableCellClick"
+									 :page-size-opts='[2000]' :values="group.riskItems"
+									show-pager="false">
+
+								</vue-bootstrap-table>
+
+							</simple-card>
+							
+						</simple-card>
+					</div>
+
+				</el-tab-pane>
+
+
+
+				<el-tab-pane label="变更培训">
+
+					<div class="rip-item">
+
+						<simple-card :show-content.sync="cardModel.checkBasisCardModel.showContent">
+							<p slot="title"><i class="basicPng"></i><span>培训记录</span></p>
+						
+					
+							<vue-bootstrap-table :setting="tableModel.pxjlModel" 
+								 :page-size-opts='[2000]' show-pager="false" v-ref:pxjl>
+							</vue-bootstrap-table>
+						</simple-card>
+					</div>
+
+					<div class="rip-item">
+						<simple-card class="fip-content-item">
+							<p slot="title"><i class="basicPng"></i><span>附件</span></p>
+							<div class="rel-info-panel-content-tabs">
+								<el-tabs active-key="relTab">
+									<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+										<file-list-simple-card readonly :data="fileModel.file.data" :config="fileModel.file.cfg">
+										</file-list-simple-card>
+									</el-tab-pane>
+									<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+										<image-list-simple-card readonly :data="fileModel.pic.data" :config="fileModel.pic.cfg">
+										</image-list-simple-card>
+									</el-tab-pane>
+									<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+										<video-list-simple-card readonly :data="fileModel.video.data"
+											:config="fileModel.video.cfg"></video-list-simple-card>
+									</el-tab-pane>
+								</el-tabs>
+							</div>
+						</simple-card>
+					</div>
+
+				</el-tab-pane>
+
+
+				<el-tab-pane label="确认验收">
+					<div class="rip-item">
+
+						<simple-card :show-content.sync="cardModel.showContent">
+							<p slot="title"><i class="basicPng"></i><span>确认验收</span></p>
+						
+						
+
+
+							<simple-card class="rip-item-sub" v-for="(index, group) in groups2">
+								<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+									<div class="left" style="width: 300px;">{{group.name}}</div>
+									
+								</div>
+
+								<vue-bootstrap-table :setting="tableModel.checkModel"	@on-click-cell="doTableCellClick"
+									 :page-size-opts='[2000]' :values="group.riskItems"
+									show-pager="false">
+
+								</vue-bootstrap-table>
+
+							</simple-card>
+						</simple-card>
+					</div>
+
+					<div class="rip-item">
+
+
+						
+
+						<simple-card >
+							<p slot="title"><i class="basicPng"></i><span>验收意见</span></p>
+							<vue-bootstrap-table :setting="tableModel.ysyjModel"  
+							:page-size-opts='[2000]'	:values="mainModel.pgyjValues" show-pager="false" v-ref:ysyj>
+							</vue-bootstrap-table>
+						</simple-card>
+
+					</div>
+				</el-tab-pane>
+
+
+
+
+
+			</el-tabs>
+		</div>
+	</div>
+
+</div>
+<style>
+	#changeDeadline .ivu-select {
+		width: 150px;
+	}
+</style>
+<Modal :visible.sync="opinionModel.visible" :title="opinionModel.title" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <el-form :model="opinionModel" :rules="opinionModel.rules" v-ref:opinionform>
+           
+          
+            <el-form-item :label="opinionModel.title+'结果'" prop="result">
+                <iv-radio-group :model.sync="opinionModel.result">
+                    <iv-radio value="1" 
+                        @change="opinionModel.result=1">
+                        通过</iv-radio>
+                    <iv-radio value="2" 
+                        @change="opinionModel.result=2">
+                        不通过</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+            <el-form-item label="意见内容" prop="opinion">
+                <iv-textarea :value.sync="opinionModel.opinion"></iv-textarea>
+            </el-form-item>
+        
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="opinionModel.visible=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSaveOpinionModel" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<Modal :visible.sync="resultModel.visible" title="落实情况" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+		<el-form :model="resultModel" :rules="resultModel.rules" >
+
+
+			<el-form-item label="实施情况"  prop="detail">
+				<iv-input type="textarea" :rows="4" textonly :value.sync="resultModel.detail"></iv-input>
+			</el-form-item>
+		
+			<el-form-item :label="$t('gb.common.picture')"  >
+				<lite-box v-for="(index,pic) in resultModel.rightPictures" :show-close="false" @click="doPic(pic)">
+					<img :src="convertPicPath(pic)">
+				</lite-box>
+				<span v-show="resultModel.rightPictures.length==0">暂无</span>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.video')" >
+				<lite-box v-for="(index,pic) in resultModel.wrongPictures" :show-close="false"  @click="doPlay(pic)">
+					<img :src="convertPath()">
+				</lite-box>
+				<span v-show="resultModel.wrongPictures.length==0">暂无</span>
+			</el-form-item>
+		</el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="resultModel.visible=false" class="pull-right">确定</vi-button>
+      
+    </div>
+
+</Modal>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false" @do-save="doSaveUsers"
+	:filter-data="selectModel.userSelectModel.filterData" :single-select="userType==1||userType==3">
+</user-select-modal>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+	<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400"  footer-hide>
+	<img v-if="picModel.show" :src="convertPicPath(picModel.file,'watermark')">
+</Modal>

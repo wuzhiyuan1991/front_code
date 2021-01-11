@@ -1,0 +1,25 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+
+				<el-form-item label="序      号">
+					<iv-input disabled :value.sync="mainModel.code"></iv-input>
+				</el-form-item>
+				<el-form-item label="操作内容" prop="content">
+					<iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.content"></iv-input>
+				</el-form-item>
+				<el-form-item label="负  责  人" prop="principalType">
+					<iv-checkbox-group :model.sync="mainModel.vo.principalType" prop="principalType">
+						<iv-checkbox value="1" style="display: block;">检修作业人员</iv-checkbox>
+						<iv-checkbox value="2" style="display: block;margin-left: 0;">检修负责人</iv-checkbox>
+						<iv-checkbox value="3" style="display: block;margin-left: 0;">监护人</iv-checkbox>
+					</iv-checkbox-group>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

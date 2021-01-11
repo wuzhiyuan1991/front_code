@@ -1,0 +1,213 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <div style="display: flex;justify-content: space-between;align-items: center;height: 100%;padding-top: 2px;">
+                <div>
+                    <iv-button v-if="hasAuth('create')" style="width: auto;" type="primary" :disabled="searching" @click="doAddFolder">新建文件夹</iv-button>
+                    <iv-button :disabled="searching" type="primary" @click="showFileTypeModal" v-if="hasAuth('uploadFile') && acceptUpload">上传文件</iv-button>
+                    <iv-button @click="refresh">刷新</iv-button>
+
+                </div>
+                <div style="display: inline-flex;align-items: center;">
+                    <div>文件名：</div>
+                    <iv-input :value.sync="inputNameValue" style="width: 200px;"></iv-input>
+                    <div style="margin-left: 10px;">上传人：</div>
+                    <iv-input :value.sync="inputUserValue" style="width: 150px;"></iv-input>
+                    <div style="margin-left: 10px;">修改时间：</div>
+                    <vi-date-picker type="daterange" :value.sync="inputDateValue" placement="bottom-end"></vi-date-picker>
+                    <iv-button @click="doSearch" type="primary" style="margin-left: 10px;">搜索</iv-button>
+                    <iv-button @click="reset" style="margin-left: 10px;">重置</iv-button>
+                </div>
+            </div>
+            <vue-file-upload
+                    v-ref:uploader
+                    :check-files="checkFiles"
+                    style="display: none;"
+                    :params="uploadModel.params"
+                    @on-before-upload="doUploadBefore"
+                    @on-success-upload="doUploadSuccess"
+                    @on-upload-complete="onUploadComplete"
+                    :filters="uploadModel.filters">
+            </vue-file-upload>
+        </div>
+
+        <div class="mp-content" style="padding: 0;display: flex;background: #ecf0f4;">
+            <vue-file-upload
+                    v-ref:single-uploader
+                    :check-files="checkFiles"
+                    style="display: none;"
+                    :multi-selection="false"
+                    :params="uploadModel.params"
+                    @on-before-upload="doUploadBefore"
+                    :params-render="uploadParamsRender"
+                    @on-success-upload="doUploadSuccess"
+                    @on-upload-complete="onUploadComplete"
+                    :filters="uploadModel.filters">
+            </vue-file-upload>
+            <div class="lr-layout-r card-bag-box">
+                <div style="position: relative;">
+                    <iv-breadcrumb>
+                        <breadcrumb-item v-for="(index, path) in paths" @click="doClickBreadItem(index, path)">{{path.name}}</breadcrumb-item>
+                    </iv-breadcrumb>
+                    <!--<a href="javascript:void(0);" v-show="searching">返回</a>-->
+                </div>
+                <ul class="card-bag-ul">
+                    <li class="card-bag-item-header" v-show="currentList.length > 0">
+                        <div style="flex-grow: 1;overflow: hidden;">名称</div>
+                        <div style="min-width: 200px;text-align: center;">目录</div>
+                        <div style="min-width: 80px;text-align: center;">上传人</div>
+                        <div style="min-width: 140px;text-align: center;">修改时间</div>
+                        <div style="min-width: 135px;text-align: right;"></div>
+                    </li>
+                    <li v-for="(index, doc) in currentList" class="card-bag-item">
+                        <div @click="doClickItem(doc)" style="display: inline-flex;align-items: center;flex-grow: 1;overflow: hidden;">
+                            <file-icon size="26" :ext="doc.ext"></file-icon>
+                            <span class="text-ellipsis" v-if="doc.type === '1'">{{doc.name}}</span>
+                            <a href="javascript:void(0);" target="_blank" class="text-ellipsis link" v-if="doc.type === '2'">{{doc.name}}</a>
+                        </div>
+                        <div style="min-width: 200px;text-align: center;font-size: 12px;color: #666;padding-top: 1px;max-width: 200px;overflow-x: hidden;text-overflow: ellipsis; white-space: nowrap;":title="doc.path">{{doc.path}}</div>
+                        <div style="min-width: 80px;text-align: center;font-size: 12px;color: #666;padding-top: 1px;">{{doc.createBy}}</div>
+                        <div style="min-width: 140px;text-align: center;font-size: 12px;color: #666;padding-top: 1px;">{{doc.createDate}}</div>
+                        <div style="min-width: 135px;text-align: right;" class="card-bag-item-action">
+                            <a href="javascript:void(0);" title="重新上传" @click="reupload(doc)" v-if="doc.type === '2' && hasAuth('reupload')"><i class="ivu-icon ivu-icon-android-upload"></i></a>
+                            <a :href="convertFilePath(doc)" target="_blank" title="下载" v-if="doc.type === '2' && hasAuth('down')"><i class="ivu-icon ivu-icon-android-download"></i></a>
+                            <a href="javascript:void(0);" title="移动" @click="move(doc)" v-if="hasAuth('move')"><i class="ivu-icon ivu-icon-arrow-move"></i></a>
+                            <span v-if="doc.type === '1'">
+                                <a href="javascript:void(0);" v-if="hasAuth('editDoc')" title="编辑" @click="doUpdate(doc, index)"><i class="ivu-icon ivu-icon-compose"></i></a>
+                                <a href="javascript:void(0);" v-if="hasAuth('deleteDoc')" title="删除" @click="doDelete(doc)"><i class="ivu-icon ivu-icon-trash-a"></i></a>
+                            </span>
+                            <span v-if="doc.type === '2'">
+                                <a href="javascript:void(0);" v-if="hasAuth('editFile')" title="编辑" @click="doUpdate(doc, index)"><i class="ivu-icon ivu-icon-compose"></i></a>
+                                <a href="javascript:void(0);" v-if="hasAuth('deleteFile')" title="删除" @click="doDelete(doc)"><i class="ivu-icon ivu-icon-trash-a"></i></a>
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Modal :visible.sync="formModel.visible" :title="formModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content document-rename">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="width: 100%;">
+                <el-form-item label="文件名称" prop="name" label-width="80px">
+                    <iv-input :value.sync="mainModel.vo.name" v-if="mainModel.vo.type === '1'"></iv-input>
+                    <iv-input :value.sync="mainModel.vo.name" v-else>
+                        <strong slot="append">{{formModel.appendSlot}}</strong>
+                    </iv-input>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark" label-width="80px" v-if="editFormMode !== '1'">
+                    <iv-input :value.sync="mainModel.vo.remark" type="textarea" :rows="3"></iv-input>
+                </el-form-item>
+                <el-form-item label="是否允许上传文件" prop="acceptUpload" label-width="140px" v-if="mainModel.vo.type === '1'">
+                    <iv-checkbox :checked.sync="mainModel.vo.acceptUpload === '1'" @on-change="changeUploadFile"></iv-checkbox>
+                </el-form-item>
+                <el-form-item label="允许上传的文件格式" prop="fileExtensions" label-width="150px" v-if="mainModel.vo.type === '1' && mainModel.vo.acceptUpload === '1'">
+                    <iv-checkbox style="margin-left: 10px;" :checked.sync="allChecked" @click="doCheckExtensionAll" >全选</iv-checkbox>
+                    <div style="padding: 10px">
+                        <span v-for="(index,f) in extensionData">
+                            <iv-checkbox :checked.sync="f.isChecked" @change.stop="doChangeUploadFileExtension(f)" style="width: 70px">{{f.name}}</iv-checkbox>
+                        </span>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveFolder" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync="deleteFormModel.visible" :title="deleteFormModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content document-rename">
+            <div v-show="deleteFormModel.tipVisible" style="color: red;font-size: 18px;margin-bottom: 15px;">此文件下存在文件或文件夹，确定全部删除？</div>
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" style="width: 100%;">
+                <el-form-item label="备注" prop="remark" label-width="80px">
+                    <iv-input :value.sync="mainModel.vo.remark" type="textarea" :rows="3"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doDeleteFolder" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync="reUploadModel.visible" :title="reUploadModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content document-rename">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" style="width: 100%;">
+                <el-form-item label="备注" prop="remark" label-width="80px">
+                    <iv-input :value.sync="mainModel.vo.remark" type="textarea" :rows="3"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveReUploadRemark" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync="fileTypeModel.visible" title="选择上传文件类型" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" style="width: 100%;">
+                <el-form-item label="文件类型">
+                    <iv-radio-group :model.sync="fileDataType">
+                        <iv-radio value="1" v-if="hasAuth('isPublicFile')"><span style="margin-left: 3px;">公开文件</span></iv-radio>
+                        <iv-radio value="10" v-if="hasAuth('isAuditFile')"><span style="margin-left: 3px;">待审核文件</span></iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item label="文件上传说明" prop="remark">
+                    <iv-input :value.sync="mainModel.vo.remark" type="textarea" :rows="3"></iv-input>
+                </el-form-item>
+            </el-form>
+
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="confirmFileType" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync="moveModel.visible" :title="moveModel.title" :footer-hide="true">
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <el-form :model="mainModel.vo">
+                <el-form-item label="移动到">
+                    <iv-tree-select
+                            :model.sync="mainModel.vo.parentId"
+                            :list="folderList"
+                            id-attr="id"
+                            display-attr="name"
+                            placeholder="请选择文件夹"
+                            clearable
+                            @on-change="doChangeParent"
+                    >
+                        <iv-tree
+                                :model="folderList"
+                                :selected-datas.sync="selectedDatas"
+                                id-attr="id"
+                                pid-attr="parentId"
+                                display-attr="name"
+                                serch-filterable
+                                single-select
+                                show-checkbox
+                                allow-parent-checked
+                        >
+                        </iv-tree>
+                    </iv-tree-select>
+                </el-form-item>
+                <el-form-item label="说明">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.remark"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doUpdateParentId" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

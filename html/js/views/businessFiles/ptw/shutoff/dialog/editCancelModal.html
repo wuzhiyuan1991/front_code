@@ -1,0 +1,19 @@
+<Modal :visible.sync="visible"  title="编辑" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div  style="height: auto;background: #fff;padding:10px;">
+            <base-list
+                    :auto-close="false"
+                    :values.sync="list"
+                    @on-selected='doSelectTaskIndex'
+                    @on-add-ok="doSaveCatalogType"
+                    @on-edit-ok="doEditCatalogType"
+                    @on-move-row="onMoveRow"
+                    @on-del="doDelCataLogType"
+                    @on-del-all="doDelCataLogTypeAll"
+            ></base-list>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doCancel" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>

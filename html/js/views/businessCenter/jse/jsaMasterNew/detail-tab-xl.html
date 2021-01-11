@@ -1,0 +1,381 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button v-if="hasAuth('edit')" type="ghost" @click.stop="doShowJsaMasterNewFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+<!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+<!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="分析人员，可以以逗号或者是其他字符分割" prop="analysePerson" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.analysePerson" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业日期" prop="workDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.workDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.workDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="分析小组组长" prop="analyseLeader" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.analyseLeader" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业内容" prop="taskContent" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.taskContent" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="专家点评" prop="commentExpert" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.commentExpert" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="管理处点评" prop="commentGlc" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.commentGlc" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="公司点评" prop="commentGongsi" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.commentGongsi" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="施工单位，可手填" prop="construction" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.construction" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="是否承包商作业；0:否,1:是" prop="contractor" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.contractor" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="表明是否复制页面传来的数据，非空时为复制页面传来的值" prop="copy" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.copy" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否为交叉作业" prop="crossTask" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.crossTask" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="" prop="isflag" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.isflag" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="步骤json" prop="jsonstr" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.jsonstr" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否为新的工作任务" prop="newTask" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.newTask" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="票卡" prop="opCard.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.opCard" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowOpCardSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="部门id(原系统)" prop="organId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.organId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="是否需要许可证" prop="permit" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.permit" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否有特种作业人员资质证明" prop="qualification" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.qualification" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否参考库" prop="reference" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.reference" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-input type="textarea" :rows="3" class="display-all-line" :value.sync="mainModel.vo.remark" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="步骤中最高风险级别的分值" prop="riskScore" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskScore" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否分享" prop="share" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.share" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否有相关操作规程" prop="specification" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.specification" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业许可证号（如有）" prop="taskLicense" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.taskLicense" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="提交类型" prop="updatetype" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.updatetype" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业位置" prop="workPlace" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workPlace" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+						<div class="rip-item">
+							<simple-card :show-content.sync="cardModel.jsaDetailNewCardModel.showContent">
+								<p slot="title"><i class="basicPng"></i><span>步骤</span></p>
+								<a slot="extra" @click.prevent="cardModel.jsaDetailNewCardModel.showContent = !cardModel.jsaDetailNewCardModel.showContent;" >
+									<span v-if="cardModel.jsaDetailNewCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+									<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+									</a>
+								<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowJsaDetailNewFormModal4Create" >
+									<span><Icon type="plus"></Icon>添加</span>
+								</a>
+								<vue-bootstrap-table
+									:setting="tableModel.jsaDetailNewTableModel"
+									@on-del-row="doRemoveJsaDetailNews"
+									@on-edit-row="doShowJsaDetailNewFormModal4Update"
+									@on-move-row="doMoveJsaDetailNews"
+									v-ref:jsadetailnew-table
+									>
+								</vue-bootstrap-table>
+							</simple-card>
+						</div>
+
+
+				</el-tab-pane>
+				<el-tab-pane label="资料" key="basTab">
+					<div class="rip-item">
+						<el-form :model="mainModel.vo" class="rip-item-form">
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">基本信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('编码')">
+											<span>{{mainModel.vo.code}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('分析人员，可以以逗号或者是其他字符分割')">
+											<span>{{mainModel.vo.analysePerson}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('作业日期')">
+											<span>{{mainModel.vo.workDate}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('状态')">
+											<span>{{mainModel.vo.disable}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">详细信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('分析小组组长')">
+											<span>{{mainModel.vo.analyseLeader}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('作业内容')">
+											<span>{{mainModel.vo.taskContent}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('公司')">
+											<span>{{mainModel.vo.compId}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('部门')">
+											<span>{{mainModel.vo.orgId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('专家点评')">
+											<span>{{mainModel.vo.commentExpert}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('管理处点评')">
+											<span>{{mainModel.vo.commentGlc}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('公司点评')">
+											<span>{{mainModel.vo.commentGongsi}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('施工单位，可手填')">
+											<span>{{mainModel.vo.construction}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否承包商作业；0:否,1:是')">
+											<span>{{mainModel.vo.contractor}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('表明是否复制页面传来的数据，非空时为复制页面传来的值')">
+											<span>{{mainModel.vo.copy}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否为交叉作业')">
+											<span>{{mainModel.vo.crossTask}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('')">
+											<span>{{mainModel.vo.isflag}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('步骤json')">
+											<span>{{mainModel.vo.jsonstr}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否为新的工作任务')">
+											<span>{{mainModel.vo.newTask}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('票卡')">
+											<span>{{mainModel.vo.opCardId}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('部门id(原系统)')">
+											<span>{{mainModel.vo.organId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否需要许可证')">
+											<span>{{mainModel.vo.permit}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否有特种作业人员资质证明')">
+											<span>{{mainModel.vo.qualification}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否参考库')">
+											<span>{{mainModel.vo.reference}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('备注')">
+											<span>{{mainModel.vo.remark}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('步骤中最高风险级别的分值')">
+											<span>{{mainModel.vo.riskScore}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否分享')">
+											<span>{{mainModel.vo.share}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否有相关操作规程')">
+											<span>{{mainModel.vo.specification}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('作业许可证号（如有）')">
+											<span>{{mainModel.vo.taskLicense}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('提交类型')">
+											<span>{{mainModel.vo.updatetype}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('作业位置')">
+											<span>{{mainModel.vo.workPlace}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>			
+						</el-form>
+					</div>	
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<div class="rip-item">
+				<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+			</div>
+        -->
+	</div>
+
+</div>
+
+<opcard-select-modal :visible.sync="selectModel.opCardSelectModel.visible" :filter-data="selectModel.opCardSelectModel.filterData" single-select @do-save="doSaveOpCard"></opcard-select-modal>
+
+<jsadetailnew-form-modal
+		:visible.sync="formModel.jsaDetailNewFormModel.show"
+		@do-save="doSaveJsaDetailNew"
+		@do-update="doUpdateJsaDetailNew"
+		:query-url="formModel.jsaDetailNewFormModel.queryUrl"
+		:hidden-fields="formModel.jsaDetailNewFormModel.hiddenFields"
+		v-ref:jsadetailnew-form-modal>
+</jsadetailnew-form-modal>
+<jsamasternew-form-modal
+		:visible.sync="formModel.jsaMasterNewFormModel.show"
+		@do-update="doUpdateJsaMasterNew"
+		:query-url="formModel.jsaMasterNewFormModel.queryUrl"
+		v-ref:jsamasternew-form-modal>
+</jsamasternew-form-modal>
+

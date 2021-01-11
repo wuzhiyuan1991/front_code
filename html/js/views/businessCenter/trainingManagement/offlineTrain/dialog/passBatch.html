@@ -1,0 +1,44 @@
+<Modal :visible.sync="visible" :title="mainModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform >
+
+                <el-form-item  label="通过时间" prop="trainDate">
+                    <date-picker  format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.trainDate"></date-picker>
+                </el-form-item>
+
+                <el-form-item label="通过员工" prop="users">
+                    <multiple-input-select
+                            :selected-multiple.sync="mainModel.vo.users"
+                            @on-click="doShowUserSelectModal"
+                    ></multiple-input-select>
+                </el-form-item>
+
+                <!--<el-form-item  label="通过员工" prop="users">
+                    <div  class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point" @click.prevent="doShowUserSelectModal">
+                        <div class="ivu-select-selection" style="line-height: 24px;">
+                            <div class="ivu-tag" v-for="(index, tag) in mainModel.vo.users">
+                                <span class="ivu-tag-text">{{tag.name}}</span>
+                                <i class="ivu-icon ivu-icon-ios-close-empty" @click.stop="doRemoveTeachers(index)"></i>
+                            </div>
+                        </div>
+                            <span style="font-size: 16px;" class="select-ico-add">
+                                <i class="ivu-icon ivu-icon-plus"></i>
+                            </span>
+                    </div>
+
+                </el-form-item>-->
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<user-select-modal
+        :visible.sync="selectModel.userSelectModel.visible"
+        :filter-data="selectModel.userSelectModel.filterData"
+        @do-save="doSaveUsers"
+></user-select-modal>

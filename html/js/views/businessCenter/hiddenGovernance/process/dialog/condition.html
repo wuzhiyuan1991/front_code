@@ -1,0 +1,85 @@
+<div class="edit-pop-container">
+    <div class="epc-content">
+        <div>
+            <div v-for="i in mainModel.rcList.length" style="margin-bottom: 10px;">
+                <iv-row>
+                    <iv-col span="9">
+                        <i-select :model.sync="mainModel.rcList[i].filterLookupId" :list="mainModel.conditionItems" style="width:200px"  @on-change="doChangeNodesAndExpress">
+                            <i-option v-for="item in mainModel.conditionItems" :value="item.id">{{ item.name }}
+                            </i-option>
+                        </i-select>
+                    </iv-col>
+
+                    <iv-col span="6">
+                        <i-select :model.sync="mainModel.rcList[i].conditionNodes"
+                                  :list="mainModel.conditions[mainModel.rcList[i].filterLookupId]"
+                                  style="width:100px; margin-left:15px">
+                            <i-option v-for="item in mainModel.conditions[mainModel.rcList[i].filterLookupId]"
+                                      :value="item.id">{{ item.value }}
+                            </i-option>
+                        </i-select>
+                    </iv-col>
+                    <iv-col span="8">
+
+                        <date-picker :selected-date.sync="mainModel.rcList[i].conditionValueDate"
+                                     v-if="mainModel.conponentType[mainModel.rcList[i].filterLookupId] == '1'"></date-picker>
+
+                        <iv-input type="textarea" :value.sync="mainModel.rcList[i].conditionValue" :rows="1"
+                                  v-if="mainModel.conponentType[mainModel.rcList[i].filterLookupId] == '2'"></iv-input>
+
+                        <iv-input :value.sync="mainModel.rcList[i].attr5" @click="doChooiseModel(mainModel.rcList[i].filterLookupId,i)"
+                                  v-if="mainModel.conponentType[mainModel.rcList[i].filterLookupId] == '3'"></iv-input>
+                        <!--<input type="text" @click="doChooiseModel(mainModel.rcList[i].filterLookupId,i)"-->
+                        <!--v-model="mainModel.rcList[i].attr5"-->
+                        <!--v-if="mainModel.conponentType[mainModel.rcList[i].filterLookupId] == '3'">-->
+
+                        <i-select :model.sync="mainModel.rcList[i].conditionValue"
+                                  :list="mainModel.selectConditionValues[mainModel.rcList[i].filterLookupId]"
+                                  size="small"
+                                  v-if="mainModel.conponentType[mainModel.rcList[i].filterLookupId] == '4'" style="width:180px">
+                            <i-option
+                                    v-for="item in mainModel.selectConditionValues[mainModel.rcList[i].filterLookupId]"
+                                    :value="item.id">{{ item.value }}
+                            </i-option>
+                        </i-select>
+                    </iv-col>
+                    <Icon type="android-remove-circle" style="cursor: pointer; margin-top: 10px;color: red; padding-left: 8px" @click="doDeleteCondition(i)"></Icon>
+                </iv-row>
+
+            </div>
+
+            <div>
+                <!--<span @click="doAddCondition('and')" style="cursor: pointer;
+                        width: 50%;
+                        font-size: 14px;
+                        border: 1px dashed #bdc0c4;
+                        padding: 2px 10px;
+                        background: #fff;">添加And条件</span>-->
+                <span  @click="doAddCondition('or')" style="cursor: pointer;
+                        width: 50%;
+                        font-size: 14px;
+                        border: 1px dashed #bdc0c4;
+                        padding: 2px 10px;
+                        background: #fff;">添加Or条件</span>
+            </div>
+
+            <div style="
+				    border-top: solid 1px #fff;
+				    padding-top: 5px;
+				    margin-top: 10px;
+				    font-size: 14px;
+				">
+                <span>设定规则</span>
+            </div>
+            <iv-input type="textarea" :value.sync="mainModel.express"></iv-input>
+        </div>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+
+
+<Modal :visible.sync="conditionValueModel.show" :title="conditionValueModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <condition-value></condition-value>
+</Modal>

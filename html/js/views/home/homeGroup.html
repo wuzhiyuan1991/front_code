@@ -1,0 +1,42 @@
+<div class="homeCenter">
+			<div class="main-panel">
+				<div class="contentHome">
+						<div class="homeNews">
+							<div class="homeCompTitle"><span>公告通知</span></div>
+							<div class="content homeLayout">
+								<p v-for="notice in notices">{{notice.name}}</p>
+							</div>
+						</div>
+				</div>
+				<div class="contentHome">
+						<ul class="homeList">
+							<li><span>公司总数</span><p><b>{{groupStatistic.compNum}}</b><i class="homeCompIco"></i></p></li>
+							<li><span>员工总数</span><p><b>{{groupStatistic.userNum}}</b><i class="homeUserIco"></i></p></li>
+							<li><span>任务总数</span><p><b>{{groupStatistic.todoNum}}</b><i class="homeTaskIco"></i></p></li>
+						</ul>
+				</div>
+				<div class="contentHome">
+					<div class="homeCompLeft">
+							<div class="bottomForm">
+								<div class="homeCompTitle"><span>个人报表</span></div>
+								<!--//tab切换-->
+								<div class="tabHeaderMain homeEchartMain">
+									<!--<report-tabs-component :type="1"></report-tabs-component>-->
+								</div>
+							</div>
+					</div>
+					<div class="homeCompLeft">
+						<div class="bottomForm">
+							<div class="homeCompTitle"><span>个人报表</span></div>
+							<!--//tab切换-->
+							<div class="tabHeaderMain homeEchartMain">
+								<!--<report-tabs-component :type="1"></report-tabs-component>-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!--<Modal :visible.sync="userModel.show" :title="userModel.title" width="400" :footer-hide="true">-->
+	<!--<userComponent></userComponent>-->
+<!--</Modal>-->

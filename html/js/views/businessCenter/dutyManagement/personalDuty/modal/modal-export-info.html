@@ -1,0 +1,27 @@
+<Modal :visible.sync="visible"  width='800' :title="modalTitle" @on-cancel="doClose" :footer-hide="true">
+    <div class="modal-box-default" style="background: #fff;">
+		导出
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<style>
+    .ivu-radio-cursor .ivu-radio{
+        cursor: pointer;
+    }
+    .ivu-select-dropdown-width280 .ivu-select-dropdown{
+        width:280px;
+    }
+	.label280 {
+		width: 280px;
+	}
+</style>

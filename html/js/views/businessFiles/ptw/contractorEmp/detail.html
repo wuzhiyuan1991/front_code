@@ -1,0 +1,74 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="年龄" prop="age">
+						<iv-input :value.sync="mainModel.vo.age" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="证书" prop="certificate">
+						<iv-input :value.sync="mainModel.vo.certificate" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="证书编号" prop="certificateNo">
+						<iv-input :value.sync="mainModel.vo.certificateNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="承包商" prop="contractor.id">
+						<input-select :value="mainModel.vo.contractor" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowContractorSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="身份证号" prop="idNumber">
+						<iv-input :value.sync="mainModel.vo.idNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="性别" prop="sex">
+						<iv-input :value.sync="mainModel.vo.sex" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="联系电话" prop="telephone">
+						<iv-input :value.sync="mainModel.vo.telephone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="工种" prop="workType">
+						<iv-input :value.sync="mainModel.vo.workType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<file-list-simple-card title="附件列表" class="fip-content-item" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		-->
+			</div>
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<contractor-select-modal :visible.sync="selectModel.contractorSelectModel.visible" :filter-data="selectModel.contractorSelectModel.filterData" single-select @do-save="doSaveContractor"></contractor-select-modal>
+

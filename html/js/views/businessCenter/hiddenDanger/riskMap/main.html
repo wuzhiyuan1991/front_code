@@ -1,0 +1,5 @@
+<div style="height: 100%;overflow: hidden;">
+    <risk-map-overview v-if="!pictureId" @go="go"></risk-map-overview>
+
+    <risk-map-area :picture-id="pictureId" v-if="pictureId" @back="back"></risk-map-area>
+</div>

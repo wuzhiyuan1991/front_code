@@ -1,0 +1,57 @@
+<Modal v-if="load" title="填写作业票" :visible.sync="show" width="1000">
+    <div class="box-base flex-layout-vertical " style="padding-right: 10px;height: 550px;background: #fff">
+        <div style="width:auto;display: flex;flex-direction: column;overflow: auto;height: 100%">
+            <div class="box-base-title base-border-bottom mb5">
+                <p></p>
+                <div>
+                    <span class="font-normal" v-if="pms.type!='create'">
+                        <contact-tip :work-card="mainModelVo" v-ref:contact-tip v-if="pms.type!='create'"></contact-tip>
+                        <!--                        <Poptip v-model="poptipShow" placement="bottom">-->
+<!--                    <span style="color:#666;">关联的作业票 <label class="link-ele">(5)</label></span>-->
+<!--                    <div slot="content">-->
+<!--                        <div class="flex-layout-vertical">-->
+<!--                            <p class="flex-layout-between">-->
+<!--                                <span></span>-->
+<!--                                <span class="link-ele" @click="doSetContact">去设置关联作业票>></span>-->
+<!--                            </p>-->
+<!--                            <vue-bootstrap-table-->
+<!--                                    :setting="tableModel.contactPtw"-->
+<!--                                    :show-pager="true"-->
+<!--                                    :show-filter="false"-->
+<!--                                    @on-del-row="doDel"-->
+<!--                                    @on-edit-row="doEdit"-->
+<!--                                    :values.sync="tableModel.contactPtw.values"-->
+<!--                            >-->
+<!--                            </vue-bootstrap-table>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </Poptip>-->
+
+                        <iv-button size="small"  @click="doSetContact">关联</iv-button>
+                    </span>
+                    <span class="link-ele font-normal ml20" >
+                        <span style="color:#666;">{{permitModel.cardTpl&&permitModel.cardTpl.name?permitModel.cardTpl.name:model.name}}</span>
+                        (<span @click="doChangeTpl">更改</span>)
+                    </span>
+                </div>
+            </div>
+            <div class="flex-grow1 over-auto" >
+              
+                <ptw-fill  v-ref:ptw-fill></ptw-fill>
+<!--                <div>-->
+<!--                    <iv-button @click="doFillSave" style="width: 100px">保存</iv-button>-->
+<!--                    <iv-button @click="doFillSubmit" style="width: 100px"  v-show="permitModel.id">提交</iv-button>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </div>
+    <template slot="footer">
+        <vi-Button type="ghost" size="large" @click="doCancel">退出</vi-Button>
+        <iv-button  type="primary"   size="large"    style="width: 100px"  @click="doFillSave">保存</iv-button>
+        <vi-Button type="primary"   size="large"    style="width: 100px" @click="doFillSubmit">提交</vi-Button>
+    </template>
+</Modal>
+<user-select-modal  single-select :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>
+<sel-tpl-modal v-ref:sel-tpl-modal @on-success="doSelectedTpl" :disabled="disabled" :visible.sync="selTplModel.show"></sel-tpl-modal>
+<model-contact-ptw  v-ref:contact-ptw  @on-success="doUpdateContact"></model-contact-ptw>
+

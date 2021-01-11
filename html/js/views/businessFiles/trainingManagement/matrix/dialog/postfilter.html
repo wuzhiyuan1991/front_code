@@ -1,0 +1,56 @@
+<!-- <div class="form-dialog" id="dialog-form" style="height: 600px;width: 370px;"> -->
+<Modal :visible.sync="visible" :title="title" width="1000" height="800" :footer-hide="true" @on-cancel="doClose">
+
+<div class="edit-pop-container">
+    <div class="epc-content">
+        <ul class="post-filter-tab">
+            <li class="post-filter-tab-item" :class="{'active': activeTab === 1}" @click="changeTab(1)">岗位</li>
+            <li class="post-filter-tab-item" :class="{'active': activeTab === 2}" @click="changeTab(2)">安全角色</li>
+        </ul>
+
+        <!--岗位-->
+        <div v-show="activeTab === 1">
+            <div class="" style="display: flex;align-items: center;justify-content: space-between;">
+                <iv-checkbox :checked.sync="positionSelectAll" @click.prevent="togglePosition(2)">全选</iv-checkbox>
+                <iv-input :value.sync="positionValue" cleanable @on-remove="doFilterPosition" @on-enter="doFilterPosition" @on-click="doFilterPosition" placeholder="搜索岗位" icon="search" style="width: 300px;"></iv-input>
+            </div>
+            <div class="post-filter-content-box">
+                <div v-for="first in positions" class="post-filter-group">
+                    <div class="post-filter-group__left">
+                        <strong class="text-ellipsis" style="flex: 1;">{{first.orgName}}</strong>
+                        <div style="min-width: 100px;"><iv-checkbox :checked.sync="first.allChecked" @click.prevent="togglePosition(0, first)">全选</iv-checkbox></div>
+                    </div>
+                    <ul class="post-filter-group__right">
+                        <li v-for="second in first.positions" class="text-ellipsis post-filter-group__item">
+                            <iv-checkbox :checked.sync="second.isChecked" @click.prevent="togglePosition(1, first, second)"><span :title="second.name">{{second.name}}</span></iv-checkbox>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--安全角色-->
+        <div v-show="activeTab === 2">
+           <div class="" style="display: flex;align-items: center;justify-content: space-between;">
+               <iv-checkbox :checked.sync="hseSelectAll" @click.prevent="toggleHseRole(0)">全选</iv-checkbox>
+               <iv-input :value.sync="roleValue" cleanable @on-remove="doFilterRole" @on-enter="doFilterRole" @on-click="doFilterRole" placeholder="搜索安全角色" icon="search" style="width: 300px;"></iv-input>
+           </div>
+           <div class="post-filter-content-box">
+               <div class="post-filter-group">
+                   <ul class="post-filter-group__right">
+                       <li v-for="hse in hseRoles" class="text-ellipsis post-filter-group__item">
+                           <iv-checkbox :checked.sync="hse.isChecked" @click.prevent="toggleHseRole(1, hse)">{{hse.name}}</iv-checkbox>
+                       </li>
+                   </ul>
+               </div>
+           </div>
+        </div>
+
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">确定</vi-button>
+        <vi-button type="primary" @click="doClose" class="pull-right">取消</vi-button>
+
+    </div>
+</div>
+</Modal>

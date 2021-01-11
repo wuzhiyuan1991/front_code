@@ -1,0 +1,122 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <!--<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>-->
+                <!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>-->
+                <!--<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>-->
+                <vi-button v-if="mainModel.isReadOnly" type="ghost" @click="doClose">{{$t("gb.common.close")}}
+                </vi-button>
+                <vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+                    {{$t("gb.common.cancel")}}
+                </vi-button>
+                <vi-button type="ghost" v-if="hasAuth('exportDetail')" @click="doConfirmCallback('doExportDetail', '导出数据?')">{{$t("gb.common.exportDetail")}}</vi-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" style="height:200px;" :model="mainModel.vo" is-label-vertical
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="姓名" prop="code" class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.username" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+                        <company-tree-select v-if="!mainModel.isReadOnly"
+                                             :id.sync="mainModel.vo.compId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']"
+                                  textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box">
+                        <department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"
+                                                :comp-id.sync="mainModel.vo.compId"></department-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('bs.orl.post')" prop="posId" class="small-info-box">
+                        <!--<iv-input :value.sync="mainModel.vo.posId" :textonly="mainModel.isReadOnly"></iv-input>-->
+                        <span style="max-height: 40px;overflow: hidden;float: left;text-overflow:ellipsis;width: 260px;white-space: nowrap;">{{mainModel.postListName}}</span>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <!--<el-form-item  label="用户详情" prop="detailId" class="small-info-box" >-->
+                    <!--<iv-input :value.sync="mainModel.vo.detailId" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item  label="是否禁用，0启用，1禁用" prop="disable" class="small-info-box" >-->
+                    <!--<iv-input :value.sync="mainModel.vo.disable" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item :label="$t('bc.hal.securityRole')" prop="detailId" class="small-info-box">
+                        <!--<iv-input :value.sync="mainModel.vo.detailId" :textonly="mainModel.isReadOnly"></iv-input>-->
+                        <span :title="mainModel.hseRoleListName" style="max-height: 40px;overflow: hidden;float: left;text-overflow:ellipsis;width: 260px;white-space: nowrap;">{{mainModel.hseRoleListName}}</span>
+                    </el-form-item>
+                    <!--<el-form-item :label="$t('das.oniu.mail')" prop="email" class="small-info-box">-->
+                        <!--<iv-input :value.sync="mainModel.vo.email" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item :label="$t('ori.perm.mobile')" prop="mobile" class="small-info-box">-->
+                        <!--<iv-input :value.sync="mainModel.vo.mobile" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item label="是否离职" prop="disable" class="small-info-box">
+                        <span>{{mainModel.vo.disable == 0 ? '否' : '是'}}</span>
+                    </el-form-item>
+                </iv-row>
+
+
+            </el-form>
+        </div>
+        <!--<simple-card class="fip-content-item" >-->
+        <!--<p slot="title"><i class="basicPng"></i><span>课程列表</span></p>-->
+        <!--&lt;!&ndash;<a slot="extra">&ndash;&gt;-->
+        <!--&lt;!&ndash;<span><Icon type="arrow-up-b"></Icon>收起</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;<span v-else><Icon type="arrow-down-b"></Icon>展开</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a slot="extra"  @click.prevent="doShowCourseSelectModal()">&ndash;&gt;-->
+        <!--&lt;!&ndash;<span><Icon type="plus"></Icon>添加</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;:url="tableModel.courseCategoryTableModel.url"&ndash;&gt;-->
+        <!--<vue-bootstrap-table-->
+        <!--:values="userCourse"-->
+        <!--:columns="tableModel.courseCategoryTableModel.columns"-->
+        <!--:show-empty-row="false"-->
+        <!--:use-default-global-filter="false"-->
+        <!--:lazy-load="true"-->
+        <!--v-ref:user-file-table-->
+        <!--&gt;-->
+        <!--</vue-bootstrap-table>-->
+        <!--</simple-card>-->
+    </div>
+
+    <div class="rel-info-panel">
+        <simple-card class="fip-content-item" style="padding: 0 10px;">
+            <p slot="title" style="display: flex;align-items: center;"><i class="basicPng"></i><span>{{$t("bc.ria.courseList")}}</span></p>
+            <div class="rel-info-panel-content-tabs">
+                <el-tabs active-key="relTab" @tab-click="doTabInit" v-if="showTabs">
+                    <el-tab-pane v-for="(index,item) in categorys" :label="item.name" key="relTab">
+
+                            <div v-for="(index,data) in userCourse">
+                                <p style="font-size: 14px;padding-left: 10px; height: 40px;line-height: 40px;">{{data.name}}</p>
+                                <vue-bootstrap-table
+                                        :values="data.taskList"
+                                        :columns="tableModel.courseCategoryTableModel.columns"
+                                        :show-empty-row="false"
+                                        :show-column-picker="false"
+                                        :show-pager="true"
+                                        :resizeable="true"
+                                        :auto-width="false"
+                                        :use-default-global-filter="false"
+                                        v-ref:user-file-table
+                                >
+                                </vue-bootstrap-table>
+                            </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+        </simple-card>
+    </div>
+
+
+</div>
+
+
+
+

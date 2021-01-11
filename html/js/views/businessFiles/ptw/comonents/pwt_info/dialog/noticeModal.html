@@ -1,0 +1,29 @@
+<Modal :visible.sync="visible"  title="通知提醒设置" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" style="width:500px;" v-ref:ruleform>
+                <iv-row >
+                    <iv-checkbox true-value='1' false-value='0' :checked.sync="mainModel.vo.enableExpireNotice">启用通知提醒 <span style='color:#a1a1a1;'>（作业许可到期前，通过App通知提醒相关人员）</span></iv-checkbox>
+                </iv-row>
+                <el-form-item label="通知提醒时间" >
+                    到期前
+                    <iv-input-number
+                            is-integer
+                            style="width: 80px;text-align: center;"
+                            :value.sync="mainModel.vo.expireNoticeTime" :textonly="mainModel.vo.enableExpireNotice=='0'"></iv-input-number>
+                    分钟
+                    <span style="color:#a1a1a1">（最大240分钟，最小1分钟）</span>
+                </el-form-item>
+                <el-form-item label="通知提醒人员" >
+                    <template v-for="item in list">
+                        <iv-Checkbox :disabled="mainModel.vo.enableExpireNotice=='0'" :checked.sync="item.isCheck">{{item.name}}</iv-Checkbox>
+                        <br>
+                    </template>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

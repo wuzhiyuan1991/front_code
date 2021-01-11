@@ -1,0 +1,124 @@
+<Modal :visible.sync="visible" :title="title" width="1000" :footer-hide="true" class="userSelectModal">
+    <div class="export-template">
+        <div class="export-template-left">
+            <div class="title">待选数据列</div>
+            <div class="fixed-height-box">
+            <table>
+                <colgroup>
+                    <col style="width: 50px;">
+                    <col style="width: 180px;">
+                    <col style="width: 50px;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>名称</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(index, item) in canSelectColumns">
+                    <td>{{index + 1}}</td>
+                    <td>{{item.fieldName}}</td>
+                    <td class="t-center">
+                        <div @click="add(index, item)">
+                            <Icon type="plus-round"></Icon>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-for="n in canSelectFillLength">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+
+        <div class="export-template-middle">
+            <Icon type="arrow-swap" size="30"></Icon>
+        </div>
+
+        <div class="export-template-right">
+            <div class="title">已选数据列</div>
+            <div class="fixed-height-box">
+            <table>
+                <colgroup>
+                    <col style="width: 50px;">
+                    <col style="width: 200px;">
+                    <col style="width: 200px;">
+                    <col style="width: 100px;">
+                    <col style="width: 50px;">
+                    <col style="width: 50px;">
+                    <col style="width: 50px;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>名称</th>
+                    <th>修改名称</th>
+                    <th>列宽(px)</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(index,item) in selectColumns">
+                    <td>{{index + 1}}</td>
+                    <td>{{item.fieldName}}</td>
+                    <td>
+                        <iv-input placeholder=" " :value.sync="item.excelName"></iv-input>
+                    </td>
+                    <td>
+                        <iv-input type="number" placeholder=" " :value.sync="item.cellWidth" @on-blur="verifyWidth(item)"></iv-input>
+                    </td>
+                    <td class="t-center">
+                        <div @click="remove(index, item)">
+                            <Icon type="minus-round"></Icon>
+                        </div>
+                    </td>
+                    <td class="t-center">
+                        <div @click="moveUp(index, item)">
+                            <Icon type="arrow-up-c"></Icon>
+                        </div>
+                    </td>
+                    <td class="t-center">
+                        <div @click="moveDown(index, item)">
+                            <Icon type="arrow-down-c"></Icon>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-for="n in selectFillLength">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    <div class="export-template-preview">
+        <div class="title">结果预览</div>
+        <div class="table-box">
+            <table :style="{'width': tableWidth + 'px'}">
+                <tr>
+                    <th v-for="item in selectColumns" :style="{'width': item.cellWidth + 'px'}">{{item.excelName}}</th>
+                </tr>
+                <tr>
+                    <td v-for="item in selectColumns" :style="{'width': item.cellWidth + 'px'}"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</Modal>

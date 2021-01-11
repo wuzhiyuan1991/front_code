@@ -1,0 +1,34 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform >
+			<el-form-item :label="$t('bs.orl.departCode')" prop="code">
+				<iv-input  v-if="mainModel.opType == 'create'" :value.sync="mainModel.vo.code"></iv-input>
+				<iv-input  v-if="mainModel.opType == 'update'" :value.sync="mainModel.vo.code" disabled></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('bs.orl.departName')" prop="name">
+				<iv-input  :value.sync="mainModel.vo.name"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.name">-->
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+			    <!--<i-select :model.sync="mainModel.vo.parentId" :list="mainModel.vo.deptList" >-->
+		            <!--<i-option v-for="item in mainModel.vo.deptList" :value="item.id">{{ item.name }}</i-option>-->
+		        <!--</i-select>-->
+				<!--<iv-input  v-if="mainModel.opType == 'update'" :value.sync="mainModel.vo.parentId" disabled></iv-input>-->
+				<company-tree-select v-if="mainModel.opType == 'create'" :id.sync="mainModel.vo.compId"></company-tree-select>
+				<company-tree-select v-if="mainModel.opType == 'update'" :id.sync="mainModel.vo.compId" disabled></company-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.dept')" >
+				<department-tree-select  :id.sync="mainModel.parentDeptId" :comp-id.sync ="mainModel.vo.compId" v-ref:dept :dept-disabled="mainModel.deptDisabled"></department-tree-select>
+			</el-form-item>
+			<!--prop="phone"-->
+			<el-form-item :label="$t('bs.bac.contactNumber')" >
+				<iv-input  :value.sync="mainModel.vo.phone"></iv-input>
+			</el-form-item>
+
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+		<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>	
+</div>	

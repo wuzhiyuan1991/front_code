@@ -1,0 +1,154 @@
+<Modal :title="title" :visible.sync="visible" v-if="load">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <div class="flex-grow1 pd10" style="max-height: 500px;width:100%;">
+                <el-form :model="model" :rules="rules"  class="width-auto-ipt fixed-width" label-width="130px" v-ref:form >
+                    <el-form-item label="评价时间" prop="evaluateDate">
+                        <div v-if="readOnly">
+                            {{model.evaluateDate?model.evaluateDate.substr(0,10):''}}
+                        </div>
+                        <div v-else>
+                            <date-picker  :selected-date.sync="model.evaluateDate" data-format="yyyy-MM-dd 00:00:00" format="yyyy-MM-dd"
+                                         type="date"></date-picker>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="评价原因" prop="evaluateReason" >
+                        <span v-if="readOnly">
+                              {{enum.evaluateReason[model.evaluateReason]}}
+                        </span>
+                        <span v-else>
+                            <i-select :list="enum.evaluateReason" :model.sync="model.evaluateReason">
+                            <i-option :value="val" v-for="(val,key) in enum.evaluateReason">{{key}}</i-option>
+                            </i-select>
+                        </span>
+                    </el-form-item>
+                    <el-form-item label="委托单位" prop="trusteeUnit">
+                        <iv-input :textonly="readOnly"  :value.sync="model.trusteeUnit"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="委托单位法人" prop="trusteeCorp">
+                        <iv-input :textonly="readOnly"  :value.sync="model.trusteeCorp"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="法人电话" prop="trusteeCorpMobile">
+                        <iv-input :textonly="readOnly"  :value.sync="model.trusteeCorpMobile"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="委托单位联系人" prop="trusteeLinkman">
+                        <iv-input :textonly="readOnly"  :value.sync="model.trusteeLinkman"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="联系人电话" prop="trusteeLinkmanMobile">
+                        <iv-input :textonly="readOnly"  :value.sync="model.trusteeLinkmanMobile"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="重大危险源名称" prop="mrsName" v-show="!isCommon">
+                        <iv-input  :textonly="readOnly"  :value.sync="model.majorRiskSource.name" disabled></iv-input>
+                    </el-form-item>
+                    <el-form-item label="重大危险源等级" v-show="!isCommon">
+                        <span v-if="readOnly">{{ getDataDic('icpe_check_object_mrs_risk_level', model.majorRiskSource.riskLevel) }}</span>
+                        <i-select  :list="getDataDicList('icpe_check_object_mrs_risk_level')" :model.sync=" model.majorRiskSource.riskLevel" clearable  disabled v-else></i-select>
+                    </el-form-item>
+                    <el-form-item label="危险源控制程序" prop="controlProcedure">
+                        <iv-input :textonly="readOnly"  :value.sync="model.controlProcedure"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="安全评价单位" prop="evaluateUnit">
+                        <iv-input :textonly="readOnly" :value.sync="model.evaluateUnit"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="评价报告书编号" prop="reportNumber">
+                        <iv-input :textonly="readOnly" :value.sync="model.reportNumber"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="编制日期">
+                        <div v-if="!readOnly">
+                            <date-picker :selected-date.sync="model.compileDate" data-format="yyyy-MM-dd 00:00:00" format="yyyy-MM-dd"
+                                         type="date"></date-picker>
+                        </div>
+                        <div v-else>
+                            {{model.compileDate?model.compileDate.substr(0,10):''}}
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="安全评价报告">
+                        <ul>
+                            <li :class="{'diy-hover':!readOnly}" class="cert-file-item" v-for="(index, file) in fileModel['SE1']">
+                                <div class="cert-file-name">
+                                    <a :href="convertFilePath(file)" target="_blank" v-text="file.orginalName"></a>
+                                </div>
+                                <Icon @click.stop="doDeleteFile(file.id, index,fileModel['SE1'])" type="close-circled" v-if="!readOnly"></Icon>
+                            </li>
+                        </ul>
+                        <a @click="uploadClicked('SE1')" class="form-upload-href" href="javascript:void(0);"  v-if="!readOnly">上传文件</a>
+                    </el-form-item>
+                    <el-form-item label="其他附件(外部评审记录等信息）">
+                        <ul>
+                            <li :class="{'diy-hover':!readOnly}" class="cert-file-item" v-for="(index, file) in fileModel['SE2']">
+                                <div class="cert-file-name">
+                                    <a :href="convertFilePath(file)" target="_blank" v-text="file.orginalName"></a>
+                                </div>
+                                <Icon @click.stop="doDeleteFile(file.id, index,fileModel['SE2'])" type="close-circled" v-if="!readOnly"></Icon>
+                            </li>
+                        </ul>
+                        <a @click="uploadClicked('SE2')" class="form-upload-href" href="javascript:void(0);"  v-if="!readOnly&&fileModel['SE2']&&fileModel['SE2'].length<5">上传文件</a>
+                    </el-form-item>
+                            <el-form-item label="报告是否备案">
+                                <div class="flex-layout">
+                                <div class="mr5 flex-noshrink" v-if="!(readOnly&&model.reportBak==1)">
+                                    <iv-checkbox v-if="!readOnly" :checked.sync="model.reportBak" false-value="0" true-value="1">是</iv-checkbox>
+                                    <span v-else>{{model.reportBak==0?'否':'是'}}</span>
+                                </div>
+                                <div v-show="model.reportBak==1">
+                                     <ul>
+                                        <li :class="{'diy-hover':!readOnly}" class="cert-file-item" v-for="(index, file) in fileModel['SE3']">
+                                        <div class="cert-file-name">
+                                        <a :href="convertFilePath(file)" target="_blank" v-text="file.orginalName"></a>
+                                        </div>
+                                        <Icon @click.stop="doDeleteFile(file.id, index,fileModel['SE3'])" type="close-circled" v-if="!readOnly"></Icon>
+                                        </li>
+                                    </ul>
+                                    <a @click="uploadClicked('SE3')" class="form-upload-href" href="javascript:void(0);"   v-if="!readOnly&&fileModel['SE3']&&fileModel['SE3'].length<5">上传文件</a>
+                                </div>
+                                </div>
+                            </el-form-item>
+                    <el-form-item label="预案是否备案">
+                        <div class="flex-layout mr5">
+                            <div class="mr5 flex-noshrink" v-if="!(readOnly&&model.planBak==1)">
+                                <iv-checkbox v-if="!readOnly" :checked.sync="model.planBak" false-value="0" true-value="1">是</iv-checkbox>
+                                <span v-else>{{model.planBak==0?'否':'是'}}</span>
+                            </div>
+                        <div v-show="model.planBak==1">
+                        <ul>
+                            <li :class="{'diy-hover':!readOnly}" class="cert-file-item" v-for="(index, file) in fileModel['SE4']">
+                                <div class="cert-file-name">
+                                    <a :href="convertFilePath(file)" target="_blank" v-text="file.orginalName"></a>
+                                </div>
+                                <Icon @click.stop="doDeleteFile(file.id, index,fileModel['SE4'])" type="close-circled" v-if="!readOnly"></Icon>
+                            </li>
+                        </ul>
+                        <a @click="uploadClicked('SE4')"   class="form-upload-href" href="javascript:void(0);"  v-if="!readOnly&&fileModel['SE4']&&fileModel['SE4'].length<5">上传文件</a>
+                        </div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="备注" prop="remark">
+                        <iv-input :rows="3" :textonly="readOnly" :value.sync="model.remark" type="textarea"></iv-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <template slot="footer">
+        <div v-if="readOnly"> <vi-Button @click="doCancel" size="large" type="primary">关闭</vi-Button></div>
+        <div v-else>
+            <vi-Button @click="doCancel" size="large" type="ghost">取消</vi-Button>
+            <vi-Button @click="doSave" size="large" type="primary">保存</vi-Button>
+        </div>
+    </template>
+    <vue-file-upload
+            :filters="currentUploadModel.filters"
+            :multi-selection="true"
+            :params="currentUploadModel.params"
+            @on-before-upload="doUploadBefore"
+            @on-success-upload="doUploadSuccess"
+            @on-upload-complete="onUploadComplete"
+            style="display: none;"
+            :check-files="currentUploadModel.checkFiles"
+            v-ref:uploader>
+    </vue-file-upload>
+</Modal>
+<style>
+    .diy-hover i{display: none}
+    .diy-hover:hover i{display: inline-block}
+</style>

@@ -1,0 +1,22 @@
+<div :class="classes" v-clickoutside="handleClose">
+    <iv-input
+        readonly
+        :disabled="disabled"
+        :value.sync="displayRender"
+        :size="size"
+        :placeholder="placeholder"
+        @on-focus="onFocus"></iv-input>
+    <Icon type="ios-close" :class="[prefixCls + '-arrow']" v-show="showCloseIcon" @click.stop="clearSelect"></Icon>
+    <Icon type="arrow-down-b" :class="[prefixCls + '-arrow']"></Icon>
+    <Dropdown v-show="visible" transition="slide-up">
+        <div>
+            <Caspanel
+                v-ref:caspanel
+                :prefix-cls="prefixCls"
+                :data.sync="data"
+                :disabled="disabled"
+                :change-on-select="changeOnSelect"
+                :trigger="trigger"></Caspanel>
+        </div>
+    </Dropdown>
+</div>

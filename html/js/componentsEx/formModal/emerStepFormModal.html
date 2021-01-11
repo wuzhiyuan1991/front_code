@@ -1,0 +1,52 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+						<!--<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+					<!--</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="步骤" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('emerCardId') == -1)" label="应急处置卡" prop="emerCard.id">-->
+						<!--<input-select :value="mainModel.vo.emerCard" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('emerCard') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowEmerCardSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+
+					<!--<el-form-item v-if="(hiddenFields.indexOf('emerSceneId') == -1)" label="事故场景" prop="emerScene.id">-->
+						<!--<input-select :value="mainModel.vo.emerScene" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('emerScene') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowEmerSceneSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('disposal') == -1)" label="处置" prop="disposal">
+						<iv-input :rows="4" type="textarea" :value.sync="mainModel.vo.disposal" :disabled="(disabledFields.indexOf('disposal') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('principal') == -1)" label="负责人" prop="principal">
+						<iv-input   :value.sync="mainModel.vo.principal" :disabled="(disabledFields.indexOf('principal') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+				<el-form-item v-if="(hiddenFields.indexOf('principal') == -1)" label="相关岗位" prop="positions">
+
+					<div class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point" @click.prevent="doShowUserSelectModal()">
+						<div class="ivu-select-selection" style="line-height: 24px;">
+							<div class="ivu-tag" v-for="(index, tag) in mainModel.vo.positions">
+								<span class="ivu-tag-text">{{tag.name}}</span>
+								<i class="ivu-icon ivu-icon-ios-close-empty" @click.stop="doRemovePositions(index)"></i>
+							</div>
+						</div>
+						<span style="font-size: 16px;" class="select-ico-add">
+							<i class="ivu-icon ivu-icon-plus"></i>
+						</span>
+					</div>
+
+					<!--<iv-input   :value.sync="mainModel.vo.principal" :disabled="(disabledFields.indexOf('principal') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+				</el-form-item>
+
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<emerscene-select-modal :visible.sync="selectModel.emerSceneSelectModel.visible" :filter-data="selectModel.emerSceneSelectModel.filterData" single-select @do-save="doSaveEmerScene"></emerscene-select-modal>
+<emercard-select-modal :visible.sync="selectModel.emerCardSelectModel.visible" :filter-data="selectModel.emerCardSelectModel.filterData" single-select @do-save="doSaveEmerCard"></emercard-select-modal>
+<emer-position-select-model :visible.sync="selectModel.emerPositionModel.visible" @do-save="doSavePosition"></emer-position-select-model>

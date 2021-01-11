@@ -1,0 +1,38 @@
+<Modal :visible.sync="visible" title="选择法律法规" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container" style="width: 900px">
+     
+      <div class="epc-content epc-content-scroll" style="max-height: 600px;">
+        <div class="lr-layout" style="padding: 0;">
+            <div class="lr-layout-l legal-regulation-type-box" style="width: 200px;overflow-y: auto;height: 510px;">
+                <iv-tree
+                        id-attr="id"
+                        pid-attr="parentId"
+                        display-attr="name"
+                        :model="legalTypes"
+                        :selected-datas.sync="treeSelectData"
+                        :show-checkbox="false"
+                        :single-select="true"
+                        :trigger-parent-event="true"
+                        @on-tree-node-click="doTreeNodeClick"
+                ></iv-tree>
+            </div>
+        <div class="lr-layout-r">
+            <vue-bootstrap-table :columns="tableModel.columns" :show-pager="true"
+            :selected-datas.sync="mainModel.selectedDatas" :url="tableModel.url || ''"   @on-dbclick-cell="onDbClickCell" :values="tableModel.values || []"
+           :default-filter-value="tableModel.defaultFilterValue" is-single-check
+           lazy-load
+           resizeable
+            v-ref:table>
+          </vue-bootstrap-table>
+          <!-- show-filter  -->
+          <!-- @do-filter="nativeSearchFilter" -->
+        </div>
+        </div>
+       
+      </div>
+      <div class="epc-footer">
+        <vi-button type="primary" @click="visible=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+      </div>
+    </div>
+  </Modal>

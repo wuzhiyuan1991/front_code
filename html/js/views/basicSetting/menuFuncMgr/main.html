@@ -1,0 +1,65 @@
+<div class="tab-container" style="height: 100%; overflow-x: hidden">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row type="flex" align="middle" class="mp-header-item">
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t('bs.bac.menuMgr')}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="treeShowList">{{$t('bs.bac.expandAll')}}
+                    </vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="treeHide">{{$t('bs.bac.collapseAll')}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+
+        <div class="mp-content">
+            <div>
+                <iv-row type="flex" align="middle">
+                    <div style="height: 40px; width: 100%;line-height: 40px;border-bottom: 1px solid #f5f5f5;">
+                        <iv-col span="8" style="padding-left: 20px !important">{{$t('ori.rolm.menu')}}</iv-col>
+                        <iv-col span="16" style="text-align: right;padding-right: 35px;">{{$t("gb.common.op")}}</iv-col>
+                    </div>
+                    <iv-col class="menuList" span="24">
+                        <!--v-ref:ruletree-->
+                        <!--<tree-grid  :model="data"-->
+                        <!--:selected-datas.sync="selectedDatas"-->
+                        <!--:single-select="true"-->
+                        <!--id-attr="id"-->
+                        <!--pid-attr="parentId"-->
+                        <!--display-attr="name"-->
+                        <!--:show-checkbox="false"-->
+                        <!--@on-tree-node-click="doChangeGroup" ></tree-grid>-->
+
+                        <iv-tree-grid :model="mainModel.data" v-ref:treegrid
+                                   :selected-datas.sync="mainModel.selectedTreeDatas"
+                                   id-attr="id"
+                                   pid-attr="parentId"
+                                   display-attr="name"
+                                   :single-select="true"
+                                   :show-checkbox="false"
+                                   :allow-parent-checked="true"
+                                   @on-add-node="doAddNode"
+                                   @on-edit-node="doEditNode"
+                                   @on-del-node="doDelNode"
+                                   @on_tree_data_ready="doTreeDataReady"
+                                   :edit="true"
+                                   :auth-mgr-show="true"
+                                   :auth-data-show="true"
+                                   :open="mainModel.showHide"
+                                   assist
+                                   :assist-func="mainModel.assistFunc"
+                        ></iv-tree-grid>
+                    </iv-col>
+                </iv-row>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--<Modal :visible.sync="updataModel.show" :title="updataModel.title" width="520" :footer-hide="true">-->
+<!--<editComponent></editComponent>-->
+<!--</Modal>-->
+<Modal :visible.sync="addModel.show" :title="addModel.title" width="520" :footer-hide="true">
+    <detailComponent @doupdata="doupdata"></detailComponent>
+</Modal>
+

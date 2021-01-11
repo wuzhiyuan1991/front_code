@@ -1,0 +1,59 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col $main-header-condition-div-attr-default>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+									<!--<iv-dropdown-item>-->
+										<!--<vue-file-upload  @on-success-upload="doSuccessUpload" file-ext="xls,xlsx" vue-file-upload :url="uploadModel.url" custom-style>-->
+											<!--<div class="uploadAport"><a>{{$t("gb.common.import")}}</a></div>-->
+										<!--</vue-file-upload>-->
+									<!--</iv-dropdown-item>-->
+									<iv-dropdown-item>
+										<div v-if="hasPermission('1010004005')" class="uploadAport" @click="doExportExcel" ><a>{{$t("gb.common.export")}}</a></div>
+									</iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    <div class="import" v-if="hasAuth('import')"><a>{{$t("gb.common.import")}}</a></div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" v-if="hasAuth('edit')" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
+                    <vi-button type="text" v-if="hasAuth('setDefault')" class="mp-header-item-btn" @click="doDefault">{{$t("bs.bac.defaultMail")}}</vi-button>
+                    <vi-button type="text" v-if="hasAuth('relate')" class="mp-header-item-btn" @click="doRelEnt">{{$t("bs.bac.associatedComp")}}</vi-button>
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+                    <vi-button type="text" v-if="hasAuth('delete')" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                </iv-col>
+            </iv-row>
+
+        </div>
+
+        <div class="mp-content">
+            <vue-bootstrap-table @on-data-loaded="doLoadTableData" $main-center-table-attr-default>
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<aside :show.sync="detailModel.show" placement="right" width="860px">
+    <detailComponent @do-detail-cancel="doDetailCancel" @do-modify-state="doModifyState" @do-detail-delete="doDetailDelete"></detailComponent>
+</aside>
+
+<!--<aside :show.sync="editModel.show" placement="right" width="860px">-->
+<!--<editComponent @do-finshed="doFinshed" @do-cancel="doCancel"></editComponent>-->
+<!--</aside>-->
+<Modal title="关联公司" :visible.sync="editOrgModel.show" :footer-hide="true">
+    <editorgcomponent @do-edit-finshed="doEditFinshed" @do-cancel="doCancel"></editorgcomponent>
+</Modal>

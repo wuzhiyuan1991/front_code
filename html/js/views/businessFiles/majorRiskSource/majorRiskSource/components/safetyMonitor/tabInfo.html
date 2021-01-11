@@ -1,0 +1,23 @@
+<div class="flex-layout-between">
+    <span style="font-size: 14px;font-weight: 700"></span>
+    <span class="link-ele"><icon class="mr5" type="plus"  @click="doAdd">添加</icon></span>
+</div>
+<div>
+    <vue-bootstrap-table
+            :setting="tableModel.info"
+            :show-pager="true"
+            :show-filter="false"
+            :values="tableModel.info.values"
+            @on-del-row="doDel"
+            @on-edit-row="doEdit"
+            @on-move-row="doMove"
+            v-ref:main-table
+    >
+    </vue-bootstrap-table>
+</div>
+<!--:page-size-opts="[200]"-->
+
+<modal-form
+        v-ref:dialog-form
+        @on-success="saveAfter"
+></modal-form>

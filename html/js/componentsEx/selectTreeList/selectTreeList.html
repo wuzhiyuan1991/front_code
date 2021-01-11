@@ -1,0 +1,99 @@
+<!--&lt;!&ndash;<i-select :model.sync="selectmodel" multiple style="width:260px">&ndash;&gt;-->
+<!--&lt;!&ndash;</i-select>&ndash;&gt;-->
+<Modal :visible.sync="visible"  :title="modalTitle" width="900"    @on-cancel="doClose" :footer-hide="true" class="userSelectModal">
+	<div class="treeitem edit-pop-container">
+		<iv-row style="padding: 20px 15px">
+			<iv-col span="11" >
+				<div class="ivu-transfer-edit">
+					<div class="ivu-transfer-list">
+							<div class="ivu-transfer-list-header">
+								<span>未选择</span>
+								<div  style="float:right;right: 25px;font-size: 14px;top: 35px;z-index:5;">
+									<span v-show="params>0"  class="userSelectModalBtnStyle btnLinkHover"  @click="changeOpenDeep(2)">展开</span>
+									<span  v-show="params<0" class="userSelectModalBtnStyle btnLinkHover"  @click="changeOpenDeep(0)">收起</span>
+								</div>
+						</div>
+						<!--:show-checkbox="false"-->
+						<!--:single-select="true"-->
+						<!--@on-tree-node-click="dochangegroup"-->
+						<div class="ivu-transfer-list-body">
+							<div style="height: 100%; overflow:auto;padding-left: 10px" class="ivu-transfer-list-body-box">
+								<select-tree  :model="treedata"
+											  :backups-flag.sync="backupsFlag"
+											  :selected-datas.sync="selectedDatas"
+											  id-attr="key"
+											  pid-attr="parentKey"
+											  type="type"
+											  display-attr="label"
+											  :allow-parent-checked="true"
+											  :parent-node="parentNode"
+											  :department="department"
+											  :serch-filterable="serchFilterable"
+											  :subject-matter-type="subjectMatterType"
+											  :custom-ico="customIco"
+											  :custom-func="customFunc"
+											  :open-deep="openDeep"
+											  :model-type="modelType"
+											  :openstatus="openstatus"
+								></select-tree>
+							</div>
+						</div>
+					</div>
+				</div>
+			</iv-col>
+			<iv-col span="2" style="position: relative; top: 150px; left: 10px">
+				<Operation
+						:prefix-cls="prefixCls"
+						:operations="operations"
+						:left-active="left == true"
+						@moveleft="domovetoleft"
+						@moveright="domovetoright"
+						:show-fix-ico="showFixIco"
+						:right-active="rigth == true"></Operation>
+			</iv-col>
+			<iv-col span="11">
+				<!--filterable 是否显示搜索-->
+				<!--titles标题-->
+				<!--data：数据源-->
+				<!--checked-keys：选中的数据-->
+				<!--filter-method：搜索函数-->
+				<!--showcount：是否显示数量-->
+				<!--filter-placeholder:搜索框站位-->
+				<!--list-style：自定义样式-->
+				<div class="ivu-transfer-edit ivu-transfer-edit-left">
+					<List
+							:prefix-cls="prefixCls + '-list'"
+							:data="transferData"
+							:render-format="renderFormat"
+							:checked-keys.sync="rightCheckedKeys"
+							:valid-keys-count.sync="validKeysCount"
+							:style="listStyle"
+							:title="titles"
+							:filterable="filterable"
+							:filter-placeholder="filterPlaceholder"
+							:filter-method="filterMethod"
+							:not-found-text="notFoundText"
+							v-ref:transfer
+					>
+						<!--:showcount="false"-->
+					</List>
+				</div>
+			</iv-col>
+		</iv-row>
+		<div class="epc-footer">
+			<vi-button type="primary"  @click="beforeDoSave" class="pull-right">确定</vi-button>
+			<vi-button type="primary"  @click="doClose" class="pull-right">取消</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<style>
+	.btnLinkHover{
+		color:#3c8dbc;
+	}
+	.btnLinkHover:hover{
+		color:#33a6ff;
+		cursor:pointer;
+	}
+</style>
+

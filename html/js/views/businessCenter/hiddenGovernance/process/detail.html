@@ -1,0 +1,75 @@
+
+<div class="detail-container" style="overflow-y: auto;overflow-x: hidden">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item  label="编码" prop="code">-->
+						<!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item :label="$t('gb.common.phaseName')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.processSubordinate')" prop="activitiModeler.id">
+						<input-select :value="mainModel.vo.activitiModeler" id-field="id" display-field="name" textonly></input-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.valueStage')" prop="value">
+						<iv-input :value.sync="mainModel.vo.value" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.approverModify')" prop="attr2">
+						<iv-checkbox :checked.sync="mainModel.enableUpdate" :disabled="mainModel.isReadOnly"></iv-checkbox>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.processDepartment')" prop="attr1" style="width:920px">
+						<iv-checkbox :checked.sync="mainModel.dataLimit" :disabled="mainModel.isReadOnly">
+							<span style="color:#b8bdb9" >？流程角色人员仅处理人员所属部门的隐患问题，其他设置条件无效</span>
+						</iv-checkbox>
+					</el-form-item>
+					<!--<el-form-item :label="$t('gb.common.processDeadlineDay')" prop="deadlineDay">
+						<iv-input type="number" :value.sync="mainModel.vo.deadlineDay" :disabled="mainModel.isReadOnly"></iv-input>
+					</el-form-item>-->
+					<el-form-item label="处理时限" prop="deadlineDay">
+						<div class="flex-layout">
+							<iv-input  type="number" :value.sync="mainModel.vo.deadlineDay" :disabled="mainModel.isReadOnly">
+								<i-select :popper-fixed="false" slot="append" :disabled="mainModel.isReadOnly"
+										  :model.sync="mainModel.vo.deadlineUnit" :list="unitList"
+										  style="width: 100px"
+								>
+									<i-option v-for="item of  unitList"
+											  :value="item.value">{{item.name}}</i-option>
+								</i-select>
+							</iv-input>
+						</div>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<!-- 流程角色 -->
+			<filter-component :value="mainModel.vo.value" :is-read-only="mainModel.vo.id == null" :process-id="mainModel.vo.id" :person-filter-data="personDataFilter"></filter-component>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && mainModel.opType !== 'create'" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>
+<style>
+	.el-form-item__content{
+		width:100%
+	}
+</style>

@@ -1,0 +1,56 @@
+<div v-if="mapType==1" class="sw-risk-map" style="overflow: hidden;height: 100%;max-height: calc(100vh - 100px)" @click="onBoxClick" v-el:container>
+    <button class="ivu-btn btnPosition1" type="button" style="padding: 4px 15px 3px;" title="刷新" @click="refreshData">刷新</button>
+
+    <div class="sw-risk-overview-legend" style="position: absolute;left:30px;top:24px;z-index:6;" id="legendMsak">
+        <div @click="colorClick(item)" style="cursor: pointer;" v-for="item in pojos" class="sw-risk-overview-legend-item" :data-level="item.level">
+            <span :style="'background:'+item.color" class="sw-risk-overview-legend-block"></span>
+            <span>{{item.label}}</span>
+        </div>
+    </div>
+
+    <div style="height: 100%;position: absolute;z-index: 5;width: 100%;user-select: none;opacity: 0;"
+         @mousedown="onmousedown" @click="onMaskClick" v-el:mask></div>
+
+    <div v-if="mapType==1" style="will-change: transform;width: 1920px; height: 1080px;position: relative;" v-el:box>
+        <canvas width="1920" height="1080" v-el:canvas class="front-canvas"></canvas>
+    </div>
+
+
+    <div style="display: none;">
+        <img src="images/risk_map/icon/5.png" id="icon4">
+        <img src="images/risk_map/icon/1.png" id="icon0">
+        <img src="images/risk_map/icon/2.png" id="icon1">
+        <img src="images/risk_map/icon/3.png" id="icon2">
+        <img src="images/risk_map/icon/4.png" id="icon3">
+    </div>
+</div>
+
+
+
+<div v-else class="sw-risk-map" style="overflow: hidden;height: 100%;" @click="onBoxClick" v-el:container>
+    <div style="height: 100%;position: absolute;z-index: 5;width: 100%;user-select: none;opacity: 0;"
+         @mousedown="onmousedown" @click="onMaskClick" v-el:mask></div>
+    <div v-else style="will-change: transform;width: 1920px; height: 1080px;position: relative;" v-el:box>
+        <canvas width="1920" height="1080" v-el:canvas class="front-canvas"></canvas>
+    </div>
+    <!--<div class="sw-risk-overview-legend">-->
+        <!--<div v-for="item in riskPojos" class="sw-risk-overview-legend-item">-->
+            <!--<span :style="renderPictureLegend(item)" class="sw-risk-overview-legend-block"></span>-->
+            <!--<span>{{item.riskLabel}}</span>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>
+
+<style>
+    @media screen and (max-width: 1800px){
+        .btnPosition1{
+            position: absolute;z-index:6;right:50px;top: 20px;
+        }
+    }
+    @media screen and (min-width: 1800px){
+        .btnPosition1{
+            position: absolute;z-index:6;right:50px;top: 20px;
+        }
+    }
+</style>
+

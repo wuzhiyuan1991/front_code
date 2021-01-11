@@ -1,0 +1,231 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="18">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="6">
+
+                    <div class="prelative addButton pull-right">
+                        <iv-button @click="doShowStarSetting">显示说明</iv-button>
+                    </div>
+                </iv-col>
+            </iv-row>
+
+        </div>
+
+        <div v-show="isTooMuch" class="mp-content" style="display: flex;flex-direction: column;">
+            <div class="text-center">
+                <h4 style="padding: 50px 0 20px;">当前数据太多，请筛选课程和岗位</h4>
+                <p>课程数量： <strong style="color: red;">{{courseLength}}</strong></p>
+                <p>岗位数量： <strong style="color: red;">{{positionLength}}</strong></p>
+                <div style="padding-top: 10px;">
+                    <a href="javascript:void(0);" @click="doPostFilter" style="margin-right: 20px;">岗位筛选</a>
+                    <a href="javascript:void(0);" @click="doCourseFilter">课程筛选</a>
+                </div>
+            </div>
+        </div>
+        <div v-show="!isTooMuch" class="mp-content" style="position: relative;overflow: hidden;">
+
+            <!--左侧-->
+            <div style="position: absolute;left: 0;top: 0;z-index: 2;display: flex;flex-direction: column;height: calc(100% - 17px);overflow: hidden;" v-el:fixed-table>
+                <!--头部-->
+                <div style="position: relative;z-index: 2;">
+                    <table class="matirx-table">
+                        <colgroup>
+                            <col style="width: 130px;">
+                            <col style="width: 130px;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <td colspan="2">
+                                <a href="javascript:void(0);" @click.stop="doPostFilter">岗位筛选&gt;&gt;</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <a href="javascript:void(0);" @click.stop="doCourseFilter">课程筛选&gt;&gt;</a>
+                            </td>
+                        </tr>
+                        <tr @click="onTHeadClick" style="height: 55px;">
+                            <td colspan="2">
+                                <a href="javascript:void(0);" @click.stop="toggleCourseInfo">{{showCourseInfo ? "隐藏" : "显示"}}课程信息</a>
+                            </td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2">培训学时</td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2">培训方式</td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2">培训要求
+                                <poptip placement="top">
+                                    <a href="javascript:void(0);" style="position: relative;top:3px;"><Icon type="ios-information"></Icon></a>
+                                    <ul slot="content">
+                                        <li>R1 - 了解</li>
+                                        <li>R2 - 掌握</li>
+                                        <li>R3 - 掌握并能指导他人</li>
+                                        <li>R4 - 资质取证</li>
+                                    </ul>
+                                </poptip>
+                            </td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2">默认复培周期</td>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!--主体-->
+                <div v-el:fixed-body>
+                    <table class="matirx-table">
+                        <colgroup>
+                            <col style="width: 130px;">
+                            <col style="width: 130px;">
+                        </colgroup>
+                        <tbody @click="onTBodyClick" id="matrix-fixed-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--主体-->
+            <div style="overflow: hidden;height: 100%;width: 100%;display: flex;flex-direction: column;">
+                <!--头部-->
+                <div v-el:scroll-header>
+                    <table class="matirx-table" :style="tableWidth">
+                        <colgroup>
+                            <col style="width: 130px;">
+                            <col style="width: 130px;">
+                            <col v-for="n in courseLength">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td :colspan="course.count" v-for="course in courseModel.levelOne" class="text-ellipsis" :title="course.subjectName">{{course.subjectName}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td :colspan="course.count" v-for="course in courseModel.levelTwo" class="text-ellipsis" :title="course.subjectName">{{course.subjectName}}</td>
+                        </tr>
+                        <tr @click="onTHeadClick" style="height: 55px;">
+                            <td colspan="2"></td>
+                            <td v-for="course in courseModel.levelThree">
+                                <a style="white-space: normal;overflow: hidden;text-overflow: ellipsis;display: -webkit-box; -webkit-line-clamp: 2;-webkit-box-orient: vertical;line-height: 14px;word-break: break-all;" href="javascript:void(0);" data-type="course" :data-cid="course.id" :data-code="course.code">{{course.name}}</a>
+                            </td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2"></td>
+                            <td v-for="course in courseModel.levelThree">{{course.trainHour}}小时</td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2"></td>
+                            <td v-for="course in courseModel.levelThree">{{getDataDic("course_type", course.type)}}</td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2"></td>
+                            <td v-for="course in courseModel.levelThree">R{{course.requirement}}</td>
+                        </tr>
+                        <tr v-show="showCourseInfo">
+                            <td colspan="2"></td>
+                            <td v-for="course in courseModel.levelThree">{{displayFrequence(course.frequence)}}</td>
+                        </tr>
+                        </thead>
+                    </table>
+
+                </div>
+
+                <!--主体-->
+                <div style="height: 100%;width: calc(100% + 20px);overflow-y: auto;overflow-x:scroll;flex-grow: 1;" v-el:scroll-body>
+                    <table class="matirx-table" :style="tableWidth2">
+                        <colgroup>
+                            <col style="width: 130px;">
+                            <col style="width: 130px;">
+                            <col v-for="n in courseLength">
+                        </colgroup>
+                        <tbody @click="onTBodyClick" id="matrix-main-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div v-el:pop class="fade-transition ivu-poptip-popper" v-show="popperModel.show" style="position: absolute; width: 230px;" x-placement="top">
+            <div class="ivu-poptip-content">
+                <div class="ivu-poptip-arrow"></div>
+                <div class="ivu-poptip-inner">
+                    <div class="ivu-poptip-body">
+
+                        <ul slot="content" class="matrix-poptip">
+                            <li style="justify-content: flex-end;">
+                                <Icon type="close" style="cursor: pointer;" @click="closePopper"></Icon>
+                            </li>
+                            <li>
+                                <span class="labl">课程名称</span>
+                                <span class="text">{{popperModel.course.name}}</span>
+                            </li>
+                            <li>
+                                <span class="labl">{{popperModel.position.type === '1' ? '安全角色' : '岗位'}}</span>
+                                <span class="text">{{popperModel.position.name}}</span>
+                            </li>
+                            <li v-if="popperModel.isOnline">
+                                <span class="labl">培训期限</span>
+                                <iv-input :value.sync="popperModel.defaultPeriod"  v-show="popperModel.action === 'bind'" type="number">
+                                    <span slot="append">天</span>
+                                </iv-input>
+                                <span class="text" v-show="popperModel.action === 'unbind'">{{popperModel.period}}天</span>
+                            </li>
+                            <li>
+                                <span class="labl">复培周期</span>
+                                <iv-input :value.sync="popperModel.frequence" :disabled="popperModel.checked" v-show="popperModel.action === 'bind'" type="number">
+                                    <span slot="append">个月</span>
+                                </iv-input>
+                                <span class="text" v-show="popperModel.action === 'unbind'">{{displayFrequence(popperModel.frequence)}}</span>
+                            </li>
+                            <li v-show="popperModel.action === 'bind'" style="justify-content: flex-end;line-height: 20px;">
+                                <iv-checkbox :checked.sync="popperModel.checked" @on-change="changeFrequence"></iv-checkbox>无需复培
+                            </li>
+                            <li style="justify-content: flex-end;margin-top: 5px;">
+                                <iv-button type="primary" @click="bind" v-show="popperModel.action === 'bind'">学习</iv-button>
+                                <iv-button type="primary" @click="unbind" v-show="popperModel.action === 'unbind'">取消学习</iv-button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<aside :show.sync="detailModel.show" class="large-info-aside">
+    <detail-panel @do-detail-finshed="doDetailFinshed"></detail-panel>
+</aside>
+
+<!--岗位筛选-->
+<post-filter @do-post-finshed="doPostFinish" :visible.sync="postFilter.show" :title="postFilter.title"></post-filter>
+
+<!--课程筛选-->
+<Modal :visible.sync="courseFilter.show" :title="courseFilter.title" width="1000" height="800" :footer-hide="true">
+    <course-filter @do-courses-finshed="doCourseFinish"></course-filter>
+</Modal>
+
+<!--显示设置-->
+<Modal :visible.sync="starSetting.show" title="显示说明" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="background-color: #fff;">
+            <ul>
+                <li v-for="item in starSetting.items" style="margin-bottom: 5px;">
+                    <!--<iv-checkbox :checked.sync="item.show">-->
+                        <span style="display: inline-block;height: 16px;width: 16px;margin-right: 5px;border-radius: 3px;vertical-align: sub;" :style="{'background-color': item.color}"></span>
+                        {{item.name}}
+                    <!--</iv-checkbox>-->
+                </li>
+            </ul>
+        </div>
+        <div class="epc-footer" style="background-color: #fff;border-color: #ddd;">
+            <vi-button type="primary" @click="getMatrix" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

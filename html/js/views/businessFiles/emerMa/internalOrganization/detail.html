@@ -1,0 +1,70 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title" style="width: 100%;"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span>
+					<disable-select style="display: inline-block;float: right;" :value.sync="mainModel.vo.disable"></disable-select>
+				</p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<!--<el-form-item :label="$t('gb.common.code')" prop="code">-->
+						<!--<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+					<!--</el-form-item>-->
+					<el-form-item label="应急组别" prop="emerGroup.id">
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.emerGroup.id" :list="emerGroups">
+							<i-option v-for="item in emerGroups" :value="item.id">{{item.name}}</i-option>
+						</i-select>
+						<span style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;" v-else>{{mainModel.vo.emerGroup.name}}</span>
+					</el-form-item>
+					<el-form-item label="应急职务" prop="name">
+						<!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+
+						<iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.name}}</span>
+
+					</el-form-item>
+					<el-form-item label="应急职责" prop="remarks" full-width>
+						<iv-textarea  v-if="!mainModel.isReadOnly" :rows="4" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.remarks}}</span>
+
+					</el-form-item>
+				</el-form>
+			</simple-card>
+
+			<div class="rel-info-panel">
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>人员组成</span></p>
+					<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowUserSelectModal()" >
+						<span><Icon type="plus"></Icon>添加</span>
+					</a>
+					<vue-bootstrap-table
+							:setting="tableModel.userTableModel"
+							@on-del-row="doRemoveUsers"
+							v-ref:user-table
+					>
+					</vue-bootstrap-table>
+				</simple-card>
+			</div>
+			
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>

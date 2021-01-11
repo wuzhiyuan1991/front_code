@@ -1,0 +1,199 @@
+
+<simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+    <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+    <el-form :model="mainModel.vo" :rules="rules" class="fip-content-item-form" v-ref:ruleform>
+        <!--<el-form-item :label="$t('gb.common.subjectObj')" prop="checkObject.name">-->
+            <!--<iv-input name="name" :value.sync="mainModel.vo.checkObject.name" data-options="required:true" textonly></iv-input>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item :label="$t('gb.common.personInCharge')" prop="principalName">-->
+            <!--<iv-input name="name" :value.sync="mainModel.vo.principalName" data-options="required:true" textonly></iv-input>-->
+            <!--&lt;!&ndash;<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.principalName" data-options="required:true" disabled>&ndash;&gt;-->
+        <!--</el-form-item>-->
+        <el-form-item :label="$t('gb.common.problemDesc')" prop="problem">
+            <iv-input name="name" :value.sync="mainModel.vo.problem" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.problem" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item :label="$t('hag.common.regDate')" prop="createDate">
+            <iv-input name="name" :value.sync="mainModel.vo.createDate" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.createDate" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item label="检查人" prop="checkUser">
+            <iv-input :value="mainModel.vo.user.name" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.riskLevel" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item label="问题发现人" prop="problemFinder">
+            <iv-input :value="mainModel.vo.problemFinder" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.riskLevel" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item label="整改类型" prop="riskLevel">
+            <iv-input name="name" :value="mainModel.vo.reformType == '0' ? '立即整改' : '正常整改'" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.riskLevel" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item :label="$t('gb.common.riskLevel')" prop="riskLevel">
+            <iv-input name="name" :value.sync="mainModel.vo.riskLevel" data-options="required:true" v-if="mainModel.vo.riskLevel != null" textonly></iv-input>
+            <span v-else>{{getDataDic("risk_level_result", mainModel.vo.riskLevelResult)}}</span>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.riskLevel" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item :label="$t('hag.hazc.hiddenGrade')" prop="riskType">
+            <span>{{getDataDic("risk_type", mainModel.vo.riskType)}}</span>
+        </el-form-item>
+
+        <el-form-item label="风险判定类型" prop="riskJudgementType" v-if="isShowXBGDField">
+            <!--<i-select :model.sync="mainModel.vo.riskJudgementType" :list="getDataDicList('pool_second_level')" :disabled="selectModel.disabled">-->
+                <!--<i-option v-for="s in mainModel.riskJudgementTypeList" :value="s.id">{{s.value}}</i-option>-->
+            <!--</i-select>-->
+            <span>{{riskJudgementTypeName}}</span>
+        </el-form-item>
+
+        <el-form-item label="隐患类别" prop="hiddenDangerType">
+            <span>{{getDataDic("hidden_danger_type", mainModel.vo.hiddenDangerType)}}</span>
+        </el-form-item>
+        <el-form-item  label="问题类型" prop="type">
+            <span >{{getDataDic('pool_type', mainModel.vo.type)}}</span>
+        </el-form-item>
+        <el-form-item  label="HSE类型" prop="hseType" v-if="enableHSEType">
+            <span >{{getDataDic('random_observe_hse_type', mainModel.vo.hseType)}}</span>
+        </el-form-item>
+        <el-form-item label="专业" prop="specialty" v-if="showOpCard">
+            <span style="font-size: 14px;">{{specialtyText}}</span>
+            <!--<iv-input name="name" :value.sync="mainModel.vo.riskLevel" data-options="required:true" textonly></iv-input>-->
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.riskLevel" data-options="required:true" disabled>-->
+        </el-form-item>
+        <el-form-item label="来源" prop="sourceType">
+            <span  v-if="showLink" style="color: #56b5ff; cursor: pointer;text-decoration: underline" @click="doViewSource">{{sourceType}}</span>
+            <iv-input v-else name="name" :value.sync="sourceType" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.sourceType" data-options="required:true" disabled>-->
+        </el-form-item>
+        <!--<el-form-item :label="$t('hat.hazt.Verifier')" prop="verifierName">-->
+            <!--<iv-input name="name" :value.sync="mainModel.vo.verifierName" data-options="required:true" textonly></iv-input>-->
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.verifierName" data-options="required:true" disabled>-->
+        <!--</el-form-item>-->
+
+        <el-form-item :label="$t('gb.common.latentDefect')">
+            <iv-input name="name" :value.sync="mainModel.vo.latentDefect" data-options="required:true" textonly></iv-input>
+        </el-form-item>
+
+        <el-form-item label="发现渠道" v-if="mainModel.enableDiscoveryChannel">
+            <span>{{mainModel.vo.discoveryChannel}}</span>
+        </el-form-item>
+        
+        <el-form-item label="成因分析" prop="causeAnalysis">
+            <iv-input name="name" :value.sync="mainModel.vo.causeAnalysis" data-options="required:true" textonly></iv-input>
+        </el-form-item>
+
+        <el-form-item :label="$t('gb.common.businessSource')">
+            <span>{{getDataDic("pool_biz_source_type", mainModel.vo.bizType)}}</span>
+        </el-form-item>
+
+        <el-form-item label="问题产生原因">
+            <span>{{getDataDic("pool_problem_reason", mainModel.vo.problemReason)}}</span>
+        </el-form-item>
+
+        <el-form-item :label="$t('gb.common.recMeasure')" prop="danger">
+            <iv-input name="name" :value.sync="mainModel.vo.danger" data-options="required:true" textonly></iv-input>
+            <!--<input type="text" class="inp" maxlength="50" name="name" v-model="mainModel.vo.danger" data-options="required:true" disabled>-->
+        </el-form-item>
+        
+        <el-form-item label="检查依据" >
+            <iv-input name="name" :value.sync="mainModel.vo.checkBasis" data-options="required:true" textonly></iv-input>
+		</el-form-item>
+
+        <el-form-item label="一级分类" prop="firstLevel" v-if="isShowXBGDField">
+            <!--<i-select :model.sync="mainModel.vo.firstLevel" :list="getDataDicList('pool_first_level')" :disabled="selectModel.disabled">-->
+                <!--<i-option v-for="s in getDataDicList('pool_first_level')" :value="s.id">{{s.value}}</i-option>-->
+            <!--</i-select>-->
+            <span >{{getDataDic('pool_first_level', mainModel.vo.firstLevel)}}</span>
+        </el-form-item>
+
+        <el-form-item label="二级分类" prop="secondLevel" v-if="isShowXBGDField">
+            <!--<i-select :model.sync="mainModel.vo.secondLevel" :list="getDataDicList('pool_second_level')" :disabled="selectModel.disabled">-->
+                <!--<i-option v-for="s in getDataDicList('pool_second_level')" :value="s.id">{{s.value}}</i-option>-->
+            <!--</i-select>-->
+            <span >{{getDataDic('pool_second_level', mainModel.vo.secondLevel)}}</span>
+        </el-form-item>
+
+        <el-form-item label="低老坏分类" prop="lowOldBadLevel" v-if="isShowXBGDField">
+            <!--<i-select :model.sync="mainModel.vo.lowOldBadLevel" :list="getDataDicList('pool_low_old_bad_level')" :disabled="selectModel.disabled">-->
+                <!--<i-option v-for="s in getDataDicList('pool_low_old_bad_level')" :value="s.id">{{s.value}}</i-option>-->
+            <!--</i-select>-->
+            <span >{{getDataDic('pool_low_old_bad_level', mainModel.vo.lowOldBadLevel)}}</span>
+        </el-form-item>
+
+        <el-form-item label="负责人" prop="lowOldBadLevel" v-if="isShowXBGDField">
+            <!--<i-select :model.sync="mainModel.vo.lowOldBadLevel" :list="getDataDicList('pool_low_old_bad_level')" :disabled="selectModel.disabled">-->
+            <!--<i-option v-for="s in getDataDicList('pool_low_old_bad_level')" :value="s.id">{{s.value}}</i-option>-->
+            <!--</i-select>-->
+            <span >{{mainModel.vo.principalName}}</span>
+        </el-form-item>
+
+        <el-form-item label="负责人部门" prop="lowOldBadLevel" v-if="isShowXBGDField">
+            <!--<i-select :model.sync="mainModel.vo.lowOldBadLevel" :list="getDataDicList('pool_low_old_bad_level')" :disabled="selectModel.disabled">-->
+            <!--<i-option v-for="s in getDataDicList('pool_low_old_bad_level')" :value="s.id">{{s.value}}</i-option>-->
+            <!--</i-select>-->
+            <span >{{ getDataDic("org", mainModel.vo.principalOrgId)["deptName"]}}</span>
+        </el-form-item>
+
+
+        <el-form-item label="需要调用一票两卡" label-width="120px" v-if="showOpCard">
+            <span style="font-size: 14px;">{{this.mainModel.vo.nestedOpCard === '2' ? '是' : '否'}}</span>
+        </el-form-item>
+
+        <el-form-item label="整改费用" prop="rectificationCost" v-if="showOtherField">
+            <iv-input name="name" :value.sync="mainModel.vo.rectificationCost" data-options="required:true" textonly></iv-input>
+        </el-form-item>
+        <el-form-item label="奖励金额(元)" prop="rewardAmount" v-if="showOtherField">
+            <iv-input :value.sync="mainModel.vo.rewardAmount" type="number" textonly></iv-input>
+        </el-form-item>
+        <el-form-item label="奖励人次" prop="rewardNum" v-if="showOtherField">
+            <iv-input :value.sync="mainModel.vo.rewardNum" type="number" textonly></iv-input>
+        </el-form-item>
+
+        <el-form-item label="未完成原因说明" v-if="isShowXBGDField">
+            <span >{{mainModel.vo.reform.unFinishedDesc}}</span>
+<!--            <iv-input :value.sync="mainModel.vo.unFinishedDesc" textonly></iv-input>-->
+        </el-form-item>
+        <el-form-item label="整改完成情况" v-if="isShowXBGDField">
+            <span >{{mainModel.vo.reform.completionDesc}}</span>
+<!--            <iv-input :value.sync="mainModel.vo.completionDesc" textonly></iv-input>-->
+        </el-form-item>
+        <el-form-item label="针对此问题今后的防范措施" v-if="isShowXBGDField">
+            <span >{{mainModel.vo.reform.afterPreventive}}</span>
+<!--            <iv-input :value.sync="mainModel.vo.afterPreventive" textonly></iv-input>-->
+        </el-form-item>
+
+    </el-form>
+</simple-card>
+    <simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+        <p slot="title"><i class="basicPng"></i><span>{{$t('bc.hal.enclosure')}}</span></p>
+        <simple-card class="fip-content-sub-item">
+            <span slot="title">{{$t('gb.common.picture')}}</span>
+            <image-view :images="mainModel.vo.pictures" :show-close="false"></image-view>
+
+        </simple-card>
+        <simple-card class="fip-content-sub-item">
+            <span slot="title">{{$t('gb.common.video')}}</span>
+            <lite-box v-for="video in mainModel.vo.videos" :show-close="false" @click="doPlay(video)">
+                <img :src="convertPath()" >
+            </lite-box>
+        </simple-card>
+        <simple-card class="fip-content-sub-item">
+            <span slot="title">音频</span>
+            <!--<lite-box v-for="audio in mainModel.vo.audios" :show-close="false" @click="doPlay(audio.fileId)">-->
+                <!--<img :src="convertPath()" >-->
+            <!--</lite-box>-->
+            <ul style="display: flex;flex-wrap: wrap;">
+                <li v-for="audio in mainModel.vo.audios" @click="doPlayAudio(audio.ctxPath)" style="height: 80px;width: 80px;text-align: center; background-color: #fff;line-height: 98px;cursor: pointer;border: 1px solid #ddd;margin: 0 10px 10px 0;border-radius: 5px;">
+                    <Icon type="music-note" style="font-size: 32px;"></Icon>
+                </li>
+            </ul>
+        </simple-card>
+    </simple-card>
+
+
+<Modal  class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<audio-player
+        :visible.sync="audioModel.visible"
+        :path="audioModel.path"
+></audio-player>

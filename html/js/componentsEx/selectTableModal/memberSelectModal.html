@@ -1,0 +1,125 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" v-ref:tree :footer-hide="true" class="userSelectModal">
+    <iv-row type="flex">
+        <!--<iv-col  v-if="!isSupperAdmin" style="background-color: #eaf0f5;display: flex;padding-left: 3px;padding-right: 20px;padding-top: 10px;" span="24" >-->
+            <!--<span v-if="!isConcatLogin" class="selectBtnOrgStyle"  :class="searchTreeleft==0?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 0?'color:#33a6ff':''" @click="changeOrg(0)">本部门</span> <span v-if="!isConcatLogin">|</span>-->
+            <!--<span  class="selectBtnOrgStyle" :class="searchTreeleft==1?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 1?'color:#33a6ff':''" @click="changeOrg(1)">本公司</span> <span v-if="!emptyAll">|</span>-->
+            <!--<span v-if="!emptyAll" class="selectBtnOrgStyle" :class="searchTreeleft==2?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 2?'color:#33a6ff':''" @click="changeOrg(2)">所有</span> <span v-if="!emptyAll && isShowConcator">|</span>-->
+            <!--<span v-if="isShowConcator" class="selectBtnOrgStyle" :class="searchTreeleft==3?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 3?'color:#33a6ff':''" @click="changeOrg(3)">承包商</span>-->
+        <!--</iv-col>-->
+
+        <iv-col  v-if="!isSupperAdmin && showOnlyType==-1" style="background-color: #eaf0f5;display: flex;padding-left: 3px;padding-right: 20px;padding-top: 10px;" span="24" >
+            <span v-if="!isConcatLogin" class="selectBtnOrgStyle"  :class="searchTreeleft==0?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 0?'color:#33a6ff':''" @click="changeOrg(0)">本部门</span> <span v-if="!isConcatLogin">|</span>
+            <span  class="selectBtnOrgStyle" :class="searchTreeleft==1?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 1?'color:#33a6ff':''" @click="changeOrg(1)">本公司</span> <span v-if="!emptyAll">|</span>
+            <span v-if="!emptyAll" class="selectBtnOrgStyle" :class="searchTreeleft==2?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 2?'color:#33a6ff':''" @click="changeOrg(2)">所有</span> <span v-if="!emptyAll && isShowConcator">|</span>
+            <span v-if="isShowConcator" class="selectBtnOrgStyle" :class="searchTreeleft==3?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 3?'color:#33a6ff':''" @click="changeOrg(3)">承包商</span>
+        </iv-col>
+
+        <templete></templete>
+        <iv-col span="8" style="background-color: #eaf0f5;padding: 10px 0 0 10px" v-show="filterTreeType && this.searchTreeleft!=3">
+            <iv-input :value="treeModel.keyword" icon="ios-search" @on-click="doFilterLeft" @on-enter="doFilterLeft"></iv-input>
+            <div class="member-select-left-tree" v-el:mtree>
+                <div class="loading-text" v-if="treeModel.showLoading">加载中</div>
+                <iv-tree
+                        id-attr="id"
+                        pid-attr="parentId"
+                        display-attr="name"
+                        :model="treeModel.data"
+                        :selected-datas.sync="treeModel.selectedData"
+                        :show-checkbox="false"
+                        :single-select="true"
+                        :trigger-parent-event="true"
+                        :data-query="treeModel.keyword"
+                        @on-tree-node-click="doTreeNodeClick"
+                ></iv-tree>
+            </div>
+        </iv-col>
+
+        <iv-col span="8" style="background-color: #eaf0f5;padding: 10px 0 0 10px" v-if="this.searchTreeleft==3">
+            <iv-input :value.sync="leftTableModel.keyword" icon="ios-search" @on-click="doFilterConcator" @on-enter="doFilterConcator"></iv-input>
+            <div class="member-select-left-tree" v-el:mtree>
+                <!--<div class="loading-text" v-if="treeModel.showLoading">加载中</div>-->
+                <vue-bootstrap-table
+                        :columns="leftTableModel.columns"
+                        :show-pager="true"
+                        :selected-datas.sync="leftTableModel.selectedDatas"
+                        :values.sync="concatTableModel.list"
+                        :url="leftTableModel.url"
+                        :is-single-check="leftTableModel.singleSelect"
+                        :default-filter-value="leftTableModel.defaultFilterValue"
+                        :is-cache-selected-data="isCacheSelectedData"
+                        resizeable
+                        :page-size-opts='[1000]'
+                        :show-page-number='false'
+                        :show-pager="false"
+                        :show-empty-row='false'
+                        v-ref:left-table>
+                </vue-bootstrap-table>
+            </div>
+        </iv-col>
+
+
+        <iv-col :span="(searchTreeleft==3 || filterTreeType)?16:24" style="background-color: #eaf0f5;padding-top: 10px;">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModel.keyword" placeholder="姓名、公司、部门、岗位、安全角色" icon="ios-search" @on-click="doFilterRight"
+                          @on-enter="doFilterRight"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content" v-show='searchTreeleft!=3'>
+                    <vue-bootstrap-table
+                            :columns="tableModel.columns"
+                            :filter-column="tableModel.filterColumn"
+                            :show-pager="true"
+                            :selected-datas.sync="tableModel.selectedDatas"
+                            :url="tableModel.url"
+                            :is-single-check="singleSelect"
+                            :default-filter-value="tableModel.defaultFilterValue"
+                            @on-dbclick-cell="onDbClickCell"
+                            :page-size-opts="[10,50,100,200]"
+                            :show-empty="false"
+                            :is-cache-selected-data="isCacheSelectedData"
+                            lazy-load
+                            resizeable
+                            v-ref:table>
+                    </vue-bootstrap-table>
+                </div>
+                <div class="epc-content" v-show="searchTreeleft==3">
+                    <vue-bootstrap-table
+                            :columns="concatTableModel.columns"
+                            :filter-column="concatTableModel.filterColumn"
+                            :show-pager="true"
+                            :selected-datas.sync="concatTableModel.selectedDatas"
+                            :url="concatTableModel.url"
+                            :is-single-check="singleSelect"
+                            @on-dbclick-cell="onDbClickCell"
+                            :page-size-opts="[10,50,100,200]"
+                            :is-cache-selected-data="isCacheSelectedData"
+                            :show-empty="false"
+                            resizeable
+                            lazy-load
+                            v-ref:concat-table>
+                    </vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+    </iv-row>
+</Modal>
+
+
+<style>
+    .selectBtnOrgStyle{
+        font-size: 14px;
+        color:#000;
+        cursor:pointer;
+        margin-right: 10px;
+        margin-left:10px;
+    }
+    .selectBtnOrgStyle:hover{
+        color:#33a6ff;
+    }
+    .selectBtnOrgStyleColor:{
+        color:#33a6ff;
+    }
+</style>

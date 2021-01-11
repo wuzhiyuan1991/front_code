@@ -1,0 +1,34 @@
+<div class="bip-content flex-layout h-p100">
+    <div class="mr15 h-p100">
+        <base-according class="h100" :values="pwtInfoTypes"  :width="110"
+                        :current-index.sync="pwtInfoTypeSelectedIndex"  @on-selected="onTabSelected">
+        </base-according>
+    </div>
+    <div class="flex-grow1 over-auto child-h100 ">
+        <div class="fip-content width-auto-ipt" v-show="pwtInfoTypeSelectedKey==1">
+            <baseinfo :model="model" :pms="pms" :permit-model="permitModel"></baseinfo>
+        </div>
+        <div class="fip-content"  v-show="pwtInfoTypeSelectedKey==2">
+            <weihaibs :model="model" :permit-model="permitModel" ></weihaibs>
+        </div>
+        <div class="fip-content"  v-show="pwtInfoTypeSelectedKey==3">
+            <security-measures :model="model" :permit-model="permitModel"></security-measures>
+        </div>
+        <div class="fip-content"   v-show="pwtInfoTypeSelectedKey==4">
+            <ppe :model="model" :permit-model="permitModel"></ppe>
+        </div>
+        <div class="fip-content"  v-show="pwtInfoTypeSelectedKey==5">
+           <gelifh :model="model"  :permit-model="permitModel"></gelifh>
+        </div>
+        <div class="fip-content" style="width: 600px" v-show="pwtInfoTypeSelectedKey==6">
+            <gas-detection :model="model" :permit-model="permitModel"></gas-detection>
+        </div>
+        <div class="fip-content" v-show="pwtInfoTypeSelectedKey==7">
+            <license-issue :model="model" :permit-model="permitModel"></license-issue>
+        </div>
+        <div class="fip-content" v-show="pwtInfoTypeSelectedKey==8">
+            <work-close :model="model" :pms="pms" :permit-model="permitModel"></work-close>
+        </div>
+    </div>
+</div>
+<user-select-modal :single-select="!userMulti" :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>

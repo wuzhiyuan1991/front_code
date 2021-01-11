@@ -1,0 +1,34 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="编码" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="设备设施类型名" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="是否禁用" prop="disable" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.disable" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+	</div>
+
+	
+</div>
+
+
+
+

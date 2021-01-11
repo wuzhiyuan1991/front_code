@@ -1,0 +1,146 @@
+<div class="review-container">
+    <!-- 要素树 -->
+    <div class="review-left">
+        <div class="title">{{tableName}}</div>
+        <div class="tree-box">
+            <div class="type-tabs">
+                <a href="javascript:void(0);" @click="getSelfData" :class="{'active': isFilter}">我的</a>
+                <a href="javascript:void(0);" @click="getAllData" :class="{'active': !isFilter}">全部</a>
+            </div>
+            <ul class="member-select-left-tree" style="margin-top: 5px;height: calc(100% - 50px);"
+                v-show="treeModel.data.length > 0">
+                <iv-tree :model="treeModel.data"
+                         :selected-datas.sync="treeModel.selectedData"
+                         :show-checkbox="false"
+                         :single-select="true"
+                         :trigger-parent-event="false"
+                         @on-tree-node-click="doTreeNodeClick"
+                         display-attr="elementName"
+                ></iv-tree>
+            </ul>
+        </div>
+    </div>
+    <!-- 审核项 -->
+    <div class="review-right" v-show="treeModel.data.length > 0" v-el:right-box>
+        <div class="top-head">
+            <!--<Icon type="ios-photos"></Icon>-->
+            <!--<span>评分</span>-->
+            <ul style="display: inline-flex;">
+                <li class="s-result-item checked">附件</li>
+            </ul>
+            <div class="right">
+                <iv-button type="ghost" @click="doRefresh">刷新</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="top-body" v-el:right-content style="display: flex;padding: 0;overflow-y: hidden;">
+
+            <!--上传文件-->
+            <div style="width: 50%;padding: 20px;border-right: 1px solid #ccc;height: 99%;">
+                <div style="color: #999;font-size:12px;border-bottom: 1px solid #e9e9e9; margin-bottom:20px;">
+                    <div style="display: flex;align-items: center;justify-content: space-between;height: 40px;">
+                        <div>
+                            <strong>上传文件</strong>
+                            <span style="font-size: 12px;">（支持 word、excel、pdf; 单个文件最大10MB）</span>
+                        </div>
+                        <vi-date-picker type="daterange"  shortcuts="daterange" :value.sync="dateRange" placeholder="选择日期范围" style="width:180px;"></vi-date-picker>
+                    </div>
+                </div>
+                <div :style="styles">
+                    <div v-for="(no, list) in scoreFileList" class="c-audit-file-box">
+                        <div class="c-audit-folder" :class="{'warn': !list.todayUpload}">
+                            <Icon :type="arrowIconType(list)" style="width: 15px;" @click="toggleFolder(list)"></Icon>
+                            <file-icon size="24" ext="folder"></file-icon>
+                            <div class="c-audit-folder-name">{{list.name}}</div>
+                            <span class="c-audit-folder-hz">频率： {{displayHzName(list.frequencyType)}}</span>
+                            <vue-file-upload
+                                    v-if="isFilter && !isFreeze"
+                                    @on-success-upload="onUploadSuccess"
+                                    @on-upload-complete="onUploadComplete"
+                                    @on-before-upload="onBeforeUpload"
+                                    @on-error-upload="onUploadComplete"
+                                    :params="fileModel.params"
+                                    :filters="fileModel.filters"
+                                    class="file_upload"
+                                    custom-style
+                            >
+                                <a href="javascript:void(0);" @click="setRecordId(list.id)">上传文件</a>
+                            </vue-file-upload>
+                        </div>
+                        <div style="padding-left: 20px;" v-show="list.show">
+                            <div v-for="(i, item) in list.files">
+                                <h4 style="margin: 10px 0 10px;border-bottom: 1px solid #ccc;line-height: 30px;">{{item.month}} <span style="padding: 1px 6px;background-color: #f0f0f0;margin-left: 5px;">{{item.files.length}}</span></h4>
+                                <ul class="c-audit-file-lb">
+                                    <li v-for="(index, f) in item.files" class="c-audit-file-item">
+                                        <file-icon size="20" :ext="f.fileExt"></file-icon>
+                                        <div class="c-audit-file-name" @click="doFileClick(f)">{{f.name}}</div>
+                                        <a href="javascript:;" class="caf-preview" @click="doPreview(f)">预览</a>
+                                        <span class="c-audit-file-createAt">{{f.createDate}}</span>
+                                        <Icon type="close-circled" v-show="showUploadRemoveIcon" @click.stop.prevent="doDeleteFile(f.fileId)"></Icon>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div v-show="list.showMore === 1" style="text-align: center;">
+                                <a @click="showMoreFile(list, 2)" href="javascript:void(0);"style="color:blue;">更多</a>
+                            </div>
+                            <div v-show="list.showMore === 2" style="text-align: center;">
+                                <a @click="showMoreFile(list, 1)" href="javascript:void(0);"style="color:blue;">收起</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!--审核列表文件-->
+            <div style="width: 50%;padding: 20px;">
+                <div style="height: 30px;line-height: 30px;color: #999;font-size:12px;border-bottom: 1px solid #e9e9e9; margin-bottom:20px;">
+                    <p><strong>{{$t('bc.ria.auditFile')}}</strong></p>
+                </div>
+                <div style="max-height: calc(100% - 50px);overflow-y: auto;margin-right: -20px;padding-right: 10px;">
+                    <div v-for="(no, list) in tableFileList" class="c-audit-file-box">
+                        <div class="c-audit-folder">
+                            <Icon :type="arrowIconType(list)" style="width: 15px;" @click="toggleFolder(list)"></Icon>
+                            <file-icon size="24" ext="folder"></file-icon>
+                            <div class="c-audit-folder-name">{{list.name}}</div>
+                            <span class="c-audit-folder-hz">频率： {{displayHzName(list.frequencyType)}}</span>
+                        </div>
+
+                        <ul class="c-audit-file-lb"  v-show="list.show">
+                            <li v-for="(index, f) in list.files" class="c-audit-file-item">
+                                <file-icon size="20" :ext="f.fileExt"></file-icon>
+                                <div class="c-audit-file-name" @click="doFileClick(f)">{{f.name}}</div>
+                                <a href="javascript:;" class="caf-preview" @click="doPreview(f)">预览</a>
+                                <span class="c-audit-file-createAt">{{f.createDate}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="c-audit-file-lb" style="padding-left: 0;margin-top: 30px;">
+                        <li v-for="(index, f) in elementFiles" class="c-audit-file-item">
+                            <file-icon size="20" :ext="f.fileExt"></file-icon>
+                            <div class="c-audit-file-name" @click="doFileClick(f)">{{f.name}}</div>
+                            <a href="javascript:;" class="caf-preview" @click="doPreview(f)">预览</a>
+                            <span class="c-audit-file-createAt">{{f.createDate}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="review-right" v-show="showLoading" style="display: flex;justify-content: center;align-items: center;position: absolute;height: calc(100% - 20px);width: 100%;z-index: 10;">
+        <div class="bg-rotate-loader"></div>
+    </div>
+    <div class="review-right" v-show="emptyResult">
+        <p class="empty-tip">没有需要评分的项</p>
+    </div>
+    <div class="userSelectModal ivu-modal-wrap" v-show="isUploading">
+        <div class="ivu-modal-mask" style="display: flex;align-items: center;justify-content: center;">
+            <div style="height: 100px;width: 450px;background-color: #fff;border-radius: 3px;padding: 20px 10px; line-height: 30px;">
+                <p>已上传： {{successLength}} / {{totalLength}}</p>
+                <Progress :percent="uploadPercent" status="active" :stroke-width="16" hide-info></Progress>
+            </div>
+        </div>
+    </div>
+</div>

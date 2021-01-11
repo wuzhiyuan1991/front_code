@@ -1,0 +1,350 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="beforedoAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form"   :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+<!--					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >-->
+<!--						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+<!--					</el-form-item>-->
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="attr1" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.attr1" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.attr1)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="单位名称" prop="deptName" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.deptName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="单位地址" prop="deptAddr" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.deptAddr" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="企业类型" prop="compType" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.compType" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<span style="font-size: 14px;" v-if="mainModel.isReadOnly">{{ getDataDic('comp_type', mainModel.vo.compType) }}</span>
+						<i-select clearable :model.sync="mainModel.vo.compType" :list="getDataDicList('comp_type')" v-else></i-select>
+					</el-form-item>
+					<el-form-item label="法人代表" prop="corporation" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.corporation" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="经营范围" prop="businessScope" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.businessScope" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="营业执照编号" prop="licenceNo" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.licenceNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+
+					<el-form-item label="服务类别" prop="serviceType" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.serviceType" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<span style="font-size: 14px;" v-if="mainModel.isReadOnly">{{ getDataDic('service_type', mainModel.vo.serviceType) }}</span>
+						<i-select clearable :model.sync="mainModel.vo.serviceType" :list="getDataDicList('service_type')" v-else></i-select>
+					</el-form-item>
+
+					<el-form-item label="服务资质" prop="qualification" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.qualification" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--						<span style="font-size: 14px;" v-if="mainModel.isReadOnly">{{ getDataDic('service_qualification', mainModel.vo.qualification) }}</span>-->
+<!--						<i-select clearable :model.sync="mainModel.vo.qualification" :list="getDataDicList('service_qualification')" v-else></i-select>-->
+
+						<div v-if="mainModel.isReadOnly" class="exam-paper-point">
+							<div class="ivu-tag" v-for="item in mainModel.vo.qualifications">
+								<span class="ivu-tag-text">{{ getDataDic('service_qualification', item) }}</span>
+							</div>
+						</div>
+						<i-select v-else multiple clearable :model.sync="mainModel.vo.qualifications" :list="getDataDicList('service_qualification')" ></i-select>
+
+					</el-form-item>
+					<el-form-item label="资质等级"  prop="qualificationLevel" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.qualificationLevel" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<div :class="{'rel-info-panel-mask': !mainModel.vo.qualifications.length}">
+							<span style="font-size: 14px;" v-if="mainModel.isReadOnly">{{ getDataDic('qualification_level', mainModel.vo.qualificationLevel) }}</span>
+							<i-select clearable :model.sync="mainModel.vo.qualificationLevel" :list="getDataDicList('qualification_level')" v-else></i-select>
+
+						</div>
+					</el-form-item>
+					<el-form-item label="资质证书" prop="certificate" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.certificate" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<ul v-show='mainModel.action != "copy"'>
+							<li v-for="(index, file) in mainModel.fileList" class="cert-file-item" @click="doClickFile(index)">
+								<div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+								<Icon v-show="!mainModel.isReadOnly" class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index, 0)"></Icon>
+							</li>
+						</ul>
+						<iv-button type="text" v-show='mainModel.action != "copy" && !mainModel.isReadOnly && mainModel.fileList.length<9' style="padding:0;color:#33A6FF" @click="uploadClicked(0)" >上传</iv-button>
+
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="证书有效截止日期" prop="cetDeadline" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.cetDeadline" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.cetDeadline)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="联系人" prop="linkman" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.linkman" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="联系电话（手机）" prop="mobilePhone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.mobilePhone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="联系电话（座机）" prop="telephone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.telephone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="注册资金" prop="registerCapital" class="small-info-box" >
+						<iv-input type="number" :value.sync="mainModel.vo.registerCapital" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="雇员人数" prop="empNum" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.empNum" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="健康安全环保协议" prop="securityAgreement" class="small-info-box" >
+						<ul v-show='mainModel.action != "copy"'>
+							<li v-for="(index, file) in mainModel.fileList1" class="cert-file-item" @click="doClickFile(index)">
+								<div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+								<Icon  v-show="!mainModel.isReadOnly" class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index, 1)"></Icon>
+							</li>
+						</ul>
+						<iv-button type="text" v-show='mainModel.action != "copy" && !mainModel.isReadOnly && mainModel.fileList1.length<9' style="padding:0;color:#33A6FF" @click="uploadClicked(1)" >上传</iv-button>
+					</el-form-item>
+					<el-form-item label="健康安全环保协议有效期" prop="agreementDeadline" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.agreementDeadline" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.agreementDeadline)" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+
+		</div>
+	</div><!-----   文件相关  ----->
+	<vue-file-upload
+			v-ref:uploader
+			style="display: none;"
+			:multi-selection="true"
+			:params="uploadModel.params"
+			@on-before-upload="doUploadBefore"
+			@on-success-upload="doUploadSuccess"
+			@on-upload-complete="onUploadComplete"
+			:filters="uploadModel.filters">
+	</vue-file-upload>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item" style="min-height: 750px;" >
+				<simple-card v-ref:simpcard :show-content.sync="cardModel.contractorEmpCardModel.showContent"  filter filter-when>
+					<p slot="title"><i class="basicPng"></i><span>承包商人员</span></p>
+					<a slot="extra" @click.prevent="cardModel.contractorEmpCardModel.showContent = !cardModel.contractorEmpCardModel.showContent;" >
+						<span v-if="cardModel.contractorEmpCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+						<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+					<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doImport" >
+						<span><Icon type="plus"></Icon>导入</span>
+					</a>
+					<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doExport" >
+						<span><Icon type="ios-cloud-download-outline"></Icon>导出</span>
+					</a>
+					<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowContractorEmpFormModal4Create" >-->
+						<!--<span><Icon type="plus"></Icon>添加</span>-->
+					<!--</a>-->
+					<div style="display: flex;align-items:flex-start;width:100%">
+						<div class="table-box-border" :style="tableModel.contractorEmpTableModel.lists.length>0?'width:50%;height: auto;':'width:100%'"  >
+							<div class="table-box-border-tools">
+								<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowContractorEmpFormModal4Create" >
+									<span><Icon type="plus"></Icon>新增</span>
+								</a>
+								<a v-if="tableModel.contractorEmpTableModel.lists.length>0" slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowContractorEmpFormModal4Update" >
+									<span><Icon type="compose"></Icon>编辑</span>
+								</a>
+								<a v-if="tableModel.contractorEmpTableModel.lists.length>0" slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doRemoveContractorEmp" >
+									<span><Icon type="trash-a"></Icon>删除</span>
+								</a>
+								<a v-if="tableModel.contractorEmpTableModel.lists.length>0" slot="extra" v-show="mainModel.opType != 'create' && tableModel.contractorEmpTableModel.cureObj &&tableModel.contractorEmpTableModel.cureObj.disable=='1'" @click.prevent="changeDisable(0)" >
+									<span><Icon type="plus"></Icon>驻场</span>
+								</a>
+								<a v-if="tableModel.contractorEmpTableModel.lists.length>0" slot="extra" v-show="mainModel.opType != 'create' && tableModel.contractorEmpTableModel.cureObj &&tableModel.contractorEmpTableModel.cureObj.disable=='0'" @click.prevent="changeDisable(1)" >
+									<span><Icon type="close"></Icon>离场</span>
+								</a>
+							</div>
+							<vue-bootstrap-table
+									:page-size-opts=[10]
+									:setting="tableModel.contractorEmpTableModel"
+									@on-del-row="doRemoveContractorEmp"
+									@on-edit-row="doShowContractorEmpFormModal4Update"
+									v-ref:contractoremp-table
+									:selected-datas.sync="seleceDatas"
+									@on-click-cell="onClickRow"
+									@on-data-loaded="changeSelect"
+									:values.sync='tableModel.contractorEmpTableModel.lists'
+									is-single-check
+									iscache-selected-data
+							>
+							</vue-bootstrap-table>
+						</div>
+						<div  class="contractor-right" v-show="tableModel.contractorEmpTableModel.cureObj">
+							<div class="contractor-right-title">
+								<div class="contractor-right-left">
+									<span>{{tableModel.contractorEmpTableModel.cureObj.name}}</span>
+									<span v-show="tableModel.contractorEmpTableModel.cureObj.disable=='0'" class="labelIcon">驻场</span>
+									<span v-show="tableModel.contractorEmpTableModel.cureObj.disable=='1'" style="background: red;" class="labelIcon" >离场</span>
+								</div>
+								<div class="contractor-right-left">
+									<span v-show="tableModel.contractorEmpTableModel.cureObj.disable=='0'" @click="changeDisable('1')" class="contractor-link"><Icon type="close"></Icon>离场</span>
+									<span v-show="tableModel.contractorEmpTableModel.cureObj.disable=='1'" class="contractor-link" @click="changeDisable('0')"><Icon type="plus"></Icon>驻场</span>
+									<Icon type="compose" @click="doShowContractorEmpFormModal4Update" class="contractor-link">编辑</Icon>
+									<Icon type="trash-a" @click="doRemoveContractorEmp" class="contractor-link">删除</Icon>
+								</div>
+							</div>
+							<div class="contractor-right-body">
+								<div class="contractor-right-body-top">
+									<div class="contractor-right-body-top-list">
+										<span class="contractor-right-body-top-list-label">年龄</span>
+										<span class="contractor-right-body-top-list-content">{{tableModel.contractorEmpTableModel.cureObj.age}}</span>
+										<span class="contractor-right-body-top-list-label">性别</span>
+										<span class="contractor-right-body-top-list-content">{{getDataDic('sex',tableModel.contractorEmpTableModel.cureObj.sex)}}</span>
+									</div>
+									<div class="contractor-right-body-top-list">
+										<span class="contractor-right-body-top-list-label">身份证号</span>
+										<span class="contractor-right-body-top-list-content">{{tableModel.contractorEmpTableModel.cureObj.idNumber}}</span>
+										<span class="contractor-right-body-top-list-label">联系电话</span>
+										<span class="contractor-right-body-top-list-content">{{tableModel.contractorEmpTableModel.cureObj.telephone}}</span>
+									</div>
+									<div class="contractor-right-body-top-list">
+										<span class="contractor-right-body-top-list-label">工种</span>
+										<span class="contractor-right-body-top-list-content">{{getWorkTypeRel}}</span>
+									</div>
+									<div class="contractor-right-body-top-list">
+										<span class="contractor-right-body-top-list-label">备注</span>
+										<span style="white-space: pre-wrap" class="contractor-right-body-top-list-content">{{tableModel.contractorEmpTableModel.cureObj.remark}}</span>
+									</div>
+								</div>
+							</div>
+							<div style="padding:10px;">
+								<div style="text-align: right;margin-bottom:10px;" @click="doAddrel" class="contractor-link"><Icon type="plus" ></Icon>添加</div>
+								<lite-table
+										:columns="tableModel.ptwJsaReferenceDetailTableModel.columns"
+										:values="tableModel.contractorEmpTableModel.cureObj.certRel"
+										:tools=tableTools
+										:page-size-opts="[10]"
+										show-sequence
+										@on-update="doEditrel"
+										@on-delete="removeRel"
+										show-page
+
+								></lite-table>
+							</div>
+						</div>
+					</div>
+				</simple-card>
+		</div>
+	</div>
+</div>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+
+<!-- 弹框 -->
+<cert-rel-form-modal :check-list="checkList" v-ref:edit-model :visible.sync="editModel.show" :title="editModel.title" @do-add="addRel" @do-update="updateRel"></cert-rel-form-modal>
+
+<contractoremp-form-modal
+		:visible.sync="formModel.contractorEmpFormModel.show"
+		@do-save="doSaveContractorEmp"
+		@do-update="doUpdateContractorEmp"
+		:query-url="formModel.contractorEmpFormModel.queryUrl"
+		:hidden-fields="formModel.contractorEmpFormModel.hiddenFields"
+		v-ref:contractoremp-form-modal>
+</contractoremp-form-modal>
+
+<style>
+	.contractor-right{
+		width:50%;
+		flex:1;
+		margin-left:5px;
+		border:1px solid #ddd;
+	}
+	.contractor-right-title{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px solid #ddd;
+		background: #EEF3F5;
+		padding: 5px;
+	}
+	.contractor-right-left{
+		display: flex;
+		align-items: center;
+		margin:5px 10px;
+		font-size:14px;
+	}
+	.labelIcon{
+		padding:0 5px;
+		background: rgb(170, 205, 3);
+		color:#fff;
+		display: inline-block;
+		margin-left:10px;
+	}
+	.contractor-link{
+		color:#3c8dbc;
+		display: block;
+		margin-left:10px;
+		cursor:pointer;
+	}
+	.contractor-link:hover{
+		color:#5cadff
+	}
+	.contractor-right-body{
+		padding:10px;
+	}
+	.contractor-right-body-top{
+		padding-bottom: 10px;
+		border-bottom: 1px dashed #ddd;
+
+	}
+	.contractor-right-body-top-list{
+		display: flex;
+		margin-top:10px;
+	}
+	.contractor-right-body-top-list-label{
+		width:70px;
+		color:#999;
+		font-size: 12px;
+	}
+	.contractor-right-body-top-list-content{
+		width: 180px;
+		font-size: 14px;
+		word-break: break-all;
+		margin-left: 10px;
+		margin-right: 30px;
+	}
+
+	.table-box-border{
+		border:1px solid #ddd;
+	}
+	.table-box-border-tools a{
+		display: inline-block;
+		margin:10px;
+	}
+
+</style>

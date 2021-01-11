@@ -1,0 +1,152 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<!-- <vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:80px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					
+					<el-form-item :label="$t('gb.common.name')" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!-- <el-form-item label="分组类型" prop="type" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('smoc_smoc_template_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('smoc_smoc_template_type')" clearable></i-select>
+					</el-form-item> -->
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<!-- <el-form-item label="模板内容" prop="content" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item> -->
+				
+				</iv-row>
+			
+			
+					
+			</el-form>
+		</div>
+		<div class="rel-info-panel" >
+
+			<div class="rel-info-panel-content-tabs">
+			
+				<div class="rip-item">
+					<simple-card :show-content.sync="cardModel.showContent">
+						<p slot="title"><i class="basicPng"></i><span>分组</span></p>
+					
+						<a slot="extra" v-show="!mainModel.isReadOnly"
+							@click.prevent="doShowCheckBasisSelectModal()">
+							<span>
+								<Icon type="plus"></Icon>添加
+							</span>
+						</a>
+
+
+						<simple-card  class="rip-item-sub" v-for="(index, group) in riskItems" v-ref:groupcrad1>
+							<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+								<div class="left" style="width: 300px;">{{group.name}}</div>
+								<div class="right"  v-show="!mainModel.isReadOnly">
+								
+									<vi-button type="text" icon="plus"
+										@click="doShowItemFormModal4Create(group, index)">{{$t('bc.ria.append')}}
+									</vi-button>
+
+									<iv-dropdown trigger="click" placement="top-end">
+										<vi-button type="text" icon="more">更多</vi-button>
+										<iv-dropdown-menu slot="list">
+											<iv-dropdown-item @click="doShowGroupFormModal4Update(group, index)">
+												<a href="javascript:void(0);">
+													<Icon type="edit"></Icon>
+													<span>编辑分组名称</span>
+												</a>
+											</iv-dropdown-item>
+											
+											<iv-dropdown-item @click="doMove(-1, group, index)">
+												<a href="javascript:void(0);">
+													<Icon type="arrow-up-a"></Icon>
+													<span>上移</span>
+												</a>
+											</iv-dropdown-item>
+
+											<iv-dropdown-item @click="doMove(1, group, index)">
+												<a href="javascript:void(0);">
+													<Icon type="arrow-down-a"></Icon>
+													<span>下移</span>
+												</a>
+											</iv-dropdown-item>
+											<iv-dropdown-item @click="doRemoveGroup(group, index)">
+												<a href="javascript:void(0);">
+													<Icon type="trash-a"></Icon>
+													<span>{{$t("gb.common.del")}}</span>
+												</a>
+											</iv-dropdown-item>
+										</iv-dropdown-menu>
+									</iv-dropdown>
+								</div>
+							</div>
+
+							<vue-bootstrap-table :setting="checkBasisTableModel" @click="groupIndex=index"	@on-click-cell="doTableCellClick"
+								@on-edit-row="doEidtGroup" @on-del-row="doRemoveCheckBasis" @on-move-row="domoveGroup" :page-size-opts='[2000]' :values="group.riskItems"
+								show-pager="false" >
+
+							</vue-bootstrap-table>
+
+						</simple-card>
+						<!--</group-partial>-->
+					</simple-card>
+				</div>
+	
+						
+	
+						
+	
+	
+	
+	
+			
+	
+	
+	
+	
+				</el-tabs>
+			</div>
+		</div>
+	</div>
+
+
+
+</div>
+
+<add-group :visible="addGroup.visible" @do-save="doSaveItem"></add-group>
+
+
+<Modal :visible.sync="add.visible" title="模板" :footer-hide="true">
+
+	<div class="epc-content" style="position: relative;background-color: white;">
+		<el-form :model="add" :rules="add.rules" v-ref:addform>
+
+			<el-form-item label="分组名" prop="name">
+				<iv-input :value.sync="add.name"></iv-input>
+			</el-form-item>
+
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="add.visible=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+		<vi-button type="primary" @click="doAddGroupName" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>

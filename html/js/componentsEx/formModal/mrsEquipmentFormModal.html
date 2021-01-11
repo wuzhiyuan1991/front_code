@@ -1,0 +1,54 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('quantity') == -1)" label="数量" prop="quantity">
+						<iv-input :value.sync="mainModel.vo.quantity" :disabled="(disabledFields.indexOf('quantity') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsId') == -1)" label="重大危险源" prop="mrs.id">
+						<input-select :value="mainModel.vo.majorRiskSource" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('majorRiskSource') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowMajorRiskSourceSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="类型" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icpe_mrs_equipment_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('icpe_mrs_equipment_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('manufacturer') == -1)" label="生产厂家" prop="manufacturer">
+						<iv-input :value.sync="mainModel.vo.manufacturer" :disabled="(disabledFields.indexOf('manufacturer') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('nominalDiameter') == -1)" label="公称直径" prop="nominalDiameter">
+						<iv-input :value.sync="mainModel.vo.nominalDiameter" :disabled="(disabledFields.indexOf('nominalDiameter') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('parentId') == -1)" label="父" prop="parentId">
+						<iv-input :value.sync="mainModel.vo.parentId" :disabled="(disabledFields.indexOf('parentId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('pipingMaterial') == -1)" label="管道材质" prop="pipingMaterial">
+						<iv-input :value.sync="mainModel.vo.pipingMaterial" :disabled="(disabledFields.indexOf('pipingMaterial') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('productionDate') == -1)" label="出厂日期" prop="productionDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.productionDate" :disabled="(disabledFields.indexOf('productionDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.productionDate)" :disabled="(disabledFields.indexOf('productionDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('specification') == -1)" label="规格型号" prop="specification">
+						<iv-input :value.sync="mainModel.vo.specification" :disabled="(disabledFields.indexOf('specification') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('storageMedium') == -1)" label="储存介质" prop="storageMedium">
+						<iv-input :value.sync="mainModel.vo.storageMedium" :disabled="(disabledFields.indexOf('storageMedium') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('wallThickness') == -1)" label="工程壁厚" prop="wallThickness">
+						<iv-input :value.sync="mainModel.vo.wallThickness" :disabled="(disabledFields.indexOf('wallThickness') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<majorrisksource-select-modal :visible.sync="selectModel.majorRiskSourceSelectModel.visible" :filter-data="selectModel.majorRiskSourceSelectModel.filterData" single-select @do-save="doSaveMajorRiskSource"></majorrisksource-select-modal>

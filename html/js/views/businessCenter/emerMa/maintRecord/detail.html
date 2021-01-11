@@ -1,0 +1,106 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="类别" prop="type">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_maint_record_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('iem_maint_record_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="应急资源名称" prop="emerResource.id">
+						<input-select :value="mainModel.vo.emerResource" id-field="id" display-field="name" @do-clear-input="doClearEmerRecource" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowEmerResourceSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="技术要求或功能要求">
+						<iv-input :value.sync="mainModel.vo.emerResource.reqirement" :textonly="mainModel.isReadOnly" disabled></iv-input>
+					</el-form-item>
+					<el-form-item label="规格/型号">
+						<iv-input :value.sync="mainModel.vo.emerResource.specification" :textonly="mainModel.isReadOnly" disabled></iv-input>
+					</el-form-item>
+					<el-form-item label="数量">
+						<iv-input :value.sync="quantity" :textonly="mainModel.isReadOnly" disabled></iv-input>
+					</el-form-item>
+					<el-form-item label="属地">
+						<iv-input :value.sync="mainModel.vo.emerResource.dominationArea.name" :textonly="mainModel.isReadOnly" disabled></iv-input>
+					</el-form-item>
+					<el-form-item label="存储地点">
+						<iv-input :value.sync="mainModel.vo.emerResource.location" :textonly="mainModel.isReadOnly" disabled></iv-input>
+					</el-form-item>
+					<el-form-item label="维护保养日期" prop="maintTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"  :selected-date.sync="mainModel.vo.maintTime" clearable time-zero></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.maintTime.slice(0,10)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item	label='下次维护保养日期'	prop="nextMaintTime">
+						<date-picker v-if="!mainModel.isReadOnly && !isNextMaintTimeReadonly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.nextMaintTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.nextMaintTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="数量" prop="maintQuantity">
+						<div v-if="!mainModel.isReadOnly">
+							<iv-input-number  is-integer :value.sync="mainModel.vo.maintQuantity" :textonly="mainModel.isReadOnly" style="width:60%;"></iv-input-number>
+							<span style="font-size: 12px;">
+								<span>{{mainModel.vo.emerResource.unit}}</span>
+								<iv-checkbox :value="0" :checked="maintAll" style="float: right;margin-left: 10px" @change="doAllQuantityChange">
+									<span>所有</span>
+								</iv-checkbox>
+							</span>
+						</div>
+						<span style="font-size:14px;" v-else>{{maintQuantity}}</span>
+					</el-form-item>
+					<el-form-item label="作业类别" prop="operationType">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('is_inside', mainModel.vo.operationType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.operationType" :list="getDataDicList('is_inside')" clearable></i-select>
+					</el-form-item>
+
+					<el-form-item  label="作业操作人员" prop="operators">
+						<div v-if="mainModel.vo.operationType == 1">
+							<div v-if="mainModel.isReadOnly" class="exam-paper-point">
+								<div class="ivu-tag" v-for="tag in mainModel.vo.users">
+									<span class="ivu-tag-text">{{tag.name}}</span>
+								</div>
+							</div>
+							<div v-else class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point" @click.prevent="doShowUserSelectModal()">
+								<div class="ivu-select-selection" style="line-height: 24px;">
+									<div class="ivu-tag" v-for="(index, tag) in mainModel.vo.users">
+										<span class="ivu-tag-text">{{tag.name}}</span>
+										<i class="ivu-icon ivu-icon-ios-close-empty" @click.stop="doRemoveUser(index)"></i>
+									</div>
+								</div>
+								<span style="font-size: 16px;" class="select-ico-add">
+									<i class="ivu-icon ivu-icon-plus"></i>
+								</span>
+							</div>
+						</div>
+						<iv-input v-else :value.sync="mainModel.vo.operators" :textonly="mainModel.isReadOnly" :disabled="mainModel.vo.operationType != 2"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业内容" prop="operationContent" full-width>
+						<iv-textarea v-if="!mainModel.isReadOnly" :rows="4" :value.sync="mainModel.vo.operationContent" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.operationContent}}</span>
+
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<emerresource-select-modal :visible.sync="selectModel.emerResourceSelectModel.visible" :filter-data="selectModel.emerResourceSelectModel.filterData" single-select @do-save="doSaveEmerResource"></emerresource-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>
+

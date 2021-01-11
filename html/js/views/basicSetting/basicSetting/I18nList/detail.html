@@ -1,0 +1,41 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.chinese')" prop="zhValue">
+						<iv-input :value.sync="mainModel.vo.zhValue" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.english')" prop="enValue">
+						<iv-input :value.sync="mainModel.vo.enValue" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.model')" prop="moduleName">
+						<iv-input :value.sync="mainModel.vo.moduleName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remarks">
+						<iv-input type="textarea" :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasPermission('1010007002')" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly && hasPermission('1010007001')" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button type="ghost" class="mp-header-item-btn" v-if="!mainModel.isReadOnly && isEditStatus" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly　&& mainModel.vo.id != null && hasPermission('1010007003')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>

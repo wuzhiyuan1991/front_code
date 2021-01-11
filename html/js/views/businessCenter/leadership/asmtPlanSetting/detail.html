@@ -1,0 +1,61 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  label="编码" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="是否禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="结束时间" prop="endTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endTime"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endTime" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="频率类型" prop="frequencyType">
+						<iv-input :value.sync="mainModel.vo.frequencyType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="是否重复" prop="isRepeatable">
+						<iv-input :value.sync="mainModel.vo.isRepeatable" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="是否包含周末" prop="isWeekendInculed">
+						<iv-input :value.sync="mainModel.vo.isWeekendInculed" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="时间间隔" prop="period">
+						<iv-input :value.sync="mainModel.vo.period" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="开始时间" prop="startTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startTime"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startTime" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="间隔单位" prop="unit">
+						<iv-input :value.sync="mainModel.vo.unit" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>
+
+

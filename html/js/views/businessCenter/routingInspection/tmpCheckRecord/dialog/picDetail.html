@@ -1,0 +1,14 @@
+<div class="edit-pop-container">
+    <!--epc-content-row-space 控制每一行的间距-->
+    <div class="epc-content" :rules="rules" style="height: 300px">
+        <el-form  :model="mainModel.vo" v-ref:ruleform>
+            <el-form-item label="备注" >
+                <iv-input type="textarea" textonly :value.sync="mainModel.vo.remarks"></iv-input>
+            </el-form-item>
+            <el-form-item label="现场图片">
+                <image-view :images=" mainModel.vo.pictures" :show-close="false"></image-view>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+

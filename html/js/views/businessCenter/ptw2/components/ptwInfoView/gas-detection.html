@@ -1,0 +1,212 @@
+<simple-card style="width:750px;">
+    <p slot="title" class="ptw-title">气体检测</p>
+
+    <!--<div >-->
+        <!--<div class="flex-layout-between">-->
+        <!--</div>-->
+    <!--</div>-->
+    <div id="imageBoxxx" style="padding-left:9px;">
+        <div style="padding-bottom: 20px;">
+            <p class="base-border-bottom mb10">需要检测的气体</p>
+            <div style="padding-left:110px;">
+                <div class="flex-layout mb10">
+                    <span class="form-item-label color-item-999 mr10" >有毒有害气体或蒸汽</span>
+                    <span class="flex-grow1 ">
+                    <span v-for="item in gasHarmList">
+                        <input disabled type="checkbox" :checked="item.attr1 == '1'" />
+                        {{item.name}}
+                    </span>
+                </span>
+                </div>
+                <div class="flex-layout mb10">
+                    <span class="form-item-label color-item-999 mr10" >可燃气体或蒸汽</span>
+                    <span class="flex-grow1 ">
+                    <span v-for="item in gasCombustibleList">
+                        <input disabled type="checkbox" :checked="item.attr1 == '1'" />
+                        {{item.name}}
+                    </span>
+                </span>
+                </div>
+                <div class="flex-layout mb10">
+                    <span class="form-item-label color-item-999 mr10" >氧气</span>
+                    <span class="flex-grow1 ">
+                    <span v-for="item in gasOxygenList">
+                        <input disabled type="checkbox" :checked="item.attr1 == '1'" />
+                        {{item.name}}
+                    </span>
+                </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            <p class="base-border-bottom mb10">气体检测方式</p>
+            <div style="padding-left:110px;">
+                <iv-radio-group :model.sync="model.gasCheckMethod">
+                    <!--<iv-radio value="3">全部数据</iv-radio>-->
+                    <iv-radio disabled value="1">
+                        不按照部位检查
+                    </iv-radio>
+                    <div style="margin-bottom:8px;"></div>
+                    <iv-radio disabled value="2">
+                        按照部位检查
+                        <div style="display: flex;align-items: center;">
+                            <input style="margin-left:10px;" disabled type="checkbox" :checked="model.gasCheckMethod=='2' &&  model.gasCheckPosition.indexOf('1')>-1" />
+                            <label>上部</label>
+                            <input style="margin-left:10px;" disabled type="checkbox" :checked="model.gasCheckMethod=='2' &&  model.gasCheckPosition.indexOf('2')>-1" />
+                            <label>中部</label>
+                            <input style="margin-left:10px;" disabled type="checkbox" :checked="model.gasCheckMethod=='2' &&  model.gasCheckPosition.indexOf('3')>-1" />
+                            <label>下部</label>
+                        </div>
+                    </iv-radio>
+                </iv-radio-group>
+            </div>
+
+
+            <p class="base-border-bottom mb10 mt20">作业中检查模式</p>
+            <div style="padding-left:110px;">
+                <iv-radio-group :model.sync="model.gasCheckType">
+                    <!--<iv-radio value="3">全部数据</iv-radio>-->
+                    <iv-radio disabled value="1">
+                        定期检查
+                    </iv-radio>
+                    <div>
+                        <span class="flex-grow1"> </span>
+                        <!--<p>{{enum.gasCheckType[model.gasCheckType]}}</p>-->
+                        <p style="padding-left:1em;margin-top:10px;" v-if="model.gasCheckCycle>0" class="flex-v-center-warp "> <input type="checkbox" checked disabled />检测频率设定：每{{model.gasCheckCycle}}{{enum.gasCheckCycleUnit[model.gasCheckCycleUnit]}} &nbsp;&nbsp; 执行一次</p>
+                        <p style="padding-left:1em;margin-top:10px;margin-bottom:15px;" v-if="model.gasCheckNoticeTime>0" class="flex-v-center-warp "> <input type="checkbox" checked disabled />到期提醒设定：提前{{model.gasCheckNoticeTime}}分钟 &nbsp;&nbsp;提醒</p>
+                    </div>
+                    <iv-radio disabled value="2">
+                        持续检查
+                    </iv-radio>
+                </iv-radio-group>
+            </div>
+
+            <!--<p class="base-border-bottom mb10">作业中检查模式</p>-->
+            <!--<div class=" mb10" v-if="model.gasCheckType==">-->
+                <!--<iv-radio disabled checked>定期检查</iv-radio>-->
+                <!---->
+            <!--</div>-->
+            <!--<div class=" mb10">-->
+                <!--<iv-radio checked disabled value="1">定期检查</iv-radio>-->
+            <!--</div>-->
+        </div>
+        <!--<div>-->
+            <!--<p class="base-border-bottom mb5 base-border-bottom">需要检测的气体</p>-->
+            <!--<div class="flex-layout mb20" v-for="gas of gasTypeList" v-if="gas.item&&gas.item.length>0">-->
+                <!--<div class="form-item-label">-->
+                    <!--{{gas.name}}-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--<ul class="ul-inside" v-if="gas.items.length>0">-->
+                        <!--<li v-for="item of gas.items">-->
+                            <!--{{item.isExtra==1?item.content:item.name}}-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="mb20" >
+            <p class="base-border-bottom mb5 mt20">作业前检查</p>
+            <!--<div :class="{'base-border-bottom':index+1!=checkBeforeRecords.length}"-->
+                 <!--v-for="(index,checkBefore) of checkBeforeRecords">-->
+            <!--<div class="flex-layout mb10">-->
+                <!--<span class="form-item-label">检测地点</span>-->
+                <!--<span class="flex-grow1">{{checkBefore.detectSite}}</span>-->
+            <!--</div>-->
+            <!--<div class="flex-layout mb10">-->
+                <!--<span class="form-item-label">检测时间</span>-->
+                <!--<span class="flex-grow1">{{checkBefore.detectTime}}</span>-->
+            <!--</div>-->
+            <div class="flex-layout mb10">
+                <span class="form-item-label color-item-999 mr10" >检测结论</span>
+                <span class="flex-grow1 ">
+                    {{model.promiseList['9']}}
+                </span>
+            </div>
+            <div class="flex-layout mb20">
+                <span class="form-item-label color-item-999 mr10" >授权气体检测员</span>
+                <span class="flex-grow1 lite-box-height-auto" v-if="model.gasInspector">
+                    <!--<image-view image-style="height:20px;width:auto;" v-if="checkBefore&&checkBefore.length>0&&checkBefore[0].signFiles"  :images="checkBefore[0].signFiles" :show-close="false"></image-view>-->
+                    {{model.gasInspector.name}}
+                </span>
+            </div>
+            <div class="flex-layout ">
+                <!--<span class="form-item-label"></span>-->
+                <span class="flex-grow1 " >
+                    <!--<lite-table v-ref:table-task-level-->
+                                <!--:show-sequence="false"-->
+                                 <!--:show-pager="false"-->
+                                 <!--:lazy-load="true"-->
+                                 <!--:columns="tableModel.preCheckRecord.columns"-->
+                                 <!--:values.sync="checkBefore.gasDetectionDetails"-->
+                    <!--&gt;</lite-table>-->
+
+                    <lite-table v-ref:table-task-level
+                        :show-sequence="false"
+                        :show-pager="false"
+                        :lazy-load="true"
+                        :columns="tableModel.newTable.columns"
+                        :values.sync="tableModel.beforeList"
+                                @on-click="onCellClick"
+                    ></lite-table>
+                </span>
+            </div>
+            <!--<div class="flex-layout mb10">-->
+                <!--<span class="form-item-label">检测结论</span>-->
+                <!--<span class="flex-grow1">{{model.promiseList['9']}}</span>-->
+            <!--</div>-->
+            <!--<div class="flex-layout mb10 flex-v-center">-->
+                <!--<span class="form-item-label">授权气体检测员签名</span>-->
+                <!--<span>-->
+                      <!--<image-view v-if="checkBefore&&checkBefore.signFiles"  :images="checkBefore.signFiles" :show-close="false"></image-view>-->
+                <!--</span>-->
+                <!--<span class="form-item-label">签名时间</span>-->
+                <!--<span>{{checkBefore.signFiles[0].createDate}}</span>-->
+            <!--</div>-->
+            <!--</div>-->
+        </div>
+        <!--------作业中检查------------------------>
+        <div class="mb20" >
+            <p class="base-border-bottom mb5">作业中检查</p>
+                <!--<div class="flex-layout mb10">-->
+                    <!--<span class="form-item-label color-item-999 "  >检查模式</span>-->
+                    <!--<span class="flex-grow1 ">-->
+                        <!--&lt;!&ndash;<span>{{['','定期检查','持续检查'][model.gasCheckType]}}</span>&ndash;&gt;-->
+                         <!--<iv-radio-group :model.sync="model.gasCheckType">-->
+                            <!--&lt;!&ndash;<iv-radio value="3">全部数据</iv-radio>&ndash;&gt;-->
+                            <!--<iv-radio disabled value="1">定期检查</iv-radio>-->
+                            <!--<iv-radio disabled value="2">持续检查</iv-radio>-->
+                        <!--</iv-radio-group>-->
+                    <!--</span>-->
+                <!--</div>-->
+                <div class="flex-layout mb10">
+                    <!--<span class="form-item-label"></span>-->
+                    <span class="flex-grow1 ">
+                        <!--<lite-table v-ref:table-checking-record-->
+                                    <!--:show-sequence="false"-->
+                                             <!--:show-pager="true"-->
+                                             <!--:lazy-load="true"-->
+                                             <!--:columns="tableModel.checkingRecord.columns"-->
+                                             <!--:values.sync="checkIng.gasDetectionDetails"-->
+                        <!--&gt;</lite-table>-->
+                         <lite-table v-ref:table-checking-record
+                                     :show-sequence="false"
+                                     :lazy-load="true"
+                                     show-page
+                                     :columns="tableModel.newTable.columns"
+                                     :values.sync="tableModel.afterList"
+                                     @on-click="onCellClick"
+                         ></lite-table>
+                    </span>
+                </div>
+        </div>
+    </div>
+</simple-card>
+
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>

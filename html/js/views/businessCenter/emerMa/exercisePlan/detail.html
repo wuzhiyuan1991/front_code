@@ -1,0 +1,124 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p style="width:100%;" slot="title"><i class="basicPng"></i>
+					<span>{{$t('gb.common.basicInfo')}}</span>
+					<span  :style="mainModel.vo.status==1?'padding-left:5px;padding-right:5px;background:#aacd03;color:#fff;':'padding-left:5px;padding-right:5px;background:red;color:#fff;'"  style="font-size:14px;color:#fff;" class="pull-right" v-if="mainModel.isReadOnly">{{ getDataDic('iem_exercise_plan_status', mainModel.vo.status) }}</span>
+				</p>
+				<el-form label-width="125px" class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="计划年份" prop="year">
+						<vi-date-picker  v-if="!mainModel.isReadOnly" type="year" :value="mainModel.vo.year" @on-change="changeQryYear" clearable="false"></vi-date-picker>
+						<span style="font-size:14px;" v-else>{{mainModel.vo.year}}</span>
+					</el-form-item>
+					<el-form-item label="预案类型" prop="emerPlanType">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_type', mainModel.vo.emerPlanType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.emerPlanType" :list="getDataDicList('iem_emer_plan_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="演练组织机构" prop="emerPlanDept">
+						<iv-input :value.sync="mainModel.vo.emerPlanDept" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="演练组织人">
+						<!--<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_type', mainModel.vo.emerPlanType) }}</span>-->
+						<!--<i-select multiple v-else :model.sync="mainModel.vo.usersList" :list="mainModel.vo.users" clearable></i-select>-->
+						<multiple-input-select
+								:selected-multiple.sync="mainModel.vo.usersList"
+								:textonly="mainModel.isReadOnly"
+								:disabled="false"
+								@on-click="doShowUserSelectModal"
+						></multiple-input-select>
+					</el-form-item>
+					<el-form-item label="演练科目" prop="subjects">
+						<iv-input :value.sync="mainModel.vo.subjects" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="演练形式" prop="form">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_exercise_plan_form', mainModel.vo.form) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.form" :list="getDataDicList('iem_exercise_plan_form')" ></i-select>
+					</el-form-item>
+					<el-form-item label="演练科目类型" prop="subjectType">
+						<div v-if="mainModel.isReadOnly">
+							<span style="font-size:14px;"  v-for="(index, item) in mainModel.subjectType" :key="index"> {{getDataDic("emer_exercise_subjects_type",item)}}</span>
+						</div>
+						<i-select multiple v-else @on-change="changeSubjectType" :model.sync="mainModel.subjectType" :list="getDataDicList('emer_exercise_subjects_type')" ></i-select>
+
+						<!--<iv-input :value.sync="mainModel.vo.subjectType" :textonly="mainModel.isReadOnly"> emer_exercise_subjects_type</iv-input>-->
+					</el-form-item>
+					<el-form-item label="演练地点" prop="dominationArea.id">
+						<div class="flex-layout">
+							<cascade-input-select style="width:49%" :value="mainModel.vo.dominationArea" cascade-id="f9i0uqhd1o" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())" ></cascade-input-select>
+
+							<!--<cascade-input-select style="width:49%" :value="mainModel.vo.dominationArea" :cascade-id="mainModel.vo.compId" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())" ></cascade-input-select>-->
+							<iv-input style="width:49%;margin-left:2%" :value.sync="mainModel.vo.specificAddress" :textonly="mainModel.isReadOnly"></iv-input>
+						</div>
+					</el-form-item>
+
+					<!--<el-form-item label="演练具体地点" prop="specificAddress">-->
+						<!--<iv-input :value.sync="mainModel.vo.specificAddress" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item label="参演部门/岗位" prop="participant">
+						<iv-input :value.sync="mainModel.vo.participant" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="参演人数（人）" prop="participantNumber">
+						<iv-input :value.sync="mainModel.vo.participantNumber" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="演练日期" prop="exerciseStartDate">
+						<iv-input v-if="mainModel.isReadOnly" :value.sync="mainModel.vo.exerciseStartDate.slice(0,10)" :textonly="mainModel.isReadOnly"></iv-input>
+						<date-picker v-else format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.exerciseStartDate"></date-picker>
+					</el-form-item>
+					<el-form-item label="演练实施截止日期" prop="exerciseEndDate">
+						<iv-input v-if="mainModel.isReadOnly" :value.sync="mainModel.vo.exerciseEndDate.slice(0,10)" :textonly="mainModel.isReadOnly"></iv-input>
+						<date-picker v-else format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.exerciseEndDate"></date-picker>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<div class="ivu-textarea-wrapper-width-280">
+							<iv-textarea v-if="!mainModel.isReadOnly" :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+							<span style="font-size: 14px;display: block;width: 262px;white-space: pre-line;word-break: break-all" v-else>{{mainModel.vo.remark}}</span>
+						</div>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('publish') && mainModel.vo.status == 0" type="ghost" @click.stop="doPublish" icon="android-document">发布</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('invalid') && mainModel.vo.status == 1" type="ghost" @click.stop="doInvalid" icon="android-document">失效</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.vo.status == 0" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete()" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<!--<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>-->
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<dominationarea-select-modal :visible.sync="selectModel.dominationAreaSelectModel.visible" :filter-data="selectModel.dominationAreaSelectModel.filterData" single-select @do-save="doSaveDominationArea"></dominationarea-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>
+
+<Modal :visible.sync="publishSuccessModel.visible" :title="publishSuccessModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			演练计划已经发布成功！
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doConfirm" class="pull-right">确定</vi-button>
+			<vi-button type="primary" @click="doCreateScheme" class="pull-right">进入演练方案</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<style>
+	.ivu-textarea-wrapper-width-280 .ivu-textarea-wrapper{
+		width:262px !important;
+	}
+</style>
+

@@ -1,0 +1,113 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">同步数据</vi-button>
+
+
+                        <Modal :visible.sync="visible"  title="风险点告知卡后台自动生成" width:420          :footer-hide="true">
+                            <div class="modal-box-default">
+                                <div  style="max-height: 500px;overflow: auto;">
+
+                                     <div  style="margin-left: 30px; font-size: 16px; " >
+                                        <p     class="messagetitle">从危害辨识记录批量生成风险点告知卡</p>
+                                        <p    class="messagetitle" >如果风险点告知卡已经存在,会覆盖更新</p>
+                                        <p    class="messagetitle" >如果风险点告知卡不存在,会自动创建生成</p>
+                                      </div>
+
+
+                                    <!-- <div class="form-item-label required-before">{{title}}</div> -->
+                                
+                                </div>
+                            </div>
+                            <div class="edit-pop-container">
+                                <div class="epc-footer">
+                                  
+                                    
+
+                                    <vi-button type="primary" @click="doSave" class="pull-right">开始</vi-button>
+                                    <!-- <vi-button  class="pull-right">取消</vi-button> -->
+                                    <!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+                                </div>
+                            </div>
+                        </Modal>
+                        
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+			                    <!--<iv-dropdown-item>-->
+                                    <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                    $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit') && tableModel.selectedDatas.length == 1"  type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+<!--                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"-->
+<!--                               @click="doAdd4Copy">复制-->
+<!--                    </vi-button>-->
+                    <vi-button v-if="hasAuth('enable') && tableModel.selectedDatas.length == 1" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete') && tableModel.selectedDatas.length == 1" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete') && tableModel.selectedDatas.length > 1" type="text" class="mp-header-item-btn"
+                               @click="doDeleteBatch">批量删除
+                    </vi-button>
+
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- Legacy模式 -->
+<!--
+<riskcard-form-modal
+		:visible.sync="formModel.riskCardFormModel.show"
+		@do-save="doSaveRiskCard"
+		v-ref:riskcard-form-modal>
+</riskcard-form-modal>
+-->
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel   @title-changed="detaMes" ></detail-panel>
+</aside>
+<importingComponent :init-fun="initFun" :visible.sync="showImportingModal"></importingComponent>
+
+
+
+<print-modal v-ref:print-modal></print-modal>
+
+<style>
+    .ivu-radio-cursor .ivu-radio{
+        cursor: pointer;
+    }
+    .messagetitle{
+            margin-top: 20px;
+    }
+</style>

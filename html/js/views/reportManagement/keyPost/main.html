@@ -1,0 +1,106 @@
+<style>
+    .clear-data-title {
+        cursor: pointer;
+        line-height: 40px;
+        margin-bottom: 8px;
+        padding: 0 20px;
+    }
+
+    .clear-data-title a {
+        float: right;
+    }
+
+    .clear-data-title:hover {
+        background-color: #f5f5f5;
+    }
+
+    #keypost .simple-card-head {
+        height: 20px !important;
+        line-height: 20px !important;
+    }
+</style>
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle" style="padding-left: 10px;">
+            <div class="basic" style="visibility: hidden;">
+                <all-classification $main-header-classification-attr-default :showdept="true" @on-change="changeOrgComp"
+                    @on-org-change="changeOrgComp">
+                </all-classification>
+            </div>
+
+        </div>
+        <div style="height: calc(100% - 160px);padding-bottom: 10px; overflow-y: auto;">
+            <div class="clear-data-title" @click.prevent="isShowKeyPost = !isShowKeyPost">
+                <strong slot="title" class="checkRe">关键岗位人员</strong>
+                <a slot="extra">
+                    <span v-if="isShowKeyPost">
+                        <Icon type="chevron-up"></Icon>
+                    </span>
+                    <span v-else>
+                        <Icon type="chevron-down"></Icon>
+                    </span>
+                </a>
+            </div>
+
+            <div id="keypost" v-show="isShowKeyPost" style="padding: 0 20px;position: relative;">
+                <div style="position: absolute;top: -5px;width: 200px;z-index: 10;">
+                    <company-tree-select @on-tree-click='changeComp' :id.sync="compId"></company-tree-select>
+                </div>
+                <simple-card style="position: relative;padding-top: 0;top:-20px" filter @do-filter="doQuery"
+                    custom-filter filter-when>
+
+                    <a v-if='this.compName!=="所有公司"' class="a-color" href="#" slot="extra" @click.prevent="doAddUser">
+                        <span>
+                            <Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+                        </span></a>
+                    <div>
+                        <vue-bootstrap-table :show-seq="true" :url="tableModel.url" :columns="tableModel.columns"
+                            :show-empty-row="false" @on-click-cell="doClickCell" lazy-load v-ref:key-post-table
+                            style="width: 100%;"></vue-bootstrap-table>
+                    </div>
+                    <!-- style="overflow: inherit;" -->
+                </simple-card>
+                <!-- <div style="width: 770px;margin-bottom: 10px;">
+                    <iv-input style="width: 300px;" :value.sync="mainModel.keyword" icon="ios-search" @on-click="doQuery" @on-enter="doQuery"></iv-input>
+
+                    <vi-button class="pull-right" icon="plus" type="text" @click="doAddUser"><span>添加</span></vi-button>
+                </div> -->
+
+            </div>
+            <!--<div>-->
+            <!--<vi-button class="pull-left ivu-btn btn" @click="doSaveKeyPost"><span>保存</span></vi-button>-->
+            <!--</div>-->
+        </div>
+
+        <div class="clear-data-title" @click.prevent="isShowModelParam = !isShowModelParam">
+            <strong slot="title" class="checkRe">模块启用参数</strong>
+            <a slot="extra">
+                <span v-if="isShowModelParam">
+                    <Icon type="chevron-up"></Icon>
+                </span>
+                <span v-else>
+                    <Icon type="chevron-down"></Icon>
+                </span>
+            </a>
+        </div>
+        <div v-show="isShowModelParam" style="padding: 0 20px;">
+            <div style="width: 770px;margin-bottom: 10px;">
+                <p>【任务状态统计】报表统计指标</p>
+            </div>
+            <div style="width: 770px;max-height: 491px;">
+                <iv-checkbox :checked.sync="taskStatusParam.checkManagement == 1"
+                    @on-change="toggleTaskStatusParam('checkManagement')">检查管理</iv-checkbox>
+                <iv-checkbox :checked.sync="taskStatusParam.randomObservation == 1"
+                    @on-change="toggleTaskStatusParam('randomObservation')">随机观察</iv-checkbox>
+                <iv-checkbox :checked.sync="taskStatusParam.iegn == 1" @on-change="toggleTaskStatusParam('iegn')">隐患管理
+                </iv-checkbox>
+                <iv-checkbox :checked.sync="taskStatusParam.itm == 1" @on-change="toggleTaskStatusParam('itm')">培训管理
+                </iv-checkbox>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<user-select-modal :visible.sync="selectModel.visible" :filter-data="selectModel.filterData" @do-save="doSaveUsers">
+</user-select-modal>

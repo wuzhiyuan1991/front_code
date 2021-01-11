@@ -1,0 +1,316 @@
+<style scoped>
+	.top .ivu-select-large.ivu-select-single .ivu-select-selection .ivu-select-selected-value,
+	.ivu-select-large.ivu-select-single .ivu-select-selection,
+	.ivu-select-single .ivu-select-selection .ivu-select-placeholder {
+		line-height: 24px !important;
+		height: 24px !important;
+	}
+
+	.top .ivu-btn:hover {
+		border: rgb(217, 217, 217) solid 1px;
+		color: #666666;
+	}
+
+	#detail .custom-vi-tree-item div {
+		padding-bottom: 0 !important;
+		padding-top: 1px;
+	}
+
+	#detail .bold {
+		font-weight: 400 !important;
+	}
+
+
+	.top .ivu-select-selected-value {
+		margin-left: 90px;
+	}
+
+
+	#scDetail .table-content-box,
+	.table-scroll-main {
+		background-color: #fff !important;
+	}
+
+	/* .table tbody tr td,
+	.table tbody tr td span,
+	.table tbody tr td div {
+		text-overflow: -o-ellipsis-lastline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 8;
+		line-clamp: 8;
+		-webkit-box-orient: vertical;
+		white-space: normal !important;
+	} */
+
+	.maxH {
+		text-overflow: -o-ellipsis-lastline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 8;
+		line-clamp: 8;
+		-webkit-box-orient: vertical;
+		white-space: normal !important;
+	}
+</style>
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<div class="bip-header-title">
+				<Icon type="ios-photos"></Icon>
+				<span>{{mainModel.title}}</span>
+			</div>
+		</div>
+
+
+		<div class="fip-content" style="position: relative;">
+			<!-- 模型基础信息 -->
+			<div class="top"
+				style="position: absolute;left: 110px;top:10px;z-index: 99;display: flex;width: 320px;height: 24px;">
+				<!-- <iv-button v-if='!isReviseStatus&&mainModel.opType=="view"' style='line-height: 14px;cursor: auto;'>修订历史</iv-button> -->
+				<iv-button v-if='isReviseStatus&&mainModel.opType=="view"' style='line-height: 14px;cursor: auto;'>新版本
+				</iv-button>
+				<div v-if='!isReviseStatus&&mainModel.opType=="view"'
+					style="position: absolute;top: 3px;left: 10px;z-index: 5;">修订历史</div>
+				<i-select v-show='!isReviseStatus&&mainModel.opType=="view"'
+					style="display: inline-block;height: 24px!important;" size='large' :popper-fixed="false"
+					:model.sync="revise" :list="reviseList">
+
+					<i-option v-for="upper in reviseList" :value="upper.lawsId">{{upper.reviseDate.substring(0,10)}}
+					</i-option>
+				</i-select>
+
+				<button v-if='!isReviseStatus&&mainModel.opType=="view"'
+					style='width: 100px;border-radius: 5px;background-color: white; line-height: 14px;margin-left: 20px;color: #00cc66!important;border:1px solid #00cc66!important;cursor: auto;
+					outline: none; '>
+					{{getDataDic('icm_limitation', mainModel.vo.limitation)}}</button>
+			</div>
+
+			<simple-card class="fip-content-item ">
+
+				<p slot="title" style="width: 100%;"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span>
+				</p>
+
+
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+					:rules="mainModel.isReadOnly?[]:mainModel.rules" v-ref:ruleform>
+					<!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"
+							:allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item> -->
+					<el-form-item label="法规名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="发文字号" prop="issuedNumber">
+						<iv-input :value.sync="mainModel.vo.issuedNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="效力级别" prop="effectiveLevel">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icm_effective_level', mainModel.vo.effectiveLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.effectiveLevel"
+							:list="getDataDicList('icm_effective_level')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="发布机关" prop="publishAuthority">
+						<iv-input :value.sync="mainModel.vo.publishAuthority" :textonly="mainModel.isReadOnly">
+						</iv-input>
+					</el-form-item>
+					<el-form-item label="时效性" prop="limitation">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icm_limitation', mainModel.vo.limitation) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.limitation" style="width: 260px;"
+							:list="getDataDicList('icm_limitation')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="发布日期" prop="publishDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+						 :default-date="false"	:selected-date.sync="mainModel.vo.publishDate" clearable>
+						</date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.publishDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="实施日期" prop="effectiveDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+						:default-date="false"	:selected-date.sync="mainModel.vo.effectiveDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.effectiveDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="法规简述" prop="resume">
+						<iv-textarea :value.sync="mainModel.vo.resume" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<!-- <el-form-item label="法规分类" prop="typeId">
+						<iv-tree-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.typeId"
+							:list="legalRegulationTypes" id-attr="id" display-attr="name">
+							<iv-tree :model="legalRegulationTypes" :serch-filterable="true" id-attr="id"
+								:selected-datas.sync="typeSelectData" pid-attr="parentId" display-attr="name"
+								:single-select="true" :allow-parent-checked="true"></iv-tree>
+						</iv-tree-select>
+						
+						<iv-input v-else :value.sync="mainModel.vo.lawsType.name" textonly></iv-input>
+					</el-form-item> -->
+					<el-form-item label="法规文件" style="margin-bottom: 20px;position: relative;">
+						<div v-for='(index,item) in fileList' v-if='fileList.length>0'><span style="cursor: pointer;"
+								@click='doClickFile(index)' class="link-ele">{{item.orginalName}}</span>
+							<Icon v-if='!mainModel.isReadOnly' @click.stop="removeFile(item.id, index)"
+								type="close-circled" style="margin-left: 10px ; cursor: pointer; color: red;">
+							</Icon>
+						</div>
+						<vue-file-upload v-ref:uploader style="display: none;" :multi-selection="true"
+							:params="uploadModel.params" @on-before-upload="doUploadBefore"
+							@on-success-upload="doUploadSuccess" @on-upload-complete="onUploadComplete"
+							:filters="uploadModel.filters">
+						</vue-file-upload>
+						<span v-if='!mainModel.isReadOnly' class="link-ele" @click="uploadClicked">添加</span>
+					</el-form-item>
+					<!-- <el-form-item :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item> -->
+
+					<!-- <el-form-item label="用来标识法律法规(方便记录修订信息)" prop="discernId">
+						<iv-input :value.sync="mainModel.vo.discernId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item> -->
+
+
+					<!-- <el-form-item label="是否是已修订" prop="isRevise">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_laws_is_revise', mainModel.vo.isRevise) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isRevise" :list="getDataDicList('icm_laws_is_revise')" clearable></i-select>
+					</el-form-item> -->
+
+
+
+
+					<!-- <el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+					</el-form-item> -->
+
+					<p style="text-align: left;margin:5px 0;line-height: 18px;position: relative;">
+						<span
+							style="border-left: 3px solid #33a6ff;height: 12px;position: absolute;top:3px;left:-10px;display: inline-block;"></span>修订信息
+					</p>
+					<el-form-item label="修订简述" prop="revise" style="position: relative;">
+						<iv-textarea :value.sync="mainModel.vo.revise" :readonly="reviseOnly"
+							:style="{margin-bottom:isReviseStatus?'0px';'20px'}"></iv-textarea>
+						<span @click='resiveInfo.visible=true' class="link-ele" v-if='isReviseStatus'>附加
+						</span>
+					</el-form-item>
+					<el-form-item v-if='mainModel.isReadOnly' label="修订历史" style="margin-bottom: 30px;">
+						<div class="link-ele" v-for="item in reviseList" @click='selectRevise(item.lawsId)'>
+							{{item.name}}</div>
+					</el-form-item>
+
+					<p style="text-align: left;margin:5px 0;line-height: 18px;position: relative;margin-top: 12px;">
+						<span
+							style="border-left: 3px solid #33a6ff;height: 12px;position: absolute;top:3px;left:-10px;display: inline-block;"></span>
+						废止信息</p>
+					<el-form-item label="废止日期" prop="annulmentDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+						:default-date="false"	:selected-date.sync="mainModel.vo.annulmentDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.annulmentDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="废止说明" prop="annulment">
+						<iv-textarea :value.sync="mainModel.vo.annulment" :readonly="mainModel.isReadOnly">
+						</iv-textarea>
+					</el-form-item>
+
+				</el-form>
+
+
+			</simple-card>
+
+			<div style="width: 800px;" v-show='mainModel.isReadOnly' id="scDetail">
+
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>其他信息</span></p>
+
+					<div class="lr-layout" style="padding: 0;margin-right:20px ;">
+						<div id='detail' class="lr-layout-l legal-regulation-type-box"
+							style="margin-right: 0px;width: 240px;overflow-x: hidden;">
+							<div
+								style="display:flex;justify-content:left;width: 240px;border: rgb(233, 233, 233) solid 1px;margin-top: 22px;">
+								<Icon type="edit" @click="doUpdateType"
+									style="margin:10px  20px;font-size: 16px;cursor: pointer;"></Icon>
+								<Icon type="plus-round" @click="doCreateType"
+									style="margin:10px  20px;font-size: 16px;cursor: pointer;">
+								</Icon>
+								<Icon type="trash-a" @click="doDeleteType"
+									style="margin:10px 20px;font-size: 16px;cursor: pointer;"></Icon>
+							</div>
+							<iv-tree :show-icon-plus="true"
+								style="height: 442px;overflow-y:auto;border: rgb(233, 233, 233) solid 1px;padding: 15px;"
+								id-attr="id" pid-attr="parentId" display-attr="name" :model="chapterTypes"
+								:selected-datas.sync="treeSelectData" :show-checkbox="false" :single-select="true"
+								:trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick"></iv-tree>
+						</div>
+						<div class="lr-layout-r" style="padding: 0;">
+							<p style="text-align: right;"> <span @click='doShowLawsContentFormModal4Create'
+									class="link-ele">新增</span></p>
+
+							<vue-bootstrap-table style="margin-left:5px;height: 480px;"
+								:setting="tableModel.lawsContentTableModel" @on-del-row="doRemoveLawsContent"
+								@on-edit-row="doShowLawsContentFormModal4Update" :lazy-load="true"
+								v-ref:laws-content-table>
+							</vue-bootstrap-table>
+
+						</div>
+					</div>
+
+				</simple-card>
+			</div>
+
+
+
+
+		</div>
+
+	</div>
+
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="hasAuth('revise') && mainModel.isReadOnly && mainModel.vo.isRevise == 0" type="ghost"
+			@click="doRevise" icon="android-document">
+			修订</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly && !isReviseStatus" type="ghost" @click="doSave" icon="android-document">
+			{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly &&  isReviseStatus" type="ghost" @click="doSaveRevise"
+			icon="android-document">
+			{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="cancel"
+			icon="ios-information-outline ">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button v-if="!mainModel.isReadOnly &&  isReviseStatus" type="ghost" @click="doReviseCancel"
+			icon="ios-information-outline ">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="edit"
+			icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button
+			v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')"
+			type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+
+		<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy"
+			icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"
+			icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+	</div>
+
+</div>
+<type-form-modal-detail :spare-id="'detail'" :visible.sync="typeForm.visible" :lists="chapterTypes"
+	@do-tree-save="doSaveType"></type-form-modal-detail>
+
+
+<laws-content-form-modal :chapter='treeSelectData' :visible.sync="formModel.lawsContentFormModel.show"
+	@do-save="doSaveLawsContent" @do-update="doUpdateLawsContent" :query-url="formModel.lawsContentFormModel.queryUrl"
+	:hidden-fields="formModel.lawsContentFormModel.hiddenFields" v-ref:laws-content-form-modal>
+</laws-content-form-modal>
+<Modal :visible.sync='resiveInfo.visible' width='500' title="附加修订简述" @on-ok="doOk" @on-cancel="cancel"
+	:footer-hide="true">
+	<div style="background-color: white;">
+		<el-form :model="resiveInfo.vo" :rules="resiveInfo.rules" v-ref:modalruleform>
+			<el-form-item label="修订简述" prop='revise' style="margin-bottom: 20px;position: relative;">
+				<iv-textarea :value.sync="resiveInfo.vo.revise"></iv-textarea>
+			</el-form-item>
+		</el-form>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doOk" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+			<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+		</div>
+	</div>
+</Modal>

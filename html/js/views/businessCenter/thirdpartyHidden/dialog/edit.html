@@ -1,0 +1,80 @@
+
+<div class="edit-pop-container" >
+    <!--epc-content-row-space 控制每一行的间距-->
+    <div class="epc-content epc-content-row-space">
+        <el-form :model="mainModel.vo"  :rules="rules" v-ref:ruleform>
+            <!--<el-form-item :label="$t('gb.common.subjectObj')" prop="checkObjectId">-->
+                     <!--<iv-input display-type="popselect" :value.sync="mainModel.vo.checkObjectName"  @click="selectCheckObject" ></iv-input>-->
+            <!--</el-form-item>-->
+            <el-form-item :label="$t('gb.common.type')" prop="type">
+                <i-select :model.sync="mainModel.vo.type" :list="mainModel.checkItemTypes"  :disabled="selectModel.disabled">
+                    <i-option v-for="s in mainModel.checkItemTypes" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.riskGrade')" prop="riskModelId">
+                <risk-model  :model.sync="riskModel"></risk-model>
+            </el-form-item>
+            <!--<partial  name="my-partial"></partial>-->
+             $hook
+            <!--<el-form-item :label="$t('gb.common.infoSource')" prop="infoSource">-->
+                <!--<i-select :model.sync="mainModel.vo.infoSource" :list="mainModel.infoSourceList"  >-->
+                    <!--<i-option v-for="s in mainModel.infoSourceList" :value="s.id">{{s.value}}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.systemElement')" prop="systemElement">-->
+                <!--<i-select :model.sync="mainModel.vo.systemElement" :list="mainModel.systemElementList">-->
+                    <!--<i-option v-for="s in mainModel.systemElementList" :value="s.id">{{s.value}}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.profession')" prop="profession">-->
+                <!--<i-select :model.sync="mainModel.vo.profession" :list="mainModel.professionList"  >-->
+                    <!--<i-option v-for="s in mainModel.professionList" :value="s.id">{{s.value}}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+                <el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+                    <company-tree-select v-if="!!mainModel.opType" :id.sync="mainModel.vo.compId"></company-tree-select>
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+                    <department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+                </el-form-item>
+            <el-form-item :label="$t('gb.common.equipmentAndFacilities')">
+                <input-select :value.sync="mainModel.vo.equipment" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name"   :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowEquipmentSelectModal())" ></input-select>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.problemDesc')" prop="problem" >
+                <iv-input type="textarea" :value.sync="mainModel.vo.problem"></iv-input>
+                <!--<textarea rows="3" v-model="mainModel.vo.problem"></textarea>-->
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.recMeasure')" prop="danger">
+                <iv-input type="textarea" :value.sync="mainModel.vo.danger"></iv-input>
+                <!--<textarea rows="3" v-model="mainModel.vo.danger" name="danger"></textarea>-->
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.picture')">
+                <lite-box v-for="(index,pic) in mainModel.vo.pictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.pictures)" @click="doPic(pic.fileId)">
+                    <img :src="convertPicPath(pic.fileId)">
+                </lite-box>
+                <vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload" class="file_upload"
+                                 :filters="pictures.filters"></vue-file-upload>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.video')">
+                <lite-box v-for="(index,video) in mainModel.vo.videos" @on-close="doDeleteFile(video.fileId,index,mainModel.vo.videos)" @click="doPlay(video.fileId)">
+                    <img :src="convertPath()" >
+                </lite-box>
+                <vue-file-upload :params="videos.params" :filters="videos.filters" @on-success-upload="doVideosSuccessUpload" class="file_upload"></vue-file-upload>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<!-- <Modal :visible.sync="checkObjectModel.show" :title="checkObjectModel.title" width="800" footer-hide class="userSelectModal">
+    <checkobject-component></checkobject-component>
+</Modal> -->
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal  class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>
+<equipment-select-modal single-select :visible.sync="mainModel.showEquipmentSelectModal"  @do-save="doSaveEquipment"></equipment-select-modal>

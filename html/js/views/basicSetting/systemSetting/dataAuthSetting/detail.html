@@ -1,0 +1,30 @@
+<div class="edit-pop-container" >
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item label="编码" prop="code">
+				<iv-input :value.sync = "mainModel.vo.code"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.name')" prop="name" >
+				<iv-input :value.sync = "mainModel.vo.name"></iv-input>
+			</el-form-item>
+			<el-form-item label="键" prop="key">
+				<iv-input :value.sync = "mainModel.vo.key"></iv-input>
+			</el-form-item>
+			<el-form-item label="值" prop="value">
+				<iv-input :value.sync = "mainModel.vo.value"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.remarks')">
+				<iv-input :value.sync = "mainModel.vo.remarks"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.EnableDisable')">
+				<i-select :model.sync="mainModel.vo.disable" :list="mainModel.disableList" v-else>
+					<i-option v-for="item in mainModel.disableList" :value="item.value">{{ item.name }}</i-option>
+				</i-select>
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+		<!--<vi-button type="primary" @click="docancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>

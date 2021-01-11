@@ -1,0 +1,109 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel"  style="width:100%;" is-label-vertical v-ref:ruleform>
+		<table class="layout-table border-none" style="margin-bottom: 0;">
+			<colgroup>
+				<col style="width: 60px;">
+				<col style="width: 158px;">
+				<col style="width: 110px;">
+				<col style="width: 74px;">
+				<col>
+				<col style="width: 50px;" v-if="!isDataReferenced">
+			</colgroup>
+			<thead style="background-color: transparent;">
+			<tr class="layout-table-tr" style="height: 40px;">
+				<td class="text-center" style="white-space: normal;padding: 0 4px;">
+					<span>等级</span>
+					<poptip placement="top" trigger="hover">
+						<a href="javascript:void(0);" style="color: red;font-size: 14px;"><Icon type="help-circled"></Icon></a>
+						<div slot="content">等级值越低，风险值越小</div>
+					</poptip>
+				</td>
+				<td class="text-center" style="padding: 0 4px;">{{$t("bd.ria.scoreRange")}}</td>
+				<td class="text-center" style="padding: 0 4px;">{{$t("gb.common.riskLevel")}}</td>
+				<td class="text-center" style="padding: 0 4px;">{{$t("bd.ria.colorCoding")}}</td>
+				<td class="text-center" style="padding: 0 4px;">{{$t("bd.ria.operatSuggestInfo")}}</td>
+				<td v-if="!isDataReferenced" class="text-center" style="padding: 0 4px;">{{$t("gb.common.op")}}</td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr class="layout-table-tr" v-for="(index, latRange) in mainModel.gradeLatRanges" style="height: 40px;">
+				<td class="text-center" style="white-space: normal;padding: 0 4px;">
+					<div style="height: 24px;width: 24px;border: 1px solid #ccc;text-align: center;line-height: 22px;border-radius: 3px;">{{index + 1}}</div>
+				</td>
+				<td style="white-space: normal;padding: 0 4px;">
+					<el-form-item :prop="'gradeLatRanges.'+index+'.maxScore'" :rules="ruleModel.score">
+						<iv-input-number :disabled="isDataReferenced" :value.sync="latRange.minScore" style="width:60px"></iv-input-number>
+						~
+						<iv-input-number :disabled="isDataReferenced" :value.sync="latRange.maxScore" style="width:60px"></iv-input-number>
+					</el-form-item>
+				</td>
+				<td style="white-space: normal;padding: 0 4px;">
+					<el-form-item :prop="'gradeLatRanges.'+index+'.level'" :rules="ruleModel.level">
+						<iv-input :disabled="isDataReferenced" :value.sync="latRange.level"></iv-input>
+					</el-form-item>
+				</td>
+				<td class="text-center" style="white-space: normal;padding: 0 4px;">
+					<color-picker style="display: block;" :value.sync="latRange.colorMark" :index="index"></color-picker>
+				</td>
+				<td style="white-space: normal;padding: 0 4px;">
+					<el-form-item :prop="'gradeLatRanges.'+index+'.suggest'" :rules="ruleModel.suggest" style="width: 100%;">
+						<iv-input :value.sync="latRange.suggest"></iv-input>
+					</el-form-item>
+				</td>
+				<td class="text-center" v-if="!isDataReferenced" style="white-space: normal;padding: 0 4px;">
+					<Icon style="font-size: 16px;line-height: 30px;" v-show="index === itemLastIndex" type="ios-trash-outline" @click="removeRange(index)"></Icon>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		</el-form>
+		<div v-if="!isDataReferenced">
+			<iv-button type="dashed" @click="addLatRange" long>{{$t("bc.ria.append")}}</iv-button>
+		</div>
+		<!--<el-form :model="mainModel"  style="width:100%;" is-label-vertical v-ref:ruleform>-->
+			<!--<iv-row style="line-height: 30px;">-->
+				<!--<iv-col span="3">等级</iv-col>-->
+   				<!--<iv-col span="5">{{$t("bd.ria.scoreRange")}}</iv-col>-->
+   				<!--<iv-col span="3">{{$t("gb.common.riskLevel")}}</iv-col>-->
+   				<!--<iv-col span="3">{{$t("bd.ria.colorCoding")}}</iv-col>-->
+   				<!--<iv-col span="8">{{$t("bd.ria.operatSuggestInfo")}}</iv-col>-->
+   				<!--<iv-col v-if="!isDataReferenced" span="2">{{$t("gb.common.op")}}</iv-col>-->
+   			<!--</iv-row>-->
+			<!--<iv-row v-for="(index, latRange) in mainModel.gradeLatRanges" style="padding-bottom: 20px;">-->
+				<!--<iv-col span="3">等级</iv-col>-->
+   				<!--<iv-col span="5">-->
+		        	<!--<el-form-item :prop="'gradeLatRanges.'+index+'.maxScore'" :rules="ruleModel.score">-->
+	   					<!--<iv-input-number :disabled="isDataReferenced" :value.sync="latRange.minScore" style="width:50px"></iv-input-number>-->
+			        	<!--~-->
+			        	<!--<iv-input-number :disabled="isDataReferenced" :value.sync="latRange.maxScore" style="width:50px"></iv-input-number>-->
+	 		       	<!--</el-form-item>-->
+				<!--</iv-col>-->
+   				<!--<iv-col span="3">-->
+   					<!--<el-form-item :prop="'gradeLatRanges.'+index+'.level'" :rules="ruleModel.level">-->
+						<!--<iv-input :disabled="isDataReferenced" :value.sync="latRange.level"></iv-input>-->
+			       	<!--</el-form-item>-->
+				<!--</iv-col>-->
+   				<!--<iv-col span="3" style="padding-top: 4px; padding-left: 1px;">-->
+					<!--<color-picker :value.sync="latRange.colorMark" :index="index"></color-picker>-->
+				<!--</iv-col>-->
+   				<!--<iv-col span="8">-->
+		        	<!--<el-form-item :prop="'gradeLatRanges.'+index+'.suggest'" :rules="ruleModel.suggest">-->
+						<!--<iv-input :value.sync="latRange.suggest"></iv-input>-->
+			       	<!--</el-form-item>-->
+				<!--</iv-col>-->
+   				<!--<iv-col v-if="!isDataReferenced" span="2" style="padding: 2px 0 0 5px;">-->
+   					<!--<Icon style="font-size: 16px;line-height: 30px;" type="ios-trash-outline" @click="removeRange(index)"></Icon>-->
+				<!--</iv-col>-->
+   			<!--</iv-row>-->
+   			<!--<iv-row v-if="!isDataReferenced">-->
+   				<!--<iv-col spna="24">-->
+   					<!--<iv-button type="dashed" @click="addLatRange" long>{{$t("bc.ria.append")}}</iv-button>-->
+   				<!--</iv-col>-->
+   			<!--</iv-row>-->
+		<!--</el-form>-->
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>

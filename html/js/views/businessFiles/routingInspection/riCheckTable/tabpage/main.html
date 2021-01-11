@@ -1,0 +1,154 @@
+<div class="lr-layout">
+    <!--left-->
+    <div class="lr-layout-l">
+        <div class="title">巡检线路</div>
+        <div class="toolbar">
+            <iv-button v-if="showEdit" type="text" @click="doMoveArea(-1)">
+                <i class="ivu-icon ivu-icon-arrow-up-a"></i>
+            </iv-button>
+            <iv-button v-if="showEdit" type="text" @click="doMoveArea(1)">
+                <i class="ivu-icon ivu-icon-arrow-down-a"></i>
+            </iv-button>
+            <iv-button v-if="showEdit" type="text" @click="doEditArea">
+                <i class="ivu-icon ivu-icon-edit"></i>
+            </iv-button>
+            <iv-button v-if="showEdit" type="text" @click="doDeleteArea">
+                <i class="ivu-icon ivu-icon-trash-a"></i>
+            </iv-button>
+            <iv-button v-if="showEdit" type="text" @click="doAddArea">
+                <i class="ivu-icon ivu-icon-plus-round"></i>
+            </iv-button>
+        </div>
+        <ul>
+            <li
+                    v-for="(index, area) in areas"
+                    class="lr-layout-li"
+                    :class="{'checked': index === checkedAreaIndex}"
+                    @click="doSelectArea(index)"
+                    :title="area.riCheckAreaTpl.name"
+            >
+                <span style="display: inline-block;width: 25px;">{{index + 1}}</span>{{area.riCheckAreaTpl.name}}
+            </li>
+        </ul>
+    </div>
+
+    <!--right-->
+    <div class="lr-layout-r">
+        <!--header-->
+        <div class="layout-header">
+            <div><span style="font-size: 16px;">巡检区域：</span>{{checkedArea.riCheckAreaTpl.name}}</div>
+            <div>
+                <iv-button @click="doShowPointSelectModal('create')" v-show="areas.length > 0 && showEdit">添加巡检点</iv-button>
+                <iv-button @click="doClosePage" style="margin-left: 5px;">关闭</iv-button>
+            </div>
+        </div>
+
+        <!--body-->
+        <div class="layout-body">
+            <div v-for="(index, point) in points" class="ri-ct-point-item">
+                <div class="body-header">
+                    <div style="display: flex;align-items: center;">
+                        <span style="font-size: 16px;">巡检点：</span>
+                        <span class="p-name">{{point.name}}</span>
+                        <!--<a href="javascript:void(0);" @click="doShowPointSelectModal('update', point.id)">选择巡检点</a>-->
+                        <!--<span>或者</span>-->
+                        <!--<a href="javascript:void(0);" @click="doShowEquipmentModal(point.id)">选择设备设施</a>-->
+                    </div>
+                    <div style="display: flex;align-items: center;">
+
+                        <iv-input
+                                icon="ios-search"
+                                cleanable
+                                @on-remove="setFilterValue(point._keyWord, index)"
+                                @on-click="setFilterValue(point._keyWord, index)"
+                                @on-enter="setFilterValue(point._keyWord, index)"
+                                :value.sync="point._keyWord"
+                                placeholder="输入后回车搜索"
+                                v-show="point.showInput"
+                        ></iv-input>
+
+                        <iv-button @click="toggleItemInput(point, false)" v-show="point.showInput" type="text" icon="power">折叠</iv-button>
+
+                        <iv-button @click="toggleItemInput(point, true)" v-show="!point.showInput" type="text" icon="search">搜索</iv-button>
+
+                        <!--<iv-button @click="doDeletePoint(point.id)" type="text" icon="trash-a">删除</iv-button>-->
+                        <iv-button v-if="showEdit" @click="doAddItem(point.id, point.refType)" type="text" icon="plus">新增巡检内容</iv-button>
+
+                        <iv-dropdown v-if="showEdit" trigger="click" placement="bottom-end">
+
+                            <vi-button type="text" icon="more">更多</vi-button>
+
+                            <iv-dropdown-menu slot="list" class="layout-dropdown-menu">
+                                <!--<iv-dropdown-item @click="doUpdatePoint">-->
+                                    <!--<i class="ivu-icon ivu-icon-edit"></i>-->
+                                    <!--<span>编辑</span>-->
+                                <!--</iv-dropdown-item>-->
+
+                                <iv-dropdown-item @click="doMovePoint(-1, index, point)" v-show="!point.showInput">
+                                    <i class="ivu-icon ivu-icon-arrow-up-a"></i>
+                                    <span>上移</span>
+                                </iv-dropdown-item>
+
+                                <iv-dropdown-item @click="doMovePoint(1, index, point)" v-show="!point.showInput">
+                                    <i class="ivu-icon ivu-icon-arrow-down-a"></i>
+                                    <span>下移</span>
+                                </iv-dropdown-item>
+
+                                <iv-dropdown-item @click="doDeletePoint(point.id)">
+                                    <i class="ivu-icon ivu-icon-trash-a"></i>
+                                    <span>删除</span>
+                                </iv-dropdown-item>
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                </div>
+
+                <lite-table
+                        :columns="tableModel.columns"
+                        :values="point.checkItems | filter-item point.keyWord"
+                        :tools="tools"
+                        show-sequence
+                        show-page
+                        @on-update="doUpdateItem"
+                        @on-delete="doDeleteItem"
+                        @on-move="doMoveItem"
+                ></lite-table>
+
+            </div>
+
+        </div>
+        <div class="footer"></div>
+    </div>
+</div>
+
+<area-select-modal
+        :visible.sync="areaSelectModel.visible"
+        :filter-data="areaSelectModel.filterData"
+        @do-create="doCreateArea"
+        @do-save="doRefreshAreas"
+></area-select-modal>
+
+<area-form-modal
+        :visible.sync="areaFormModel.visible"
+        @do-save="doRefreshAreas"
+></area-form-modal>
+
+
+<item-form-modal
+        :visible.sync="itemFormModel.visible"
+        @do-save="doRefreshPoints"
+></item-form-modal>
+
+<point-select-modal
+        single-select
+        :visible.sync="pointSelectModel.visible"
+        :filter-data="pointSelectModel.filterData"
+        :parent-id="checkedArea.id"
+        @do-save="doRefreshPoints"
+        @do-create="doAddPoint"
+></point-select-modal>
+
+<point-form-modal
+        :visible.sync="pointFormModel.visible"
+        @do-save="doRefreshPoints"
+></point-form-modal>

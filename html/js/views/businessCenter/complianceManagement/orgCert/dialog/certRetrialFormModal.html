@@ -1,0 +1,47 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item label="预定复审时间" prop="retrialDate">
+						<date-picker format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.retrialDate" disabled></date-picker>
+					</el-form-item>
+
+					<el-form-item label="复审结果" prop="result">
+						<iv-radio-group :model.sync="mainModel.vo.result" @on-change="changeCheckedRequired">
+							<iv-radio :value="item.id" v-for="item in resultList">{{item.value}}</iv-radio>
+						</iv-radio-group>
+					</el-form-item>
+
+					<el-form-item label="附件" prop="cloudFiles">
+						<ul>
+							<li v-for="(index, file) in mainModel.vo.cloudFiles" class="cert-file-item" @click="doViewImages(index)">
+								<div class="cert-file-name">{{file.orginalName}}</div>
+								<Icon type="close-circled" @click.stop="removeFile(file.id, index)"></Icon>
+							</li>
+						</ul>
+						<a @click="uploadClicked" v-if="mainModel.vo.cloudFiles.length < 9" href="javascript:void(0);" class="form-upload-href">上传文件</a>
+					</el-form-item>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('uploaderId') == -1)" label="上传人" prop="uploader.id">-->
+						<!--<input-select :value="mainModel.vo.uploader" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('uploader') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowUploaderSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+			</el-form>
+			<vue-file-upload
+					v-ref:uploader
+					style="display: none;"
+					:multi-selection="false"
+					:params="uploadModel.params"
+					@on-before-upload="doUploadBefore"
+					@on-success-upload="doUploadSuccess"
+					@on-upload-complete="onUploadComplete"
+					:filters="uploadModel.filters">
+			</vue-file-upload>
+
+			<image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

@@ -1,0 +1,20 @@
+ <!--左浮动框-->
+<div class="edit-pop-container">
+	<div class="epc-content" style="height: 420px; overflow: auto">
+		<!--<div class="not">{{$t("bs.bac.alreadySel")}}</div>-->
+        <iv-tree :model="mainModel.data"
+                 :selected-datas.sync="mainModel.selectedDatas"
+                 :single-select="true"
+				 :allow-parent-checked="true"
+                 id-attr="id"
+                 pid-attr="parentId"
+                 display-attr="name"
+				  :open="false"
+				  :serch-filterable="true">
+        </iv-tree>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+	</div>
+</div>

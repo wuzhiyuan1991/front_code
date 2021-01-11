@@ -1,0 +1,19 @@
+<el-form-item :label="label" :prop="prop" class="file_upload_text">
+    <lite-box v-for="(index,file) in data" @on-close="doDeleteFile(file.fileId||file.id,index)">
+        <i class="ivu-icon  ivu-icon-document-text file_upload_text_ico"></i>
+        <a v-text="file.orginalName"
+           target="_blank"
+           style="width: 90px; margin: 2px;"
+           :href="convertFileUrl(file)"
+        ></a>
+    </lite-box>
+    <vue-file-upload
+            :custom-style="true"
+            :params="params"
+            @on-success-upload="doFileSuccessUpload"
+            :filters="filters"
+            class="file_upload_buttom"
+    >
+        <slot><span class="file_tps"><i class="ivu-icon ivu-icon-link"></i>添加附件</span></slot>
+    </vue-file-upload>
+</el-form-item>

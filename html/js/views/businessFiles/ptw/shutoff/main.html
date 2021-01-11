@@ -1,0 +1,282 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification :is-can-select-all="false" $main-header-classification-attr-default :showdept="true" ></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button @click="doAddDetail">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+			                    <!--<iv-dropdown-item>-->
+                                    <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                    $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"
+                               @click="doAdd4Copy">复制
+                    </vi-button>
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content ptw-base-info" >
+                <div class="lr-layout" style="background: #fff;padding:10px 0;">
+                    <div class="lr-layout-l legal-regulation-type-box" style="width: 189px;overflow-y: auto;z-index:100;border-right: 1px solid #ddd;">
+                        <base-according :border-right='false' :current-index.sync="checkedGroupIndex" v-ref:according width='188' :values="tabList" name-field="value" @on-selected="doSelectGroup"></base-according>
+                    </div>
+                    <div class="lr-layout-r" style="padding: 0;border:1px solid #ddd;">
+                        <div v-show='checkedGroupIndex==0' style="width:700px;">
+                            <div class="pad-form-item">
+                                <el-form class="width-auto-ipt" label-width="160px">
+                                    <el-form-item label="作业完成声明">
+                                        <div class="flex-layout">
+                                            <div class="flex-grow1 flex-flex-1 form-disabled bgw h80" style="white-space: pre-wrap">
+                                                {{mainModel.finishptw.name}}
+                                            </div>
+                                            <div class="link-ele pdl5"  v-if="hasAuth('edit')" @click="doShowEdit(7)">定制内容</div>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="作业申请人签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0 >
+                                       <div class="dashed-btn">添加签字人员确认</div>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="作业批准人签名">
+                                        <span class="form-disabled mr10 width250">操作人录入（年月日时分）</span>
+                                        <span class="form-disabled ml10 width250">操作人签名</span>
+                                    </el-form-item>
+
+                                </el-form>
+                            </div>
+                        </div>
+                        <div v-show='checkedGroupIndex==1' style="width:700px;">
+                            <div class="pad-form-item">
+                                <el-form class="width-auto-ipt" label-width="160px">
+                                    <el-form-item label="作业取消原因">
+                                        <div class="flex-layout">
+                                            <div class="flex-grow1 form-disabled bgw h80">
+                                                <div class="ele-disabled-mask"></div>
+                                                <iv-checkbox-group class="group-vertical">
+                                                    <iv-checkbox disabled v-for="item of cancelReasonList">{{item.name}}</iv-checkbox>
+                                                    <iv-checkbox disabled>其他________________（填写）</iv-checkbox>
+                                                </iv-checkbox-group>
+
+                                            </div>
+                                            <div class="link-ele pdl5 flex-noshrink"  v-if="hasAuth('edit')" @click="doShowCancelModal()">定制内容</div>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="作业取消声明">
+                                        <div class="flex-layout">
+                                            <div class="flex-grow1 flex-flex-1 form-disabled bgw h80" style="white-space: pre-wrap">
+                                                {{mainModel.cancelptw.name}}
+                                            </div>
+                                            <div class="link-ele pdl5 flex-noshrink"  v-if="hasAuth('edit')" @click="doShowEdit(6)">定制内容</div>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="作业申请人签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0 >
+                                        <div class="dashed-btn">添加签字人员确认</div>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="作业批准人签名">
+                                        <span class="form-disabled mr10 width250">操作人录入（年月日时分）</span>
+                                        <span class="form-disabled ml10 width250">操作人签名</span>
+                                    </el-form-item>
+
+                                </el-form>
+                            </div>
+
+                        </div>
+                        <div v-show="checkedGroupIndex==3" style="width:700px;">
+                            <div class="pad-form-item">
+                                <el-form class="width-auto-ipt" label-width="160px">
+                                    <el-form-item label="作业延期期限">
+                                        <div class="  form-disabled ">
+                                            自___年___月___日___时___分始， 至___年___月___日___时___分止                                        </div>
+                                    </el-form-item>
+                                    <!--<el-form-item label="作业延期理由">-->
+                                        <!--<div class="  form-disabled ">-->
+                                            <!--手动录入-->
+                                        <!--</div>-->
+                                    <!--</el-form-item>-->
+                                    <el-form-item label="作业申请人签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0 >
+                                        <div class="dashed-btn">添加签字人员确认</div>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="作业批准人签名">
+                                        <span class="form-disabled mr10 width250">操作人录入（年月日时分）</span>
+                                        <span class="form-disabled ml10 width250">操作人签名</span>
+                                    </el-form-item>
+
+                                </el-form>
+                            </div>
+                        </div>
+                        <div v-show="checkedGroupIndex==2" style="width:700px;">
+                            <div class="pad-form-item">
+                                <el-form class="width-auto-ipt" label-width="160px">
+                                    <el-form-item label="作业有效期">
+                                        <div class="flex-layout form-disabled">
+                                            <div class="flex-flex-1   ">
+                                                模板定制时设定作业有效期
+                                            </div>
+                                            <div class="select-div" style="width:80px;border:none;">
+                                                <span style="margin-left:15px;">小时</span>
+                                                <Icon style="margin-right:15px;" type="arrow-down-b"></Icon>
+                                            </div>
+                                        </div>
+
+                                    </el-form-item>
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="作业延期期限">
+                                        <div class="  form-disabled ">
+                                            自___年___月___日___时___分始， 至___年___月___日___时___分止
+                                        </div>
+                                    </el-form-item>
+                                    <!--<el-form-item label="作业续签理由">-->
+                                        <!--<div class="  form-disabled ">-->
+                                            <!--手动录入-->
+                                        <!--</div>-->
+                                    <!--</el-form-item>-->
+                                    <el-form-item label="作业申请人签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+                                    <el-form-item label="xxx人员签名">
+                                        <span class="form-disabled mr10 width250">人员签名</span>
+                                        <span class="form-disabled ml10 width250">签名日期时间</span>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0 >
+                                        <div class="dashed-btn">添加签字人员确认</div>
+                                    </el-form-item>
+
+                                    <el-form-item label="" label-width=0>
+                                        <div style="width:100%;border-top:1px solid #ddd;">
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="作业批准人签名">
+                                        <span class="form-disabled mr10 width250">操作人录入（年月日时分）</span>
+                                        <span class="form-disabled ml10 width250">操作人签名</span>
+                                    </el-form-item>
+
+                                </el-form>
+                            </div>
+                        </div>
+                        <div v-show="checkedGroupIndex==4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+<edit-modal @do-save="saveInfo" :visible.sync="formModel.edit.visible" v-ref:edit></edit-modal>
+<edit-cancel-modal :select-org-id="selectOrgId" @do-update="updateCancelList" :visible.sync="formModel.editCancel.visible" v-ref:cancel-modal></edit-cancel-modal>
+

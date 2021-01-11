@@ -1,0 +1,169 @@
+<!-- 左浮动框 -->
+<div class="detail-container">
+    <div class="few-info-panel pull-left">
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{$t("gb.common.detail")}}</span>
+        </div>
+        <div class="fip-content remainForm businessCon">
+            <!-- 基本信息 -->
+            <el-form :model="mainModel" :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.timeRules" class="fip-content-item-form" style="width: auto" v-ref:ruleform>
+                <simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+                    <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+
+                    <el-form-item :label="$t('bs.bac.number')" prop="vo.code" style="width:88%">
+                        <iv-input v-if="mainModel.opType === 'create'" type="text" :value.sync="mainModel.vo.code"></iv-input>
+                        <iv-input v-if="mainModel.opType === 'update'" type="text" :value.sync="mainModel.vo.code" disabled></iv-input>
+                        <iv-input v-if="mainModel.isReadOnly" type="text" :value.sync="mainModel.vo.code" textonly></iv-input>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('bs.bac.remindName')" prop="vo.remindName" style="width: 88%">
+                        <iv-input :value.sync="mainModel.vo.remindName" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('gb.common.ownedComp')" prop="vo.orgId" style="width: 59%">
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['compName']" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('bs.bac.operatObject')" prop="vo.lookupId" style="width: 59%">
+                        <i-select :model.sync="mainModel.vo.lookupId" v-if="mainModel.opType === 'create'" :list="mainModel.lookupList" @on-change="doChangeDataByTime">
+                            <i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>
+                        </i-select>
+                        <iv-input :value.sync="mainModel.vo.lookup.attr1" v-if="mainModel.opType === 'update'" disabled></iv-input>
+                        <iv-input :value.sync="mainModel.vo.lookup.attr1" v-if="mainModel.isReadOnly" textonly></iv-input>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('bs.bac.remindMode')" prop="timeWay">
+                        <iv-checkbox-group :model="mainModel.timeWay">
+                            <iv-checkbox value="0">{{$t('bs.bac.system')}}</iv-checkbox>
+                            <iv-checkbox value="1">{{$t('das.oniu.mail')}}</iv-checkbox>
+                            <iv-checkbox value="3">APP</iv-checkbox>
+                        </iv-checkbox-group>
+                    </el-form-item>
+
+
+                </simple-card>
+
+                <!-- 提醒条件 -->
+                <simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+                    <p slot="title"><i class="basicPng"></i><span>{{$t("bs.bac.remindReson")}}</span></p>
+                    <ul v-if="mainModel.isReadOnly">
+                        <li v-for="r in mainModel.showRcList" track-by="$index">{{r}}</li>
+                    </ul>
+                    <div v-else>
+                        <div class="reminderSettings-group" v-if="mainModel.vo.rcList.length > 0" v-for="(index,condition) in mainModel.vo.rcList">
+                            <div class="reminderSettings-condition">
+                                <i-select :model.sync="mainModel.vo.rcList[index].lookupItemId" @on-change="doChangeNodesAndExpress" :list="mainModel.timeCondition" size="small">
+                                    <i-option v-for="item in mainModel.timeCondition" :value="item.id">{{ item.name }}</i-option>
+                                </i-select>
+                            </div>
+                            <div class="reminderSettings-condition">
+                                <i-select :model.sync="mainModel.vo.rcList[index].conditionNodes" @on-change="doChangeTimeValue" :list="mainModel.dateCondition" size="small">
+                                    <i-option v-for="item in mainModel.dateCondition" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+                            </div>
+                            <div class="reminderSettings-condition" v-if="(mainModel.vo.rcList[index].conditionNodes !='isNull') && (mainModel.vo.rcList[index].conditionNodes !='isNotNull')">
+                                <vi-date-picker type="date" :value.sync="mainModel.vo.rcList[index].conditionValueDate" placeholder="请选择日期"></vi-date-picker>
+                            </div>
+                            <div class="reminderSettings-condition" v-if="(mainModel.vo.rcList[index].conditionNodes =='betweenDate') && (mainModel.vo.rcList[index].conditionNodes !='isNull') && (mainModel.vo.rcList[index].conditionNodes !='isNotNull')">
+                                <vi-date-picker type="date" :value.sync="mainModel.vo.rcList[index].conditionValueEndDate" placeholder="请选择日期"></vi-date-picker>
+                            </div>
+                            <Icon type="android-remove-circle" style="cursor: pointer; margin-top: 10px;color: red;" @click="doDeleteCondition(index)"></Icon>
+                        </div>
+
+                    </div>
+                </simple-card>
+                <el-form-item prop="vo.rcList" label="" v-if="!mainModel.isReadOnly" style="margin-left:-30px;">
+                    <div class="reminderSettings-AddCondition" v-if="mainModel.vo.rcList.length < 5">
+                        <textarea type="text" readonly="readonly" @click="doAddCondition">{{$t('bs.bac.addReson')}}</textarea>
+                    </div>
+                </el-form-item>
+                <!-- 设定规则 -->
+                <simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+                    <p slot="title"><i class="basicPng"></i><span>{{$t("bs.bac.setRules")}}</span></p>
+                    <div v-if="mainModel.isReadOnly">{{mainModel.vo.remindExpress}}</div>
+                    <div v-else class="reminderSettings-center" style="margin-left:-110px;">
+                        <el-form-item prop="vo.remindExpress" label="">
+                            <textarea type="text" v-model="mainModel.vo.remindExpress"></textarea>
+                        </el-form-item>
+                    </div>
+                </simple-card>
+
+                <!-- 提醒对象 -->
+                <simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+                    <p slot="title"><i class="basicPng"></i><span>{{$t("bs.bac.remindObject")}}</span></p>
+                    <a slot="extra" @click="doAddPerson" v-show="!mainModel.isReadOnly">
+                        <span><Icon type="plus"></Icon>{{$t('bs.bac.addPerson')}}</span>
+                    </a>
+                    <a slot="extra" @click="doAddRole" v-show="!mainModel.isReadOnly">
+                        <span><Icon type="plus"></Icon>{{$t('bs.bac.addRole')}}</span>
+                    </a>
+                    <table id="sample-table-2" v-if="mainModel.isReadOnly" class="table table-hover">
+                        <thead>
+                            <tr class="remindTh4">
+                                <th class="remindTh4">{{$t("gb.common.type")}}</th>
+                                <th class="remindTh4">{{$t("bd.hal.objectName")}}</th>
+                                <th style="width: 50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(index,r) in mainModel.vo.roleList">
+                                <td>{{roleTitle}}</td>
+                                <td>{{r.name}}</td>
+                                <td>
+                                    <div class="table-column-tools" @click="doDel(r,index)"><i class="ivu-icon ivu-icon-trash-a"></i></div>
+                                </td>
+                            </tr>
+                            <tr v-for="(index,u) in mainModel.vo.userList">
+                                <td>{{userTitle}}</td>
+                                <td>{{u.username}}</td>
+                                <td>
+                                    <div class="table-column-tools" @click="doDel(u,index)"><i class="ivu-icon ivu-icon-trash-a"></i></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="sample-table-5" v-else class="table table-hover">
+                        <thead>
+                            <tr class="remindTh4">
+                                <th class="remindTh4">{{$t('gb.common.type')}}</th>
+                                <th class="remindTh4">{{$t('bd.hal.objectName')}}</th>
+                                <th style="width: 50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(index,m) in mainModel.vo.rmList">
+                                <td v-text="doSearchModelType(m.type)"></td>
+                                <td>{{m.name}}</td>
+                                <td>
+                                    <div class="table-column-tools" @click="doDel(m,index)"><i class="ivu-icon ivu-icon-trash-a"></i></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </simple-card>
+
+            </el-form>
+        </div>
+    </div>
+
+    <!-- 右侧按钮 -->
+    <div class="few-info-sider pull-right" v-if="mainModel.isReadOnly">
+        <iv-button type="ghost" @click="doClose" icon="close-round">{{$t("gb.common.close")}}</iv-button>
+        <iv-button icon="android-document" v-if="hasAuth('edit')" @click.stop="doEdit" type="ghost">{{$t('gb.common.edition')}}</iv-button>
+        <iv-button v-if="hasAuth('delete')" type="ghost" @click="doConfirmCallback('doDelete')" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+    </div>
+    <div class="few-info-sider pull-right" v-if="!mainModel.isReadOnly">
+        <iv-button type="ghost" @click="doClose" icon="close-round">{{$t("gb.common.close")}}</iv-button>
+        <iv-button type="ghost" @click="doSave" icon="android-document">{{$t("bd.ria.preservation")}}</iv-button>
+        <iv-button type="ghost" v-if="mainModel.opType === 'update'" @click="doCancel" icon="ios-information-outline">{{$t("gb.common.cancel")}}</iv-button>
+    </div>
+</div>
+
+<!-- 弹框选人 -->
+<user-select-modal :visible.sync="showModal" @do-save="doSaveSelect" single-select></user-select-modal>
+<!-- 选择角色 -->
+<Modal :visible.sync="roleModel.show" :title="roleModel.title" :width="700" footer-hide>
+    <role-component @do-role-saved="doRoleSaved"></role-component>
+</Modal>

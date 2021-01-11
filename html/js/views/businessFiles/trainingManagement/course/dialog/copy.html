@@ -1,0 +1,19 @@
+<div class="edit-pop-container" >
+    <div class="epc-content" style="background-color: #fff;">
+        <el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform >
+            <el-form-item class="small-info-box" label="复制到公司" prop="destCompId">
+                <company-tree-select :id.sync="mainModel.vo.destCompId"></company-tree-select>
+            </el-form-item>
+            <el-form-item label="复制到部门" prop="destOrgId" class="small-info-box">
+                <department-tree-select :id.sync="mainModel.vo.destOrgId" :comp-id.sync="mainModel.vo.destCompId"></department-tree-select>
+            </el-form-item>
+            <el-form-item label="复制进度" class="small-info-box" v-show="showPercent">
+                <progress :percent="copyPercent" status="active" hide-info :stroke-width="12"></progress>
+            </el-form-item>
+        </el-form>
+
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doOk" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>

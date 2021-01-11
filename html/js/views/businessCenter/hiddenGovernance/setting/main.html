@@ -1,0 +1,55 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col $main-header-condition-div-attr-default>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button @click="doAdd" v-if="hasPermission('5010005001')">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="none" placement="bottom-end">
+                            <!--<vi-button type="ghost" icon="chevron-down"></vi-button>-->
+                            <!--<iv-dropdown-menu slot="list">-->
+                            <!--<iv-dropdown-item>-->
+                            <!--<vue-file-upload custom-style>-->
+                            <!--<div class="uploadAport" v-if="hasPermission('5010005001')"><a>{{$t("gb.common.import")}}</a></div>-->
+                            <!--</vue-file-upload>-->
+                            <!--</iv-dropdown-item>-->
+                            <!--<iv-dropdown-item>-->
+                            <!--<div class="uploadAport" @click="doExportExcel" v-if="hasPermission('5010005001')"><a>{{$t("gb.common.export")}}</a></div>-->
+                            <!--</iv-dropdown-item>-->
+                            <!--</iv-dropdown-menu>-->
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                    <!--<div class="import" v-if="hasPermission('100010312')"><a>{{$t("gb.common.import")}}</a></div>-->
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doEnable" v-if="hasPermission('100010307')">{{$t("gb.common.enable")}}</vi-button>-->
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doDisable" v-if="hasPermission('100010308')">停用</vi-button>-->
+                    <vi-button type="text" class="mp-header-item-btn" @click="doUpdate" v-if="hasPermission('5010005002')">{{$t("gb.common.edition")}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doDelete" v-if="hasPermission('5010005003')">{{$t("gb.common.del")}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="" )>{{$t("gb.common.export")}}</vi-button>-->
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doExport" v-if="hasPermission('100010311')">{{$t("gb.common.export")}}</vi-button>-->
+                </iv-col>
+            </iv-row>
+
+        </div>
+
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- 右滑弹框 -->
+<aside :show.sync="detailModel.show" placement="right" class="large-info-aside">
+    <detail-component></detail-component>
+</aside>

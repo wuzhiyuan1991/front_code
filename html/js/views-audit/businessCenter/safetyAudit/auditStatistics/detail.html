@@ -1,0 +1,79 @@
+<div class="detail-large-container" style="background-color:#fff;padding:20px;">
+
+    <div class="base-info-panel pull-left" style="padding: 10px;">
+
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{mainModel.title}}</span>
+        </div>
+
+        <div class="fip-content" style="width: 680px;">
+            <!-- 模型基础信息 -->
+            <simple-card class="fip-content-item">
+                <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+                <el-form class="fip-content-item-form" :model="mainModel.vo" :rules="mainModel.emptyRules" v-ref:ruleform>
+                    <el-form-item :label="$t('gb.common.code')" prop="code" v-show="mainModel.opType !== 'create'">
+                        <iv-input :value.sync="mainModel.vo.code" :textonly="true"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('bc.hal.planName')" prop="name">
+                        <iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="安全体系" prop="auditTableId">
+                        <input-select :value="mainModel.vo.auditTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowauditTableSelectModal())"></input-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.personInCharge')" prop="ownerId">
+                        <user-select v-if="!mainModel.isReadOnly" @do-save="doSaveUser" :data-model="mainModel.vo.user.username" single-select></user-select>
+                        <iv-input v-else textonly :value.sync="mainModel.vo.user.username"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="发布状态" prop="status">
+                        <iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.startTime')" prop="startDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.endTime')" prop="endDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="发布时间" prop="publishDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.publishDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.publishDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+
+                </el-form>
+            </simple-card>
+
+            <simple-card class="fip-content-item" :show-content.sync="cardModel.showFactorContent">
+                <p slot="title"><i class="basicPng"></i><span>要素得分</span></p>
+                <a slot="extra"><span><Icon type="navicon"></Icon>列表</span></a>
+                <a slot="extra"><span><Icon type="stats-bars"></Icon>柱状图</span></a>
+                <a slot="extra"><span><Icon type="pie-graph"></Icon>饼图</span></a>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>编码</th>
+                            <th>要素名称</th>
+                            <th>权重</th>
+                            <th>评分</th>
+                            <th>折算得分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </simple-card>
+
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+    </div>
+</div>

@@ -1,0 +1,199 @@
+<style>
+    .main-item{
+        width: 100%;
+    }
+    .main-item .simple-card-head{
+        padding: 3px 0 15px 0px;
+        line-height: 1;
+
+    }
+    .main-item .contentItem{
+        position: absolute;
+        left: 125px;
+        top: 3px;
+        color: #999999;
+    }
+    .footer_button{
+        margin: 20px 10px;
+    }
+    .footer_button1{
+        position: absolute;
+        right: 0;
+        top: 52px;
+        margin: 20px 10px;
+    }
+    .psdTip{
+        padding-left:9px;
+        height:41px;
+        line-height:41px;
+    }
+    .red-color{
+        color:#ff0000;
+    }
+    .el-form-item__label{
+        padding:10px 10px 0 0 !important;
+        padding-left:9px!important;
+    }
+    .main-item .ivu-input-wrapper{
+        text-align: left;
+    }
+
+    /*6871 增加一个safeRule class*/
+    .safeRule .basic{
+        padding-left: 0px;
+    }
+    .safeRule  .simple-card {
+    }
+    .safeRule  .simple-card-head{
+     /*   height: 60px;
+        line-height: 60px;*/
+        padding: 0px;
+    }
+    .safeRule .simple-card-extra{
+        top: 25px;
+        right: 20px;
+    }
+    .safeRule  .simple-card-head p{
+        margin-left: 20px;
+        width:calc(100% - 40px);
+        height: 60px;
+        line-height: 60px;
+        border-bottom: 1px solid #f7f7f7;
+    }
+    .safeRule .simple-card-head:hover{
+        background: #f2f2f2;
+    }
+    .safeRule .businessCon{
+        margin-left: 11px;
+    }
+
+</style>
+<div class="tab-container safeRule">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <div class="basic">{{$t('bs.bac.safetyRule')}}</div>
+            <!-- 弹窗按钮   -->
+            <div class="grid_tool">
+            </div>
+            <div id="dialog-form" style="display: none;"></div>
+        </div>
+        <div class="formBody" style=" height: calc(100% - 60px); background: #fff;overflow: hidden;">
+            <div class="main-item">
+                <simple-card  :show-content.sync="isShowItem">
+                    <p slot="title" @click.prevent="isShowItem = !isShowItem">密码规则设置<a class="contentItem">设置企业成员登录密码所必须满足的规则</a></p>
+                    <a slot="extra" @click.prevent="isShowItem = !isShowItem">
+                        <span v-if="isShowItem"><Icon type="chevron-up"></Icon></span>
+                        <span v-else><Icon type="chevron-down"></Icon></span>
+                    </a>
+                    <div class="businessCon">
+                        <el-form :model="mainModel.vo">
+                            <el-form-item  style="overflow: initial" :label="$t('bs.das.miniLength')" prop="passwordDetail.miniLength">
+                                <i-select :model.sync="mainModel.vo.passwordDetail.miniLength" :list="mainModel.lengthList" >
+                                    <i-option v-for="item in mainModel.lengthList" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+                            </el-form-item>
+                            <el-form-item  style="overflow: initial"  :label="$t('bs.das.effecTime')" prop="passwordDetail.effecTime">
+                                <i-select :model.sync="mainModel.vo.passwordDetail.effecTime" :list="mainModel.timeList" >
+                                    <i-option v-for="item in mainModel.timeList" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+                            </el-form-item>
+                            <el-form-item  style="overflow: initial"  :label="$t('bs.das.retryLimit')" prop="passwordDetail.retryLimit">
+                                <i-select :model.sync="mainModel.vo.passwordDetail.retryLimit"  :list="mainModel.limitList" >
+                                    <i-option v-for="item in mainModel.limitList" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+                            </el-form-item>
+                            <el-form-item   style="overflow: initial" :label="$t('bs.das.lockingTime')" prop="passwordDetail.lockingTime">
+                                <i-select :model.sync="mainModel.vo.passwordDetail.lockingTime" :list="mainModel.lockingList" >
+                                    <i-option v-for="item in mainModel.lockingList" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+                            </el-form-item>
+                            <el-form-item prop="passwordDetail.letter" label-width="10px">
+                                <iv-checkbox :checked.sync="mainModel.vo.limiting[0].checked" value="0">必须包含字母</iv-checkbox>
+                            </el-form-item>
+                            <el-form-item label="" prop="passwordDetail.number" label-width="10px">
+                                <iv-checkbox :checked.sync="mainModel.vo.limiting[1].checked"  value="1">必须包含数字</iv-checkbox>
+                            </el-form-item>
+                            <el-form-item label="" prop="passwordDetail.caseLetter" label-width="10px">
+                                <iv-checkbox :checked.sync="mainModel.vo.limiting[2].checked" value="2">必须包含大小写字母</iv-checkbox>
+                            </el-form-item>
+                            <el-form-item label="" prop="passwordDetail.specialCharacter" label-width="10px">
+                                <iv-checkbox :checked.sync="mainModel.vo.limiting[3].checked" value="3">必须包含字母和数字以外的特殊字符</iv-checkbox>
+                            </el-form-item>
+                        </el-form>
+                        <div class="footer_button">
+                            <vi-button type="primary" @click="doSavePsd">{{$t("gb.comnon.save")}}</vi-button>
+                        </div>
+
+                    </div>
+                </simple-card>
+            </div>
+            <!--<div class="main-item">-->
+                <!--<simple-card  :show-content.sync="isShowItem1">-->
+                    <!--<p slot="title">重置密码<a class="contentItem">重置所有人员密码，并通知所有人进行密码修改</a></p>-->
+                    <!--<a slot="extra" @click.prevent="isShowItem1 = !isShowItem1">-->
+                        <!--<span v-if="isShowItem1"><Icon type="chevron-up"></Icon></span>-->
+                        <!--<span v-else><Icon type="chevron-down"></Icon></span>-->
+                    <!--</a>-->
+                    <!--<div style="margin-top: 30px;">-->
+                        <!--<el-form :model="mainModel.vo">-->
+                            <!--<el-form-item :label="$t('bs.das.setNewPsd')" prop="orgId">-->
+                                <!--<iv-input :value.sync="mainModel.vo.userVO.password"></iv-input>-->
+                            <!--</el-form-item>-->
+                        <!--</el-form>-->
+                        <!--<div class="footer_button1">-->
+                            <!--<vi-button type="primary" class="pull-right" @click="doChangePsd">重置</vi-button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="psdTip" :class="{ 'red-color': isRed }">{{psdTip}}</div>-->
+                <!--</simple-card>-->
+            <!--</div>-->
+            <div class="main-item">
+                <simple-card  :show-content.sync="isShowItem2">
+                    <p slot="title" @click.prevent="isShowItem2 = !isShowItem2">IP限制<a class="contentItem">可以设置登录IP限制规则。设置后，限制登录</a></p>
+                    <a slot="extra" @click.prevent="isShowItem2 = !isShowItem2">
+                        <span v-if="isShowItem2"><Icon type="chevron-up"></Icon></span>
+                        <span v-else><Icon type="chevron-down"></Icon></span>
+                    </a>
+                    <div class="businessCon">
+                        <simple-card  :show-content.sync="isShowItem2">
+                            <p style="height: 60px;line-height: 60px;margin-left: 10px">
+                               <iv-checkbox :checked.sync="mainModel.envVo.enable" @change="checkedChange">启用</iv-checkbox>
+                            </p>
+                            <a slot="extra" @click="addRule"> <Icon type="plus"></Icon>添加</a>
+                            <el-form :model="mainModel.envVo" style="width: 100%;" v-ref:ruleform is-label-vertical>
+                                <div>
+                                    <iv-row style="height: 45px;background: #f2f2f2;margin-left: 10px;text-align: left;padding: 12px;">
+                                        <iv-col span="4" style="padding-left:5px;">{{$t("bs.bac.number")}}</iv-col>
+                                        <iv-col span="8">{{$t("gb.common.name")}}</iv-col>
+                                        <iv-col span="8">IP地址</iv-col>
+                                        <iv-col span="4"> </iv-col>
+                                    </iv-row>
+                                    <iv-row style="height: 45px;margin-left: 10px;text-align: left;padding: 12px;"  v-for="(index,ip) in mainModel.envVo.enableIpList">
+                                        <iv-col span="4" style="padding: 10px 5px;">{{index+1}}</iv-col>
+                                        <iv-col span="8">
+                                            <el-form-item  :prop="'enableIpList.'+index+'.name'" :rules="ruleModel.name">
+                                                <iv-input @on-blur="blur" :textonly="isReadOnly(index)" :value.sync="mainModel.envVo.enableIpList[index].name"></iv-input>
+                                            </el-form-item>
+                                        </iv-col>
+                                        <iv-col span="8">
+                                            <el-form-item  :prop="'enableIpList.'+index+'.address'"  :rules="ruleModel.address">
+                                                <iv-input @on-blur="blur" :textonly="isReadOnly(index)" :value.sync="mainModel.envVo.enableIpList[index].address"></iv-input>
+                                            </el-form-item>
+                                        </iv-col>
+                                        <iv-col span="4">
+                                            <div style="cursor: pointer;text-align: right;padding: 12px;">
+                                                <Icon @click="editRule" type="edit" style="margin-right: 15px;"></Icon>
+                                                <Icon @click="delRule(index)"  type="ios-trash-outline"></Icon>
+                                            </div>
+                                        </iv-col>
+                                    </iv-row>
+                                </div>
+                            </el-form>
+                        </simple-card>
+                    </div>
+                </simple-card>
+            </div>
+        </div>
+    </div>
+
+</div>

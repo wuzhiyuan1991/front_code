@@ -1,0 +1,68 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span='18'>
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span='6' >
+                    <div class="prelative addButton pull-right">
+                        <!--<vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>-->
+                        <iv-button @click="doMultipleDelegate('delegate')" v-if="hasAuth('delegateBatch')">批量委托</iv-button>
+                        <iv-button @click="doMultipleDelegate('assign')" v-if="hasAuth('dispatchBatch')">批量分派</iv-button>
+
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <!--<iv-dropdown-item>-->
+                                <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn"-->
+                    <!--@click="doDelete">{{$t("gb.common.del")}}-->
+                    <!--</vi-button>-->
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('execute')" @click="doMakeCheckRecord">{{$t('gb.common.implement')}}
+                    </vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('delegate')" @click="doSingleDelegate('delegate')">委托</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('dispatch')" @click="doSingleDelegate('assign')">分派</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :show-scroll="true"></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel :is-show-excute="mainModel.isShowExcute" :msg="isLateCheckAllowed"></detail-panel>
+</aside>
+
+<delegate-single-component
+        :visible.sync="delegateSingleModel.show"
+        :id="delegateSingleModel.id"
+        :checker-ids="delegateSingleModel.checkerIds"
+        :type="delegateSingleModel.type"
+></delegate-single-component>
+
+<delegate-batch-component
+        :visible.sync="delegateBatchModel.visible"
+        :type="delegateBatchModel.type"
+></delegate-batch-component>

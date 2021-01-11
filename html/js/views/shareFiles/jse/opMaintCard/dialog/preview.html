@@ -1,0 +1,117 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div class="preview-box" id="section-to-print">
+        <!--<table class="preview-box-table font-bold">-->
+            <!--<tbody>-->
+            <!--<tr>-->
+                <!--<td>{{vo.code}} {{vo.name}}</td>-->
+                <!--<td>-->
+                    <!--<div>订单编号：</div>-->
+                    <!--<div>通知单编号：</div>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
+        <div style="padding: 10px 0 20px;display: flex;justify-content: space-between;align-items: center;">
+            <h3 style="text-align: center;word-break: break-all;flex-grow: 1;padding: 0 30px 0 180px;">{{vo.attr1}} {{vo.name}}</h3>
+            <div style="width: 180px;min-width: 180px;">
+                <p>订单编号：</p>
+                <p>通知单编号：</p>
+            </div>
+        </div>
+        <table class="preview-box-table font-bold">
+            <colgroup>
+                <col style="width: 150px;">
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td>设备名称</td>
+                <td>{{vo.equipName}}</td>
+                <td>设备位号</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>开始时间</td>
+                <td style="letter-spacing: 30px;padding-left: 40px;">月日时分</td>
+                <td>结束时间</td>
+                <td style="letter-spacing: 30px;padding-left: 40px;">月日时分</td>
+            </tr>
+            <tr>
+                <td>检修负责人</td>
+                <td></td>
+                <td>检修内容</td>
+                <td>{{vo.content}}</td>
+            </tr>
+            <tr>
+                <td>检修作业人员</td>
+                <td></td>
+                <td>监护人</td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="preview-box-table">
+            <colgroup>
+                <col style="width: 120px;">
+                <col style="width: 60px;">
+                <col>
+                <col style="width: 110px;">
+                <col style="width: 60px;">
+            </colgroup>
+            <tbody>
+            <tr class="font-bold">
+                <td class="text-center">工序</td>
+                <td class="text-center">序号</td>
+                <td class="text-center">内容</td>
+                <td class="text-center">负责人</td>
+                <td class="text-center">确认</td>
+            </tr>
+            <template v-for="(index, item) in items">
+                <tr v-for="(i, tr) in item.items">
+                    <td :rowspan="item.items.length" v-if="i === 0" class="font-bold">{{item.name}}</td>
+                    <td class="text-center">{{tr.num}}</td>
+                    <td>{{{tr.content}}}</td>
+                    <td>{{{tr.userNames}}}</td>
+                    <td></td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+        <div class="preview-box-sign" style="margin-top: 15px;">
+            <span>签字：检修作业人员</span>
+            <span>（</span>
+            <span>）签字时间：</span>
+            <span>年</span>
+            <span>月</span>
+            <span>日</span>
+            <span>时</span>
+            <span>分</span>
+        </div>
+        <div class="preview-box-sign">
+            <span>签字：检修负责人</span>
+            <span>（</span>
+            <span>）签字时间：</span>
+            <span>年</span>
+            <span>月</span>
+            <span>日</span>
+            <span>时</span>
+            <span>分</span>
+        </div>
+        <div class="preview-box-sign">
+            <span>签字：监护人</span>
+            <span>（</span>
+            <span>）签字时间：</span>
+            <span>年</span>
+            <span>月</span>
+            <span>日</span>
+            <span>时</span>
+            <span>分</span>
+        </div>
+    </div>
+</Modal>

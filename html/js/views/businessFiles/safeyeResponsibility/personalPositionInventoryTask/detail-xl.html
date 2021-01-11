@@ -1,0 +1,94 @@
+<div class="detail-large-container" v-el:container>
+
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button type="ghost" @click.stop="doExecute" v-if="showExecuteBtn">执行</iv-button>
+				<iv-button type="ghost" @click.stop="doSave" v-show="!mainModel.isReadOnly">保存</iv-button>
+				<iv-button type="ghost" @click.stop="doCancel" v-show="!mainModel.isReadOnly">取消</iv-button>
+				<iv-button type="ghost" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item label="人员" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.user.name" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+						<iv-input :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="部门" prop="orgId" class="small-info-box">
+						<iv-input :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="岗位" prop="users" class="small-info-box">
+						<div>{{displayPositionText}}</div>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="时间计划" prop="commitmentSetting.type" class="small-info-box">
+						<div>{{frequencyTypeText}}</div>
+					</el-form-item>
+					<el-form-item label="考核时间" prop="commitmentSetting.year" class="small-info-box">
+						<div>{{displayDate}}</div>
+						<div style="line-height: 1;">({{displayPeriodText}})</div>
+					</el-form-item>
+					<el-form-item label="承诺书附件" class="small-info-box">
+						<ul>
+							<li v-for="(index, file) in cloudFiles" class="cert-file-item" @click="doClickFile(index)">
+								<div class="cert-file-name" :title="file.orginalName">{{file.orginalName}}</div>
+							</li>
+						</ul>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+		<image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+	</div>
+
+	<div class="rel-info-panel" v-show="showGroupPanel">
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="itemPng"></i>执行细则 <span style="font-size: 14px;font-weight: normal;margin-left: 20px;">(标准分值：{{totalScore}} 分<span v-if="mainModel.vo.isComplete === '2'">, 实际得分：{{totalActualScore}} 分</span>)</span></p>
+
+				<simple-card class="rip-item-sub" v-for="(index,tir) in groups">
+					<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+						<div class="left" style="width: 300px;">{{tir.name}}</div>
+
+						<div class="right">
+							<iv-input class="simple-card-input-box" icon="ios-search" @on-click="setFilterValue(tir._keyWord, index)"
+									  @on-enter="setFilterValue(tir._keyWord, index)" :value.sync="tir._keyWord"
+									  style="width:200px;height: 27px;line-height: 28px;" placeholder="请输入" v-show="tir.showInput"></iv-input>
+
+							<vi-button type="text" icon="ios-search" @click="toggleItemInput(tir, true)" v-show="isEditRel && !tir.showInput">搜索</vi-button>
+							<vi-button type="text" icon="power" @click="toggleItemInput(tir, false)" v-show="isEditRel && tir.showInput">折叠</vi-button>
+						</div>
+					</div>
+
+					<lite-table
+							:columns="tableModel.groupTableModel.columns"
+							:values="tir.items | item-filter tir.keyWord"
+							:tools="tableTools"
+							@on-click="onRowClicked"
+							@on-update="doUpdateItem"
+					></lite-table>
+				</simple-card>
+			</simple-card>
+		</div>
+	</div>
+	<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+		<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+	</Modal>
+	<audio-player
+			:visible.sync="audioModel.visible"
+			:path="audioModel.path"
+	></audio-player>
+	<item-form-modal :visible.sync="formModel.itemFormModel.visible" @do-save="doSaveItem" v-ref:item-form-modal></item-form-modal>
+</div>

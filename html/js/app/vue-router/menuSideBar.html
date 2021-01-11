@@ -1,0 +1,23 @@
+<ul class="sidebar-menu">
+    <!--一级菜单名称-->
+    <!--<li class="treeview">-->
+        <!--<a href="javascript:void(0);">-->
+            <!--<i class="{{menu.icon}}"></i><span>{{menu.name}}</span>-->
+        <!--</a>-->
+    <!--</li>-->
+    <li class="level-one-menu">
+        <i class="{{menu.icon}}"></i><span>{{menu.name}}</span>
+    </li>
+    <!--菜单路由-->
+    <li class="treeview" v-for="item in values" @click="toggle(item)" :class="{active: itemShow == item && showClass}">
+        <a v-link="{ path:item.routerPath}">
+            <i class="{{item.icon}}"></i><span>{{item.name}}</span>
+        </a>
+        <ul class="treeview-menu">
+            <li v-for="submenu in item.children">
+                <a v-link="{ path: submenu.routerPath}" @click.stop.prevent="doSubMenuItemClick(submenu)" :class="{active: subMenuShow == submenu}"
+                   :title="submenu.name" :data-code="submenu.code"><i></i>{{submenu.name}}</a>
+            </li>
+        </ul>
+    </li>
+</ul>

@@ -1,0 +1,31 @@
+<div class="reportChartMain report">
+    <div class="mp-header formTitle" style="margin-left: 10px;">
+        <div class="basic">{{mainModel.title}}</div>
+    </div>
+    <div class="report-qry-head">
+        <el-form :model="qryModel" :rules="mainModel.qryRules" is-label-vertical v-ref:ruleform>
+            <iv-row>
+                <iv-col span="5">
+                    <el-form-item prop="dateRange" style="width:100%;overflow: inherit;">
+                        <vi-date-picker type="daterange" :options="mainModel.datePickOpts" :value.sync="qryModel.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="7">
+                    <el-form-item prop="objRange" style="width:100%;overflow: inherit;">
+                        <obj-select :type="qryModel.typeOfRange" :values.sync="qryModel.objRange"
+                                    ></obj-select>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="1" style="padding-top: 6px;">
+                    <iv-button @click="doQry()">查询</iv-button>
+                </iv-col>
+                <iv-col span="1" style="padding-top: 6px;">
+                    <div class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                </iv-col>
+            </iv-row>
+        </el-form>
+    </div>
+    <div>
+        <vuecharts :options="mainModel.lineChartOpt" v-ref:chart></vuecharts>
+    </div>
+</div>

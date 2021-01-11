@@ -1,0 +1,31 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="联系人" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mobile') == -1)" label="手机号码" prop="mobile">
+						<iv-input :value.sync="mainModel.vo.mobile" :disabled="(disabledFields.indexOf('mobile') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('officePhone') == -1)" label="办公电话" prop="officePhone">
+						<iv-input :value.sync="mainModel.vo.officePhone" :disabled="(disabledFields.indexOf('officePhone') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('duty') == -1)" label="职务" prop="duty">
+						<iv-input :value.sync="mainModel.vo.duty" :disabled="(disabledFields.indexOf('duty') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" :label="$t('gb.common.remarks')" prop="remarks" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<emergroup-select-modal :visible.sync="selectModel.emerGroupSelectModel.visible" :filter-data="selectModel.emerGroupSelectModel.filterData" single-select @do-save="doSaveEmerGroup"></emergroup-select-modal>

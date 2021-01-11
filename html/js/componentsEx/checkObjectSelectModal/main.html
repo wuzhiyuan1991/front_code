@@ -1,0 +1,233 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="1200" :footer-hide="true" class="userSelectModal">
+    <div class="sw-modal-body">
+        <div class="sw-co-type">
+            <span class="tit">选择检查对象：</span>
+            <span
+               v-for="type in types"
+               class="sw-co-t-item"
+               :class="{'checked': checkedType === type.id}"
+               @click="doChangeType(type.id)"
+            >{{type.name}}</span>
+        </div>
+
+        <div class="sw-co-condition">
+            <span class="tit">查询条件：</span>
+            <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+            <department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync="mainModel.vo.compId"></department-tree-select>
+            <input-select
+                    :value="mainModel.vo.dominationArea"
+                    placeholder="请选择属地"
+                    id-field="id"
+                    display-field="name"
+                    @click="doShowDominationAreaSelectModal"
+            ></input-select>
+            <iv-button type="primary" @click="doQuery" style="margin-left: 20px;">查询</iv-button>
+        </div>
+
+        <!--选择属地-->
+        <div class="sw-co-center sw-column" v-if="showArea">
+            <div class="sw-co-bar">
+                <span>属地：</span>
+                <div>
+                    <iv-input :value.sync="rightKey"></iv-input>
+                    <iv-button @click="doQuery">查询</iv-button>
+                </div>
+            </div>
+            <vue-bootstrap-table
+                    :url="url"
+                    :columns="columns"
+                    :filter-column="tableModel.filterColumn"
+                    :show-pager="true"
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :default-filter-value="tableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    lazy-load
+                    :show-filter="false"
+                    v-ref:table1
+            >
+            </vue-bootstrap-table>
+        </div>
+
+
+        <!--选择设备-->
+        <div class="sw-co-center sw-row" v-if="showEquipment">
+            <div class="sw-co-left">
+                <div class="sw-co-bar">
+                    <span>设备类型：</span>
+                    <div>
+                        <iv-input :value.sync="leftKey"></iv-input>
+                    </div>
+                </div>
+                <div class="sw-co-left-box">
+                    <iv-tree
+                            id-attr="id"
+                            pid-attr="parentId"
+                            display-attr="name"
+                            :model="treeData"
+                            :selected-datas.sync="treeModel.selectedData"
+                            :show-checkbox="true"
+                            :single-select="true"
+                            :trigger-parent-event="true"
+                            :data-query="leftKey"
+                            @on-tree-node-click="doTreeNodeClick"
+                    ></iv-tree>
+                </div>
+            </div>
+            <div class="sw-co-right">
+                <div class="sw-co-bar">
+                    <span>设备：</span>
+                    <div>
+                        <iv-input :value.sync="rightKey"></iv-input>
+                        <iv-button @click="doQuery">查询</iv-button>
+                    </div>
+                </div>
+                <vue-bootstrap-table
+                        :url="url"
+                        :columns="columns"
+                        :filter-column="tableModel.filterColumn"
+                        :show-pager="true"
+                        :selected-datas.sync="mainModel.selectedDatas"
+                        :default-filter-value="tableModel.defaultFilterValue"
+                        @on-dbclick-cell="onDbClickCell"
+                        lazy-load
+                        :show-filter="false"
+                        v-ref:table2
+                >
+                </vue-bootstrap-table>
+            </div>
+        </div>
+
+        <!--选择化学品-->
+        <div class="sw-co-center sw-row" v-if="showChemical">
+            <div class="sw-co-left">
+                <div class="sw-co-bar">
+                    <span>化学品类型：</span>
+                    <div>
+                        <iv-input :value.sync="leftKey"></iv-input>
+                    </div>
+                </div>
+                <div class="sw-co-left-box">
+                    <iv-tree
+                            id-attr="id"
+                            pid-attr="parentId"
+                            display-attr="name"
+                            :model="treeData"
+                            :selected-datas.sync="treeModel.selectedData"
+                            :show-checkbox="true"
+                            :single-select="true"
+                            :trigger-parent-event="true"
+                            :data-query="leftKey"
+                            @on-tree-node-click="doTreeNodeClick"
+                    ></iv-tree>
+                </div>
+            </div>
+            <div class="sw-co-right">
+                <div class="sw-co-bar">
+                    <span>重点/一般危化品：</span>
+                    <div>
+                        <iv-input :value.sync="rightKey"></iv-input>
+                        <iv-button @click="doQuery">查询</iv-button>
+                    </div>
+                </div>
+                <vue-bootstrap-table
+                        :url="url"
+                        :columns="columns"
+                        :filter-column="tableModel.filterColumn"
+                        :show-pager="true"
+                        :selected-datas.sync="mainModel.selectedDatas"
+                        :default-filter-value="tableModel.defaultFilterValue"
+                        @on-dbclick-cell="onDbClickCell"
+                        lazy-load
+                        :show-filter="false"
+                        v-ref:table3
+                >
+                </vue-bootstrap-table>
+            </div>
+        </div>
+
+
+        <!--选择重大危险源-->
+        <div class="sw-co-center sw-column" v-if="showRiskSource">
+            <div class="sw-co-bar">
+                <span>重大危险源：</span>
+                <div>
+                    <iv-input :value.sync="rightKey"></iv-input>
+                    <iv-button @click="doQuery">查询</iv-button>
+                </div>
+            </div>
+            <vue-bootstrap-table
+                    :url="url"
+                    :columns="columns"
+                    :filter-column="tableModel.filterColumn"
+                    :show-pager="true"
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :default-filter-value="tableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    lazy-load
+                    :show-filter="false"
+                    v-ref:table4
+            >
+            </vue-bootstrap-table>
+        </div>
+
+        <!--选择化学品工艺-->
+        <div class="sw-co-center sw-row" v-if="showProcess">
+            <div class="sw-co-left">
+                <div class="sw-co-bar">
+                    <span>工艺类型：</span>
+                    <div>
+                        <iv-input :value.sync="leftKey"></iv-input>
+                    </div>
+                </div>
+                <div class="sw-co-left-box">
+                    <iv-tree
+                            id-attr="id"
+                            pid-attr="parentId"
+                            display-attr="name"
+                            :model="treeData"
+                            :selected-datas.sync="treeModel.selectedData"
+                            :show-checkbox="true"
+                            :single-select="true"
+                            :trigger-parent-event="true"
+                            :data-query="leftKey"
+                            @on-tree-node-click="doTreeNodeClick"
+                    ></iv-tree>
+                </div>
+            </div>
+            <div class="sw-co-right">
+                <div class="sw-co-bar">
+                    <span>重点化学工艺：</span>
+                    <div>
+                        <iv-input :value.sync="rightKey"></iv-input>
+                        <iv-button @click="doQuery">查询</iv-button>
+                    </div>
+                </div>
+                <vue-bootstrap-table
+                        :url="url"
+                        :columns="columns"
+                        :filter-column="tableModel.filterColumn"
+                        :show-pager="true"
+                        :selected-datas.sync="mainModel.selectedDatas"
+                        :default-filter-value="tableModel.defaultFilterValue"
+                        @on-dbclick-cell="onDbClickCell"
+                        lazy-load
+                        :show-filter="false"
+                        v-ref:table5
+                >
+                </vue-bootstrap-table>
+            </div>
+        </div>
+
+        <div class="sw-co-footer">
+            <iv-button type="primary" @click="doSave" style="margin-right: 20px;">确认</iv-button>
+            <iv-button>取消</iv-button>
+        </div>
+    </div>
+</Modal>
+
+<dominationarea-select-modal
+        single-select
+        :visible.sync="dominationAreaSelectModel.visible"
+        :filter-data="dominationAreaSelectModel.filterData"
+        @do-save="doSaveDominationArea"
+></dominationarea-select-modal>

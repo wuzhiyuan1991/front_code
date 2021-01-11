@@ -1,0 +1,47 @@
+<simple-card v-if="!!title" :class="class">
+    <p slot="title"><i class="basicPng"></i><span>{{title}}</span></p>
+    <span slot="extra"><slot name="extra"></slot></span>
+    <simple-card >
+        <span slot="title" v-if="!readonly">{{remark}}
+            <span class="titlePrompt">（文件支持{{fileType}}格式; 单个文件大小最大支持{{fileMaxSize}};{{limitFile?'最多上传9个文件':''}}）</span>
+        </span>
+
+        <image-view v-show="data && data.length>0" :images="data" @on-close="doDeleteFile"></image-view>
+        <vue-file-upload
+                v-if="!readonly && !limitFile"
+                @on-success-upload="referMater"
+                :params="params"
+                :filters="filters"
+                class="file_upload"
+        ></vue-file-upload>
+        <vue-file-upload
+                v-if="!readonly && data.length < 9&& limitFile"
+                @on-success-upload="referMater"
+                :params="params"
+                :filters="filters"
+                class="file_upload"
+        ></vue-file-upload>
+    </simple-card>
+
+</simple-card>
+<simple-card v-else :class="class">
+    <span slot="title">{{remark}}
+        <span class="titlePrompt" v-if="!readonly">（文件支持{{fileType}}格式; 单个文件大小最大支持{{fileMaxSize}};{{limitFile?'最多上传9个文件':''}}）</span>
+    </span>
+
+    <image-view v-show="data && data.length>0" :images="data" @on-close="doDeleteFile"></image-view>
+    <vue-file-upload
+    v-if="!readonly && !limitFile"
+    @on-success-upload="referMater"
+    :params="params"
+    :filters="filters"
+    class="file_upload"
+></vue-file-upload>
+    <vue-file-upload
+            v-if="!readonly && data.length < 9&& limitFile"
+            @on-success-upload="referMater"
+            :params="params"
+            :filters="filters"
+            class="file_upload"
+    ></vue-file-upload>
+</simple-card>

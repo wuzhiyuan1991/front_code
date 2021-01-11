@@ -1,0 +1,57 @@
+
+<div class="edit-pop-container">
+        <div class="epc-content el-form-item__label_light">
+            <el-form :model="model"  v-if="model">
+                <el-form-item label="作业时间" prop="workStartTime" class="small-info-box" style="width:420px;">
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.workStartTime" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" ></iv-input>
+                    <span style="width:auto;color:#666;font-size: 14px;">&nbsp;至&nbsp;</span>
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.workEndTime" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" ></iv-input>
+
+                </el-form-item>
+                <el-form-item :label="findName('作业类型')"  class="small-info-box " >
+                    <!--<iv-input v-if="model.workCatalog" :value='model.workCatalog.name' :textonly="mainModel.isReadOnly"></iv-input>-->
+
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" v-if="model.workCatalog" style="width:auto;" :value='model.workCatalog.name' :textonly="mainModel.isReadOnly"></iv-input>
+                    <span v-if="model.workLevel && model.workLevel.name">({{model.workLevel.name}})</span>
+                </el-form-item>
+                <el-form-item  :label="findName('生产单位')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value="getDataDic('org',model.prodUnitId)['deptName']" textonly ></iv-input>
+                </el-form-item>
+                <el-form-item  :label="findName('作业地点')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.workPlace" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item  :label="findName('作业所在的设备')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.workEquipment" :textonly="mainModel.isReadOnly" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></iv-input>
+                </el-form-item>
+                <el-form-item :label="findName('作业内容')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.workContent" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item  :label="findName('作业审核人')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" v-if="model.auditor" :value.sync="model.auditor.name" :read-only="mainModel.isReadOnly" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item  :label="findName('预约人')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" v-if="model.applicant" :value.sync="model.applicant.name" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item  :label="findName('预约提交时间')"  class="small-info-box " >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.createDate" :read-only="mainModel.isReadOnly" :textonly="mainModel.isReadOnly" ></iv-input>
+                </el-form-item>
+
+<div style="border-top:1px solid #ddd;margin-top:10px;" v-if="model.enableReservation!=0"></div>
+
+                <el-form-item v-if="model.enableReservation!=0" label="审核人" prop="auditor" class="small-info-box el-form-item" >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" v-if="model.auditor" :value.sync="model.auditor.name" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></iv-input>
+                </el-form-item>
+                <el-form-item v-if="model.enableReservation!=0" label="审核结果" prop="auditResult" class="small-info-box el-form-item" >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="getDataDic('iptw_audit_result', model.auditResult)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="model.enableReservation!=0" label="评审意见" prop="auditOpinion" class="small-info-box el-form-item" >
+                    <iv-input style="width:auto;color:#666;font-size: 14px;" :value.sync="model.auditOpinion" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="model.enableReservation!=0" :label="findName('作业负责人')" prop="auditOpinion" class="small-info-box el-form-item" >
+                    {{getAttr2User}}
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+
+

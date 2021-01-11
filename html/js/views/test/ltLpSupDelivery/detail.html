@@ -1,0 +1,69 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="劳保用品" prop="supply.id">
+						<input-select :value="mainModel.vo.sup" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowSupSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="用品型号">
+						<iv-input :value.sync="mainModel.vo.sup.model" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="领用人" prop="receiver.id">
+						<input-select :value="mainModel.vo.receiver" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowReceiverSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="领用日期" prop="receiverDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.receiverDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.receiverDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="领用数量" prop="quantity">
+						<iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.quantity" type="number">
+							<span slot="append">{{mainModel.vo.sup.unit}}</span>
+						</iv-input>
+						<div v-else>{{mainModel.vo.quantity}} {{mainModel.vo.sup.unit}}</div>
+					</el-form-item>
+
+					<el-form-item :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': false}">
+			</div>
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<ltlpsup-select-modal :visible.sync="selectModel.supSelectModel.visible" :filter-data="selectModel.supSelectModel.filterData" single-select @do-save="doSaveSup"></ltlpsup-select-modal>
+<member-select-modal :visible.sync="selectModel.receiverSelectModel.visible" :filter-data="selectModel.receiverSelectModel.filterData" single-select @do-save="doSaveReceiver"></member-select-modal>
+

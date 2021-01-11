@@ -1,0 +1,8 @@
+<div>
+	<slot v-if="customStyle"></slot>
+	<div v-else="!customStyle" style="width: 80px; height: 80px; border: 3px dashed #e6e6e6; 
+			text-align: center; cursor: pointer;
+			color: #cccccc; font-size: 18px; position: relative;">
+		<Icon type="plus-round" class="file_upload_i"></Icon>
+	</div>
+</div>

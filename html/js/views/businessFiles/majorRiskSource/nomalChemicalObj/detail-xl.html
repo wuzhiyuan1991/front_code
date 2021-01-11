@@ -1,0 +1,125 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+
+					<el-form-item  label="编码" prop="code" class="small-info-box" >
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+					</el-form-item>
+
+					<el-form-item  label="基础化学品" prop="catalog.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.catalog" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="doShowCheckObjectCatalogSelectModal" ></input-select>
+					</el-form-item>
+
+					<el-form-item  label="名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item  label="实际储量" prop="actualReserves" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.actualReserves" :textonly="mainModel.isReadOnly"  style="width: 120px;" :style="limitStyle"></iv-input>
+						<!--<iv-input-number v-else :value.sync="mainModel.vo.actualReserves" min="0" style="width: 120px;position: relative;top: -1px;"></iv-input-number>-->
+						<iv-input :value.sync="mainModel.vo.catalog.unit" :textonly="mainModel.isReadOnly" :disabled="!mainModel.isReadOnly" style="width: 80px;" placeholder="单位"></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+
+					<el-form-item  label="所属公司" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item  label="所属部门" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item  label="属地" prop="dominationArea.id" class="small-info-box" >
+						<!--<input-select :value="mainModel.vo.dominationArea" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())" ></input-select>-->
+						<cascade-input-select
+								:value="mainModel.vo.dominationArea"
+								:cascade-id="mainModel.vo.orgId"
+								:textonly="mainModel.isReadOnly"
+								@click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())"
+						></cascade-input-select>
+					</el-form-item>
+
+					<el-form-item class="small-info-box" :label="$t('gb.common.state')" prop="disable">
+						<!--<i-select :model.sync="mainModel.vo.disable" :list="mainModel.disableList" v-if="!mainModel.isReadOnly && mainModel.opType == 'update'">-->
+							<!--<i-option v-for="item in mainModel.disableList" :value="item.id">{{ item.name }}</i-option>-->
+						<!--</i-select>-->
+						<!--<div v-if="mainModel.isReadOnly || mainModel.opType == 'create'" >-->
+							<!--<span v-if="mainModel.vo.disable === '0'" style="background-color: #aacd03;color: #fff;padding: 4px 10px;">{{getDataDic('disable', mainModel.vo.disable)}}</span>-->
+							<!--<span v-if="mainModel.vo.disable === '1'" style="background-color: #f03;color: #fff;padding: 4px 10px;">{{getDataDic('disable', mainModel.vo.disable)}}</span>-->
+						<!--</div>-->
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="备注" full-width prop="remark" class="small-info-box" style="width: 600px;">
+						<iv-input type="textarea" :rows="3" class="display-all-line" :value.sync="mainModel.vo.remark" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" v-show="mainModel.opType !== 'create'">
+		<div class="rip-item">
+			<file-list-simple-card title="涉及的所有化学品安全技术说明书（MSDS）" :data="fileModel.M3.data" :config="fileModel.M3.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" v-show="mainModel.opType !== 'create'">
+		<div class="rip-item">
+			<file-list-simple-card title="安全管理规章制度及安全操作规程" :data="fileModel.M5.data" :config="fileModel.M5.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" v-show="mainModel.opType !== 'create'">
+		<div class="rip-item">
+			<file-list-simple-card title="事故应急预案、评审意见、演练计划和评估报告" :data="fileModel.M7.data" :config="fileModel.M7.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" v-show="mainModel.opType !== 'create'">
+		<div class="rip-item">
+			<file-list-simple-card title="场所安全警示标志的设置情况" :data="fileModel.M10.data" :config="fileModel.M10.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+</div>
+
+<!--基础档案-->
+<checkobjectcatalog-select-modal
+		single-select
+		:visible.sync="selectModel.checkObjectCatalogSelectModel.visible"
+		:filter-data="selectModel.checkObjectCatalogSelectModel.filterData"
+		@do-save="doSaveCheckObjectCatalog"
+></checkobjectcatalog-select-modal>
+
+<!--属地-->
+<dominationarea-select-modal
+		single-select
+		:visible.sync="selectModel.dominationAreaSelectModel.visible"
+		:filter-data="selectModel.dominationAreaSelectModel.filterData"
+		@do-save="doSaveDominationArea"
+></dominationarea-select-modal>
+
+
+

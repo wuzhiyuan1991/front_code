@@ -1,0 +1,70 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="内容" prop="content">
+						<iv-input :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkSource') == -1)" label="来源" prop="checkSource">
+						<iv-input :value.sync="mainModel.vo.checkSource" :disabled="(disabledFields.indexOf('checkSource') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('status') == -1)" label="状态" prop="status">
+						<iv-input :value.sync="mainModel.vo.status" :disabled="(disabledFields.indexOf('status') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('user') == -1)" label="发布者id" prop="publisherId">
+						<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('user') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showUserSelectModal = true)" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('auditDate') == -1)" label="审核时间" prop="auditDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.auditDate" :disabled="(disabledFields.indexOf('auditDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.auditDate" :disabled="(disabledFields.indexOf('auditDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkDate') == -1)" label="检查时间" prop="checkDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkDate" :disabled="(disabledFields.indexOf('checkDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkDate" :disabled="(disabledFields.indexOf('checkDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<!-- <el-form-item v-if="(hiddenFields.indexOf('checkObject') == -1)" label="检查对象id" prop="checkObjectId">
+						<input-select :value="mainModel.vo.checkObject" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('checkObject') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showCheckObjectSelectModal = true)" ></input-select>
+					</el-form-item> -->
+					<el-form-item v-if="(hiddenFields.indexOf('closeDate') == -1)" label="关闭时间" prop="closeDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.closeDate" :disabled="(disabledFields.indexOf('closeDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.closeDate" :disabled="(disabledFields.indexOf('closeDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('contentType') == -1)" label="附件类型" prop="contentType">
+						<iv-input :value.sync="mainModel.vo.contentType" :disabled="(disabledFields.indexOf('contentType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="是否禁用，0启用，1禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('praises') == -1)" label="点赞数" prop="praises">
+						<iv-input :value.sync="mainModel.vo.praises" :disabled="(disabledFields.indexOf('praises') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('publisherName') == -1)" label="发布者姓名" prop="publisherName">
+						<iv-input :value.sync="mainModel.vo.publisherName" :disabled="(disabledFields.indexOf('publisherName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" label="备注" prop="remarks">
+						<iv-input :value.sync="mainModel.vo.remarks" :disabled="(disabledFields.indexOf('remarks') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reviews') == -1)" label="评论数" prop="reviews">
+						<iv-input :value.sync="mainModel.vo.reviews" :disabled="(disabledFields.indexOf('reviews') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<!-- <checkobject-select-modal single-select :visible.sync="mainModel.showCheckObjectSelectModal"  @do-save="doSaveCheckObject"></checkobject-select-modal> -->
+<user-select-modal single-select :visible.sync="mainModel.showUserSelectModal"  @do-save="doSaveUser"></user-select-modal>

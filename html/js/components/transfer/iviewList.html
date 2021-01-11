@@ -1,0 +1,28 @@
+
+<div :class="classes" :style="style">
+    <div :class="prefixCls + '-header'">
+        <iv-checkbox :checked.sync="checkedAll" :disabled="checkedAllDisabled" @on-change="toggleSelectAll"></iv-checkbox>
+        <span>{{ title }}</span>
+        <span :class="prefixCls + '-header-count'" v-if="showcount">{{ count }}</span>
+    </div>
+    <div :class="bodyClasses" class="lefttoptoselect">
+        <div :class="prefixCls + '-body-search-wrapper'" v-if="filterable">
+            <Search
+                :prefix-cls="prefixCls + '-search'"
+                :query.sync="query"
+                :placeholder="filterPlaceholder"></Search>
+        </div>
+        <ul :class="prefixCls + '-content'" class="lefttoptoselect">
+            <li
+                v-for="item in showItems | filterBy filterData"
+                :class="itemClasses(item)"
+                @dblclick.prevent="onDblclick(item)"
+                @click.prevent="select(item)">
+                <iv-checkbox :checked="isCheck(item)" :disabled="item.disabled"></iv-checkbox>
+                <span v-if="item.shareCode">{{item.shareCode}}&nbsp;&nbsp;-</span><span :title="showLabel(item)">{{{showLabel(item) }}}</span>
+            </li>
+            <li :class="prefixCls + '-content-not-found'">{{notFoundText}}</li>
+        </ul>
+    </div>
+    <div :class="prefixCls + '-footer'" v-if="showFooter" v-el:footer><slot></slot></div>
+</div>

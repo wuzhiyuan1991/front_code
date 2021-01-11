@@ -1,0 +1,38 @@
+<div class="detail-container">
+
+    <div class="few-info-panel pull-left">
+
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>审批流设置</span>
+        </div>
+
+        <div class="fip-content">
+            <div style="font-size: 16px;padding-bottom: 5px;border-bottom: 1px solid #e8e8e8;">审批流设置</div>
+
+            <div style="display: flex;justify-content: space-between;align-items: center;margin: 10px 0;height: 28px;">
+                <iv-checkbox :checked.sync="enableProcess" @on-change="toggleEnable" :disabled="!hasAuth">启用审批流</iv-checkbox>
+                <iv-button type="ghost" v-show="enableProcess && hasAuth" @click="doAddProcess">添加</iv-button>
+            </div>
+            <div v-show="enableProcess">
+                <lite-table
+                        :columns="columns"
+                        :values="values"
+                        :tools="tools"
+                        @on-delete="doDeleteProcess"
+                        @on-update="doUpdateProcess"
+                ></lite-table>
+
+            </div>
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+    </div>
+
+
+    <approval-form-modal :has-auth="hasAuth" :visible.sync="approvalFormModel.visible" @do-save="doSavedProcess" :type="type" v-ref:form-modal></approval-form-modal>
+</div>
+
+
+

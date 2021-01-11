@@ -1,0 +1,593 @@
+<style>
+	.homeCenter{
+		background: #ebf0f5;
+		height:auto;
+		overflow: hidden;
+
+	}
+	.homeRight{
+		width:60%;
+		background: #ebf0f5;
+		right:10px;
+		height: 100%;
+		position: relative;
+		float: left;
+		margin-bottom: -20000px;
+		padding-bottom: 20000px;
+	}
+	.homeLeft{
+		width:39.5%;
+		background: #fff;
+		height: 100%;
+		position: relative;
+		float: left;
+		margin-bottom: -20000px;
+		padding-bottom: 20000px;
+	}
+	.homeRight .topHidden{
+		background: #fff;
+		width: 100%;
+		height:50%;
+	}
+	.homeRight .bottomTrain{
+		background: #fff;
+		width: 50%;
+		height:49%;
+		top:10px;
+		position: relative;
+		float: left;
+		margin-bottom: -20000px;
+		padding-bottom: 20000px;
+	}
+	.homeRight .bottomForm{
+		background: #fff;
+		width: 49%;
+		height:49%;
+		top:10px;
+		position: relative;
+		float: left;
+		left:10px;
+	}
+	.homeTitle{
+		background: #f5f5f3;
+		width: 100%;
+		height:60px;
+		padding-top: 20px;
+	}
+	.homeTitle span{
+		font-size: 18px;
+		margin-left: 30px;
+		color: #363636;
+		/*font-weight: bold;*/
+	}
+	.content{
+		margin: 10px;
+		height:auto;
+	}
+
+
+	/*Tab 图表 header	*/
+	.tabInfo .tabList{
+		padding-left: 20px;
+		overflow: hidden;
+	}
+	.tabInfo .tabList .active{
+		border-bottom: 3px solid #56b5ff;
+	}
+	.tabInfo .tabList li{
+		float: left;
+		margin: 0 10px;
+		font-family: 'MicrosoftYaHei', 'Microsoft YaHei Normal', 'Microsoft YaHei';
+		font-weight: 400;
+		font-style: normal;
+		font-size: 14px;
+		line-height: 50px;
+		cursor: pointer;
+	}
+
+
+
+	/*//代办事项*/
+	.MatterListNav{
+		width: 100%;
+	}
+	.MatterListNav .el-tabs__header{
+		border-bottom: 0px;
+	}
+	.MatterList {
+		width: 100%;
+		overflow: hidden;
+		max-height: 400px;
+		min-height: 300px;
+		margin-bottom: 30px;
+	}
+	.MatterCenter{
+		width: 100%;
+		overflow: hidden;
+		border-bottom: 1px solid #f0f0f0;;
+	}
+
+	.MatterList li{
+		background:#f5f5f5;
+	}
+	.MatterCenter li{
+		background: none;
+
+	}
+	/*//对其问题*/
+	.MatterList li:first-child,.MatterCenter li:first-child{
+		padding-left: 20px;
+	}
+	.MatterList li,.MatterCenter li{
+		float: left;
+		/*margin: 0 10px;*/
+		font-family: 'MicrosoftYaHei', 'Microsoft YaHei Normal', 'Microsoft YaHei';
+		font-weight: 400;
+		font-style: normal;
+		font-size: 14px;
+		height: 40px;
+		width: 20%;
+		text-align: left;
+		line-height: 40px;
+		overflow : hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		color: #666666;
+	}
+	.MatterColor{
+		color:#20a0ff !important;
+		cursor: pointer;
+	}
+	/*//我的培训*/
+	.TrainingMain{
+		max-height: 400px;
+		overflow: hidden;
+		margin-bottom: 30px;
+	}
+	.TrainingTitle{
+		overflow: hidden;
+	}
+	.TrainingTitle li{
+		background:#f5f5f5;
+	}
+	.TrainingTitle li,.TrainingList li{
+		width: 50%;
+		overflow : hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		color: #666666;
+		float: left;
+		height: 40px;
+		line-height: 40px;
+	}
+	.TrainingList li:first-child{
+		color: #20a0ff;
+		padding-left: 17px;
+		cursor: pointer;
+	}
+	.TrainingTitle li:first-child{
+		padding-left: 17px;
+	}
+	.TrainingList{
+		border-bottom: 1px solid #f0f0f0;
+		overflow: hidden;
+	}
+	/*//page 安全工具包*/
+	.page{
+		background: #fff;
+		overflow: hidden;
+		border-top: 1px solid #999;
+		margin-top: 50px;
+		min-height: 200px;
+	}
+	.pageTitle{
+		margin: 20px 0;
+		font-size: 16px;
+		margin-left: 15px;
+	}
+	.pageList li{
+		float: left;
+		width: 80px;
+		height: 80px;
+		border-radius: 3px;
+		border:1px solid #999;
+		text-align: center;
+		vertical-align: bottom;
+		margin-left: 30px;
+		margin-bottom: 20px;
+		color: #000;
+		position: relative;
+		cursor: pointer;
+	}
+	.pageList .radio{
+		position: absolute;
+		right: -10px;
+		top: -10px;
+		margin: 0px;
+	}
+	.pageList li img{
+		width:45%;
+		margin: 10px;
+	}
+	/*//例外 取得最后一个*/
+	.pageException li:last-of-type{
+		font-size: 30px;
+		line-height: 80px;
+		color: #666666;
+		font-weight: bold;
+		cursor: pointer;
+	}
+	/*//日历底部信息*/
+	.calendarBootm{
+		margin: 10px 10px;
+		overflow: hidden;
+		font-size: 14px;
+	}
+	.calendarBootm p{
+		clear: both;
+	}
+	.calendarBootmLeft{
+		float: left;
+		color: #20a0ff;
+	}
+	.calendarBootmRigth{
+		float: right;
+
+	}
+	.calendarBootmRigth span{
+		cursor: pointer;
+	}
+	.calendarBootm p{
+		cursor: pointer;
+	}
+	.calendarClick .calendarNext,.calendarClick .calendarPrev{
+		position: absolute;
+		top: 235px;
+		font-size: 28px;
+		width: 30px;
+		z-index: 10;
+		cursor: pointer;
+		color: #c8c8c8;
+	}
+	.calendarClick .calendarNext{
+		left: 50px;
+	}
+	.calendarClick .calendarPrev{
+		right: 50px;
+	}
+
+	/*尾部class留白作用*/
+	.cler{
+		clear: both;
+		height: 50px;
+		background:#ebf0f5;
+	}
+/*日历插件css*/
+	.comp-full-calendar {
+
+		background: #fff;
+		max-width: 960px;
+		margin: 0 auto;
+		overflow: hidden;
+	}
+
+	.full-calendar-body {
+		margin-top: 20px;
+		padding: 20px 120px;
+	}
+	.weeks {
+		display: flex;
+	}
+	.week{
+		flex:1;
+		text-align: center;
+	}
+
+	.dates {
+		position: relative;
+		border-top: 1px solid #c8c8c8;
+	}
+	.week-row {
+
+		display: flex;
+	}
+	.day-cell {
+		flex: 1;
+	}
+	.day-number{
+		text-align: right;
+	}
+	.today .day-number{
+		background-color:#ea5644;
+		border-radius: 100%;
+		width: 40px;
+		height: 40px;
+		overflow: hidden;
+		margin: 0px auto;
+		color: #fff;
+		position: relative;
+		top: 20px;
+	}
+	.today .day-number span{
+		margin-top: -20px;
+		display: block;
+	}
+	.not-cur-month{}
+	.day-number{
+		color:rgba(0,0,0,.24);
+	}
+	/*上面的遮罩*/
+	.dates-events {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+	}
+	.events-week {
+		display: flex;
+	}
+	.events-day {
+		cursor: pointer;
+		flex: 0;
+		/*min-height: 109px;*/
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.day-number{
+		text-align: center;
+		padding:30px 5px 4px 4px;
+		opacity: 1;
+	}
+	.not-cur-month{}
+	.day-number{
+		color:#000;
+	}
+	.event-box{}
+	.event-item {
+		cursor: pointer;
+		font-size: 12px;
+		background-color: #C7E6FD;
+		margin-bottom: 2px;
+		color: rgba(0, 0, 0, .87);
+		padding: 0 0 0 4px;
+		height: 18px;
+		line-height: 18px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.is-start{
+		margin-left: 4px;
+	}
+	.is-end{
+		margin-right: 4px;
+	}
+	.is-opacity{
+		opacity: 0;
+	}
+
+	.more-link{
+		cursor: pointer;
+		/*// text-align: right;*/
+		padding-left: 8px;
+		padding-right: 2px;
+		color: rgba(0,0,0,.38);
+		font-size: 14px;
+	}
+	.more-events {
+		position: absolute;
+		width: 150px;
+		z-index: 2;
+		border: 1px solid #eee;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+	}
+	.more-header {
+		background-color: #eee;
+		padding: 5px;
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+	}
+	.title{
+		flex:1;
+	}
+	.close{
+		margin-right: 2px;
+		cursor: pointer;
+		font-size: 16px;
+	}
+	.comp-full-calendar .Go{
+		position: absolute;
+		top: 10%;
+		width: 78%;
+	}
+	.comp-full-calendar .Go .next-month{
+		right: 0;
+		position: absolute;
+	}
+	.more-body {
+		height: 140px;
+		overflow: hidden;
+	}
+	.body-list {
+		height: 120px;
+		padding: 5px;
+		overflow: auto;
+		background-color: #fff;
+	}
+	.body-item{
+		cursor: pointer;
+		font-size:12px;
+		background-color:#C7E6FD;
+		margin-bottom:2px;
+		color: rgba(0,0,0,.87);
+		padding:0 0 0 4px;
+		height: 18px;
+		line-height: 18px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.full-calendar-header {
+		display: flex;
+		align-items: center;
+		background: #f5f5f3;
+		width: 100%;
+		height: 60px;
+		/*padding-top: 10px;*/
+	}
+	.header-left,.header-right{
+		flex:1;
+		font-size: 18px;
+		margin-left: 30px;
+		color: #363636;
+		/*font-weight: bold;*/
+	}
+	.header-center {
+		flex: 3;
+		text-align: center;
+		font-size: 18px;
+		margin-left: 30px;
+		color: #363636;
+		/*font-weight: bold;*/
+	}
+	.title{
+		margin: 0 10px;
+	}
+	.prev-month,.next-month{
+		cursor: pointer;
+		color: #7ec4fb;
+	}
+
+	.full-calendar-body .prev-month{
+		position: absolute;
+		top: 10%;
+	}
+	.full-calendar-body .next-month{
+		position: absolute;
+		top: 10%;
+		right: 5%;
+	}
+
+	.full-calendar-body .dates .dates-events .events-week .events-day {
+		cursor: pointer;
+		flex: 1;
+		min-height: 40px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	/*.minute{position: absolute;right: 95px;margin-top: -48px;font-size: 14px;}*/
+.echarts{
+	height: 300px;
+}
+</style>
+<div class="content-wrapper">
+	<div class="tab-container-wapper">
+		<div class="homeCenter">
+			<div class="homeRight">
+				<div class="topHidden">
+					<div class="homeTitle"><span>待办事项</span></div>
+					<div class="content">
+						<el-tabs v-if="showTabs" class="MatterListNav">
+							<el-tab-pane v-for="item in tabsList" :label="item.label">
+								<ul  v-for="list in item.children" class="MatterList">
+									<li>{{list.Nuber}}</li>
+									<li>{{list.Matter}}</li>
+									<li>{{list.Name}}</li>
+									<li>{{list.StartTime}}</li>
+									<li>{{list.EndTime}}</li>
+									<ul  v-for="center in list.childrens" class="MatterCenter">
+										<li>{{center.Nuber}}</li>
+										<li  class="MatterColor">{{center.Matter}}</li>
+										<li>{{center.Name}}</li>
+										<li>{{center.StartTime}}</li>
+										<li>{{center.EndTime}}</li>
+									</ul>
+								</ul>
+							</el-tab-pane>
+						</el-tabs>
+
+					</div>
+				</div>
+
+				<div class="bottomTrain">
+					<div class="homeTitle"><span>我的培训</span></div>
+					<div class="content TrainingMain">
+						<ul class="TrainingTitle">
+							<li>课程名称</li>
+							<li>培训方式</li>
+						</ul>
+						<ul class="TrainingList" v-for="item in TrainingData">
+							<li>{{item.name}}</li>
+							<li>{{item.way}}</li>
+						</ul>
+					</div>
+				</div>
+				<div class="bottomForm">
+					<div class="homeTitle"><span>个人报表</span></div>
+					<!--//tab切换-->
+					<div class="tabHeaderMain">
+						<div class="tabInfo">
+							<ul class="tabList">
+								<li v-for="($index,item) in tabItem" @click="changeIndex($index)" v-bind:class="{active: activeIndex == $index}">{{item.name}}</li>
+							</ul>
+						</div>
+						<!--//图表检查次数排名 v-show="showActive"-->
+						<div class="content" >
+							<div class="echarts" v-show="showActive" ><vuecharts :options="polarCharts"  v-ref:polarCharts></vuecharts></div>
+						</div>
+						<!--//符合率排名 v-show="hideActive"-->
+						<div class="content" >
+							<!--<div  class="echarts"   v-show="hideActive">因为隐藏会是图表不加载</div>-->
+							<div  class="echarts" v-if="hideActive"><vuecharts :options="bar"  v-ref:bar></vuecharts></div>
+						</div>
+					</div>
+				</div>
+				<!--//图表-->
+				<div class="wanghuai">
+					<!--<vuecharts :options="polar"></vuecharts> -->
+				</div>
+
+			</div>
+			<div class="homeLeft">
+				<div>
+					<full-calendar class="test-fc" :events="fcEvents" first-day='0' v-ref:canendar
+								   @change-month="changeMonth"
+								   @event-click="eventClick"
+								   @day-click="dayClickDemo"
+								   @more-click="moreClick">
+					</full-calendar>
+					<div class="calendarBootm">
+						<div class="calendarBootmLeft">2016-12-10</div>
+						<div class="calendarBootmRigth">
+							<span >＋培训计划</span>
+							<span>＋检查计划</span>
+						</div>
+						<p>09：00  动火作业培训计划  开始报名</p>
+					</div>
+					<div class="calendarClick">
+						<div class="calendarNext" @click="prev"><Icon type="arrow-left-b"></Icon></div>
+						<div class="calendarPrev"  @click="next"><Icon type="arrow-right-b"></Icon></div>
+					</div>
+				</div>
+				<div class="page">
+					<div class="pageTitle">安全工具包</div>
+					<ul class="pageList pageException">
+						<li><img src="images/contacts.png"><p>通讯录</p></li>
+						<li><img src="images/noise.png"><p>噪音检测</p></li>
+						<li @click="addUser">+</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="cler"></div>
+	</div>
+</div>
+</div>
+<Modal :visible.sync="userModel.show" :title="userModel.title" width="400" :footer-hide="true">
+	<userComponent></userComponent>
+</Modal>

@@ -1,0 +1,520 @@
+.echarts-box {
+    height: calc(100% - 130px);
+    margin-left: 10px;
+    background: #fff;
+    padding: 0 10px 10px;
+    display: flex;
+}
+.echarts-box .echarts {
+    height: 100%;
+    width: 100%;
+    background: #f5f5f5 !important;
+}
+.echarts-box .left-pie-chart {
+    width: 65%;
+}
+.echarts-box .right-bar-chart {
+    width: 35%;
+}
+
+/*报表管理*/
+.report .mp-content {
+    height: 100%;
+    background: #ecf0f4;
+}
+
+.report .mp-header.formTitle {
+    border-bottom: 1px solid #e3e3e3;
+    padding: 0 8px;
+}
+
+.report .report-qry-head {
+    margin-left: 10px;
+    padding: 0 20px;
+    background: #fff;
+    height: 55px;
+}
+
+.report .report-qry-head .el-form-item_vertical {
+    width: 100%;
+    overflow: inherit;
+}
+
+.report .el-form_vertical {
+    border-bottom: 1px solid #f3f3f3;
+    width: 100%;
+}
+
+.report .el-form_vertical .ivu-row {
+    padding-top: 8px;
+}
+
+.report .ivu-row-flex.ivu-row-flex-end {
+    height: 50px;
+    padding: 10px 0 20px 0;
+}
+
+.report .epc-content .vue-table-container {
+    max-height: 430px;
+}
+
+.report .ivu-select-item.ivu-select-item-selected, .report .ivu-select-item-selected:hover {
+    background: #f3f3f3;
+    color: #39f;
+}
+
+.report .ivu-select-item {
+    color: #657180;
+    padding: 7px 16px;
+    font-size: 12px;
+}
+
+.report .reportChart {
+    height: calc(100% - 115px);
+    margin-left: 10px;
+    background: #fff;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.report .reportChartMain {
+    height: 100%;
+}
+
+.report .reportChart .echarts {
+    margin: 0 20px;
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    position: relative;
+    background: #f5f5f5 !important;
+}
+
+.report .reportChartCfg .echarts {
+    height: calc(50% - 10px) !important;
+    margin-bottom: 10px;
+}
+
+.report .reportChartMain .reportChart .echarts {
+    /*height: 49%;*/
+    /*margin-bottom: 10px;*/
+}
+
+.report .ivu-btn-text {
+    padding: 4px;
+    text-decoration: underline;
+}
+
+.report .ivu-cascader .ivu-select-dropdown {
+    overflow: visible;
+}
+
+.report .table-display-header {
+    overflow-x: hidden;
+}
+
+.report .ivu-cascader .ivu-cascader-menu {
+    width: 165px;
+    height: 195px;
+}
+
+.report .calendar-tools input {
+    border: none;
+    font-size: 20px;
+}
+
+.report .ivu-picker-panel-shortcut {
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.report .report_left.ivu-transfer-list-body {
+    height: calc(100% - 60px);
+    border: none;
+    background: #fff;
+}
+
+.report .reportChart .ivu-btn-text.active {
+    background: #f0efef;
+}
+
+.report .el-form-item__vertical_content .ivu-poptip-rel {
+    width: 95%;
+}
+
+.report .el-form-item.is-required .el-form-item__label:before, .report .el-form-item_vertical.is-required .el-form-item__vertical_label:before {
+    opacity: 0;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item div .ivu-icon.ivu-icon-ios-minus {
+    color: red;
+}
+
+.report .select-ico-add {
+    cursor: pointer;
+    line-height: 28px;
+    color: #fff;
+    top: 1px;
+    position: absolute;
+    z-index: 5;
+    background-color: #d9d9d9;
+    padding: 0 7px;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.report .el-form-item__vertical_content .ivu-poptip-rel {
+    width: 95%;
+}
+
+.report .ivu-input-wrapper {
+    width: 100%;
+}
+
+/*//报表管理 左边树 目前默认最多为三级 wh*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item div {
+    padding: 8px 0;
+    /*display: block !important;*/
+    cursor: pointer;
+}
+
+/*//清除checkbox默认的span边距*/
+.report .report_left .ivu-checkbox-wrapper + span {
+    margin: 0;
+}
+
+/*第一层级*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item .custom-vi-tree-item-report:hover {
+    background: #f2f2f2;
+    margin-left: -14px;
+
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item .custom-vi-tree-item-report:hover span.custom-vi-tree-item-select-prm {
+    margin-left: 14px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item .custom-vi-tree-item-report:hover i {
+    margin-left: 14px;
+}
+
+/*第二层*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover {
+    margin-left: -28px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover span.custom-vi-tree-item-select-prm {
+    margin-left: 28px;
+}
+
+/*如果第二层级没有子集的情况下 就使用custom-vi-tree-item-select-obj*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover span.custom-vi-tree-item-select-obj {
+    margin-left: 28px;
+    width: 70%;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover i {
+    margin-left: 28px;
+}
+
+.custom-vi-tree-item-report:hover .tree-star-icon .ivu-icon-ios-star-outline {
+    margin-left: 0 !important;
+    margin-top: 3px;
+}
+
+.custom-vi-tree-item-report:hover .tree-star-icon .ivu-icon-ios-star {
+    margin-left: 0 !important;
+}
+
+/*第二层级含有星星的情况下*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover .tree-star {
+    right: 10px;
+    /*padding-top: 4px;*/
+}
+
+/*第三层*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover {
+    margin-left: -42px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover span.tree-center {
+    margin-left: 42px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover i {
+    margin-left: 42px;
+}
+
+/*!*第三层级含有星星的情况下*!*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-report:hover .tree-star {
+    right: 52px;
+}
+
+/*//树在选择的情况下*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item .custom-vi-tree-item-star {
+    background: #f2f2f2;
+    margin-left: -14px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item .custom-vi-tree-item-star span.custom-vi-tree-item-select-prm {
+    margin-left: 14px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item .custom-vi-tree-item-star i {
+    margin-left: 14px;
+}
+
+/*第二层*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star {
+    margin-left: -28px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star span.custom-vi-tree-item-select-prm {
+    margin-left: 28px;
+}
+
+/*如果第二层级没有子集的情况下 就使用custom-vi-tree-item-select-obj*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star span.custom-vi-tree-item-select-obj {
+    margin-left: 28px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star i {
+    margin-left: 28px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star i {
+    margin-left: 0;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star .ivu-icon-ios-star-outline {
+    margin-top: 3px;
+}
+
+/*!*第二层级含有星星的情况下*!选中时星星不位移*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star .tree-star {
+    /*right:38px;*/
+}
+
+/*第三层*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star {
+    margin-left: -42px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star span.tree-center {
+    margin-left: 42px;
+}
+
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star i {
+    margin-left: 42px;
+}
+
+/*!*第三层级含有星星的情况下*!*/
+.report .report_left.ivu-transfer-list-body .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item ul .custom-vi-tree-item .custom-vi-tree-item-star .tree-star {
+    right: 52px;
+
+}
+
+.ivu-modal-body .treeitem {
+    background: #eaf0f5;
+}
+
+.report .vue-table-container {
+    top: -1px;
+}
+
+.riskControl .custom-vi-tree-item.item {
+    font-weight: bold;
+    padding: 8px 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.riskControl .custom-vi-tree-item.item.active, .riskControl .custom-vi-tree-item.item:hover {
+    background: #f2f2f2;
+}
+
+.riskControl li .tree-star-icon .ivu-icon-ios-star-outline {
+    display: none;
+}
+
+.riskControl li:hover .tree-star-icon .ivu-icon-ios-star-outline {
+    display: block;
+}
+
+.reportChartCalc {
+    height: calc(100% - 60px);
+}
+
+.reportModalCustomIco {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    position: relative;
+    top: 7px;
+}
+
+.reportUserModalIco {
+    background: url(../images/all.png) no-repeat -83px -321px transparent;
+}
+
+.reportCompModalIco {
+    background: url(../images/all.png) no-repeat -100px -321px transparent;
+}
+
+.reportDeptModalIco {
+    background: url(../images/all.png) no-repeat -119px -321px transparent;
+}
+
+.reportDeviModalIco {
+    background: url(../images/all.png) no-repeat -139px -321px transparent;
+}
+
+.select-range-color .ivu-poptip-rel {
+    width: 100% !important;
+}
+
+.select-range-color .ivu-select-selection {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    border-right: none;
+}
+
+.select-range-color.is-error .ivu-select-selection {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.select-type-color .ivu-select-selection {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+/* 风险管控 layer*/
+.report-layer {
+    box-shadow: 0 0 5px 0 #ccc;
+    border-radius: 3px;
+    position: absolute;
+    background-color: #fff;
+    z-index: 99;
+    top: 0;
+    left: 0;
+}
+.report-layer-header {
+    padding: 10px 15px 8px;
+    border-bottom: 1px solid #ccc;
+}
+.report-layer-body {
+    display: flex;
+}
+.report-layer-body ul {
+    width: 200px;
+    border-right: 1px solid #ccc;
+    padding: 15px;
+    line-height: 20px;
+    font-size: 12px;
+}
+.report-layer-body ul:last-child {
+    border-right: none;
+}
+.risk-control-layer.ivu-row {
+    background-color: #fff;
+    padding: 20px;
+    height: 440px;
+}
+.risk-control-layer .ivu-col-span-6 {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+}
+.risk-control-layer-header {
+    font-size: 14px;
+    background-color: #f5f5f5;
+    padding: 10px;
+}
+.risk-control-layer-body {
+    padding: 10px;
+    flex-grow: 1;
+    overflow: auto;
+}
+.risk-control-layer-body tbody tr {
+    cursor: pointer;
+}
+.risk-control-layer-body tbody tr:hover {
+    background-color: #f5f5f5;
+}
+.risk-control-layer-body tbody tr.active {
+    background-color: #d0d0d0;
+}
+.risk-control-layer-body td,
+.risk-control-layer-body th{
+    padding: 5px;
+}
+
+/* 培训统计报表 */
+.train-chart {
+    display: flex;
+    height: 100%;
+}
+.train-chart .train-content {
+    flex: 1;
+    background-color: #fff;
+    margin-right: 10px;
+    padding: 10px;
+}
+.train-chart .rank-box {
+    width: 25%;
+    background-color: #fff;
+    padding: 10px;
+    font-size: 12px;
+}
+.train-chart .train-tit {
+    height: 50px;
+    line-height: 46px;
+    border-bottom: 1px solid #50b9fd;
+    padding-left: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.train-chart .rank-box ul {
+    padding: 10px;
+    overflow-y: auto;
+    height: calc(100% - 50px);
+}
+.train-chart .rank-box .rank-item {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+.train-chart .rank-item .rank-pos {
+    width: 50px;
+}
+.train-chart .rank-item .rank-name {
+    flex: 1;
+}
+.train-chart .rank-item .rank-times {
+    width: 50px;
+}
+.train-chart .train-filter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 15px 0;
+}
+.train-chart .train-select {
+    width: 100px;
+    margin-right: 10px;
+}
+.train-chart .train-select .ivu-select-selection {
+    font-size: 12px;
+}
+.train-obj-select {
+    width: 210px;
+    position: relative;
+    top:-2px;
+    margin-right: 10px;
+}
+.train-date-range {
+    width: 180px;
+    margin-right: 10px;
+}

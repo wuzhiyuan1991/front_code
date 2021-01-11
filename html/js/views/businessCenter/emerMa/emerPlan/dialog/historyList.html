@@ -1,0 +1,263 @@
+<!--<div class="edit-pop-container" style="padding-left:20px;">-->
+    <!--<div class="border-left">-->
+        <!--<div class="historyBox" v-for="(index, item) in list">-->
+            <!--<div class="historyBoxHead"  @click="item.isShow=!item.isShow">-->
+                <!--<div class="historyBoxTitle">-->
+                    <!--{{getStepName(item.step)}}-->
+                <!--</div>-->
+                <!--<div class="historyBoxHeadname">{{item.user.name}}</div>-->
+                <!--<div class="historyBoxHeadname">{{item.operateTime}}</div>-->
+                <!--<div :class="item.result==2?'historyBoxHeadResultGreen':'historyBoxHeadResult'">{{getResult(item.result)}}</div>-->
+                <!--<div ><Icon type="chevron-down"></Icon></div>-->
+                <!--<div  class="leftPoint"><Icon type="pinpoint"></Icon></div>-->
+            <!--</div>-->
+            <!--<div class="historyBoxBody" v-show="item.isShow">-->
+                <!--<el-form v-if="item.step=='1'">-->
+                    <!--<el-form-item label="预案编码"  full-width>-->
+                        <!--<span>{{ item.code }}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="预案名称"  full-width>-->
+                        <!--<span>{{ item.name}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="版本号"  full-width>-->
+                        <!--<span>{{ item.verNo}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="预案类型"  full-width>-->
+                        <!--<span>{{ getType(item.type)}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="所属公司"  full-width>-->
+                        <!--<span>{{ getComp(compId) }}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="修订频率"  full-width>-->
+                        <!--<span>{{ item.reviseFrequence}} 年</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="备注"  full-width>-->
+                        <!--<span>{{ item.remark}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="附件资料"  full-width>-->
+                        <!--<span>{{{ getFileList(item.fileList)}}}</span>-->
+                    <!--</el-form-item>-->
+                <!--</el-form>-->
+                <!--<el-form v-else>-->
+                    <!--<el-form-item label="处理结果"  full-width>-->
+                        <!--<span :style="getColorResult(item.result)">{{ getResult(item.result) }} </span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="回退节点" v-if="item.rollbackStep" full-width>-->
+                        <!--<span :style="item.result!='2'?'color:red;':''">{{ getStepName(item.rollbackStep)}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="参与人员"  full-width>-->
+                        <!--<span>{{ item.participant}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="过程详情备注描述"  full-width>-->
+                        <!--<span>{{ item.remark}}</span>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item label="附件资料"  full-width>-->
+                        <!--<span>{{{ getFileList(item.fileList) }}}</span>-->
+                    <!--</el-form-item>-->
+                <!--</el-form>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<ul class="ivu-timeline" style=";margin-top: 20px;">
+    <li class="ivu-timeline-item hidden-danger-timeline-item" v-for="(index, item) in list">
+        <div class="ivu-timeline-item-tail"></div>
+        <div class="ivu-timeline-item-head ivu-timeline-item-head-blue"></div>
+        <div class="ivu-timeline-item-content labelWidth150">
+            <div class="brief-info" @click="item.isShow=!item.isShow">
+                <!--<span class="time" style="width:75px;">{{getStepName(item.step)}}</span>-->
+                <div class="info" style="width:550px;" :class="briefBackground(item)">
+                    <span class="name" style="font-weight: 600;">{{getStepName(item.step)}}</span>
+                    <span class="name">{{item.user.name}}</span>
+                    <span class="name" style="width: 150px;">{{item.operateTime}}</span>
+                    <!--<Icon :type="item.open ? 'chevron-up' : 'chevron-down'" v-if="item.showIcon"></Icon>-->
+                    <Icon :type="item.isShow ? 'chevron-up' : 'chevron-down'" ></Icon>
+                    <span class="action right"  :style="item.result!=2?'color:red;width:60px':'color:#20a0ff;width:60px;'" >{{getResult(item.result)}}</span >
+                </div>
+            </div>
+
+            <div  style="margin-left: 85px;width: 460px;" class="detail-info" v-show="item.isShow" :class="calcBackground(item)">
+                    <!--节点: 指派-->
+                    <ul v-if="item.step=='1'">
+                        <!--<li class="detail-item">-->
+                            <!--<div class="tit">预案编码</div>-->
+                            <!--<div class="con">{{ item.code }}</div>-->
+                        <!--</li>-->
+                        <li class="detail-item">
+                            <div class="tit">预案名称</div>
+                            <div class="con">{{ item.name }}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">版本号</div>
+                            <div class="con">{{ item.verNo }}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">预案类型</div>
+                            <div class="con">{{ getType(item.type) }}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">所属公司</div>
+                            <div class="con">{{ getComp(compId) }}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">方案编制日期</div>
+                            <div class="con">{{ item.editDate.slice(0,10) }}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">修订频率</div>
+                            <div class="con">{{ item.reviseFrequence}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">备注</div>
+                            <div class="con">
+                                <iv-textarea :rows="4" :value.sync="item.remark" readonly :width="260"></iv-textarea>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">附件资料</div>
+                            <div class="con">{{{getFileList(item.fileList)}}}</div>
+                        </li>
+                    </ul>
+
+
+                    <ul v-else>
+                        <li class="detail-item">
+                            <div class="tit">处理结果</div>
+                            <div class="con">{{ getResult(item.result) }}</div>
+                        </li>
+                        <li class="detail-item" v-if="item.rollbackStep">
+                            <div class="tit">回退节点</div>
+                            <div class="con">{{getStepName(item.rollbackStep)}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit" v-show="item.step!=6">参与人员</div>
+                            <div class="tit" v-show="item.step==6">签发人</div>
+                            <div class="con">
+                                <iv-textarea :rows="4" :value.sync="item.participant" readonly :width="260"></iv-textarea>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <!--<div class="tit" >{{getStepName(item.step)}}评审日期</div>-->
+                            <div class="tit" >评审日期</div>
+                            <div class="con">{{ item.editDate.slice(0,10) }}</div>
+                        </li>
+
+                        <li class="detail-item">
+                            <div class="tit" >过程详情备注描述</div>
+                            <div class="con">
+                                <iv-textarea :rows="4" :value.sync="item.remark" readonly :width="260"></iv-textarea>
+                            </div>
+                        </li>
+                        <!--<li class="detail-item">-->
+                            <!--<div class="tit">备注</div>-->
+                            <!--<div class="con">{{item.remark}}</div>-->
+                        <!--</li>-->
+                        <li class="detail-item">
+                            <div class="tit">附件资料</div>
+                            <div class="con">{{{getFileList(item.fileList)}}}</div>
+                        </li>
+                    </ul>
+                <!--<ul v-else>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">处理结果</div>-->
+                        <!--<div class="con">{{ getResult(item.result) }}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item" v-if="item.rollbackStep">-->
+                        <!--<div class="tit">回退节点</div>-->
+                        <!--<div class="con">{{getStepName(item.rollbackStep)}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">参与人员</div>-->
+                        <!--<div class="con">{{item.participant}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">过程详情备注描述</div>-->
+                        <!--<div class="con">{{item.deadlineDate}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">备注</div>-->
+                        <!--<div class="con">{{item.remark}}</div>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            </div>
+
+        </div>
+    </li>
+</ul>
+
+
+
+
+
+<style>
+    .historyBox .right{
+        float:right;
+        width: 50px !important;
+    }
+    .historyBox .el-form{
+        width:500px;
+    }
+    .border-left{
+        width:100%;
+        border-left:1px dashed #ddd;
+        padding-top:20px;
+        padding-bottom: 50px;
+        /*height: 650px;*/
+        overflow-y: visible;
+    }
+    .historyBoxHead{
+        width: 530px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 20px;
+        margin-left: 80px;
+    }
+    .historyBoxTitle{
+        font-size: 14px;
+        color: #666;
+        font-weight: 700;
+        width: 80px;
+    }
+    .historyBoxHeadname{
+        width:150px;
+        margin-left:20px;
+        text-align: center;
+    }
+    .historyBoxHeadResultGreen{
+        width: 80px;
+        border-radius: 20px;
+        text-align: center;
+        background: #aacd03;
+        color: #fff;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    .historyBoxHeadResult{
+        width: 80px;
+        border-radius: 20px;
+        text-align: center;
+        background: red;
+        color: #fff;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    .leftPoint{
+        position: absolute;
+        left: -91px;
+        font-size: 22px;
+    }
+    .historyBoxBody{
+        background: #ddd;
+        margin-left: 95px;
+        width: 506px;
+        margin-top: 5px
+    }
+    .labelWidth150 .tit{
+        width:150px !important;
+    }
+</style>
+

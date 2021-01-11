@@ -1,0 +1,61 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item el-form-item__label_light">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input  :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="作业签发角色" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="承诺内容" prop="content">
+						<iv-input type="textarea" :value.sync="mainModel.vo.content" v-show="mainModel.isReadOnly" :textonly="mainModel.isReadOnly"></iv-input>
+						<iv-textarea style="font-size:14px;" :rows="4" :value.sync="mainModel.vo.content" v-show="!mainModel.isReadOnly" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="应用承诺" prop="enableCommitment">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_enable_commitment', mainModel.vo.enableCommitment) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.enableCommitment" :list="getDataDicList('iptw_catalog_enable_commitment')"></i-select>
+					</el-form-item>
+					<el-form-item label="可复选" prop="isMultiple">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_is_multiple', mainModel.vo.isMultiple) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isMultiple" :disabled="mainModel.vo.signerType != 3" :list="getDataDicList('iptw_catalog_is_multiple')"></i-select>
+					</el-form-item>
+
+					<el-form-item label="作业申请人" prop="isInherent">
+						<i-select @on-change="onSelect" v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.signerType" :list="getDataDicList('iptw_catalog_is_signer_type')"></i-select>
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_is_signer_type', mainModel.vo.signerType) }}</span>
+
+					</el-form-item>
+
+					<!--<el-form-item label="作业固有角色" prop="isInherent">-->
+						<!--<i-select v-if="!mainModel.isReadOnly && mainModel.vo.signerType == 3" disabled :model.sync="mainModel.vo.isInherent" :list="getDataDicList('iptw_catalog_is_inherent')"></i-select>-->
+						<!--<span v-if="mainModel.isReadOnly && mainModel.vo.signerType == 3">{{ getDataDic('iptw_catalog_is_inherent', mainModel.vo.isInherent) }}</span>-->
+						<!--<span v-if="mainModel.isReadOnly && mainModel.vo.signerType != 3">{{ getDataDic('iptw_catalog_signer_type', mainModel.vo.signerType) }}</span>-->
+						<!--<i-select v-if="!mainModel.isReadOnly && mainModel.vo.signerType != 3" :model.sync="mainModel.vo.signerType" disabled :list="getDataDicList('iptw_catalog_signer_type')"></i-select>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item :label="$t('gb.common.state')" prop="disable">-->
+						<!--<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly"></disable-select>-->
+					<!--</el-form-item>-->
+				</el-form>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && (mainModel.vo.signerType == 3 || mainModel.vo.signerType == 1 )&& mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.vo.signerType == 3 && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+

@@ -1,0 +1,20 @@
+
+<Modal v-if="load" :title="title" :visible.sync="visible" :footer-hide="true" :width="600">
+<div class="bg-fff flex-layout-vertical" style="min-height: 500px;padding: 20px">
+            <div class="flex-layout-between">
+                <span style="font-size: 14px;font-weight: 700"></span>
+                <span class="link-ele"><icon class="mr5" type="plus"  @click="doAdd">添加</icon></span>
+            </div>
+            <vue-bootstrap-table class="flex-grow1"
+                        :setting="tableModel.contactPTW"
+                        :show-pager="true"
+                        :show-filter="false"
+                        @on-click-cell="doIsEdit"
+                        @on-del-row="doDel"
+                        @on-edit-row="doEdit"
+                        :values.sync="tableModel.contactPTW.values"
+                        v-ref:main-table
+                ></vue-bootstrap-table>
+</div>
+</Modal>
+<modal-form v-ref:dialog-form  @on-success="saveAfter" :concat-list="tableModel.contactPTW.values"></modal-form>

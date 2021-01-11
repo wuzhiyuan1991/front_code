@@ -1,0 +1,82 @@
+<div class="edit-pop-container">
+	<div class="epc-content" style="background-color: #fff;">
+		
+		<div style="font-size: 14px;margin-bottom: 10px;"><Icon type="ios-information" style="margin-right: 3px;"></Icon>读取历史评估模型已经评定的风险等级列表，针对每一种类型对照新的风险评估模型，重新评定风险等级</div>
+		<ul class="post-filter-tab">
+			<li class="post-filter-tab-item" :class="{'active': activeTab === 1}" @click="changeTab(1)">规则编制</li>
+			<li class="post-filter-tab-item" :class="{'active': activeTab === 2}" @click="changeTab(2)">应用数据明细</li>
+		</ul>
+
+		<table class="layout-table" v-show="activeTab === 1">
+			<colgroup>
+				<col style="width: 40%">
+				<col style="width: 20%">
+				<col style="width: 40%">
+			</colgroup>
+			<thead>
+			<tr  class="layout-table-tr">
+				<th>原始风险评估模型</th>
+				<th>{{$t("gb.common.riskLevel")}}</th>
+				<th>变更后-风险评估模型(风险等级)</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr v-for="(index, latRange) in mainModel.gradeLatRanges"  class="layout-table-tr">
+				<td>{{latRange.riskModel.name}}</td>
+				<td>{{latRange.level}}</td>
+				<td style="white-space: normal;">
+					<el-form-item>
+						<risk-model :model.sync="latRange.riskModelVo" :risk-model-id="mainModel.id"></risk-model>
+					</el-form-item>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<table class="layout-table" v-show="activeTab === 2">
+			<thead>
+			<tr  class="layout-table-tr">
+				<th class="text-center">风险评估记录<br>(记录数)</th>
+				<th class="text-center">检查项<br>(记录数)</th>
+				<th class="text-center">隐患记录<br>(记录数)</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr class="layout-table-tr">
+				<td class="text-center">{{countObj.RiskAssessment}}</td>
+				<td class="text-center">{{countObj.CheckItem}}</td>
+				<td class="text-center">{{countObj.Pool}}</td>
+			</tr>
+			</tbody>
+		</table>
+		<!--<el-form :model="mainModel" style="width:500px;" is-label-vertical v-ref:ruleform>-->
+			<!--<iv-row style="line-height: 30px; font-size: 14px;">-->
+				<!--<iv-col span="10">原始风险评估模型</iv-col>-->
+				<!--<iv-col span="4">{{$t("gb.common.riskLevel")}}</iv-col>-->
+				<!--<iv-col span="10">变更后-风险评估模型(风险等级)</iv-col>-->
+			<!--</iv-row>-->
+			<!--<iv-row v-for="(index, latRange) in mainModel.gradeLatRanges" style="padding-bottom: 20px;">-->
+				<!--<iv-col span="10">-->
+					<!--<span>{{latRange.riskModel.name}}</span>-->
+					<!--&lt;!&ndash;<el-form-item>&ndash;&gt;-->
+						<!--&lt;!&ndash;<iv-input :textonly="true" :value.sync="latRange.riskModel.name"></iv-input>&ndash;&gt;-->
+					<!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+				<!--</iv-col>-->
+				<!--<iv-col span="4">-->
+					<!--<span style="font-size: 14px;">{{latRange.level}}</span>-->
+					<!--&lt;!&ndash;<el-form-item>&ndash;&gt;-->
+						<!--&lt;!&ndash;<iv-input :textonly="true" :value.sync="latRange.level"></iv-input>&ndash;&gt;-->
+					<!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+				<!--</iv-col>-->
+				<!--<iv-col span="10" style="padding: 10px 0 0 5px;">-->
+					<!--<el-form-item>-->
+						<!--<risk-model :model.sync="latRange.riskModelVo" :risk-model-id="mainModel.id"></risk-model>-->
+					<!--</el-form-item>-->
+				<!--</iv-col>-->
+			<!--</iv-row>-->
+		<!--</el-form>-->
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">保存并启用新模型</vi-button>
+	</div>
+</div>

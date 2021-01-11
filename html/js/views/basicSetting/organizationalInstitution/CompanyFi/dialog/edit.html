@@ -1,0 +1,104 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform >
+			<el-form-item :label="$t('gb.common.code')" prop="code">
+				<!--<iv-input  v-if="mainModel.opType == 'create'" :value.sync="mainModel.vo.code"></iv-input>-->
+				<!--<iv-input  v-if="mainModel.opType == 'update'" :value.sync="mainModel.vo.code" disabled></iv-input>-->
+				<iv-input :value.sync="mainModel.vo.code"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.compName')" prop="name">
+                <iv-input  :value.sync="mainModel.vo.name"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.abbreviat')" prop="attr5">
+                <iv-input  :value.sync="mainModel.vo.attr5"></iv-input>
+			</el-form-item>
+			<!--v-ref:company-->
+			<el-form-item :label="$t('gb.common.ownedComp')" prop="parentId" v-if="comShowProp">
+				<company-tree-select  :id.sync="mainModel.vo.parentId" v-ref:company :disabled="mainModel.updateType"></company-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.ownedComp')" v-else>
+				<company-tree-select  :id.sync="mainModel.vo.parentId" v-ref:company :disabled="mainModel.updateType"></company-tree-select>
+			</el-form-item>
+			<el-form-item  :label="$t('bs.bac.compGenre')" prop="organizationExt.genre">
+				<i-select :model.sync="mainModel.vo.organizationExt.genre" :list="mainModel.compDate" >
+					<i-option v-for="item in mainModel.compDate" :value="item.value">{{ item.name}}</i-option>
+				</i-select>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.divis')">
+			    <i-select  :list="mainModel.vo.countryList" :model.sync="mainModel.countryId" :serch-filterable="true" :data-query.sync="queyCountry"  @on-change="doChangeProvince" style="width:127px">
+		            <i-option v-for="item in mainModel.vo.countryList | filterBy queyCountry" :value="item.id">{{ item.name }}</i-option>
+		        </i-select>
+		        <i-select  :list="mainModel.vo.provinceList" :model.sync="mainModel.provinceId" :serch-filterable="true" :data-query.sync="queyProvince" @on-change="doChangeCity" style="width:127px">
+		            <i-option v-for="item in mainModel.vo.provinceList | filterBy queyProvince" :value="item.id">{{ item.name }}</i-option>
+		        </i-select>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.divChose')">
+				<!--style="width:85px"-->
+			<i-select :model.sync="mainModel.vo.regionId" :list="mainModel.vo.cityList"  :serch-filterable="true" :data-query.sync="queyCity">
+				<i-option v-for="item in mainModel.vo.cityList | filterBy queyCity" :value="item.id">{{ item.name }}</i-option>
+			</i-select>
+			</el-form-item>
+
+			<div v-show="!compShowMore" @click="doShowMore">
+				<span style="color: #999;font-size: 14px;padding-left: 8px;cursor: pointer;">查看更多>></span>
+			</div>
+			<div v-show="compShowMore">
+				<el-form-item  :label="$t('bs.bac.compPerson')">
+					<iv-input :value.sync="mainModel.vo.organizationExt.legalPerson"></iv-input>
+					<!--<input type="text"  class="inp" v-model="mainModel.legalPerson">-->
+				</el-form-item>
+				<el-form-item  :label="$t('bs.bac.orgCode')">
+					<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.organizationExt.orgCode"  ></iv-input>
+					<!--<input type="text"  class="inp" v-model="mainModel.organizationCode">-->
+				</el-form-item>
+				<el-form-item  :label="$t('bs.bac.regNumber')">
+					<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.organizationExt.regno"  ></iv-input>
+					<!--<input type="text"  class="inp" v-model="mainModel.regno">-->
+				</el-form-item>
+				<!--企业规模-->
+				<!--:label="$t('bs.bac.enterpriseScale')"-->
+				<!--<el-form-item label="企业规模">-->
+					<!--<iv-input :maxlength="50" :value.sync="mainModel.vo.organizationExt.scaleType">-->
+						<!--<i-select :model.sync="mainModel.vo.organizationExt.scale" :list="mainModel.enterpriseScaleList" slot="prepend" style="width:80px">-->
+							<!--<i-option v-for="item in mainModel.enterpriseScaleList" :value="item.value" style=" width: 100%;height: 30px;line-height: 30px;">{{item.name}}</i-option>-->
+						<!--</i-select>-->
+					<!--</iv-input>-->
+				<!--</el-form-item>-->
+				<el-form-item prop="industry"  style="overflow: inherit;position: absolute;top: 493px;;width: 370px;" class="small-info-box" :label="$t('bs.bac.industry')">
+					<Cascader :data="industryList" :value.sync="mainModel.industryVal"></Cascader>
+				</el-form-item>
+				<el-form-item  label="企业人数" style="margin-top: 40px;" prop="organizationExt.population">
+					<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.organizationExt.population"  type="number"></iv-input>
+				</el-form-item>
+				<el-form-item  label="企业产值" prop="organizationExt.production">
+					<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.organizationExt.production"  type="number"></iv-input>
+				</el-form-item>
+				<!--//行业-->
+				<!--<div class="select-tree" style="height: 42px">-->
+					<!--<span style="width: 110px;text-align: left;vertical-align: middle;float: left;font-size: 14px;line-height: 32px;padding-left: 9px;">所属行业</span>-->
+				   <!--<div style="margin-left: 110px;">-->
+					   <!--<Cascader :data="industryList" :value.sync="mainModel.industryVal"></Cascader>-->
+					<!--</div>-->
+				<!--</div>-->
+				<el-form-item :label="$t('bs.bac.contactNumber')" prop="organizationExt.phone">
+					<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.organizationExt.phone" pattern="phone"></iv-input>
+					<!--<input type="text"  class="inp" v-model="mainModel.phone">-->
+				</el-form-item>
+				<el-form-item :label="$t('bs.bac.electronics')" prop="organizationExt.email">
+					<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.organizationExt.email"  ></iv-input>
+					<!--<input type="text"  class="inp" v-model="mainModel.email">-->
+				</el-form-item>
+				<el-form-item :label="$t('ori.perm.introduct')">
+					<iv-input  :value.sync="mainModel.vo.remarks" type="textarea"></iv-input>
+				</el-form-item>
+				<el-form-item :label="$t('ori.perm.detailAddr')">
+					<iv-input  :value.sync="mainModel.vo.address" type="textarea"></iv-input>
+					<!--<textarea  v-model ="mainModel.vo.address" class="h80"></textarea>-->
+				</el-form-item>
+			</div>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t('gb.comnon.save')}}</vi-button>
+	</div>	
+</div>

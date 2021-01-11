@@ -1,0 +1,50 @@
+
+<li class="custom-vi-tree-item">
+
+    <div :style="ulStyle" :class="treeClasses" v-if="isShow" @click="doNodeClick($event)" >
+        <iv-checkbox v-show="isShowCheckbox" :checked.sync="checked" :disabled="checkboxDisable"></iv-checkbox>
+        <span data-type="icon" style="display: inline-block; width: auto;margin-right:3px ;" :class="{'align-text': !showCheckbox}" v-if="isFolder">
+            <Icon v-if="!showIconPlus" data-type="icon" class="tree-arrow" :type="open ? 'arrow-down-b' : 'arrow-right-b'"></Icon>
+            <!-- <i v-else data-type="icon" class="iconfont tree-arrow" :class='open ?"iconjian":"iconjia1"'></i> -->
+           <img v-else data-type="icon" :src="open ?'images/treeminus.png':'images/treeadd.png'" alt="">
+        </span>
+        <span v-if="!isFolder&&showIconPlus" style="display: inline-block; width:16px;"></span>
+        <Icon v-if="showIcon" class="type-icon" :type="isFolder ? 'ios-folder' : 'android-list'"></Icon>
+        <span :title="displayLabelValue">{{displayLabelValue}}</span>
+        <!-- 辅助显示内容 -->
+        <span style="position:absolute;left: 400px;" v-if="!isFolder && assist">{{{assistFunc(model)}}}</span>
+        <div v-if="edit" style="display: inline-block;position: absolute;left: 300px;">
+            <a @click.stop="doAddNode()">新增</a>
+            <a @click.stop="doEditNode()" style="padding-left: 10px;">编辑</a>
+            <a @click.stop="doDelNode()" style="padding-left: 10px;">删除</a>
+        </div>
+    </div>
+
+    <ul v-if="isFolder" v-show="this.open || !this.parentModel">
+        <iv-tree-node
+                :show-icon="showIcon"
+                :layer="(layer + 1)"
+                :assist="assist"
+                :assist-func="assistFunc"
+                :allow-parent-checked="allowParentChecked"
+                :trigger-parent-event="triggerParentEvent"
+                :show-checkbox="showCheckbox"
+                v-ref:treeNode
+                class="item"
+                v-for="childModel in model.children"
+                :data-query.sync="dataQuery"
+                :model="childModel"
+                :id-attr="idAttr"
+                :parent-model="model"
+                :display-attr="displayAttr"
+                :edit="edit"
+                :default-open="defaultOpen"
+                :show-count="showCount"
+                :display-func="displayFunc"
+                :default-open-layer="defaultOpenLayer"
+                :before-click-handle="beforeClickHandle"
+                :show-icon-plus="showIconPlus"
+        >
+        </iv-tree-node>
+    </ul>
+</li>

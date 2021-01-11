@@ -1,0 +1,75 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default :showdept="true"></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right export-btn">
+
+                        <iv-dropdown trigger="click" placement="bottom-end" style="vertical-align: middle;" v-ref:filter-box>
+                            <iv-button v-if="hasAuth('search')" @click="initFilterBoxData" type="default" icon="ios-search" style="width: auto;">复培搜索</iv-button>
+                            <div slot="list" class="filter-box-list">
+                                <div class="filter-box-item">
+                                    <div class="filter-box-item-name">课程复培到期时间</div>
+                                    <div class="filter-box-item-value" :class="{'checked': filterModel.checkedExpiredDateId === item.id}" v-for="item in filterModel.filterDateArray" @click="doChangeExpiredDateFilter(item.id)">{{item.name}}</div>
+                                    <date-picker format="yyyy-MM-dd" placement="bottom-end" :disabled="filterModel.checkedExpiredDateId !== '7'" :selected-date.sync="filterModel.beginDate" :end="filterModel.endDate"></date-picker>
+                                    <div style="margin:0 5px;">~</div>
+                                    <date-picker format="yyyy-MM-dd" placement="bottom-end" :disabled="filterModel.checkedExpiredDateId !== '7'" :selected-date.sync="filterModel.endDate" :begin="filterModel.beginDate"></date-picker>
+                                </div>
+                                <div class="filter-box-footer">
+                                    <iv-button @click="doFilterFromBox">确定</iv-button>
+                                    <iv-button @click="doFilterBoxClose" style="background-color: #fff;border: 1px solid #e8e8e8;color: #333;">取消</iv-button>
+                                </div>
+                            </div>
+                        </iv-dropdown>
+
+                        <iv-dropdown trigger="click" placement="bottom-end" style="vertical-align: middle;">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                    <div class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item v-if="hasAuth('retrain')">
+                                    <div class="uploadAport">
+                                        <a href="javascript:void(0);" @click="doRetrainPlan">下达复培计划</a>
+                                    </div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item v-if="hasAuth('notice')">
+                                    <div class="uploadAport">
+                                        <a href="javascript:void(0);" @click="doSetAutoRemind">设置自动提醒</a>
+                                    </div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doRetrainPlan" v-if="hasAuth('retrain')">下达复培计划</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+
+<aside :show.sync="detailModel2.show" class="middle-info-aside">
+    <detail-panel2></detail-panel2>
+</aside>
+
+<train-again-form-Modal v-ref:train-modal :visible.sync="trainAgainModel.visible" @do-save="doSaveRetrainPlan"></train-again-form-Modal>

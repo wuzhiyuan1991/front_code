@@ -1,0 +1,17 @@
+<style>
+    .isReadonly{
+        background-color: #f3f3f3;
+        cursor: not-allowed;
+    }
+</style>
+<div :class="classes" v-clickoutside="handleClose" class="ivu-select-top" >
+    <div :class="inputClazz" @click="toggleMenu" v-el:reference @mouseenter="doMouseEnter" style="min-height:30px;padding-right: 20px" @mouseleave="doMouseLeave" :class="clazz">
+        <div class="ivu-tag" v-for="item in selectedMultiple">
+            <span class="ivu-tag-text" v-text="showLabel(item)"></span>
+            <Icon v-if="!readonly" type="ios-close-empty" @click.stop="removeTag($index)"></Icon>
+        </div>
+    </div>
+    <span v-if="!readonly" style="position: absolute;top: 2px; right: 2px;font-size: 16px;line-height: 28px;padding: 0 7px;">
+        <Icon type="plus-round" @click="toggleMenu" ></Icon>
+    </span>
+</div>

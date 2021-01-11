@@ -1,0 +1,51 @@
+<Modal :visible.sync="visible" :title="title" width="692" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content" style="background-color: #fff;">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+
+                <el-form-item  label="审批节点">
+                    <iv-input disabled :value="mainModel.vo.orderNo"></iv-input>
+                </el-form-item>
+                <el-form-item  label="审批节点名称" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name" :disabled="!hasAuth"></iv-input>
+                </el-form-item>
+
+                <el-form-item  label="签署方式" prop="signWay">
+                    <iv-radio-group :model.sync="mainModel.vo.signWay">
+                        <iv-radio value="1" :disabled="!hasAuth">或签</iv-radio>
+                        <iv-radio value="2" :disabled="!hasAuth">会签</iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item  label="流转路线">
+                    <div style="display: inline-block;padding: 0 20px;background-color: #eee;margin-right: 5px;">通过</div>
+                    <div style="display: inline-block;padding: 0 20px;background-color: #eee;">退回</div>
+                </el-form-item>
+
+            </el-form>
+
+            <div class="approval-form-box1 w-p100 pad-form-item">
+                <div class="flex-v-center">
+                    <div class="font-bold mr20">审批人员</div>
+                    <div style="width: 300px">
+                            <company-tree-select  :id.sync="selectedCompId" placeholder="请选择公司"></company-tree-select>
+                    </div>
+                </div>
+                <div>
+                    <a @click="changeMode('user')" class="approval-box-item" :class="{'checked': currentMode === 'user'}" href="javascript:void(0);">按人员</a>
+                    <span>|</span>
+                    <a @click="changeMode('dept')" class="approval-box-item" :class="{'checked': currentMode === 'dept'}" href="javascript:void(0);">按部门</a>
+
+                    <a class="approval-box-item" href="javascript:void(0);" @click="doShowSelectModal">添加</a>
+                </div>
+            </div>
+            <lite-table :columns="columns" :values="values" :tools="['del']" @on-delete="doRemove" @on-click="onRowClicked"></lite-table>
+
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave('exit')" class="pull-right">保存并退出</vi-button>
+            <vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+        </div>
+    </div>
+</Modal>
+<user-select-modal :visible.sync="userSelectModel.visible" :filter-data="userSelectModel.filterData" @do-save="doSaveUsers"></user-select-modal>
+<dept-select-modal :visible.sync="deptSelectModel.visible" :filter-data="deptSelectModel.filterData" @do-save="doSaveDepts"></dept-select-modal>

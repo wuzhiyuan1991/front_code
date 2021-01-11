@@ -1,0 +1,63 @@
+<div class="reportChartMain report">
+    <div class="mp-header formTitle" style="margin-left: 10px;">
+        <div class="basic">{{qryInfoModel.title}}</div>
+    </div>
+    <div class="report-qry-head">
+        <el-form :model="qryInfoModel.vo" is-label-vertical v-ref:ruleform>
+            <iv-row style="padding-top: 6px;">
+                <iv-col span="5">
+                    <el-form-item>
+                        <iv-radio-group :model.sync="qryInfoModel.vo.timeType">
+                            <iv-radio value="1">
+                                <span>年度</span>
+                            </iv-radio>
+                            <iv-radio value="3">
+                                <span>月度</span>
+                            </iv-radio>
+                            <iv-radio value="2">
+                                <span>周</span>
+                            </iv-radio>
+                        </iv-radio-group>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="4">
+                    <el-form-item>
+                        <span style="float: left;">年份：</span>
+                        <vi-date-picker style="float: left;width:60%;font-size: 12px" type="year" @on-change="changeQryYear"></vi-date-picker>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="6">
+                    <el-form-item>
+                        <obj-select type="frw" :values.sync="qryInfoModel.vo.objRange"></obj-select>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="4" style="padding-top: 5px;">
+                    <iv-button @click="doQry()">统计</iv-button>
+                </iv-col>
+            </iv-row>
+        </el-form>
+    </div>
+    <div>
+        <vuecharts :options="pieChartOpt" @chartclick="chartClick" v-ref:pie-chart></vuecharts>
+        <vuecharts :options="barChartOpt" v-ref:bar-chart></vuecharts>
+    </div>
+    <Modal v-if="drillModel.show" :visible.sync="drillModel.show" mask-closable :title="drillModel.title" width="900" :footer-hide="true" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 900px">
+            <div class="epc-header"></div>
+            <div class="epc-content integral-table">
+                <iv-button @click="doExportData" style="position: absolute;right: 20px;top:93px;z-index: 10;">导出</iv-button>
+                <vue-bootstrap-table
+                        :columns="drillModel.table.columns"
+                        :url="drillModel.table.url"
+                        :default-filter-value="drillModel.table.qryParam"
+                        :show-filter="true"
+                        :show-column-picker="false"
+                        :filter-column="drillModel.table.filterColumns"
+                        :show-pager="true"
+                        resizeable
+                        v-ref:rpt-details-table>
+                </vue-bootstrap-table>
+            </div>
+        </div>
+    </Modal>
+</div>

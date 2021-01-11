@@ -1,0 +1,62 @@
+<li class="custom-vi-tree-item">
+
+    <div :class="treeClasses" v-if="model.id != '-1'" :style="plStyle" @click="doClickDiv">
+
+        <iv-checkbox v-show="showCheckbox" :checked.sync="checked" @click="toggle($event, 0)" :disabled="!allowParentChecked && (isFolder && singleSelect)"></iv-checkbox>
+
+        <p style="display: inline-block;cursor: pointer;" @click="toggle($event, 1)">
+            <span :class="{'align-text': !showCheckbox}">
+                <Icon v-if="isFolder" class="tree-arrow" :type="open ? 'arrow-down-b' : 'arrow-right-b'"></Icon>
+            </span>
+
+            <span :class="{'custom-margin-info':!isFolder}">{{displayLabelValue}}</span>
+        </p>
+
+        <!-- 辅助显示内容 -->
+        <span style="position:absolute;left: 400px;" v-if="!isFolder && assist" @click.stop="doAssistClicked($event, model)">{{{assistFunc(model)}}}</span>
+
+        <div v-if="edit && !authMgrShow" style="display: inline-block;position: absolute;right:10px;font-weight: normal;" @click="doEditClicked($event,model)">
+            <span style="cursor:pointer;padding-right:10px" @click="doAddNode" v-if="hasAddPermission && (!isFolder && addLevel==2 ? false:true)" v-show="menuShow"><Icon type="plus-round" style="margin-right:3px"></Icon>新增</span>
+            <span style="cursor:pointer;padding-right:10px" @click="doEditNode" v-if="hasEditPermission"><Icon type="compose" style="margin-right:3px"></Icon>编辑</span>
+            <span style="cursor:pointer;padding-right:10px" @click="doDelNode" v-if="hasDelPermission" v-show="menuShow"><Icon type="trash-a" style="margin-right:3px"></Icon>删除</span>
+            <!--自定义的额外按钮-->
+            {{{renderEditExcess}}}
+        </div>
+        <div v-if="edit && authMgrShow" style="display: inline-block;position: absolute;right:10px;font-weight: normal;" @click="doEditClicked($event,model)">
+            <span style="cursor:pointer;padding-right:10px" @click="doAddNode" v-if="hasAddPermission && (!isFolder && addLevel==2 ? false:true && !menuFuncMgr)" v-show="menuShow"><Icon type="plus-round" style="margin-right:3px"></Icon>新增</span>
+            <span style="cursor:pointer;padding-right:10px" @click="doEditNode" v-if="hasEditPermission && menuFuncMgr"><Icon type="compose" style="margin-right:3px"></Icon>编辑</span>
+            <span style="cursor:pointer;padding-right:10px" @click="doDelNode" v-if="hasDelPermission && menuFuncMgr" v-show="menuShow"><Icon type="trash-a" style="margin-right:3px"></Icon>删除</span>
+            <!--自定义的额外按钮-->
+            {{{renderEditExcess}}}
+        </div>
+    </div>
+
+    <ul v-if="isFolder " v-show="open || !parentModel">
+        <iv-tree-grid-node
+            :layer="layer+1"
+            :assist="assist"
+            :assist-func="assistFunc"
+            :allow-parent-checked="allowParentChecked"
+            :show-checkbox="showCheckbox"
+            v-for="childModel in model.children"
+            :add-level="addLevel"
+            :menu-func-mgr="childModel.menuFuncMgr"
+            :auth-mgr-show="authMgrShow"
+            :menu-show="menuShow"
+            :is-index="childModel.index"
+            :model="childModel"
+            :parent-model="model"
+            :grand-model="parentModel"
+            :display-attr="displayAttr"
+            :edit="edit"
+            :open="childModel.open"
+            :render-edit-excess="renderEditExcess"
+            :has-add-permission="hasAddPermission"
+            :has-edit-permission="hasEditPermission"
+            :has-del-permission="hasDelPermission"
+            :default-open-layer="defaultOpenLayer"
+            v-ref:treeNode
+        >
+        </iv-tree-grid-node>
+    </ul>
+</li>

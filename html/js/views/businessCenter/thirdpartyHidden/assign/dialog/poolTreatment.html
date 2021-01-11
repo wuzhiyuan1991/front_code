@@ -1,0 +1,48 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform >
+            <div v-if="formType == 1">
+                <el-form-item :label="$t('hag.hazc.resultApproval')" prop="status">
+                    <i-select :model.sync="mainModel.vo.status" :list.sync="mainModel.selectModel.status">
+                        <i-option v-for="s in mainModel.selectModel.status" :value="s.id">{{s.value}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item v-if="mainModel.enableUpdateUsers" :label="$t('hag.hazc.approver')" prop="users">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.auditUsers" id-field="id" display-field="name" @on-click="doSelectUsers(1)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.opinionsApproval')" prop="approvalOpinion">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.approvalOpinion"></iv-input>
+                </el-form-item>
+            </div>
+            <div v-if="showAssignModel">
+                <el-form-item :label="$t('hag.hazc.hiddenGrade')" prop="riskType">
+                    <i-select :model.sync="mainModel.vo.riskType" :list="mainModel.selectModel.riskTypes">
+                        <i-option v-for="s in mainModel.selectModel.riskTypes" :value="s.id">{{s.name}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.riskGrade')" prop="riskLevel">
+                    <risk-model  :model.sync="mainModel.selectModel.riskModel"></risk-model>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyReson')" prop="dealDemand">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.dealDemand"></iv-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyPerson')" prop="dealCandidates">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.dealCandidates" id-field="id" display-field="name" @on-click="doSelectUsers(2)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyTime')" prop="maxDealDate">
+                    <date-picker format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.maxDealDate" :end="mainModel.vo.maxAcceptDate"></date-picker>
+                </el-form-item>
+                <el-form-item :label="$t('hat.hazt.Verifier')" prop="accepterCandidates">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.accepterCandidates" id-field="id" :readonly="!mainModel.selectModel.userSelected.canUpdateVerifyUser" display-field="name" @on-click="doSelectUsers(3)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hat.hazt.termTime')" prop="maxAcceptDate">
+                    <date-picker format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.maxAcceptDate" :begin="mainModel.vo.maxDealDate"></date-picker>
+                </el-form-item>
+            </div>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<user-select-modal :visible.sync="mainModel.selectModel.userSelected.visible" :filter-data="mainModel.selectModel.userSelected.filterData" @do-save="doSaveUser"></user-select-modal>

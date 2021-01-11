@@ -1,0 +1,67 @@
+<Modal v-if="load" :title="title" :visible.sync="visible">
+    <div class="edit-pop-container">
+        <div  class="epc-content repair-popper">
+            <el-form label-width="120px" class="fixed-width width-auto-ipt" :model="model" :rules="rules"  v-ref:form>
+                <el-form-item label="类别" prop="phase">
+                    <i-select :model.sync="model.phase" :list="enum.workPhase" @on-change="doChangePhase" disabled>
+                        <i-option v-for="(val,key) in enum.workPhase" :value="val">{{key}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item :label="label.name" prop="mrsEquipment.id">
+                    <div class="flex-layout">
+<!--                        <i-select v-if="!isSafetyMonitor"  style="width: 100px" :model.sync="model.mrsEquipmentType" :list="enum.mrsEquipmentType" slot="prepend"-->
+<!--                                                                     @on-select="doChangeEquipmentType"-->
+<!--                                                                     v-ref:search-list>-->
+<!--                        <i-option v-for="(key,value) of enum.mrsEquipmentType" :value="key">{{value}}</i-option>-->
+<!--                    </i-select>-->
+                        <input-select class="flex-grow1" :value="model.mrsEquipment" id-field="id" display-field="name" @click="selectModel.equipment.show=true"></input-select>
+                    </div>
+                </el-form-item>
+                <el-form-item :label="label.operateTime" prop="operateTime">
+                    <date-picker format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+                                 :selected-date.sync="model.operateTime"></date-picker>
+                </el-form-item>
+                <el-form-item :label="label.quantity" prop="quantity">
+                    <div class="flex-v-center">
+                    <iv-input type="number" :value.sync="model.quantity" :min="1"></iv-input>
+                    <iv-checkbox style="width: 70px;margin-left: 5px"  :checked.sync="selAllQuantity" @click="doToggleSelAllQuantity">全部</iv-checkbox>
+                    </div>
+                </el-form-item>
+                <el-form-item  label="检验检测机构" prop="inspectOrgan" v-show="!isNormal">
+                    <iv-input :value.sync="model.inspectOrgan"></iv-input>
+                </el-form-item>
+                <el-form-item class="is-required"  :label="label.operators" prop="operators" style="overflow: inherit">
+                    <div class="mb10" v-if="isNormal">
+                        <i-select :model.sync="model.operationType" :list="enum.operationType">
+                            <i-option v-for="(val,key) in enum.operationType" :value="val">{{key}}</i-option>
+                        </i-select>
+                    </div>
+                    <div>
+                        <input-multi-selector v-if="isNormal&&model.operationType==1"
+                                              :values="model.users" @click="selectModel.user.show=true"
+                                              :overflow-hover="false"
+                        ></input-multi-selector>
+                        <iv-input v-else  :value.sync="model.operators"></iv-input>
+                    </div>
+                </el-form-item>
+                <el-form-item :label="label.operationContent" prop="operationContent">
+                    <iv-input type="textarea" :rows="6" :value.sync="model.operationContent"></iv-input>
+                </el-form-item>
+                <el-form-item class="is-required" :label="label.checkResult" prop="attr1" v-show="!isNormal">
+                    <i-select :model.sync="model.attr1" :list="enum.checkResult">
+                        <i-option v-for="(val,key) in enum.checkResult" :value="val">{{key}}</i-option>
+                    </i-select>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+    <template slot="footer">
+        <vi-Button type="ghost" size="large" @click="doCancel">取消</vi-Button>
+        <vi-Button type="primary" size="large" @click="doSave">保存</vi-Button>
+    </template>
+</Modal>
+
+<user-select-modal  :visible.sync="selectModel.user.show" @do-save="doSaveUser" ></user-select-modal>
+<equipment-select-modal single-select :visible.sync="selectModel.equipment.show" :filter-data="selectModel.equipment.filterData" @do-save="doSaveEquipment">
+
+</equipment-select-modal>

@@ -1,0 +1,103 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="18">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="6">
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('exportList')" class="uploadAport" @click="doExportExcel"><a>导出列表</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item v-if="hasAuth('process')">
+                                    <div class="uploadAport" @click="doSetApproval"><a>审批流设置</a></div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+
+                    <div class="main-special-box-1">
+                        <a @click="doFilterBySpecial('1')" :class="{'checked': filterTabId === 'todo1'}" class="main-special-item"  href="javascript:void(0);">待办 ({{undoCount}})</a>
+                        <a @click="doFilterBySpecial()" :class="{'checked': filterTabId === 'todo'}" class="main-special-item" href="javascript:void(0);">所有</a>
+                    </div>
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button>
+
+                    <vi-button v-if="tableModel.selectedDatas[0].status === '0' && hasAuth('submit')" type="text" class="mp-header-item-btn"
+                               @click="doSubmit">提交审核
+                    </vi-button>
+                    <vi-button v-if="showAuditButton" type="text" class="mp-header-item-btn"
+                               @click="doAudit">审核
+                    </vi-button>
+                    <vi-button v-if="tableModel.selectedDatas[0].status === '2' && hasAuth('quit')" type="text" class="mp-header-item-btn"
+                               @click="doQuit">弃审
+                    </vi-button>
+                    <vi-button v-if="hasAuth('importToUpdate')" type="text" class="mp-header-item-btn"
+                               @click="doImportToUpdate">导入更新
+                    </vi-button>
+                    <vi-button v-if="hasAuth('export')" type="text" class="mp-header-item-btn"
+                               @click="doExport">{{$t("gb.common.export")}}
+                    </vi-button>
+
+
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default @on-data-loaded="onTableDataLoaded"></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel @do-import-to-update="doImportToUpdate"></detail-panel>
+</aside>
+
+<aside :show.sync="approvalModel.show" class="middle-info-aside">
+    <approval-panel type="RiCheckTable" :has-auth="hasAuth('processEdit')"></approval-panel>
+</aside>
+
+<import-progress @do-export-excel="doExportExcel" :url="importProgress.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+
+<audit-form-modal :visible.sync="auditProcessModel.visible" @do-save="doSaveAuditProcessRecord"></audit-form-modal>
+<Modal :visible.sync="auditObj.visible"  footer-hide title="审核巡检表">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <p style="font-size: 24px;">审核通过该巡检表？</p>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doPass(100)" class="pull-right">不通过</vi-button>
+            <vi-button type="primary" @click="doPass(200)" class="pull-right">通过</vi-button>
+        </div>
+    </div>
+</Modal>

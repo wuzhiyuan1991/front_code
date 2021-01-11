@@ -1,0 +1,79 @@
+<div class="tab-container report">
+	<div class="main-panel">
+		<div class="mp-content" style="overflow: auto;height: 100%">
+            <div class="reportChartMain">
+                <div class="mp-header formTitle" style="margin-left: 10px;">
+                    <div class="basic">{{mainModel.title}}</div>
+                </div>
+                <div class="report-qry-head">
+                    <el-form :model="mainModel.vo" is-label-vertical :rules="mainModel.rules" v-ref:ruleform>
+                    <iv-row style="display: flex;align-items: center;">
+                        <iv-col span="5">
+                            <el-form-item prop="dateRange"  style="width:100%;overflow: inherit;">
+                            <vi-date-picker type="daterange" :options="mainModel.datePickModel.options" :value.sync="mainModel.vo.dateRange" placeholder="选择日期范围" style="width:96%"></vi-date-picker>
+                            </el-form-item>
+                        </iv-col>
+                        <iv-col span="3">
+                            <el-form-item prop="typeOfRange" style="width:100%;overflow: inherit;">
+                                <i-select class="select-color" :model.sync="mainModel.vo.typeOfRange" style="width:100%;font-size: 12px" v-ref:select
+                                          :list="mainModel.typeOfRanges" placeholder="请选择对象范围"
+                                          @on-change="changeTypeOfRange">
+                                    <i-option v-for="item in mainModel.typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                                </i-select>
+                            </el-form-item>
+                        </iv-col>
+                        <iv-col span="6">
+                            <el-form-item prop="objRange" style="width:100%;overflow: inherit;">
+                                <obj-select :type="mainModel.vo.typeOfRange" :values.sync="mainModel.vo.objRange"></obj-select>
+                            </el-form-item>
+                        </iv-col>
+                        <iv-col span="4">
+                            <iv-button @click="doQry()">统计</iv-button>
+                        </iv-col>
+                    </iv-row>
+                    </el-form>
+                </div>
+                <div class="echarts-box">
+                    <div class="left-pie-chart" style="width: 50%">
+                        <vuecharts  style="height: 50%" @chartclick="clickPieChart" :options="mainModel.charts.barChart.leftBarChart.opt" v-ref:left-chart></vuecharts>
+                        <vuecharts  style="height: 50%"  :options="mainModel.charts.barChart.leftBarChartUnder.opt" v-ref:left-chart-under></vuecharts>
+
+                    </div>
+                    <div class="right-bar-chart" style="width: 50%">
+                        <vuecharts  style="height: 50%" @chartclick="clickFirstBarChart" :options="mainModel.charts.barChart.firstBarChart.opt" v-ref:bar-chart-first></vuecharts>
+                        <vuecharts  style="height: 50%" @chartclick="clickSecondBarChart" :options="mainModel.charts.barChart.secondBarChart.opt" v-ref:bar-chart-second></vuecharts>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+
+
+<!-- 撰取 -->
+<Modal v-show="drillDataModel.show" :visible.sync="drillDataModel.show" mask-closable :title="drillDataModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container" style="width: 900px">
+        <div class="epc-header"></div>
+        <div class="epc-content">
+            <div style="padding:4px 0 0 4px;width: 225px;position: absolute; right: 0;top: 88px;z-index: 100;" v-if="drillDataModel.groups && drillDataModel.groups.length > 1">
+                <i-select @on-change="onChangeGroupOfDrillDataModel"
+                          :list="drillDataModel.groups" :placeholder="drillDataModel.placeholderOfGroups" style="width:200px;">
+                    <i-option v-for="g in drillDataModel.groups" :value="g.id">{{ g.name }}</i-option>
+                </i-select>
+            </div>
+            <!--<div style="position: absolute;right:20px;top:90px;z-index:2;">-->
+                <!--<iv-button @click="doExportRptData">导出</iv-button>-->
+            <!--</div>-->
+            <vue-bootstrap-table
+                :columns="drillDataModel.table.columns"
+                 :url="drillDataModel.table.url"
+                 :default-filter-value="drillDataModel.table.qryParam"
+                 :show-column-picker="false"
+                lazy-load
+                v-ref:detail-table
+                :show-pager="true" v-ref:rpt-details-table>
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</Modal>
+

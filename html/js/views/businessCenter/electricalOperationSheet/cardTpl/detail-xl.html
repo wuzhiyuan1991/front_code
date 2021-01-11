@@ -1,0 +1,382 @@
+<div class="detail-large-container" id="operation" v-el:container>
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div v-if="mainModel.isReadOnly" class="share-box-1">
+				<div @click="!isShare && doShare()" class="share-box-d" :style="shareIconStyle" :title="shareIconTitle">
+					<Icon type="android-share-alt"></Icon>
+				</div>
+			</div>
+			<div class="share-box-1" style="margin-left: 0;">
+				<span class="btn-green1" >{{getDataDic("iew_card_tpl_type", mainModel.vo.type)}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy') && isShare" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')  && !isShare" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+
+				<iv-button v-if="mainModel.isReadOnly && !isShare" type="ghost"
+					@click.stop="doEdit">{{$t('gb.common.edition')}}
+				</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && hasAuth('create')" type="ghost" @click="doSave">
+					{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click="doPreview">预览</iv-button>
+
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete') && !isShare" type="ghost" @click="doDelete">
+					{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</vi-button>
+
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form  class="bip-content-form" :model="mainModel.vo" is-label-vertical
+				:rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item" style="border-top: none;" >
+					<el-form-item :label="$t('gb.common.code')" prop="code"  class="small-info-box">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId"  class="small-info-box">
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId"  class="small-info-box">
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable"  class="small-info-box">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" show-input="true"></disable-select>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item" style="border-top: none;"  >
+					<el-form-item label="模板名称" style="width: 600px;" prop="name" class="small-info-box">
+						<iv-input  :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="mainModel.vo.type != 3" style="width: 600px;" label="工作的变、配电站名称及设备名称" prop="substation"  class="small-info-box">
+						<iv-input  :value.sync="mainModel.vo.substation" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="mainModel.vo.type == 3" style="width: 600px;" label="操作任务" prop="attr1"  class="small-info-box">
+						<iv-input  :value.sync="mainModel.vo.attr1" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item" style="border-top: none;"  >
+					<el-form-item v-if="mainModel.vo.type != 3" style="width: 600px;" :label="mainModel.vo.type=='1'?'工作任务-工作地点及设备双重名称':'工作任务-工作地点或地段'" prop="place"  class="small-info-box">
+						<iv-input  :value.sync="mainModel.vo.place" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="mainModel.vo.type != 3" style="width: 600px;" label="工作任务 - 工作内容" prop="content"  class="small-info-box">
+						<iv-input  :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+	<div class="rel-info-panel body-min-height" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div v-show="mainModel.vo.type == 1">
+
+			<!-- :class="{'rel-info-panel-mask': showPanelMask}" -->
+			<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+				<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>安全措施</span></p>
+				<div class="rel-info-panel-content-tabs">
+
+					<div>
+						<simple-card style="margin-top: 5px;">
+							<p slot="title" style="font-size: 14px;padding-left: 10px;">
+								<span
+									style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>应拉断路器、隔离开关
+							</p>
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('1')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+							<vue-bootstrap-table
+								lazy-load
+								:columns="firstColumns"
+								:values="tableLists.firstLists || []"
+								:show-empty-row="false"
+								:show-pager="false"
+								:show-filter="false"
+								:page-size-opts="[200]"
+								:show-column-picker="false"
+								@on-del-row="doRemoveContent"
+								@on-edit-row="doShowUpdateContent"
+								v-ref:first-list
+
+								@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+
+						</simple-card>
+					</div>
+					<div>
+						<simple-card>
+							<p slot="title" style="font-size: 14px;padding-left: 10px;">
+								<span
+									style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>应装接地线、应合接地刀闸(注明确实地点、名称及接地线编号)
+							</p>
+
+
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('2')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+
+							<vue-bootstrap-table
+									lazy-load
+									:columns="firstColumns"
+									:values="tableLists.secondLists || []"
+									:show-empty-row="false"
+									:show-pager="false"
+									:show-filter="false"
+									:page-size-opts="[200]"
+									:show-column-picker="false"
+									@on-del-row="doRemoveContent"
+									@on-edit-row="doShowUpdateContent"
+									v-ref:second-list
+
+									@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+
+						</simple-card>
+					</div>
+					<div>
+						<simple-card>
+							<p slot="title" style="font-size: 14px;padding-left: 10px;">
+								<span
+									style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>应设遮栏、应挂标示牌及防止二次回路误碰等措施
+							</p>
+
+
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('3')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+
+							<vue-bootstrap-table
+									lazy-load
+									:columns="firstColumns"
+									:values="tableLists.thirdLists || []"
+									:show-empty-row="false"
+									:show-pager="false"
+									:show-filter="false"
+									:page-size-opts="[200]"
+									:show-column-picker="false"
+									@on-del-row="doRemoveContent"
+									@on-edit-row="doShowUpdateContent"
+									v-ref:third-list
+									@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+
+						</simple-card>
+					</div>
+					<div>
+						<simple-card>
+							<p slot="title" style="font-size: 14px;padding-left: 10px;">
+								<span style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>工作地点保留带电部分或注意事项（由工作票签发人填写）
+							</p>
+
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('7')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+
+							<vue-bootstrap-table
+									lazy-load
+									:columns="firstColumns"
+									:values="tableLists.seventhLists || []"
+									:show-empty-row="false"
+									:show-pager="false"
+									:show-filter="false"
+									:page-size-opts="[200]"
+									:show-column-picker="false"
+									@on-del-row="doRemoveContent"
+									@on-edit-row="doShowUpdateContent"
+									v-ref:seventh-list
+									@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+
+						</simple-card>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div v-show="mainModel.vo.type == 2">
+
+			<!-- :class="{'rel-info-panel-mask': showPanelMask}" -->
+			<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+				<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>工作条件</span></p>
+				<div class="rel-info-panel-content-tabs">
+					<div>
+						<simple-card>
+							<!--<p slot="title" style="font-size: 14px;padding-left: 10px;position: relative;">-->
+								<!--<iv-checkbox style="position: absolute;bottom: 0;">停电</iv-checkbox>-->
+							<!--</p>-->
+							<p slot="title" style="font-size: 14px;left: -26px;position: relative;">
+								<iv-checkbox :disabled="isShare || !hasAuth('edit')" @on-change='checkboxClick' style="margin-top:6px;" :checked.sync="mainModel.vo.requireOutage" true-value="1" false-value="0" >停电</iv-checkbox>
+							</p>
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('4')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+							<vue-bootstrap-table
+									lazy-load
+									:columns="firstColumns"
+									:values="tableLists.forthLists || []"
+									:show-empty-row="false"
+									:show-pager="false"
+									:show-filter="false"
+									:page-size-opts="[200]"
+									:show-column-picker="false"
+									@on-del-row="doRemoveContent"
+									@on-edit-row="doShowUpdateContent"
+									v-ref:forth-list
+
+									@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+
+						</simple-card>
+					</div>
+
+				</div>
+			</div>
+			<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+				<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>注意事项（安全措施）</span></p>
+				<div class="rel-info-panel-content-tabs">
+
+					<div>
+						<simple-card>
+							<p slot="title" style="font-size: 14px;padding-left: 10px;">
+
+							</p>
+
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('5')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+
+							<vue-bootstrap-table
+									lazy-load
+									:columns="firstColumns"
+									:values="tableLists.fifthLists || []"
+									:show-empty-row="false"
+									:show-pager="false"
+									:show-filter="false"
+									:page-size-opts="[200]"
+									:show-column-picker="false"
+									@on-del-row="doRemoveContent"
+									@on-edit-row="doShowUpdateContent"
+									v-ref:fifth-list
+									@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+
+						</simple-card>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div v-show="mainModel.vo.type == 3">
+
+			<!-- :class="{'rel-info-panel-mask': showPanelMask}" -->
+			<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+				<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>操作项目</span></p>
+				<div class="rel-info-panel-content-tabs">
+
+					<div>
+						<simple-card>
+							<p slot="title" style="font-size: 14px;padding-left: 10px;">
+
+							</p>
+							<a slot="extra" v-if="!isShare" @click.prevent="doShowContent('6')">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+							<vue-bootstrap-table
+									lazy-load
+									:columns="firstColumns"
+									:values="tableLists.sixthLists || []"
+									:show-empty-row="false"
+									:show-pager="false"
+									:show-filter="false"
+									:page-size-opts="[200]"
+									:show-column-picker="false"
+									@on-del-row="doRemoveContent"
+									@on-edit-row="doShowUpdateContent"
+									v-ref:sixth-list
+									@on-move-row="doMoveEwWorkItem">
+							</vue-bootstrap-table>
+						</simple-card>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+<style>
+	.body-min-height .simple-card-body{
+		min-height: 0px;
+		margin-bottom:20px;
+	}
+	.btn-green1 {
+		padding: 4px 10px;
+		/* background: rgb(170, 205, 3); */
+		/* color: rgb(255, 255, 255); */
+		font-size: 14px !important;
+		margin-left: 16px;
+		border: 1px solid #ddd;
+		border-radius: 2px;
+	}
+
+	#operation .simple-card-head {
+		padding: 0 0 5px 0;
+	}
+</style>
+<content :visible.sync="contentModel.show" v-ref:content @do-save="doSaveContent" @do-update="doSaveContent"></content>
+<require :visible.sync="require.show"></require>
+<approval-step :visible.sync="approval.show"></approval-step>
+<Modal :visible.sync="selectType.show" footer-hide title="选择第1类操作票" width="1200">
+	<div class="epc-content" style="background-color: white;max-height: 600px;">
+		<vue-bootstrap-table
+			:setting="TypeTableModel"
+			:selected-datas.sync="TypeTableModel.selectedDatas"
+			:show-seq='true'>
+		</vue-bootstrap-table>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="selectType.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="doCheckCard" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>
+<Modal :visible.sync="transform.show" footer-hide title="移交通知" width="400">
+	<div class="epc-content" style="background-color: white;max-height: 600px;">
+		<!--<el-form :rules="rules" v-ref:ruleform>-->
+			<!--<el-form-item label="通知站场人员">-->
+				<!--<multi-input-select :values="users" @click="doShowSelectUserModal(item)"></multi-input-select>-->
+			<!--</el-form-item>-->
+		<!--</el-form>-->
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="transform.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="transform.show=false" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>
+<user-select-modal :visible.sync="userSelectModel.show" :single-select="userSelectModel.signal" @do-save="doSaveSelect"></user-select-modal>

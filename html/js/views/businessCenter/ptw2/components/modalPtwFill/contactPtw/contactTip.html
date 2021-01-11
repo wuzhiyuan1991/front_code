@@ -1,0 +1,21 @@
+<Poptip v-model="poptipShow" placement="bottom-end" :popper-fixed="false">
+    <span  class="link-ele" style="color:#33a6ff;">关联的作业票 <label class="link-ele">({{tableModel.contactPtw.values.length}})</label></span>
+    <div slot="content">
+        <div class="flex-layout-vertical" style="width: 300px">
+            <p class="flex-layout-between">
+                <span></span>
+                <span class="link-ele" @click="doSetContact">去设置关联作业票>></span>
+            </p>
+            <vue-bootstrap-table
+                    :setting="tableModel.contactPtw"
+                    :show-pager="true"
+                    :show-filter="false"
+                    @on-del-row="doDel"
+                    @on-edit-row="doEdit"
+                    :values.sync="tableModel.contactPtw.values"
+            >
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</Poptip>
+<modal-contact-ptw  v-ref:contact-ptw @on-success="doSuccess"></modal-contact-ptw>

@@ -1,0 +1,126 @@
+<div class="edit-pop-container">
+    <div class="epc-content">
+
+        <!--全部数据-->
+        <table class="table table-hover" style="margin-bottom: 0">
+            <thead>
+            <tr class="remindTh4">
+                <th class="remindTh4">{{$t("bs.orl.dataList")}}</th>
+                <th class="remindTh4">{{$t("bs.orl.read")}}</th>
+                <th class="remindTh4">{{$t("bs.orl.edit")}}</th>
+                <th class="remindTh4">{{$t("gb.common.del")}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td width="144px">全部数据</td>
+                <td>
+                    <i-select
+                            :model.sync="mainModel.vo.dataSet.all.select"
+                            :list.sync="mainModel.vo.dataSet.selDataList"
+                            @on-change="controllAll('select',mainModel.vo.dataSet.all.select,mainModel.vo.authTreeData)"
+                            style="width:240px"
+                    >
+                        <i-option v-for="item in mainModel.vo.dataSet.selDataList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                    </i-select>
+                </td>
+                <td>
+                    <i-select :model.sync="mainModel.vo.dataSet.all.edit"
+                              :list.sync="mainModel.vo.dataSet.delDataList"
+                              @on-change="controllAll('update',mainModel.vo.dataSet.all.edit,mainModel.vo.authTreeData)"
+                              style="width:240px"
+                    >
+                        <i-option v-for="item in mainModel.vo.dataSet.delDataList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                    </i-select>
+
+                </td>
+                <td>
+                    <i-select :model.sync="mainModel.vo.dataSet.all.del"
+                              :list.sync="mainModel.vo.dataSet.delDataList"
+                              @on-change="controllAll('delete',mainModel.vo.dataSet.all.del,mainModel.vo.authTreeData)"
+                              style="width:240px"
+                    >
+                        <i-option v-for="item in mainModel.vo.dataSet.delDataList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                    </i-select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--单项数据-->
+        <div class="data-con">
+            <div class="data-con-top" style="margin-bottom:70px;">
+                <div v-for="itemParent in mainModel.vo.authTreeData">
+
+                    <!--模块-->
+                    <div class="line-flex">
+
+                        <span class="row-name">
+                            <i class="glyphicon"
+                               @click="itemParent.showPart = !itemParent.showPart"
+                               style="cursor: pointer"
+                               :class="['',itemParent.showPart ? 'glyphicon-minus' : 'glyphicon-plus']"
+                            ></i>
+                            <span style="margin-right: 7px;">{{itemParent.name}}</span>
+                            <iv-checkbox
+                                    :checked.sync="itemParent.showBtn"
+                                    @on-change="showCheckAll(itemParent.dataAuthoritySettings)"
+                            >全选</iv-checkbox>
+                        </span>
+
+                        <span v-for="pItem in itemParent.dataAuthoritySettings" v-if="itemParent.showBtn">
+                            <i-select
+                                    v-if="pItem.roleOrgRel.type == 'select'"
+                                    @on-change="controllPartAll(pItem.roleOrgRel.type,pItem.roleOrgRel.orgLevel,itemParent.children)"
+                                    :model.sync="pItem.roleOrgRel.orgLevel"
+                                    :list.sync="itemParent.readDataList"
+                            >
+                                <i-option v-for="item in itemParent.readDataList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                            </i-select>
+
+                            <i-select
+                                    v-if="pItem.roleOrgRel.type != 'select'"
+                                    @on-change="controllPartAll(pItem.roleOrgRel.type,pItem.roleOrgRel.orgLevel,itemParent.children)"
+                                    :model.sync="pItem.roleOrgRel.orgLevel"
+                                    :list.sync="itemParent.editAndDelList"
+                            >
+                                <i-option v-for="item in itemParent.editAndDelList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                            </i-select>
+
+                        </span>
+                    </div>
+
+                    <!--单项-->
+                    <div v-for="itemChild in itemParent.children" v-if="itemParent.showPart">
+                        <div class="line-flex">
+                            <span class="row-name" style="padding-left: 42px!important;">{{itemChild.name}}</span>
+                            <span v-for="cItem in itemChild.dataAuthoritySettings">
+                                <i-select
+                                        v-if="cItem.roleOrgRel.type == 'select' "
+                                        @on-change="readChange(cItem.roleOrgRel.orgLevel,itemChild.key,itemChild.dataAuthoritySettings,itemChild)"
+                                        :model.sync="cItem.roleOrgRel.orgLevel"
+                                        :list.sync="itemChild.readDataList"
+                                >
+                                    <i-option v-for="item in itemChild.readDataList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+
+                                <i-select
+                                        v-if="cItem.roleOrgRel.type != 'select' "
+                                        :model.sync="cItem.roleOrgRel.orgLevel"
+                                        :list.sync="itemChild.editAndDelList"
+                                >
+                                    <i-option v-for="item in itemChild.editAndDelList" :disabled="item.disabled" :value="item.value">{{ item.label }}</i-option>
+                                </i-select>
+
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+    </div>
+</div>	

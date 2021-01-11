@@ -1,0 +1,87 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>操作记录</span></p>
+				<el-form v-ref:ruleform></el-form>
+				<ul class="ivu-timeline">
+					<li class="ivu-timeline-item hidden-danger-timeline-item" v-for="item in historyList">
+						<div class="ivu-timeline-item-tail"></div>
+						<div class="ivu-timeline-item-head ivu-timeline-item-head-blue" :class="{'ivu-timeline-item-head-green': item.isLast}"></div>
+						<div class="ivu-timeline-item-content">
+							<div class="brief-info" @click="toggleOpen(item)">
+								<span class="time">{{item.date}}</span>
+								<div class="info">
+									<span class="name">{{item.username}}</span>
+									<span class="action">{{item.action}}</span>
+									<Icon :type="item.open ? 'chevron-up' : 'chevron-down'"></Icon>
+								</div>
+							</div>
+
+							<div class="detail-info" v-show="item.open">
+								<p>{{item.remark}}</p>
+							</div>
+
+						</div>
+					</li>
+				</ul>
+			</simple-card>
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="hasAuth('audit') && showAuditButton" type="ghost" @click="doAudit" icon="shuffle">审核</iv-button>
+		<iv-button v-if="hasAuth('submit') && showSubmitButton" type="ghost" @click="doSubmit" icon="checkmark-round">提交</iv-button>
+		<iv-button v-if="hasAuth('recover') && showDeleteButton" type="ghost" @click="doRecover" icon="arrow-return-left">恢复</iv-button>
+		<iv-button v-if="hasAuth('recover') && showDeleteButton" type="ghost" @click="doDelete" icon="trash-a">彻底删除</iv-button>
+	</div>
+</div>
+
+<Modal :visible.sync="auditModel.visible" footer-hide title="审核文件">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<p style="font-size: 14px;margin-bottom: 5px;">审核意见：</p>
+			<div>
+				<iv-input type="textarea" :value.sync="auditModel.remark" :rows="4"></iv-input>
+			</div>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doPass('11')" class="pull-right">驳回</vi-button>
+			<vi-button type="primary" @click="doPass('2')" class="pull-right">通过</vi-button>
+		</div>
+	</div>
+</Modal>
+<Modal :visible.sync="submitModel.visible" footer-hide title="提交审核">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<p style="font-size: 14px;margin-bottom: 5px;">提交信息：</p>
+			<div>
+				<iv-input type="textarea" :value.sync="submitModel.remark" :rows="4"></iv-input>
+			</div>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSubmitPass('10')" class="pull-right">提交</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<Modal :visible.sync="recoverModel.visible" footer-hide title="恢复文件">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<p style="font-size: 14px;margin-bottom: 5px;">备注：</p>
+			<div>
+				<iv-input type="textarea" :value.sync="recoverModel.remark" :rows="4"></iv-input>
+			</div>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSureRecover()" class="pull-right">恢复</vi-button>
+		</div>
+	</div>
+</Modal>
+

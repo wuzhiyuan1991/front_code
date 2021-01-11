@@ -1,0 +1,62 @@
+<div class="cp-question-item">
+    <div class="cp-header">
+        <iv-checkbox :checked.sync="data.checked" style="color: blue;">{{data.name}}</iv-checkbox>
+        <iv-input :value.sync="data.count" @input="onCountChange" type="number" :disabled="!data.checked" number></iv-input>
+        <span>题(总共 {{total}} 题)，每道题目分值</span>
+        <iv-input :value.sync="data.score" @input="onScoreChange" type="number" :disabled="!data.checked" number></iv-input>
+    </div>
+    <table class="layout-table" style="margin-bottom: 20px;">
+        <colgroup>
+            <col>
+            <col style="width: 100px;">
+            <col style="width: 70px">
+            <col style="width: 70px;">
+            <col style="width: 30px;">
+        </colgroup>
+        <thead>
+        <tr class="layout-table-tr">
+            <td>考点</td>
+            <td>比例</td>
+            <td>试题数量</td>
+            <td>试题总数</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="layout-table-tr" v-for="(index, item) in data.points">
+            <td>{{item.name}}</td>
+            <td class="cp-input-td">
+                <iv-input type="number" @input="onPointPercentChange(index, $event)" :disabled="!data.checked || data.count === 0" :value.sync="item.percent" number>
+                    <span slot="append">%</span>
+                </iv-input>
+            </td>
+            <td><iv-input type="number" :value.sync="item.count" @input="onPointCountChange(index, $event)" :disabled="!data.checked || data.count === 0" number></iv-input></td>
+            <td>{{item.total}}</td>
+            <td>
+                <a href="javascript:;" class="cp-del-link" @click="deletePoint(index)"><Icon type="trash-a"></Icon></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="cp-header">
+        <iv-checkbox :checked.sync="data.random" @on-change="toggleRandom" :disabled="!data.checked">无考点</iv-checkbox>
+        <iv-input :value="data.randomCount" readonly :disabled="!data.random"></iv-input>
+        <span>题，占</span>
+        <iv-input :value="data.randomPercent" readonly :disabled="!data.random">
+            <span slot="append">%</span>
+        </iv-input>
+    </div>
+
+    <iv-button type="ghost" long @click="appendPoint" :disabled="!data.checked">添加知识点</iv-button>
+    <tree-modal
+            :single-select="false"
+            :default-open-layer="100"
+            open
+            :visible.sync="examPointVisible"
+            :model="examPoints"
+            title="选择知识点"
+            @do-save="doSaveExamPoints"
+    ></tree-modal>
+
+</div>
+

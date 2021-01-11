@@ -1,0 +1,30 @@
+
+<Modal :visible.sync="visible"  :title="title" :width="width"  :footer-hide="true" class="userSelectModal">
+	<div class="edit-pop-container" :style="width+'px'">
+		<div class="epc-content">
+			<iv-input :value="searchValue" icon="ios-search" @on-click="doFilterLeft" @on-enter="doFilterLeft" style="width: 50%"></iv-input>
+			<div class="member-select-left-tree" style="padding-left:15px">
+				<iv-tree
+						:id-attr="idAttr"
+						:pid-attr="pidAttr"
+						:display-attr="displayAttr"
+						:model="model"
+						:selected-datas.sync="selectedDatas"
+						:open="open"
+						:show-checkbox="true"
+						:single-select="singleSelect"
+						:data-query="searchValue"
+						:assist="assist"
+						:allow-parent-checked ="allowParentChecked"
+						:assist-func="assistFunc"
+						:default-open-layer="defaultOpenLayer"
+						>
+				</iv-tree>
+			</div>
+
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

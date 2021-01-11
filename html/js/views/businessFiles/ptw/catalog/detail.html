@@ -1,0 +1,106 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 fip-content-item-form el-form-->
+			<simple-card class="fip-content-item  el-form-item__label-light">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form " style="width:100%;" :model="mainModel.vo"
+						 :rules="mainModel.rules" v-ref:ruleform label-width="160px">
+					<el-form-item  :label="isGasCheck?'气体名称':'级别名称'" prop="name" v-if="!isPromision" >
+						<iv-input style="width:380px;" :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="typeContent" prop="content" v-if="!isGasCheck">
+						<span style="font-size:14px;white-space: normal;" v-if="mainModel.isReadOnly" >{{mainModel.vo.content}}</span>
+						<iv-textarea  width="380px" v-else type="textarea" :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="应用承诺" prop="enableCommitment" v-if="isPromision">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_enable_commitment', mainModel.vo.enableCommitment) }}</span>
+						<i-select style="width:380px;"   v-else :model.sync="mainModel.vo.enableCommitment" :list="getDataDicList('iptw_catalog_enable_commitment')"></i-select>
+					</el-form-item>
+					<el-form-item label="类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型" prop="gasType" v-if="isGasCheck">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_gas_type', mainModel.vo.gasType) }}</span>
+						<i-select v-else style="width:380px;" disabled :model.sync="mainModel.vo.gasType" :list="getDataDicList('iptw_catalog_gas_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位" prop="unit" v-if="isGasCheck">
+						<iv-input style="width:380px;" :value.sync="mainModel.vo.unit" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="检测结果精准匹配"  v-if="isGasCheck">
+						<div style="width:385px">
+							<iv-checkbox @change="doChangeEnableLookUp" :disabled="mainModel.isReadOnly" :checked.sync="mainModel.vo.attr1" true-value="1" false-value="0">
+								启用<lable class="color-subtitle">（气体检测过程中参考正常范围，超标会给出提醒）</lable>
+							</iv-checkbox>
+						</div>
+					</el-form-item>
+					<el-form-item  label="检测结果标准范围" prop="content" v-if="(isGasCheck && mainModel.vo.attr1!='1')">
+						<span style="display: block;width:380px;font-size:14px;white-space: normal;word-break: break-all;" v-if="mainModel.isReadOnly" >{{mainModel.vo.content}}</span>
+						<iv-textarea  width="380px" v-else type="textarea" :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item placement="bottom right" label="检测结果标准范围" prop="gasMinValue" v-if="isGasCheck && mainModel.vo.attr1=='1'">
+						<div v-show="!mainModel.isReadOnly" style="width:380px;" class="ivu-input-border-radius0 flex-layout ivu-select-selected-value-font-size14">
+							<div>
+								<iv-input  class="ivu-input-border-radius-left width-auto-ipt flex-grow1" :value.sync="mainModel.vo.gasMinValue"></iv-input>
+							</div>
+							<div>
+								<i-select clearable class="text-center"  style="width:5em;font-size: 14px;display: block;" :model.sync="mainModel.vo.gasMinCase" :list="getDataDicList('iptw_catalog_gas_value_case')"></i-select>
+							</div>
+							<span class="check-value-name" >检测值</span>
+							<div>
+								<i-select clearable class="text-center"  style="width:5em;display: block;" :model.sync="mainModel.vo.gasMaxCase" :list="getDataDicList('iptw_catalog_gas_value_case')"></i-select>
+							</div>
+							<div>
+								<iv-input  class="ivu-input-border-radius-right width-auto-ipt flex-grow1" style="width:4em;font-size: 14px;" :value.sync="mainModel.vo.gasMaxValue"></iv-input>
+							</div>
+						</div>
+						<div v-show="mainModel.isReadOnly" >
+							<span style="font-size:14px;">{{mainModel.vo.gasMinValue}}</span>
+							<span style="font-size:14px;" v-if="mainModel.vo.gasMinValue">{{ getDataDic('iptw_catalog_gas_value_case', mainModel.vo.gasMinCase) }}</span>
+							<span style="font-size:14px;">检测值</span>
+							<span style="font-size:14px;" v-if="mainModel.vo.gasMaxValue">{{ getDataDic('iptw_catalog_gas_value_case', mainModel.vo.gasMaxCase) }}</span>
+							<span style="font-size:14px;">{{mainModel.vo.gasMaxValue}}</span>
+						</div>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy') && !isPromision" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete') && !isPromision" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<style>
+	.check-value-name{
+		min-width: 4.3em;
+		height: 30px;
+		display: inline-block;border:1px solid #ddd;background: #F2F2F2;
+		text-align: center;
+		flex:0;
+		line-height: 30px;
+		border-left:none;
+		border-right: none;
+	}
+	.ivu-input-border-radius0 .ivu-input ,.ivu-input-border-radius0  .ivu-select-selection{
+		border-radius: 0;
+	}
+	.ivu-input-border-radius-left .ivu-select-selection,.ivu-input-border-radius-left .ivu-input{
+		border-radius: 6px 0 0 6px;
+		border-right: 0;
+	}
+	.ivu-input-border-radius-right .ivu-select-selection,.ivu-input-border-radius-right  .ivu-input{
+		border-radius: 0 6px 6px 0;
+		border-left: 0;
+	}
+</style>
+
+
+

@@ -1,0 +1,94 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="预案编号" prop="supplier" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.supplier" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="预案名称" prop="address" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.address" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="总指挥" prop="phone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.phone" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="副总指挥" prop="fax" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item  label="指挥部成员" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="办公机构" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="办公机构负责人" prop="usage" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.usage" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="办公机构成员" prop="transportationType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.usage" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="事故报案常用电话" prop="unNumber" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.unNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+				</iv-row>
+
+			</el-form>
+		</div>
+	</div>
+
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card >
+				<p slot="title"><i class="basicPng"></i><span>小组</span></p>
+				<a slot="extra" v-show="hasAuth('edit')" @click.prevent="showEquipmentModal">
+					<span><Icon type="plus"></Icon>{{$t('bc.ria.append')}}</span>
+				</a>
+				<vue-bootstrap-table
+						:url="tableModel.elementModel.url"
+						:columns="tableModel.elementModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						lazy-load
+						show-seq
+						@on-del-row="doRemoveEquipment"
+						v-ref:element-table
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+
+	<!-- 无需附件上传请删除此段代码 -->
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<file-list-simple-card title="预案附件" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+</div>
+
+
+
+

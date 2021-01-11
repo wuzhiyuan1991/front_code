@@ -1,0 +1,35 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item  label="审批结果" prop="reviseType" >
+                    <iv-radio-group :model.sync="mainModel.vo.auditResult">
+                        <iv-radio value="2">
+                            <span>通过</span>
+                        </iv-radio>
+                        <iv-radio value="1">
+                            <span>不通过</span>
+                        </iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item  label="审批意见" prop="auditOpinion">
+                    <span v-if="!modify">{{mainModel.vo.unit}}</span>
+                    <iv-input type="textarea" :rows="6" v-else :value.sync="mainModel.vo.auditOpinion" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item  label="作业负责人">
+                    <multiple-input-select
+                            :selected-multiple.sync="mainModel.vo.principals"
+                            @on-remove="removeAttr2"
+                            @on-click="showUser('attr2')"
+                    ></multiple-input-select>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <!--<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+    </div>
+</Modal>
+<user-select-modal :single-select="false" :visible.sync="showUserSelectModal.show" @do-save="doSaveUser"></user-select-modal>
+

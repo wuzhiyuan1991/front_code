@@ -1,0 +1,36 @@
+<div class="bip-content flex-layout">
+    <div style="margin-right: 15px;border-right: 1px solid #ddd;height: calc(100vh - 175px)">
+        <base-according :border-right='false' v-ref:according :values="pwtInfoTypes" class="mr15" :current-index.sync="pwtInfoTypeSelectedIndex">
+        </base-according>
+    </div>
+    <div class="flex-grow1 over-auto">
+        <div class="fip-content" style="width: 700px;" v-show="pwtInfoTypeSelectedIndex==0">
+            <baseinfo :model="model" @on-custom-content="doEditCustomContent"></baseinfo>
+        </div>
+        <div class="fip-content"  style="width: 700px;" v-show="pwtInfoTypeSelectedIndex==1">
+            <weihaibs :model="model" @on-custom-content="doEditCustomContent"></weihaibs>
+        </div>
+        <div class="fip-content"  style="width: 700px;" v-show="pwtInfoTypeSelectedIndex==2">
+            <security-measures :model="model" @on-custom-content="doEditCustomContent"></security-measures>
+        </div>
+        <div class="fip-content"  style="min-width: 700px;" v-show="pwtInfoTypeSelectedIndex==3">
+            <ppe :model="model" @on-custom-content="doEditCustomContent"></ppe>
+        </div>
+        <div class="fip-content"  style="width: 850px;" v-show="pwtInfoTypeSelectedIndex==4">
+           <gelifh :model="model" @on-custom-content="doEditCustomContent"></gelifh>
+        </div>
+        <div class="fip-content" v-show="pwtInfoTypeSelectedIndex==5">
+            <gas-detection :select-index="pwtInfoTypeSelectedIndex" :model="model" @on-custom-content="doEditCustomContent"></gas-detection>
+        </div>
+        <div class="fip-content width100-ipt" v-show="pwtInfoTypeSelectedIndex==6" >
+            <license-issue :model="model"  @on-custom-content="doEditCustomContent"></license-issue>
+        </div>
+        <div  class="fip-content" style="min-width:700px;" v-show="pwtInfoTypeSelectedIndex==7">
+            <work-close :model="model" @on-custom-content="doEditCustomContent"></work-close>
+        </div>
+    </div>
+    <base-transfer @reflesh-stuff="doEditCustomContent" v-ref:transfer></base-transfer>
+</div>
+
+<roles-model :visible.sync="showRolesModel" @do-save="doSaveRoles" ></roles-model>
+

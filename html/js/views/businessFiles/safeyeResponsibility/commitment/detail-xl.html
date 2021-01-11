@@ -1,0 +1,269 @@
+<div class="detail-large-container" v-el:container>
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && isFormulate" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+
+				<iv-button type="ghost" @click="doSignature" v-if="mainModel.isReadOnly && mainModel.vo.status === '1'">下发签名</iv-button>
+				<iv-button type="ghost" @click="doPublish" v-if="mainModel.isReadOnly && mainModel.vo.status === '3'">下达考核计划</iv-button>
+
+				<iv-button type="ghost" @click="doCancelPlan" v-if="mainModel.isReadOnly && mainModel.vo.status === '4'">取消作废</iv-button>
+
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item label="承诺书名称" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="责任部门" prop="depts" class="small-info-box">
+						<multiple-input-select
+								:selected-multiple.sync="mainModel.vo.depts"
+								:textonly="mainModel.isReadOnly"
+								@on-click="doShowDepartmentSelectModal"
+								@on-remove="doRemoveDepartment"
+						></multiple-input-select>
+					</el-form-item>
+
+					<el-form-item label="责任人" prop="users" class="small-info-box">
+						<multiple-input-select
+								:selected-multiple.sync="mainModel.vo.users"
+								:textonly="mainModel.isReadOnly"
+								:disabled="isDepartmentEmpty"
+								@on-click="doShowUserSelectModal"
+						></multiple-input-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="时间计划" prop="commitmentSetting.type" class="small-info-box">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('isr_time_plan', mainModel.vo.commitmentSetting.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.commitmentSetting.type" :list="getDataDicList('isr_time_plan')"></i-select>
+					</el-form-item>
+					<el-form-item label="时间范围" prop="commitmentSetting.year" class="small-info-box">
+
+						<div style="display: flex;" v-if="!mainModel.isReadOnly">
+							<vi-date-picker type="year" :value="mainModel.vo.commitmentSetting.year" :clearable="false" @on-change="changeYear"></vi-date-picker>
+							<i-select v-if="mainModel.vo.commitmentSetting.type === '2'" :model.sync="mainModel.vo.commitmentSetting.halfYear" :list="halfYearList" style="position: relative;top: 1px;margin-left: 10px;"></i-select>
+							<i-select v-if="mainModel.vo.commitmentSetting.type === '3'" :model.sync="mainModel.vo.commitmentSetting.quarter" :list="quarterList" style="position: relative;top: 1px;margin-left: 10px;"></i-select>
+						</div>
+						<div v-else>
+							{{displayYearText}}
+						</div>
+
+					</el-form-item>
+					<el-form-item label="制定时间" prop="formulateDate" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.formulateDate"></date-picker>
+						<div v-else>{{displayFormulateDateText}}</div>
+					</el-form-item>
+					<el-form-item label="制定单位" prop="formulateOrgId" class="small-info-box">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.formulateOrgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.formulateOrgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width class="small-info-box">
+						<iv-input type="textarea" :rows="3" class="display-all-line" :value.sync="mainModel.vo.remark" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="承诺书附件" prop="cloudFiles" class="small-info-box" >
+						<ul>
+							<li v-for="(index, file) in mainModel.vo.cloudFiles" class="cert-file-item" @click="doClickFile(index)">
+								<div class="cert-file-name" :title="file.orginalName">{{file.orginalName}}</div>
+								<Icon type="close-circled" v-if="!mainModel.isReadOnly" @click.stop="removeFile(file.id, index, file)"></Icon>
+							</li>
+						</ul>
+						<a @click="uploadClicked" v-if="!mainModel.isReadOnly && mainModel.vo.cloudFiles.length < 9" href="javascript:void(0);" class="form-upload-href">上传文件</a>
+					</el-form-item>
+
+					<el-form-item label="状态" prop="status" class="small-info-box">
+						<div v-if="mainModel.isReadOnly">
+							<span>{{ getDataDic('isr_commitment_status', mainModel.vo.status) }}</span>
+							<a v-show="mainModel.vo.status !== '1'" href="javascript:;" style="color: blue;" @click="doShowSignModal">查看签名</a>
+						</div>
+						<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('isr_commitment_status')" disabled></i-select>
+					</el-form-item>
+					<!--<el-form-item label="承诺书类别(待定)" prop="type">-->
+					<!--<iv-input :value.sync="mainModel.vo.type" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+				</iv-row>
+			</el-form>
+		</div>
+
+		<image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+		<vue-file-upload
+				v-ref:uploader
+				style="display: none;"
+				:multi-selection="false"
+				:params="uploadModel.params"
+				:auto-upload="false"
+				@on-upload="doUpload"
+				@="doFilesRemoved"
+				@on-before-upload="doUploadBefore"
+				@on-success-upload="doUploadSuccess"
+				@on-upload-complete="onUploadComplete"
+				:filters="uploadModel.filters">
+		</vue-file-upload>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="itemPng"></i>执行细则 <span style="font-size: 14px;font-weight: normal;margin-left: 20px;">(总分：{{totalScore}} 分)</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create' && isFormulate" @click.prevent="doShowCommitmentGroupFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加分组</span>
+				</a>
+				<div class="rel-info-panel-content-tabs">
+					<div class="el-tabs" active-key="relTab" style="padding-bottom: 20px;">
+						<div class="el-tabs__header" v-if="mainModel.vo.status === '4'">
+							<div
+									@click="doTabClick(tab.id)"
+									class="el-tabs__item"
+									:class="{'is-active': tab.id === activeTabId}"
+									v-for="tab in tabs">
+								<b>{{tab.name}}</b>
+							</div>
+						</div>
+						<div class="el-tabs__content" v-show="activeTabId === '1'" style="padding-bottom: 70px;">
+							<simple-card v-for="(index,tir) in groups">
+								<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+									<div class="left" style="width: 300px;">
+										{{tir.name}}
+									</div>
+
+									<div class="right" v-if="isFormulate">
+										<iv-input class="simple-card-input-box" icon="ios-search" cleanable @on-remove="setFilterValue(tir._keyWord, index)" @on-click="setFilterValue(tir._keyWord, index)"
+												  @on-enter="setFilterValue(tir._keyWord, index)" :value.sync="tir._keyWord"
+												  style="width:200px;height: 27px;line-height: 28px;" placeholder="请输入" v-show="tir.showInput"></iv-input>
+
+										<vi-button type="text" icon="ios-search" @click="toggleItemInput(tir, true)" v-show="isEditRel && !tir.showInput">搜索</vi-button>
+										<vi-button type="text" icon="power" @click="toggleItemInput(tir, false)" v-show="isEditRel && tir.showInput">折叠</vi-button>
+										<vi-button type="text" icon="plus" @click="doShowCommitmentItemFormModal4Create(tir)" v-show="isEditRel && hasAuth('edit')">新增</vi-button>
+
+										<iv-dropdown trigger="click" placement="bottom-end" v-if="hasAuth('edit')">
+											<vi-button type="text" icon="more">更多</vi-button>
+											<iv-dropdown-menu slot="list">
+												<iv-dropdown-item @click="doShowCommitmentGroupFormModal4Update(tir)">
+													<a href="javascript:void(0);"  style="margin-right:5px;"><Icon type="edit"></Icon>编辑分组名称</a>
+												</iv-dropdown-item>
+
+												<iv-dropdown-item @click="doMoveGroup('-1', tir)">
+													<a href="javascript:void(0);"  style="margin-right:5px;"><Icon type="arrow-up-a"></Icon>上移</a>
+												</iv-dropdown-item>
+
+												<iv-dropdown-item @click="doMoveGroup('1', tir)>
+													<a href="javascript:void(0);" "><Icon type="arrow-down-a"></Icon>下移</a>
+												</iv-dropdown-item>
+
+												<iv-dropdown-item @click="doDeleteGroup(tir)">
+													<a href="javascript:void(0);" > <span><Icon type="trash-a"></Icon>{{$t("gb.common.del")}}</span></a>
+												</iv-dropdown-item>
+											</iv-dropdown-menu>
+										</iv-dropdown>
+									</div>
+								</div>
+
+								<lite-table
+										:columns="tableModel.commitmentGroupTableModel.columns"
+										:values="tir.items | item-filter tir.keyWord"
+										:tools="toolColumn"
+										@on-move="doItemMove"
+										@on-update="doShowCommitmentItemFormModal4Update"
+										@on-delete="doItemDelete"
+								></lite-table>
+								<!--<vue-bootstrap-table-->
+								<!--:show-filter="false"-->
+								<!--:show-column-picker="false"-->
+								<!--:show-pager="true"-->
+
+								<!--@on-click-cell="doClickCell"-->
+								<!--:show-empty-row="false"-->
+								<!--:show-seq="true"-->
+								<!--&gt;-->
+								<!--</vue-bootstrap-table>-->
+							</simple-card>
+						</div>
+						<div class="el-tabs__content"  v-show="activeTabId === '2' && mainModel.vo.status === '4'">
+
+							<div style="margin: 10px 0;">
+								<span>考核时间范围: </span>
+								<span>{{mainModel.vo.commitmentSetting.startDate}} ~ {{mainModel.vo.commitmentSetting.endDate}}</span>
+							</div>
+							<div class="lr-layout" style="padding: 0;height: 600px;background-color: #fff;">
+								<div class="lr-layout-l" style="border: 1px solid #ddd;">
+									<ul>
+										<li v-for="(index, item) in departments"
+											class="lr-layout-li"
+											:class="{'checked': index === checkedDepartmentIndex}"
+											style="display: flex;"
+											@click="doSelectDepartment(index)">
+											<span :title="area.name">{{item.name}}</span>
+										</li>
+									</ul>
+								</div>
+								<div class="lr-layout-r" style="padding: 0 10px;">
+									<div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;">
+										<ul style="display: inline-flex;">
+											<li v-for="(index, item) in completeList"
+												class="lr-layout-li"
+												:class="{'checked': index === checkedDoneIndex}"
+												style="width: 100px;text-align: center;"
+												@click="doSelectDone(index)">
+												<span>{{item.name}}</span>
+											</li>
+										</ul>
+									</div>
+									<lite-table
+											:columns="tableModel.taskTableModel.columns"
+											:values="currentTaskList"
+											@on-click="onTaskClicked"
+											show-page
+									></lite-table>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</simple-card>
+		</div>
+	</div>
+</div>
+
+<dept-select-modal :visible.sync="selectModel.deptSelectModel.visible" :filter-data="selectModel.deptSelectModel.filterData" @do-save="doSaveBizOrgRels"></dept-select-modal>
+
+<sign-table-modal :visible.sync="selectModel.signViewModel.visible" :id="mainModel.vo.id"></sign-table-modal>
+<task-table-modal :visible.sync="selectModel.taskViewModel.visible" v-ref:task-table-modal></task-table-modal>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>
+
+<commitmentgroup-form-modal
+		:visible.sync="formModel.commitmentGroupFormModel.show"
+		@do-save="doSaveCommitmentGroup"
+		@do-update="doUpdateCommitmentGroup"
+		:query-url="formModel.commitmentGroupFormModel.queryUrl"
+		:hidden-fields="formModel.commitmentGroupFormModel.hiddenFields"
+		v-ref:commitmentgroup-form-modal>
+</commitmentgroup-form-modal>
+
+<commitment-item-form-modal
+		v-ref:commitment-item-form-modal
+		:query-url="formModel.commitmentItemFormModel.queryUrl"
+		:visible.sync="formModel.commitmentItemFormModel.show"
+		@do-save="doSaveItem"
+		@do-update="doUpdateItem"
+></commitment-item-form-modal>

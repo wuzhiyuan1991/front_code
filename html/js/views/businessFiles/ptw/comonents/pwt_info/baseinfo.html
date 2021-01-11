@@ -1,0 +1,380 @@
+
+    <simple-card>
+        <p slot="title" style="width:100%">基本信息
+            <span style="font-weight: normal;width:70px;" class="do-add-btn pull-right" @click="initSettingModel" >配置字段</span>
+            <span style="font-weight: normal;width:70px;" class="do-add-btn pull-right" @click="doShowNotice" >提醒设置</span>
+        </p>
+        <el-form  style="width:780px;" label-width="150px" class="ptw-base-info">
+            <div class="base-title-info"><span></span>模板信息</div>
+            <!---------  固化  ---------->
+            <div style="padding-left:15px;">
+                <el-form-item label="许可证模板编号" prop="code">
+                    <form-item-row>
+                        <!--<div class="form-disabled bgw">{{model.workCatalog.name}}-->
+                        <!--<template >({{model.code?model.code:'系统后台自动编码'}})</template></div>-->
+                        <iv-input placeholder="系统后台自动编码" class="color666" :class="model.code?'bgw':''" :value.sync="model.code" disabled></iv-input>
+                        <div class="link-ele pdl5" slot="after" @click="doEditCode('许可证模板编号')">修改</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  模板名称  ---------->
+                <el-form-item class="is-required"  label="许可证模板名称" prop="name">
+                    <form-item-row>
+                        <!--<div class="bgw color666" placeholder="模板名称"  :value.sync="model.name" readonly></div>-->
+                        <div class="form-disabled bgw">
+                            <!--{{model.name?model.name:'模板名称'}}-->
+                            <template v-if="model.name">{{model.name?model.name:'模板名称'}}</template>
+                            <span v-else style="color:#ddd">请填写</span>
+                        </div>
+                        <div class="link-ele pdl5" slot="after" @click="doEditname('模板名称')">修改</div>
+                    </form-item-row>
+                </el-form-item>
+            </div>
+
+
+            <div class="base-title-info"><span></span>作业票信息</div>
+            <div style="padding-left:15px;">
+            <templete v-for="(index, item) in list" >
+
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='1' && item.disable=='0'" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">作业申请人手动录入</div>
+                    </form-item-row>
+                </el-form-item>
+                <el-form-item v-if="item.isInherent!='1' && item.dataType=='2' && item.disable=='0'" :label="item.name" prop="code">
+                    <form-item-row><iv-input type="textarea" :rows="4" placeholder="作业申请人手动录入" disabled></iv-input></form-item-row>
+                </el-form-item>
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='3' && item.disable=='0'" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">作业申请人手动录入整数</div>
+                    </form-item-row>
+                </el-form-item>
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='4' && item.disable=='0'" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">作业申请人手动录入小数</div>
+                    </form-item-row>
+                </el-form-item>
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='5' && item.disable=='0'" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">自___年___月___日___时___分始</div>
+                    </form-item-row>
+                </el-form-item>
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='6' && item.disable=='0'" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">自___年___月___日___时___分始， 至___年___月___日___时___分止</div>
+                    </form-item-row>
+                </el-form-item>
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='7' && item.disable=='0'">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">内部人员选择</div>
+                    </form-item-row>
+                </el-form-item>
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='8' && item.disable=='0'">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">承包商人员选择</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='9' && item.disable=='0'" prop="code">
+                    <form-item-row>
+                        <iv-row>
+                            <iv-col span="4" class="pdr5 bgf3 label-bg">公司内部</iv-col>
+                            <iv-col span="20"> <iv-input placeholder="作业申请人选择人员（多选）"  disabled></iv-input></iv-col>
+                        </iv-row>
+                        <iv-row class="mt10">
+                            <iv-col span="4" class="pdr5 bgf3 label-bg">承包商</iv-col>
+                            <iv-col span="20"><iv-input placeholder="选择承包商人员（多选）"  disabled></iv-input></iv-col>
+                        </iv-row>
+                    </form-item-row>
+                </el-form-item>
+
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='10' && item.disable=='0'">
+                    <form-item-row>
+                        <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex">
+                            <div class="ele-disabled-mask"></div>
+                            <iv-checkbox-group class="group-vertical">
+                                <iv-checkbox disabled v-for="opt of item.value"><span class="checked-box-span">{{opt.content}}</span></iv-checkbox>
+                            </iv-checkbox-group>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+                <el-form-item :label="item.name" v-if="item.isInherent!='1' && item.dataType=='11' && item.disable=='0'">
+                    <form-item-row>
+                        <div class="form-disabled  bgw ivu-checkbox-wrapper-flex">
+                            <div class="ele-disabled-mask"></div>
+                            <iv-checkbox-group class="flex-layout">
+                                <iv-checkbox disabled ><span class="checked-box-span">是</span></iv-checkbox>
+                                <iv-checkbox disabled ><span class="checked-box-span">否</span></iv-checkbox>
+                            </iv-checkbox-group>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+
+                <!--&lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;  固化  &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+                <!--<el-form-item v-if="item.code=='code' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">-->
+                    <!--<form-item-row>-->
+                        <!--&lt;!&ndash;<div class="form-disabled bgw">{{model.workCatalog.name}}&ndash;&gt;-->
+                        <!--&lt;!&ndash;<template >({{model.code?model.code:'系统后台自动编码'}})</template></div>&ndash;&gt;-->
+                        <!--<iv-input placeholder="系统后台自动编码" class="color666" :class="model.code?'bgw':''" :value.sync="model.code" disabled></iv-input>-->
+                        <!--<div class="link-ele pdl5" slot="after" @click="doEditCode(item.name)">修改</div>-->
+                    <!--</form-item-row>-->
+                <!--</el-form-item>-->
+
+                <!--&lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;  模板名称  &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+                <!--<el-form-item class="is-required"  v-if="item.code=='name' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="name">-->
+                    <!--<form-item-row>-->
+                        <!--&lt;!&ndash;<div class="bgw color666" placeholder="模板名称"  :value.sync="model.name" readonly></div>&ndash;&gt;-->
+                        <!--<div class="form-disabled bgw">-->
+                            <!--&lt;!&ndash;{{model.name?model.name:'模板名称'}}&ndash;&gt;-->
+                            <!--<template v-if="model.name">{{model.name?model.name:'模板名称'}}</template>-->
+                            <!--<span v-else style="color:#ddd">请填写</span>-->
+                        <!--</div>-->
+                        <!--<div class="link-ele pdl5" slot="after" @click="doEditname(item.name)">修改</div>-->
+                    <!--</form-item-row>-->
+                <!--</el-form-item>-->
+
+                <!---------   作业类型  ---------->
+                <el-form-item   v-if="item.code=='workCatalog' && item.disable=='0' && item.isInherent=='1'" :label="item.name"  prop="code">
+                    <form-item-row>
+                        <div class="form-disabled bgw">{{model.workCatalog.name}}
+                            <template v-if="model.workLevel&&model.workLevel.id">({{model.workLevel.name}})</template></div>
+                        <div class="link-ele pdl5" slot="after" @click="doEditWorkType(item.name)">选择</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  作业方式  ---------->
+                <el-form-item v-if="item.code=='operatingType' && item.disable=='0' && item.isInherent=='1'" :label="item.name"  prop="code">
+                    <form-item-row>
+                        <!--<div style="margin-bottom:5px;">-->
+                            <!--<iv-radio-group :model.sync="model.enableOperatingType">-->
+                                <!--<iv-radio value="0">不启用</iv-radio>-->
+                                <!--<iv-radio value="1">启用</iv-radio>-->
+                            <!--</iv-radio-group>-->
+                        <!--</div>-->
+                        <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex">
+                            <div class="ele-disabled-mask"></div>
+                            <iv-checkbox-group class="group-vertical">
+                                <iv-checkbox disabled v-for="item of workMethodsList"><span class="checked-box-span">{{item.name}}</span></iv-checkbox>
+                            </iv-checkbox-group>
+                        </div>
+                        <div v-show="model.enableOperatingType=='1'" class="link-ele pdl5" slot="after" @click="doCustomContent('8','workMethods')">定制内容</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  申请单位  ---------->
+                <el-form-item v-if="item.code=='applUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <i-select placeholder="作业申请人选择（单选）" disabled></i-select>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  作业单位  ---------->
+                <el-form-item v-if="item.code=='workUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <iv-row>
+                            <iv-col span="4" class="pdr5 bgf3 label-bg">公司内部</iv-col>
+                            <iv-col span="20" > <iv-input placeholder="作业申请人选择人员（多选，部门档案）"  disabled></iv-input></iv-col>
+                        </iv-row>
+                        <iv-row class="mt10">
+                            <iv-col span="4" class="pdr5 bgf3 label-bg">承包商</iv-col>
+                            <iv-col span="20" ><iv-input placeholder="作业申请人选择（多选，承包商档案）"  disabled></iv-input></iv-col>
+                        </iv-row>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  生产单位  ---------->
+                <el-form-item v-if="item.code=='prodUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <i-select placeholder="作业申请人选择（单选）" disabled></i-select>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  作业地点  ---------->
+                <el-form-item v-if="item.code=='workPlace' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row><i-select placeholder="作业申请人手动录入" disabled></i-select></form-item-row>
+                </el-form-item>
+
+                <!---------  作业所在的设备  ---------->
+                <el-form-item v-if="item.code=='workEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row><iv-input placeholder="作业申请人手动录入"  disabled></iv-input></form-item-row>
+                </el-form-item>
+
+                <!---------  作业内容  ---------->
+                <el-form-item v-if="item.code=='workContent' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row><iv-input type="textarea" :rows="4" placeholder="作业申请人手动录入"  disabled></iv-input></form-item-row>
+                </el-form-item>
+
+                <!---------  作业人员  ---------->
+                <el-form-item v-if="item.code=='worker' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <iv-row>
+                            <iv-col span="4" class="pdr5 bgf3 label-bg">公司内部</iv-col>
+                            <iv-col span="20" > <iv-input placeholder="作业申请人选择人员（多选）"  disabled></iv-input></iv-col>
+                        </iv-row>
+                        <iv-row class="mt10">
+                            <iv-col span="4" class="pdr5 bgf3 label-bg">承包商</iv-col>
+                            <iv-col span="20" ><iv-input placeholder="选择承包商人员（多选）"  disabled></iv-input></iv-col>
+                        </iv-row>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  作业中所使用的主要工具/设备  ---------->
+                <el-form-item v-if="item.code=='mainEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex">
+                            <div class="ele-disabled-mask"></div>
+                            <iv-checkbox-group class="group-vertical">
+                                <iv-checkbox disabled v-for="item of equipmentList"><span class="checked-box-span">{{item.name}}</span></iv-checkbox>
+                            </iv-checkbox-group>
+                        </div>
+                        <div class="link-ele pdl5" slot="after" @click="doCustomContent(1)">定制内容</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  特种作业人员/特种设备操作人员资格证  ---------->
+                <el-form-item v-if="item.code=='specialWorker' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex">
+                            <iv-checkbox-group class="group-vertical">
+                                <iv-checkbox disabled v-for="item of certificateList"><span class="checked-box-span">{{item.name}}</span></iv-checkbox>
+                            </iv-checkbox-group>
+                        </div>
+                        <div class="link-ele pdl5" slot="after" @click="doCustomContent(2)">定制内容</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  检维修人员  ---------->
+                <el-form-item v-if="item.code=='maintainer' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">作业申请人选择（多选）</div>
+                    </form-item-row>
+                </el-form-item>
+                <!-- 属地监护人 -->
+                <el-form-item v-if="item.code=='areaSupervisior' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">作业申请人选择（多选）</div>
+                    </form-item-row>
+                </el-form-item>
+                <!---------  实施安全教育人  ---------->
+                <el-form-item v-if="item.code=='safetyEducator' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <form-item-row>
+                        <div class="flex-v-center">
+                            <!--<div class="flex-noshrink" style="width:75px" :class="{'flex-grow1':model.enableSafetyEducator=='0'}">-->
+                                <!--<i-select :model.sync="model.enableSafetyEducator" :popper-fixed="false">-->
+                                    <!--<i-option value="1">需要</i-option>-->
+                                    <!--<i-option value="0">不需要</i-option>-->
+                                <!--</i-select>-->
+                            <!--</div>-->
+                            <div class="flex-grow1" >
+                                <div class="form-disabled bl-none colorccc">作业申请人选择（单选）</div>
+                            </div>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  作业监护人  ---------->
+                <el-form-item v-if="item.code=='supervisior' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <form-item-row>
+                        <div class="flex-v-center">
+                            <!--<div class="flex-noshrink"  style="width:75px" :class="{'flex-grow1':model.enableSupervisor=='0'}">-->
+                                <!--<i-select :model.sync="model.enableSupervisor" :popper-fixed="false" >-->
+                                    <!--<i-option value="1">需要</i-option>-->
+                                    <!--<i-option value="0">不需要</i-option>-->
+                                <!--</i-select>-->
+                            <!--</div>-->
+                            <div class="flex-grow1">
+                                <div class="form-disabled bl-none colorccc">作业申请人选择（单选）</div>
+                            </div>
+                            <div class="flex-noshrink ml5"  >
+                                <iv-checkbox true-value="1" false-value="0"  :checked.sync="model.enableSuperviseRecord">需要填写现场监护记录</iv-checkbox>
+                            </div>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  作业时限  ---------->
+                <el-form-item v-if="item.code=='permitTime' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">自___年___月___日___时___分始， 至___年___月___日___时___分止</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  工作安全分析  ---------->
+                <el-form-item v-if="item.code=='jsaMasterId' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">作业申请人发起创建JSA记录或关联已经创建的JSA记录</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  备注  ---------->
+                <el-form-item v-if="item.code=='remark' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row><iv-input type="textarea" :rows="4" placeholder="作业申请人手动录入"  disabled></iv-input></form-item-row>
+                </el-form-item>
+
+                <!---------  作业计划书/方案  ---------->
+                <el-form-item v-if="item.code=='workPlan' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">
+                            <span > 上传文件</span>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  应急救援预案  ---------->
+                <el-form-item v-if="item.code=='emerScheme' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">
+                            <span > 上传文件</span>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  附     图  ---------->
+                <el-form-item v-if="item.code=='attachedPicture' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">
+                            <span > 上传文件</span>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+                <!---------  其它附件  ---------->
+                <el-form-item v-if="item.code=='otherAttachment' && item.disable=='0' && item.isInherent=='1'" :label="item.name" prop="code">
+                    <form-item-row>
+                        <div class="form-disabled colorccc">
+                            <span > 上传文件</span>
+                        </div>
+                    </form-item-row>
+                </el-form-item>
+
+            </templete>
+            </div>
+        </el-form>
+    </simple-card>
+    <edit-text v-ref:edit-text></edit-text>
+    <base-transfer v-ref:transfer></base-transfer>
+    <moddal-sel-work-catalog v-ref:work-catalog></moddal-sel-work-catalog>
+    <base-setting-model v-ref:setting :visible.sync="settingModel.show" @do-save="changeSetting" ></base-setting-model>
+
+    <notice-modal :visible.sync="noticeModel.show" v-ref:notice :model.sync="model"></notice-modal>
+
+    <style>
+        .base-title-info{
+            font-size: 12px;
+            color: #666;
+            font-weight: 700;
+            padding-left: 3px;
+            margin-top: 15px;
+            margin-left: 7px;
+            display: flex;
+            align-items: center
+        }
+        .base-title-info span{
+            display: block;
+            margin-right:10px;
+            border:2px solid #33a6ff;
+            height: 12px;
+        }
+    </style>

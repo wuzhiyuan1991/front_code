@@ -1,0 +1,40 @@
+<div :class="classes" v-show="!typeStyle" v-clickoutside="handleClose" class="ivu-select-top">
+    <div
+            :class="inputClazz"
+            @click="toggleMenu"
+            v-el:reference
+            @mouseenter="doMouseEnter"
+            @mouseleave="doMouseLeave"
+            v-if="!textonly"
+            style="padding-right:20px;padding-top:5px;padding-bottom:5px;position: relative"
+    >
+        <div class="ivu-tag" v-for="item in selectedMultiple">
+            <span class="ivu-tag-text" v-text="showLabel(item)"></span>
+            <Icon v-if="!readonly" type="ios-close-empty" @click.stop="removeTag($index)"></Icon>
+        </div>
+        <Icon type="plus" style="position: absolute;right:5px;top:7px;color:#9ea7b4;font-size:16px;"></Icon>
+    </div>
+    <div v-else style="text-align: justify;word-break: keep-all;">{{displayText}}</div>
+</div>
+
+<div v-show="typeStyle=='parameter'">
+    <div style="text-align: right;" ><span @click="toggleMenu" class="do-add-btn"  style="text-align: right;padding-right: 5px;">添加</span></div>
+    <div :class="classes"  v-clickoutside="handleClose" class="ivu-select-top">
+        <div
+                :class="inputClazz"
+                v-el:reference
+                @mouseenter="doMouseEnter"
+                @mouseleave="doMouseLeave"
+                v-if="!textonly"
+                style="padding-right:20px;padding-top:5px;padding-bottom:5px;position: relative;min-height: 80px;"
+        >
+            <div class="ivu-tag" v-for="item in selectedMultiple">
+                <span class="ivu-tag-text" v-text="showLabel(item)"></span>
+                <Icon v-if="!readonly" type="ios-close-empty" @click.stop="removeTag($index)"></Icon>
+            </div>
+        </div>
+        <div v-else style="text-align: justify;word-break: keep-all;">{{displayText}}</div>
+    </div>
+</div>
+
+

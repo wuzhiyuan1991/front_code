@@ -1,0 +1,99 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="checkListPng2"></i><span>{{$t("gb.common.basicInfo")}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button v-if="isReadOnly && hasPermission('3060002002')"  type="ghost" @click="doEdit">{{$t('gb.common.edition')}}</iv-button>
+                <iv-button v-if="!isReadOnly && hasPermission('3060002001')" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+                <vi-button v-if="mainModel.opType != 'create' && isReadOnly && hasPermission('3060002004')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+                <vi-button v-if="!isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+                <iv-button v-if="mainModel.opType != 'create' && isReadOnly && hasPermission('3060002003')"  type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" style="height:230px;" :model="mainModel.vo" :rules="isReadOnly ? emptyRules : rules" is-label-vertical v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" :label="$t('gb.common.CheckTableName')" prop="name">
+                        <iv-input :value.sync="mainModel.vo.name" :textonly="isReadOnly" ></iv-input>
+                        <!--<input type="text" class="inp" placeholder="请输入名称" v-model="mainModel.vo.name" :readonly="isReadOnly" >-->
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.checkTableClass')" prop="checkTableTypeId">
+                        <iv-tree-select :model.sync="mainModel.vo.checkTableTypeId"
+                                        :list="checkTableTypeList"
+                                        id-attr="id"
+                                        display-attr="name"
+                                        placeholder="请选择" v-if="!isReadOnly">
+                            <iv-tree :model="checkTableTypeList"
+                                     :selected-datas.sync="selectedCheckTableType"
+                                     :serch-filterable="true"
+                                     id-attr="id"
+                                     pid-attr="parentId"
+                                     display-attr="name"
+                                     :single-select="true"
+                                     :allow-parent-checked="true"
+                            ></iv-tree>
+                        </iv-tree-select>
+                        <iv-input :value.sync="mainModel.vo.checkTableType.name" :textonly="isReadOnly"  v-if="isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('gb.common.type')" prop="type">
+                        <i-select :model.sync="mainModel.vo.type" :list="mainModel.typeList" v-if.sync="!isReadOnly">
+                            <i-option v-for="type in mainModel.typeList" :value="type.id">{{ type.name }}</i-option>
+                        </i-select>
+                        <span v-if="isReadOnly">{{getDataDic('checkTable_type',mainModel.vo.type)}}</span>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('gb.common.state')" prop="disable">
+                        <i-select :model.sync="mainModel.vo.disable" :list="mainModel.disableList" v-if="!isReadOnly">
+                            <i-option v-for="item in mainModel.disableList" :value="item.id">{{ item.name }}</i-option>
+                        </i-select>
+                        <span v-if="isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+
+                    <el-form-item :label="$t('gb.common.ownedComp')"  prop="compId" class="small-info-box">
+                        <company-tree-select v-if="!isReadOnly"  :id.sync="mainModel.vo.compId"></company-tree-select>
+                        <iv-input :value="getDataDic('org',mainModel.vo.compId)['compName']" textOnly v-if="isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box-2span" :label="$t('gb.common.describe')" prop="remarks">
+                        <iv-input textonly type="textarea" :rows="1" :value.sync="mainModel.vo.remarks" :textonly="isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item rip-tableFirst">
+            <simple-card :show-content.sync="isShowCheckItem">
+                <p slot="title"><i class="itemPng"></i>证书</p>
+                <a slot="extra" @click.prevent="isShowCheckItem = !isShowCheckItem"  v-show="isShowIcon">
+                    <span v-if="isShowCheckItem"> <Icon type="arrow-up-b"></Icon> {{$t('bc.ria.packUp')}} </span>
+                    <span v-else> <Icon type="arrow-down-b"></Icon> {{$t('bd.ria.open')}} </span>
+                </a>
+                <a  slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCheckItemModel">
+                    <Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+                </a>
+                <simple-card class="rip-item-sub" v-for="(index,tir) in mainModel.vo.tirList">
+                    <vue-bootstrap-table
+                            :columns="itemColumns"
+                            :show-filter="false"
+                            :show-column-picker="false"
+                            :show-pager="true"
+                            :values="tir.itemList"
+                            @on-del-row="delItemRelRowHandler"
+                            :show-empty-row="false"
+                            :show-seq="true"
+                    >
+                    </vue-bootstrap-table>
+                </simple-card>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+<Modal :visible.sync="itemModel.show" :title="itemModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <itemComponent ></itemComponent>
+</Modal>

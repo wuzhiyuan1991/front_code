@@ -1,0 +1,61 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo" v-ref:ruleform>
+					<el-form-item  label="编码" prop="code">
+						<span>{{mainModel.vo.code}}</span>
+					</el-form-item>
+					<el-form-item  label="分享人" prop="publisherName">
+						<span>{{mainModel.vo.publisherName}}</span>
+					</el-form-item>
+					<el-form-item  label="所属公司" prop="compId">
+						<span>{{getDataDic('org', mainModel.vo.compId)['compName']}}</span>
+					</el-form-item>
+					<el-form-item  label="反馈内容" prop="content">
+						<span>{{mainModel.vo.content}}</span>
+					</el-form-item>
+					<el-form-item  label="自评项" prop="projectInfo">
+						<span style="word-break: break-all;">{{mainModel.vo.projectInfo}}</span>
+					</el-form-item>
+					<el-form-item  label="分享时间" prop="createDate">
+						<span>{{mainModel.vo.createDate}}</span>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+
+
+			<simple-card class="fip-content-sub-item">
+				<span slot="title">{{$t("gb.common.picture")}}</span>
+				<image-view :images="pictures" :show-close="false"></image-view>
+			</simple-card>
+
+			<simple-card class="fip-content-sub-item">
+				<span slot="title">点评</span>
+				<vue-bootstrap-table
+						:columns="tableModel.columns"
+                        :values="mainModel.vo.asmtShareComments"
+						:show-filter="false"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:show-pager="true"
+						v-ref:comment-table
+						style="margin-top: 10px;"
+				></vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>

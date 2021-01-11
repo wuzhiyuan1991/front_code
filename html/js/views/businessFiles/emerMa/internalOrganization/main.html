@@ -1,0 +1,167 @@
+<div class="tab-container">
+    <div class="main-panel">
+            <div class="mp-header formTitle">
+                <iv-row $main-header-row-attr-default-display>
+
+                    <iv-col $main-header-condition-div-attr-default >
+                        <all-classification $main-header-classification-attr-default  @on-org-change="doChangeOrgId" ></all-classification>
+                        <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                    </iv-col>
+                    <iv-col $main-header-func-div-attr-default>
+                        <div class="prelative addButton pull-right">
+                            <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+
+                            <iv-dropdown trigger="click" placement="bottom-end">
+                                <vi-button type="ghost" icon="chevron-down"></vi-button>
+                                <iv-dropdown-menu slot="list">
+                                    <iv-dropdown-item>
+                                        <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                    </iv-dropdown-item>
+                                    <iv-dropdown-item>
+                                        <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                    </iv-dropdown-item>
+                                    $main-header-dropdown-item-tag-common-display
+                                </iv-dropdown-menu>
+                            </iv-dropdown>
+                        </div>
+                        $main-header-refresh-button
+                    </iv-col>
+                </iv-row>
+                <iv-row $main-header-row-attr-default-hidden>
+                    <iv-col span="24">
+                        <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                        </vi-button>
+                        <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                                   @click="doUpdate">{{$t("gb.common.edition")}}
+                        </vi-button>
+                        <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"
+                                   @click="doAdd4Copy">复制
+                        </vi-button>
+                        <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                                   @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                        </vi-button>
+                        <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                                   @click="doDelete">{{$t("gb.common.del")}}
+                        </vi-button>
+                    </iv-col>
+                </iv-row>
+        </div>
+        <div class="mp-content">
+            <div class="lr-layout" style="padding: 0;">
+                <div class="lr-layout-l legal-regulation-type-box" style="width: 230px;overflow-y: auto;z-index:100">
+                    <div style="border-bottom: 2px solid #ddd;display: inline-flex;">
+                        <div style="margin: 0 17px">
+                            <iv-button v-if="hasAuth('createGroup')" style="font-size:14px;padding: 4px 10px;" type="text" @click="doCreateGroup"><Icon type="plus"></Icon></iv-button>
+                            <iv-button v-if="hasAuth('editGroup')"   style="font-size:14px;padding: 4px 10px;" type="text" @click="doUpdateGroup"><Icon type="edit"></Icon></iv-button>
+                            <iv-button v-if="hasAuth('deleteGroup')" style="font-size:14px;padding: 4px 10px;" type="text" @click="doDeleteGroup"><Icon type="trash-a"></Icon></iv-button>
+                            <iv-button v-if="hasAuth('editGroup')"   style="font-size:14px;padding: 4px 10px;" type="text" @click="doMoveGroup(-1)"><Icon type="arrow-up-a"></Icon></iv-button>
+                            <iv-button v-if="hasAuth('editGroup')"   style="font-size:14px;padding: 4px 10px;" type="text" @click="doMoveGroup(1)"><Icon type="arrow-down-a"></Icon></iv-button>
+                        </div>
+                    </div>
+                    <ul>
+                        <li
+                                v-for="(index, group) in emerGroups"
+                                class="lr-layout-li"
+                                style="border-bottom: 1px solid #ddd;height:32px;position: relative;"
+                                :class="{'checked': index === checkedGroupIndex}"
+                                @click="doSelectGroup(index)"
+                                :title="group.name"
+                        >
+                            <span style="margin-left: 17px;display: inline-block;width:126px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{group.name}}</span>
+                            <i  @click="doShowLeftModel(group, index)" class="ivu-icon ivu-icon-information-circled" :title="group.remarks" style="margin-right: 17px; margin-top: 4px;float: right;"></i>
+                        </li>
+                    </ul>
+                </div>
+                <div class="lr-layout-r"  style="padding-right: 10px;background: #fff;">
+                    <div style="width:100%;">
+                        <vue-bootstrap-table
+                                selected-datas.sync="tableModel.selectedDatas"
+                                :url="tableModel.url"
+                                :columns='tableModel.columns'
+                                :code="moduleCode"
+                                show-loading
+                                @on-click-cell="doTableCellClick"
+                                v-ref:main-table
+                                show-pager=false
+                                lazy-load
+                                show-empty-row=false
+                                auto-width=false
+                                :page-size-opts=[100000]
+                                @on-data-loaded="onTableDataLoaded"></vue-bootstrap-table>
+                    </div>
+
+                    <div style="width:100%;border-top:1px solid #ddd;margin:20px 0;"></div>
+
+                    <div style="width:100%;">
+                        <vue-bootstrap-table
+                                selected-datas.sync="tableModel1.selectedDatas"
+                                :url="tableModel1.url"
+                                :columns='tableModel1.columns'
+                                show-loading
+                                v-ref:main-table1
+                                show-pager=false
+                                lazy-load
+                                show-empty-row=false
+                                auto-width=false
+                                :page-size-opts=[100000]
+
+                        ></vue-bootstrap-table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+<div >
+    <Modal :visible.sync="mainModel.leftBorder" :title='getModalName' :footer-hide="true" >
+        <div class="edit-pop-container">
+            <div style="background: #fff;font-size: 14px;padding: 10px;min-height: 250px;white-space: pre-wrap;">{{mainModel.leftBorderObj.remarks}}</div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="mainModel.leftBorder=false" class="pull-right">关闭</vi-button>
+            </div>
+        </div>
+    </Modal>
+</div>
+
+<emergroup-form-modal
+		:visible.sync="formModel.emerGroupFormModel.show"
+		@do-save="doSaveEmerGroup"
+        @do-update="doUpdateEmerGroup"
+        :query-url="formModel.emerGroupFormModel.queryUrl"
+		v-ref:emergroup-form-modal>
+</emergroup-form-modal>
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel :group-id="emerGroupId" :emer-groups="emerGroups"></detail-panel>
+</aside>
+
+
+<style>
+    .internalOrganizationMask{
+        width: 330px;
+        min-height: 160px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        paddding: 15px;
+        position: absolute;
+        left: 220px;
+        background: #fff;
+        font-size: 13px;
+    }
+    .internalOrganizationMaskTitle{
+        padding:5px;
+        border-bottom: 1px solid #ddd;
+        margin-left: 20px;
+        margin-right: 20px
+    }
+    .internalOrganizationMaskBody{
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top : 15px;
+        padding-bottom:25px;
+    }
+</style>
+

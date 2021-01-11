@@ -1,0 +1,132 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item> -->
+					<el-form-item label="单位" prop="office">
+						<iv-input :value.sync="mainModel.vo.office" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="环境因素" prop="envFactor">
+						<iv-input :value.sync="mainModel.vo.envFactor" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="环境影响" >
+
+							<div v-for="item in json">
+								<iv-checkbox :checked="mainModel.vo[item.fieldName]==1" @on-change='dochange(item.fieldName)'  :disabled="mainModel.isReadOnly">{{item.title}}</iv-checkbox>
+							</div>
+						
+					</el-form-item>
+					<el-form-item label="污染物主要成分" prop="composition">
+						<iv-input :value.sync="mainModel.vo.composition" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="影响规模" prop="scop">
+						<i-select v-if="!mainModel.isReadOnly"  :list="getDataDicList('risk_scop')" :model.sync="mainModel.vo.scop">
+							<!-- <i-option v-for="item in getDataDicList('risk_scop')" value="item.id">{{item.value}}&nbsp;{{item.id}}分</i-option> -->
+						</i-select>
+						<iv-input v-else :value.sync="getDataDic('risk_scop',mainModel.vo.scop)" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="发生频率" prop="frequency">
+						<i-select v-if="!mainModel.isReadOnly" :list="getDataDicList('risk_frequency')" :model.sync="mainModel.vo.frequency">
+							<!-- <i-option v-for="item in getDataDicList('risk_frequency')" value="item.id">{{item.value}}&nbsp;{{item.id}}分</i-option> -->
+						</i-select>
+						<iv-input v-else :value.sync="getDataDic('risk_frequency',mainModel.vo.frequency)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="持续时间" prop="sustain">
+						<i-select :list="getDataDicList('risk_sustain')" v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.sustain">
+							<!-- <i-option v-for="item in getDataDicList('risk_sustain')" value="item.id">{{item.value}}&nbsp;{{item.id}}分</i-option> -->
+						</i-select>
+						<iv-input v-else :value.sync="getDataDic('risk_sustain',mainModel.vo.sustain)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="评价" prop="score">
+						<i-select disabled :list="getDataDicList('risk_score')"  v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.score">
+							<!-- <i-option v-for="item in getDataDicList('risk_score')" value="item.id">{{item.value}}&nbsp;{{item.id==0?'小于等于12分':'大于12分'}}分</i-option> -->
+						</i-select>
+						<iv-input v-else :value.sync="getDataDic('risk_score',mainModel.vo.score)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="目前控制措施" prop="measures">
+						<iv-textarea :rows="8" :value.sync="mainModel.vo.measures" :width="450" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="所属公司" prop="compId">
+						<company-tree-select :placement="'top-start'" v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<input-select v-else :value.sync="getDataDic('org', mainModel.vo.compId)"
+						 id-field="id" display-field="compName" textonly  ></input-select>
+					</el-form-item>
+					<el-form-item label="所属部门" prop="orgId">
+						<department-tree-select :placement="'top-start'"  v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+									
+					</el-form-item>
+				</el-form>
+			</simple-card>
+
+			<!--<div class="rel-info-panel" :class="{'rel-info-panel-mask': false}">-->
+				<!--<file-list-simple-card title="附件" class="fip-content-item" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>-->
+			<!--</div>-->
+
+
+			<!--<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">-->
+				<!--<simple-card class="fip-content-item"  filter filter-when>-->
+					<!--<p slot="title"><i class="basicPng"></i><span>参会人</span></p>-->
+					<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowTestUserSelectModal()" >-->
+						<!--<span><Icon type="plus"></Icon>添加</span>-->
+					<!--</a>-->
+					<!--<vue-bootstrap-table-->
+							<!--:setting="tableModel.attendeesTableModel"-->
+							<!--@on-del-row="doRemoveTestUser"-->
+							<!--@on-move-row="doMoveTestUser"-->
+							<!--v-ref:attendees-table-->
+					<!--&gt;-->
+					<!--</vue-bootstrap-table>-->
+				<!--</simple-card>-->
+			<!--</div>-->
+
+			<!--<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">-->
+				<!--<simple-card class="fip-content-item"  filter filter-when>-->
+					<!--<p slot="title"><i class="basicPng"></i><span>抄送人</span></p>-->
+					<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowTestUserSelectModal()" >-->
+						<!--<span><Icon type="plus"></Icon>添加</span>-->
+					<!--</a>-->
+					<!--<vue-bootstrap-table-->
+							<!--:setting="tableModel.ccUserTableModel"-->
+							<!--@on-del-row="doRemoveTestUser"-->
+							<!--@on-move-row="doMoveTestUser"-->
+							<!--v-ref:ccuser-table-->
+					<!--&gt;-->
+					<!--</vue-bootstrap-table>-->
+				<!--</simple-card>-->
+			<!--</div>-->
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">发布</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">提交</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">审批</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>-->
+		<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+
+<company-select-model @do-save='doSaveCompany' :visible.sync="companySelectModel.show"
+	:filter-data="companySelectModel.filterData" single-select></company-select-model>
+	<dept-select-modal :visible.sync="deptSelectModel.visible" @do-save="doSaveDepts" single-select
+	:filter-data="deptSelectModel.filterData"></dept-select-modal>

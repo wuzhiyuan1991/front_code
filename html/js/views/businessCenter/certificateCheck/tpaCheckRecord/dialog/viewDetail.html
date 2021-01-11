@@ -1,0 +1,71 @@
+ <div class="edit-pop-container" >
+	<div class="epc-content" style="height: 300px">
+
+	 	<el-tabs style="width:100%;" v-if="mainModel.vo.show" :active-name="mainModel.tabName" @tab-click="changeTab">
+		    <el-tab-pane :label="$t('gb.common.basic')" >
+		    	<div v-if="mainModel.vo.type == 0">
+					<div v-if="mainModel.vo.checkResult == 0 ">
+						<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('hag.hazc.communicatRecord')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.talkResult" textonly></iv-input>
+						</div>
+						<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.recMeasure')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;"  type="textarea" :value.sync="mainModel.vo.suggestStep" textonly></iv-input>
+						</div>
+					</div>
+					<div v-if="mainModel.vo.checkResult == 1 ">
+						<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.describeSup')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.talkResult" textonly></iv-input>
+						</div>
+						<!--<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.recMeasure')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;"  type="textarea" :value.sync="mainModel.vo.suggestStep" textonly></iv-input>
+						</div>-->
+					</div>
+
+		    	</div>
+		    	<div v-if="mainModel.vo.type == 1 ||  mainModel.vo.type == 2">
+					<div v-if="mainModel.vo.checkResult == 0 ">
+						<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.problemDesc')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.problem" textonly></iv-input>
+						</div>
+						<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('hag.hazc.rectifMeasur')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.remark" textonly></iv-input>
+						</div>
+					</div>
+					<div v-if="mainModel.vo.checkResult == 1 ">
+						<div style="display: flex">
+							<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.describeSup')}}：</span>
+							<iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.problem" textonly></iv-input>
+						</div>
+					</div>
+					<!--<div style="display: flex">
+						<span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('hag.hazc.rectifMeasur')}}：</span>
+						<iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.remark" textonly></iv-input>
+					</div>-->
+		    	</div>
+		    </el-tab-pane>
+		    <el-tab-pane :label="$t('gb.common.picture')">
+				<lite-box v-for="pic in mainModel.vo.picList" :show-close="false" @click="doPic(pic.fileId)">
+					<img :src="convertPicPath(pic.fileId)" >
+				</lite-box>
+		    </el-tab-pane>
+		    <el-tab-pane :label="$t('gb.common.video')">
+				<lite-box v-for="vedio in mainModel.vo.vedioList" :show-close="false" @click="doPlay(vedio.fileId)">
+					<img :src="convertPath()">
+				</lite-box>
+		    </el-tab-pane>
+
+		</el-tabs>
+	</div>
+</div>
+	<Modal :visible.sync="playModel.show" width="450" class="type-video" :footer-hide="true">
+		<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+	 </Modal>
+	 <Modal :visible.sync="picModel.show" width="400" :footer-hide="true" class="type-pic">
+		<img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+	 </Modal>

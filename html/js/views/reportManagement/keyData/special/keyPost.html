@@ -1,0 +1,68 @@
+<div :style="echartStyle" class="reportChartCalc">
+    <iv-row type="flex" justify="end">
+        <iv-col>
+            <iv-button type="text" @click="changeMethod('abs');" :class="{active:method === 'abs'}">绝对值</iv-button>
+            <span>|</span>
+            <iv-button type="text" @click="changeMethod('avg');" :class="{active:method === 'avg'}">平均值</iv-button>
+            <span>|</span>
+            <iv-button type="text" @click="changeMethod('trend');" :class="{active:method === 'trend'}">趋势</iv-button>
+            <span>|</span>
+            <iv-button type="text" @click="showMore" style="margin-right: 20px;">更多...</iv-button>
+        </iv-col>
+    </iv-row>
+
+    <vuecharts :style="echartStyle" :options="charts.opt" @chartclick="chartClick" v-ref:echarts></vuecharts>
+
+    <!-- 更多 -->
+    <Modal v-if="moreModel.show" :visible.sync="moreModel.show" title="更多" width="900" :footer-hide="true" class="userSelectModal" mask-closable>
+        <div class="edit-pop-container report" style="width: 900px;">
+            <div class="epc-content" style="overflow-x: auto;padding-top: 10px;">
+                <div style="padding-bottom: 10px;text-align: right;">
+                    <iv-button @click="doExportRptData">导出</iv-button>
+                </div>
+
+                <vue-bootstrap-table
+                        :columns="moreModel.columns"
+                        :show-scroll="moreModel.scroll"
+                        :show-column-picker="false"
+                        :values="moreModel.data"
+                        resizeable
+                        v-if="moreModel.show">
+                </vue-bootstrap-table>
+            </div>
+        </div>
+    </Modal>
+
+    <!-- 撰取 -->
+    <Modal v-if="drillModel.show" :visible.sync="drillModel.show" mask-closable :title="drillModel.title" width="900"
+           :footer-hide="true" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 900px">
+            <div class="epc-header"></div>
+            <div class="epc-content epc-content-scroll">
+
+                <div style="padding:4px 0 0 4px;width: 285px;position: absolute; right: 0;top: 88px;z-index: 100;"
+                     v-if="drillModel.groups && drillModel.groups.length > 1">
+                    <i-select @on-change="onChangeGroup"
+                              :list="drillModel.groups" placeholder="请选择对象个体" style="width:200px;">
+                        <i-option v-for="g in drillModel.groups" :value="g.id">{{ g.name }}</i-option>
+                    </i-select>
+                    <iv-button style="float: right;margin-right: 23px" @click="doExportData" >导出
+                    </iv-button>
+                </div>
+                <iv-button v-else @click="doExportData" style="position: absolute;right: 20px;top:80px;z-index: 10;">导出
+                </iv-button>
+                <vue-bootstrap-table
+                        :columns="drillModel.table.columns"
+                        :url="drillModel.table.url"
+                        :default-filter-value="drillModel.table.qryParam"
+                        :show-filter="true"
+                        :filter-column="drillModel.table.filterColumns"
+                        :show-column-picker="false"
+                        :show-pager="true"
+                        resizeable
+                        v-ref:rpt-details-table>
+                </vue-bootstrap-table>
+            </div>
+        </div>
+    </Modal>
+</div>

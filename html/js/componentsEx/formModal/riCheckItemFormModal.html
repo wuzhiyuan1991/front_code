@@ -1,0 +1,44 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" :label="$t('gb.common.state')" prop="disable">
+						<span v-if="mainModel.isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+						<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkBasis') == -1)" label="巡检依据" prop="checkBasis">
+						<iv-input :value.sync="mainModel.vo.checkBasis" :disabled="(disabledFields.indexOf('checkBasis') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="巡检内容" prop="content">
+						<iv-input :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('equipmentStatus') == -1)" label="适用设备状态" prop="equipmentStatus">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_item_equipment_status', mainModel.vo.equipmentStatus) }}</span>
+						<i-select :model.sync="mainModel.vo.equipmentStatus" :list="getDataDicList('iri_check_item_equipment_status')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isMeterReadingNeeded') == -1)" label="是否读取现场参数值" prop="isMeterReadingNeeded">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_item_is_meter_reading_needed', mainModel.vo.isMeterReadingNeeded) }}</span>
+						<i-select :model.sync="mainModel.vo.isMeterReadingNeeded" :list="getDataDicList('iri_check_item_is_meter_reading_needed')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('refId') == -1)" label="关联" prop="refId">
+						<iv-input :value.sync="mainModel.vo.refId" :disabled="(disabledFields.indexOf('refId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('refType') == -1)" label="关联类型" prop="refType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_item_ref_type', mainModel.vo.refType) }}</span>
+						<i-select :model.sync="mainModel.vo.refType" :list="getDataDicList('iri_check_item_ref_type')" v-else></i-select>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<richeckitemparam-select-modal :visible.sync="selectModel.riCheckItemParamSelectModel.visible" :filter-data="selectModel.riCheckItemParamSelectModel.filterData" single-select @do-save="doSaveRiCheckItemParam"></richeckitemparam-select-modal>

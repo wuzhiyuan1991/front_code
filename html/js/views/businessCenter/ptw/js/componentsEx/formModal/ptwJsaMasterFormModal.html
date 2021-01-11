@@ -1,0 +1,86 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('analyseLeader') == -1)" label="分析小组组长" prop="analyseLeader">
+						<iv-input :value.sync="mainModel.vo.analyseLeader" :disabled="(disabledFields.indexOf('analyseLeader') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('taskContent') == -1)" label="作业内容" prop="taskContent">
+						<iv-input :value.sync="mainModel.vo.taskContent" :disabled="(disabledFields.indexOf('taskContent') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('workDate') == -1)" label="作业日期" prop="workDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.workDate" :disabled="(disabledFields.indexOf('workDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.workDate)" :disabled="(disabledFields.indexOf('workDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('analysePerson') == -1)" label="分析人员，可以以逗号或者是其他字符分割" prop="analysePerson">
+						<iv-input :value.sync="mainModel.vo.analysePerson" :disabled="(disabledFields.indexOf('analysePerson') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('construction') == -1)" label="施工单位，可手填" prop="construction">
+						<iv-input :value.sync="mainModel.vo.construction" :disabled="(disabledFields.indexOf('construction') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('hasQualification') == -1)" label="是否有特种作业人员资质证明" prop="hasQualification">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_has_qualification', mainModel.vo.hasQualification) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.hasQualification" :list="getDataDicList('iptw_jsa_master_has_qualification')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('hasSpecification') == -1)" label="是否有相关操作规程" prop="hasSpecification">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_has_specification', mainModel.vo.hasSpecification) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.hasSpecification" :list="getDataDicList('iptw_jsa_master_has_specification')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isContractor') == -1)" label="是否承包商作业" prop="isContractor">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_is_contractor', mainModel.vo.isContractor) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isContractor" :list="getDataDicList('iptw_jsa_master_is_contractor')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isCrossOperat') == -1)" label="是否为交叉作业" prop="isCrossOperat">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_is_cross_operat', mainModel.vo.isCrossOperat) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isCrossOperat" :list="getDataDicList('iptw_jsa_master_is_cross_operat')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isNewTask') == -1)" label="是否为新的工作任务" prop="isNewTask">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_is_new_task', mainModel.vo.isNewTask) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isNewTask" :list="getDataDicList('iptw_jsa_master_is_new_task')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isPermitRequired') == -1)" label="是否需要许可证" prop="isPermitRequired">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_is_permit_required', mainModel.vo.isPermitRequired) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isPermitRequired" :list="getDataDicList('iptw_jsa_master_is_permit_required')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isShare') == -1)" label="是否分享" prop="isShare">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_is_share', mainModel.vo.isShare) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isShare" :list="getDataDicList('iptw_jsa_master_is_share')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isSubmit') == -1)" label="是否提交" prop="isSubmit">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_master_is_submit', mainModel.vo.isSubmit) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isSubmit" :list="getDataDicList('iptw_jsa_master_is_submit')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('relId') == -1)" label="关联的档案" prop="relId">
+						<iv-input :value.sync="mainModel.vo.relId" :disabled="(disabledFields.indexOf('relId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('relType') == -1)" label="关联的档案类型" prop="relType">
+						<iv-input :value.sync="mainModel.vo.relType" :disabled="(disabledFields.indexOf('relType') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('sourceId') == -1)" label="来源" prop="sourceId">
+						<iv-input :value.sync="mainModel.vo.sourceId" :disabled="(disabledFields.indexOf('sourceId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('taskLicense') == -1)" label="许可证编号" prop="taskLicense">
+						<iv-input :value.sync="mainModel.vo.taskLicense" :disabled="(disabledFields.indexOf('taskLicense') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

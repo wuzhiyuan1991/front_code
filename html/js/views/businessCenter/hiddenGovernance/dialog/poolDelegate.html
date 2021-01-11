@@ -1,0 +1,16 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform >
+	        <el-form-item label="被委托人" prop="assignees">
+	            <multi-select-input :selected-multiple="mainModel.vo.assignees" id-field="id" display-field="name" @on-click="doSelectUsers()"></multi-select-input>
+	        </el-form-item>
+	        <el-form-item :label="$t('hat.hazt.assignReason')" prop="reason">
+	            <iv-input type="textarea" :value.sync="mainModel.vo.reason"></iv-input>
+	        </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<user-select-modal :visible.sync="mainModel.selectModel.userSelected.visible" :filter-data="mainModel.selectModel.userSelected.filterData" @do-save="doSaveUser"></user-select-modal>

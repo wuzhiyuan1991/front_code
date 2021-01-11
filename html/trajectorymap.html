@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>查看巡检轨迹</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        ol{
+            padding-left: 2rem;
+        }
+        .style-none{
+            list-style-type: none;
+        }
+    </style>
+
+</head>
+<body>
+<div id="map-container" style="height: 100vh"></div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=ZjeNT2GfetESSxg3ynE0pmRmWn730NGp"></script>
+<script>
+    $(document).ready(function () {
+        var id = window.location.href.match(/id=(.+$)/)[1];
+        var type='plan';
+        if( window.location.href.match(type)){
+            type=  window.location.href.match(/type=(.+)&/)[1];
+        }
+        var api={
+           notplan: '/checkrecord/$id',
+            plan:'/checkrecord/$id/checktask',
+        };
+        $.ajaxSetup({
+            headers: {
+                'Authorization': 'Basic YXBpOnBhc3N3b3Jk',
+            }
+        });
+        var    _handleData=function(data){//数据处理
+            var mapData=[];
+            var locations=[];
+            data=data.filter(function (item) {//过滤掉没有定位的点
+                //return item.locateTime&&item.location;
+                return item.location;
+            });
+            // data=data.sort(function (a,b) {
+            //     return a.locateTime-b.locateTime;
+            // });
+            data.forEach(function (item) {
+                var index=locations.indexOf(item.location);
+                if(index>-1){
+                    mapData[index].data.push(item);
+                }
+                else{
+                    mapData.push({location:item.location,data:[item]});
+                    locations.push(item.location);
+                }
+
+            });
+            return  mapData;
+        };
+        var initMap=function (data) {
+            var mpData=_handleData(data);
+            var locations=mpData[0].location.split(',');
+            var point = new BMap.Point(parseFloat(locations[0]),parseFloat(locations[1]));
+            var mp = new BMap.Map("map-container");
+            mp.centerAndZoom(point,19);
+            mp.enableScrollWheelZoom();
+            var scale = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});// 添加比例尺
+            mp.addControl(scale);
+            mp.setMaxZoom();
+
+            var points=[];
+            //添加点
+
+            var opts = {
+                width : 350,     // 信息窗口宽度
+                // height: 80,     // 信息窗口高度
+                // title : "信息窗口" , // 信息窗口标题
+                enableMessage:true//设置允许信息窗发送短息
+            };
+            var  openInfo=function(content,e){
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+                mp.openInfoWindow(infoWindow,point); //开启信息窗口
+            };
+
+            //画点
+            mpData.forEach(function (item) {
+                var locations=item.location.split(',');
+                //msg
+                // var  $div=$("<div style='max-height: 500px; overflow-y:auto;margin-top: 10px;padding-bottom: 5px'></div>");
+                //
+                // item.data.forEach(function (item,index) {
+                //     var str="<div  style='margin-bottom: 5px;line-height:1.2rem;font-size: 13px'><p>检查项: $item</p></div>";
+                //     var $inner=$(str.replace("$item",item.name).replace("$time",item.locateTime));
+                //     if(index>0){
+                //         $inner.prepend("<div style='height: 1px;background:  #ababab'></div>")
+                //     }
+                //     $div.append($inner);
+                // });
+                var  $div=$("<div style='max-height: 500px; overflow-y:auto;margin-top: 10px;padding-bottom: 5px'><div>检查项</div>" +
+                        "<ol></ol>"+
+                    "</div>");
+                item.data.forEach(function (item,index) {
+                    var time = item.locateTime || '';
+                        var str="<li  style='margin-bottom: 5px;line-height:1.2rem;font-size: 13px'><p style='color:#3c8dbc'>"+time+"</p><p style='border-bottom:1px solid #ddd;padding-bottom:5px;'>$item</p></li>";
+                        var $inner=$(str.replace("$item",item.name));
+                        $div.find("ol").append($inner);
+                });
+                if(item.data.length===1){
+                    $div.find("ol").addClass("style-none")
+                }
+                var msg=$div[0].outerHTML;
+                var point = new BMap.Point(parseFloat(locations[0]),parseFloat(locations[1]));
+                points.push(point);
+                var marker = new BMap.Marker(point);
+                marker.addEventListener("click",function(e){
+                    openInfo(msg,e)}
+                );
+                mp.addOverlay(marker);
+
+            });
+            if(points.length<=1)return;
+           function getOpts(distance) {
+               function getIcons() {
+                   var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+                       scale: 0.5,//图标缩放大小
+                       strokeColor: '#fb9512',//设置矢量图标的线填充颜色
+                       strokeWeight: '2',//设置线宽
+                       anchor: new BMap.Size(0, 0)
+                   });
+                   var present="100%";
+                   if(distance>100){
+                       present="10%";
+                   }
+                   else  if(distance>20){
+                       present="40%";
+                   }
+                   var icons = new BMap.IconSequence(sy, '100%',present);
+                   return icons;
+                  }
+                  var   opts={
+                   enableEditing: false,//是否启用线编辑，默认为false
+                   enableClicking: true,//是否响应点击事件，默认为true
+                   strokeWeight:'5',//折线的宽度，以像素为单位s
+                   strokeOpacity: 1,//折线的透明度，取值范围0 - 1
+                   strokeColor:"#18a45b", //折线颜色
+           };
+            if(distance>5){
+                opts. icons=[getIcons()];
+            }
+               return opts;
+           }
+           var i=0;
+           for(;i<points.length-1;i++){//这里一条一条的渲染，折线的话箭头会有偏离。
+               var tempPoints=[points[i],points[i+1]];
+               var distance=mp.getDistance(tempPoints[0],tempPoints[1]).toFixed(2);
+               var polyline =new BMap.Polyline(tempPoints,getOpts(distance));
+               mp.addOverlay(polyline);
+            }
+           mp.setViewport(points);
+
+        };
+        $.get({
+            url:api[type].replace('$id',id),
+            success: function (res) {
+                if (res.error != 0) {
+                    console.error("请重新登陆尝试")
+                } else {
+                    var data = res.content.checkRecordDetailVoList;
+                    var checkList=[];
+                    data.forEach(function (item) {
+                        checkList=checkList.concat(item.itemList);
+                    });
+                    initMap(checkList);
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

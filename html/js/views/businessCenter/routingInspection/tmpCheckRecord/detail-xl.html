@@ -1,0 +1,98 @@
+<!-- 左浮动框 -->
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{$t("gb.common.basicInfo")}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <vi-button type="ghost" v-if="hasAuth('delete')" @click="doDelete" style="margin-right: 10px;">{{$t("gb.common.del")}}</vi-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <!--计划检查-->
+            <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? emptyRules : rules"  v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item prop="checkTask.name" label="任务名称"  class="small-info-box" >
+                        <input-select v-if="!mainModel.isReadOnly" :disabled="mainModel.opType !== 'create'" :show-tip="true" :value="mainModel.vo.checkTask" id-field="id" display-field="name" @click="doShowCheckTaskSelectModal" ></input-select>
+                        <span v-else>{{displayInspectTask()}}</span>
+                    </el-form-item>
+                    <el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+                        <iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.compId)['compName']" disabled></iv-input>
+                        <span v-else>{{getDataDic('org', mainModel.vo.compId)['compName']}}</span>
+                    </el-form-item>
+                    <el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+                        <iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" disabled></iv-input>
+                        <span v-else>{{getDataDic('org', mainModel.vo.orgId)['deptName']}}</span>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="检查人">
+                        <span>{{mainModel.vo.checkUser.name}}</span>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="状态">
+                        <span>{{getDataDic('check_status',mainModel.vo.checkTask.status)}}</span>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="任务开始时间" format="yyyy-MM-dd HH:mm:ss" class="small-info-box" prop="startTime">
+                        <iv-input v-if="!mainModel.isReadOnly" :value="mainModel.vo.checkTask.startDate" disabled class="inp"></iv-input>
+                        <iv-input v-else :value.sync="mainModel.vo.checkTask.startDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="任务结束时间" format="yyyy-MM-dd HH:mm:ss" class="small-info-box" prop="endTime">
+                        <iv-input v-if="!mainModel.isReadOnly" :value="mainModel.vo.checkTask.endDate" disabled class="inp"></iv-input>
+                        <iv-input v-else :value.sync="mainModel.vo.checkTask.endDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="检查开始时间" format="yyyy-MM-dd HH:mm:ss" class="small-info-box" prop="startTime">
+                        <iv-input v-if="!mainModel.isReadOnly" :value="mainModel.vo.checkBeginDate" disabled class="inp"></iv-input>
+                        <iv-input v-else :value.sync="mainModel.vo.checkBeginDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="检查结束时间" format="yyyy-MM-dd HH:mm:ss" class="small-info-box" prop="endTime">
+                        <iv-input v-if="!mainModel.isReadOnly" :value="mainModel.vo.checkEndDate" disabled class="inp"></iv-input>
+                        <iv-input v-else :value.sync="mainModel.vo.checkEndDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+
+    <!--查看检查项-->
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title">
+                    <i class="itemPng"></i>
+                    <span>任务明细</span>
+                </p>
+                <simple-card class="bip-content-sub-item" v-for="group in items">
+                    <span slot="title">{{group.groupName}}</span>
+                    <vue-bootstrap-table
+                            :columns="itemColumns"
+                            :show-filter="false"
+                            :show-column-picker="false"
+                            :show-pager="true"
+                            :values="group.itemList"
+                            @on-click-cell="doViewDetail"
+                            :show-empty-row="false"
+                            :show-seq="true"
+                            cursor="pointer"
+                    >
+                    </vue-bootstrap-table>
+                </simple-card>
+            </simple-card>
+        </div>
+    </div>
+</div>
+<!-- 编辑检查结果弹框 -->
+<Modal :visible.sync="viewDetailModel1.show" :title="viewDetailModel1.title" width="520" :footer-hide="true">
+    <view-Edit-Component></view-Edit-Component>
+</Modal>
+<Modal :visible.sync="viewDetailModel.show" :title="viewDetailModel.title" width="520" :footer-hide="true">
+    <viewDetailComponent></viewDetailComponent>
+</Modal>
+<Modal :visible.sync="picDetailModel.show" :title="picDetailModel.title" width="520" :footer-hide="true">
+    <picDetail></picDetail>
+</Modal>

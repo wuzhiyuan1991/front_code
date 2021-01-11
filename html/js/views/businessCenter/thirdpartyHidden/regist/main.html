@@ -1,0 +1,82 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <!--<iv-col $main-header-condition-div-attr-default >-->
+                <!--<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>-->
+                <!--</iv-col>-->
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-mixBusiness>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button @click="doAdd" v-if="hasPermission('2070001001')">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <!--<iv-dropdown-item>-->
+                                <!--<vue-file-upload file-ext="xls,xlsx" @on-success-upload="doSuccessUpload" custom-style>-->
+                                <!--<div  v-if="hasPermission('5010001004')" class="uploadAport"><a>{{$t("gb.common.import")}}</a></div>-->
+                                <!--</vue-file-upload>-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item>
+                                    <div v-if="hasPermission('5010001005')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doSubmit" v-if="buttonShow.submitButton">{{$t("gb.common.submit")}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doApproval" v-if="buttonShow.approvalButton && hasPermission('2070001023')">{{$t("gb.common.approval")}}</vi-button>
+                    <vi-button v-if="hasPermission('2070001002')" type="text" class="mp-header-item-btn" @click="doUpdate" >{{$t("gb.common.edition")}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doExport" v-if="hasPermission('100010192')">{{$t("gb.common.export")}}</vi-button>-->
+                    <vi-button v-if="hasPermission('2070001003')" type="text" class="mp-header-item-btn" @click="doDelete" >{{$t("gb.common.del")}}</vi-button>
+                </iv-col>
+            </iv-row>
+            <!--<iv-row type="flex" align="middle" class="mp-header-item" v-show="tableModel.selectedDatas.length != 0">-->
+            <!--<iv-col span="24">-->
+            <!--<div>-->
+            <!--<div class="topTool"><a class="">已经选中{{tableModel.selectedDatas.length}}项</a></div>-->
+            <!--<div class="topTool" @click="doSubmit" v-if="buttonShow.submitButton"><a class="">提交</a></div>-->
+            <!--<div class="topTool" @click="doApproval" v-if="buttonShow.approvalButton"><a class="">审批</a>-->
+            <!--</div>-->
+            <!--<div class="topTool" @click="doUpdate" v-if="hasPermission('100010189')"><a class="">修改</a>-->
+            <!--</div>-->
+            <!--<div class="topTool" @click="doExport" v-if="hasPermission('100010192')"><a class="">导出</a>-->
+            <!--</div>-->
+            <!--<div class="topTool" @click="doDelete" v-if="hasPermission('100010190')"><a class="">删除</a>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</iv-col>-->
+            <!--</iv-row>-->
+
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+
+<!-- 右滑弹框 -->
+<aside :show.sync="detailModel.show" placement="right" width="860px">
+    <detail-component></detail-component>
+</aside>
+<!-- 弹框 -->
+<Modal :visible.sync="editModel.show" :title="editModel.title" width="520" :footer-hide="true">
+    <edit-component></edit-component>
+</Modal>
+<!-- 弹框 -->
+<Modal :visible.sync="approvalModel.show" :title="approvalModel.title" width="520" :footer-hide="true">
+    <approval-component></approval-component>
+</Modal>

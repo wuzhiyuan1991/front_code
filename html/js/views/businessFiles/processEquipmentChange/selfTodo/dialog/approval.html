@@ -1,0 +1,59 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="500" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <p
+				style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:10px;font-size: 14px;">
+				<span
+					style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>{{name}}
+
+			</p>
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+            <el-form-item label="评估结果" prop="result">
+                <iv-radio-group :model.sync="mainModel.vo.result">
+                    <iv-radio  value="0">同意</iv-radio>
+                    <iv-radio  value="1">不同意</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+            <el-form-item v-if="vo.bizType!=2 &&  vo.level==2 &&vo.auditStatus==3" label="流转设置" prop="flowType">
+                <iv-radio-group :model.sync="mainModel.vo.flowType">
+                    <iv-radio  value="1">直接提交给下一个审批角色</iv-radio><br>
+                    <iv-radio  value="2">提交给下一个审批人（当前审批角色）</iv-radio>
+                </iv-radio-group>
+                <i-select v-show="mainModel.vo.flowType==2" :model.sync="users" :list="userList" :multiple='true' >
+                    <i-option v-for="item in userList"  :value="item.id">{{item.name}}</i-option>
+                </i-select>
+                <!-- <multi-input-selectw v-show="mainModel.vo.floType==2" :values="users" @click="doShowSelectUserModal(item)"></multi-input-select> -->
+            </el-form-item>
+            <el-form-item label="审批意见" prop="opinion">
+                <iv-textarea  :value.sync="mainModel.vo.opinion"></iv-textarea>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<!-- <Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container" style="width: 900px">
+      <i-select v-if="showCollect" style="width:120px;position: absolute;right: 20px;top: 90px;z-index:2;"
+        @on-change="doChangeCollect" :model.sync="selectModel.collect" :list="mainModel.collections">
+        <i-option v-for="type in mainModel.collections" :value="type.id">{{type.name}}</i-option>
+      </i-select>
+      <div class="epc-content epc-content-scroll">
+        <vue-bootstrap-table :columns="tableModel.columns" :filter-column="tableModel.filterColumn" :show-pager="true"
+          :selected-datas.sync="mainModel.selectedDatas" :url="tableModel.url || ''" :values="tableModel.values || []"
+          :reset-trigger-flag="tableModel.resetTriggerFlag" :default-filter-value="tableModel.defaultFilterValue"
+          @on-dbclick-cell="onDbClickCell" :is-cache-selected-data="isCacheSelectedData" lazy-load
+          show-filter :resizeable="tableModel.resizeable"
+          :is-single-check="singleSelect"
+          :is-native-data="this.isNativeData !== null ? this.isNativeData : tableModel.isNativeData || false" @do-filter="nativeSearchFilter" v-ref:table>
+        </vue-bootstrap-table>
+      </div>
+      <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+      </div>
+    </div>
+  </Modal> -->
+<user-select-modal :is-show-concator='false' :filter-data="userSelectModel.filterData" :visible.sync="userSelectModel.show" @do-save="doSaveSelect" ></user-select-modal>

@@ -1,0 +1,73 @@
+<div class="box-base flex-layout-vertical over-auto" v-if="enableOrder">
+    <div :style="{width: enableOrder?'1000px':'auto'}">
+        <div class="box-base-title base-border-bottom">
+            <p><img src="images/details/basic.png"><span class="ml15">{{title}}</span></p>
+<!--            <p class="link-ele font-normal" v-show="enableOrder">-->
+<!--                <span @click="setEnableOrder()">直接填写作业票</span>-->
+<!--            </p>-->
+            <p class="link-ele font-normal" v-show="!enableOrder">
+                <span @click="setEnableOrder()">更改模板</span>
+            </p>
+        </div>
+        <div class="flex-grow1 pd10">
+            <el-form style="width: 500px;" label-width="120px" >
+                <el-form-item class="is-required" label="作业时间" style="overflow: inherit;">
+                    <vi-date-picker type="daterange" :value.sync="dateRange" placeholder="选择作业时间范围"
+                                    style="width: 200px;"></vi-date-picker>
+                </el-form-item>
+                <el-form-item class="is-required"  label="作业类型" style="overflow:visible">
+                    <iv-radio-group v-ref:radio-group class="group-vertical" :model.sync="selWorkCatalogIndex">
+                    <iv-radio :value="index" v-for="(index,item) of workCatalogList">
+                        {{item.name}}
+                        <span v-if="item.levelList&&item.levelList.length>0&&selWorkCatalogIndex==index">
+                                    (
+                                    <iv-radio-group :model.sync="selectedWorLevelId">
+                                    <iv-radio :value="level.id"
+                                              v-for="level of item.levelList">{{level.name}}</iv-radio>
+                                </iv-radio-group>
+                                    )
+                                </span>
+                    </iv-radio>
+                </iv-radio-group>
+                </el-form-item>
+                <el-form-item class="is-required"  label="作业地点" style="overflow: inherit;">
+                    <iv-input :value.sync="formOrder.workPlace"></iv-input>
+                </el-form-item>
+                <el-form-item label="作业所在的设备">
+                    <iv-input type="textarea" :rows="6" :value.sync="formOrder.workEquipment"></iv-input>
+                </el-form-item>
+                <el-form-item class="is-required"  label="作业内容" >
+                    <iv-input type="textarea" :rows="8" :value.sync="formOrder.workContent"></iv-input>
+                </el-form-item>
+                <el-form-item class="is-required"  label="审批人" >
+                    <input-select :value="formOrder.auditor" id-field="id" display-field="name"
+                                  @click="showUserSelectModal=true"></input-select>
+                </el-form-item>
+            </el-form>
+            <div class="flex-h-end">
+                <iv-button v-if="hasAuth('apply')" style="width: 100px" @click="doFormOrderSubmit">提交</iv-button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="box-base flex-layout-vertical over-auto" v-if="enableOrder===false">
+    <div style="width:auto;display: flex;flex-direction: column;height: 100%">
+        <div class="box-base-title base-border-bottom">
+            <p><img src="images/details/basic.png"><span class="ml15">{{title}}</span></p>
+            <p class="link-ele font-normal">
+                <span @click="setEnableOrder()">更改模板</span>
+            </p>
+        </div>
+        <div class="flex-layout flex-grow1">
+            <pwt-fill :model="tplModel" :permit-model="permitModel"></pwt-fill>
+            <div>
+                <iv-button @click="doFillSave" style="width: 100px">保存</iv-button>
+                <iv-button @click="doFillSubmit" style="width: 100px"  v-show="permitModel.id">提交</iv-button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<user-select-modal single-select :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>
+<sel-tpl-modal v-ref:modal-sel-tpl @on-success="doSelectedTpl" :visible.sync="showSelTpl"></sel-tpl-modal>

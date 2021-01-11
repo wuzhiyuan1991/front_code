@@ -1,0 +1,101 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mobile') == -1)" label="手机号" prop="mobile">
+						<iv-input :value.sync="mainModel.vo.mobile" :disabled="(disabledFields.indexOf('mobile') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('serialNumber') == -1)" label="" prop="serialNumber">
+						<iv-input :value.sync="mainModel.vo.serialNumber" :disabled="(disabledFields.indexOf('serialNumber') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('detailId') == -1)" label="用户详情" prop="detailId">
+						<iv-input :value.sync="mainModel.vo.detailId" :disabled="(disabledFields.indexOf('detailId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('email') == -1)" label="邮箱" prop="email">
+						<iv-input :value.sync="mainModel.vo.email" :disabled="(disabledFields.indexOf('email') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('face') == -1)" label="头像编码" prop="face">
+						<iv-input :value.sync="mainModel.vo.face" :disabled="(disabledFields.indexOf('face') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('faceFlag') == -1)" label="头像标识" prop="faceFlag">
+						<iv-input :value.sync="mainModel.vo.faceFlag" :disabled="(disabledFields.indexOf('faceFlag') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('faceid') == -1)" label="用户头像" prop="faceid">
+						<iv-input :value.sync="mainModel.vo.faceid" :disabled="(disabledFields.indexOf('faceid') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('homeMenu') == -1)" label="首页菜单" prop="homeMenu">
+						<iv-input :value.sync="mainModel.vo.homeMenu" :disabled="(disabledFields.indexOf('homeMenu') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isRandomPeople') == -1)" label="是否抽检人" prop="isRandomPeople">
+						<iv-input :value.sync="mainModel.vo.isRandomPeople" :disabled="(disabledFields.indexOf('isRandomPeople') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('keysata') == -1)" label="加密盐" prop="keysata">
+						<iv-input :value.sync="mainModel.vo.keysata" :disabled="(disabledFields.indexOf('keysata') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('lastLoginDate') == -1)" label="最近登陆时间" prop="lastLoginDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.lastLoginDate" :disabled="(disabledFields.indexOf('lastLoginDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.lastLoginDate)" :disabled="(disabledFields.indexOf('lastLoginDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('lastLoginImei') == -1)" label="最后登录的手机Imei" prop="lastLoginImei">
+						<iv-input :value.sync="mainModel.vo.lastLoginImei" :disabled="(disabledFields.indexOf('lastLoginImei') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('lastLoginIp') == -1)" label="最近登陆ip" prop="lastLoginIp">
+						<iv-input :value.sync="mainModel.vo.lastLoginIp" :disabled="(disabledFields.indexOf('lastLoginIp') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('lastLoginQth') == -1)" label="最后登录地理位置" prop="lastLoginQth">
+						<iv-input :value.sync="mainModel.vo.lastLoginQth" :disabled="(disabledFields.indexOf('lastLoginQth') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('leaderId') == -1)" label="上级领导" prop="leaderId">
+						<iv-input :value.sync="mainModel.vo.leaderId" :disabled="(disabledFields.indexOf('leaderId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('loginName') == -1)" label="登录名" prop="loginName">
+						<iv-input :value.sync="mainModel.vo.loginName" :disabled="(disabledFields.indexOf('loginName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('loginType') == -1)" label="登陆方式" prop="loginType">
+						<iv-input :value.sync="mainModel.vo.loginType" :disabled="(disabledFields.indexOf('loginType') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mobile2') == -1)" label="备用手机" prop="mobile2">
+						<iv-input :value.sync="mainModel.vo.mobile2" :disabled="(disabledFields.indexOf('mobile2') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('nickname') == -1)" label="用户昵称" prop="nickname">
+						<iv-input :value.sync="mainModel.vo.nickname" :disabled="(disabledFields.indexOf('nickname') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('password') == -1)" label="用户密码" prop="password">
+						<iv-input :value.sync="mainModel.vo.password" :disabled="(disabledFields.indexOf('password') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('posId') == -1)" label="岗位" prop="posId">
+						<iv-input :value.sync="mainModel.vo.posId" :disabled="(disabledFields.indexOf('posId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" :label="$t('gb.common.remarks')" prop="remarks" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('status') == -1)" label="状态" prop="status">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('top_user_status', mainModel.vo.status) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('top_user_status')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="用户类型" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('top_user_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('top_user_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('username') == -1)" label="用户姓名" prop="username">
+						<iv-input :value.sync="mainModel.vo.username" :disabled="(disabledFields.indexOf('username') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

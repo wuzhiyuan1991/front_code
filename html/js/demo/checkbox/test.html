@@ -1,0 +1,34 @@
+<div>
+<!--     <iv-Checkbox-group :model.sync="social"> -->
+<!--         <iv-Checkbox value="twitter"> -->
+<!--             <Icon type="social-twitter"></Icon> -->
+<!--             <span>Twitter</span> -->
+<!--         </iv-Checkbox> -->
+<!--         <iv-Checkbox value="facebook"> -->
+<!--             <Icon type="social-facebook"></Icon> -->
+<!--             <span>Facebook</span> -->
+<!--         </iv-Checkbox> -->
+<!--         <iv-Checkbox value="github"> -->
+<!--             <Icon type="social-github"></Icon> -->
+<!--             <span>Github</span> -->
+<!--         </iv-Checkbox> -->
+<!--         <iv-Checkbox value="snapchat"> -->
+<!--             <Icon type="social-snapchat"></Icon> -->
+<!--             <span>Snapchat</span> -->
+<!--         </iv-Checkbox> -->
+<!--     </iv-Checkbox-group> -->
+<!--     <iv-Checkbox-group :model.sync="fruit"> -->
+<!--         <iv-Checkbox value="香蕉"></iv-Checkbox> -->
+<!--         <iv-Checkbox value="苹果"></iv-Checkbox> -->
+<!--         <iv-Checkbox value="西瓜"></iv-Checkbox> -->
+<!--     </iv-Checkbox-group> -->
+    
+    
+    <iv-Checkbox-group :model.sync="fruit">
+        <iv-Checkbox v-for="a in aList" :value="a">{{a}}</iv-Checkbox>
+    </iv-Checkbox-group>
+    
+    
+<!--     <vi-button type="primary" @click="printComboTreeSelectedData">修改</vi-button> -->
+    
+</div>

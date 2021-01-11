@@ -1,0 +1,486 @@
+/* table中的checkbox去掉span的margini，强制居中 */
+.bg-rotate-loader {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    border: 5px solid #B8D0FA;
+    border-top-color: #0052EC;
+    border-radius: 50%;
+    animation: loader-rotate 1s linear infinite;
+}
+
+@keyframes loader-rotate {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.table-spin {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(255, 255, 255, .5);
+    justify-content: center;
+    align-items: center;
+}
+
+table.vue-table .ivu-checkbox-wrapper + span,
+table.vue-table .ivu-checkbox + span {
+    margin: 0;
+}
+
+table.vue-table thead > tr > th {
+    border: 1px solid #fff;
+    border-bottom: none;
+    position: relative;
+}
+
+table.vue-table thead > tr > th:last-child {
+    border-right-color: #eef3f5;
+}
+
+table.vue-table thead > tr > th:first-child {
+    border-left: 1px solid #eef3f5;
+}
+
+
+.vue-table .arrow {
+    opacity: 1;
+    position: relative;
+}
+
+.vue-table .arrow:after {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: block;
+    font-family: 'Glyphicons Halflings';
+    content: "\e150";
+}
+
+.vue-table .arrow.asc:after {
+    content: "\e155";
+}
+
+.table-panel {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.vue-table {
+    margin-bottom: 0;
+    max-height: 600px;
+    table-layout: fixed;
+}
+table .ivu-poptip-arrow {
+    display: none;
+}
+.table tbody tr {
+    height: 40px;
+}
+
+.table thead tr {
+    height: 40px;
+    background: #eef3f5;
+}
+
+.table tbody td {
+    border: 1px solid #eef3f5;
+}
+.table tbody tr td,
+.table tbody tr td span,
+.table tbody tr td div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.table tbody tr td div.textarea {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 14px;
+    word-break: break-all;
+}
+
+.table tbody tr td div.textarea-autoheight {
+    white-space: pre-line;
+    line-height: 24px;
+    word-break: break-all;
+    vertical-align: middle;
+    display: flex;
+}
+
+.table tbody tr td.text-link,
+.table tbody tr td span.text-link {
+    color: #56b5ff;
+    cursor: pointer;
+}
+
+.table thead tr th,
+.table tbody tr td {
+    padding: 0 5px 0 20px;
+    border-top: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.table thead tr th.padding-normal,
+.table tbody tr td.padding-normal {
+    padding-left: 5px;
+}
+
+/* checkbox居中问题  */
+
+.table thead tr th.cell-checkbox,
+.table tbody tr td.cell-checkbox {
+    padding-left: 5px !important;
+    text-align: center;
+}
+
+/* radio居中问题  */
+.table thead tr th.cell-radio,
+.table tbody tr td.cell-radio {
+    padding-left: 12px !important;
+    text-align: center;
+}
+
+.table thead th .resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 6px;
+    cursor: col-resize;
+}
+
+.resize-line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    z-index: 999;
+    cursor: col-resize;
+    background-color: #56b5ff;
+    visibility: hidden;
+}
+
+.table-resizing {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.table-resizing .resize-line {
+    visibility: visible;
+}
+
+
+
+.vue-table .arrow.dsc:after {
+    content: "\e156";
+}
+
+.vue-table .selected-row {
+    background-color: #fff6e8 !important;
+}
+
+.table thead.zero-height,
+.table thead.zero-height tr,
+.table thead.zero-height tr th {
+    height: 0;
+}
+
+.table-head-cell-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 5px;
+}
+.table-head-cell-text {
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+.table-head-cell-icon {
+    cursor: pointer;
+}
+
+
+.order-btn-group .order-btn {
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+.order-btn-group .order-btn-disabled {
+    cursor: not-allowed;
+    color: #bbbec4;
+}
+
+.order-btn-group .order-btn i.ivu-icon {
+    padding-right: 10px;
+}
+
+.order-btn-group {
+    padding-bottom: 10px;
+}
+
+.table-column-setting-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 10px;
+    cursor: pointer;
+    width: 17px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #eef3f5;
+    z-index: 1;
+}
+
+.table-column-setting-icon .ivu-poptip-rel {
+    left: 4px;
+}
+
+.table-column-setting-icon .dropdown-menu {
+    left: initial;
+    right: 0;
+}
+.table-striped > tbody > tr:nth-child(even) {
+    background-color: #fff;
+}
+
+/*菜单管理 1959 yyt*/
+
+.menuList .table tbody tr {
+    height: auto;
+}
+
+.text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-display-header th {
+    position: relative;
+}
+
+
+/*设置table heerad颜色*/
+
+.table-scroll .table-display-header-row {
+    background: #eef3f5;
+}
+
+.table-scroll .table-display-header {
+    overflow: hidden;
+    width: calc(100% - 20px);
+}
+
+/*对火狐浏览器table的兼容*/
+
+.table-scroll .table {
+    max-width: none;
+}
+
+/*设置table 最右边的下拉小图标*/
+
+.table-scroll .ivu-custom-select-dropdown .ivu-poptip-popper {
+    left: auto !important;
+    right: 12px;
+}
+
+/*table里面的icon间距*/
+
+.table-column-tools .ivu-icon {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.table-column-tools .ivu-icon:last-child {
+    margin-right: 0;
+}
+
+/*table里面单元格的自定义render的默认样式*/
+
+.vue-table.vue-cell-link {
+    cursor: pointer;
+    color: #69b4ff;
+}
+
+/*设置table 第一列的默认的宽度*/
+
+.table-scroll table tr th:first-child {
+    width: 60px;
+}
+
+.table-scroll table tr th.seq-num {
+    width: 30px !important;
+}
+
+
+.table-scroll-main-body > table > thead > tr > th,
+.table-fixed-left-body > table > thead > tr > th {
+    padding: 0 !important;
+}
+
+.table-content-box {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.userSelectModal .table-content-box {
+    border: 1px solid #c8c8c8;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.table-scroll-main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+    background-color: #eef3f5;
+}
+
+.table-fixed-left {
+    height: calc(100% - 17px);
+}
+
+.table-scroll-main-body {
+    overflow: auto;
+    width: 100%;
+    height: calc(100% - 40px);
+}
+
+.table-fixed-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    /*background-color: #fff;*/
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-fixed-shadow {
+    box-shadow: 4px 0 4px -2px rgba(0, 0, 0, .2);
+}
+
+.table-fixed-left-body {
+    overflow: hidden;
+}
+
+.table-fixed-left-header tr > th:last-child {
+    border-right: none;
+}
+
+.table-striped > tbody > tr.tr-mouseover {
+    background-color: #f5f5f5;
+}
+
+.table tbody tr td.seq-num {
+    padding: 0 !important;
+    text-align: center;
+    border-right: 1px solid #eee;
+}
+
+.ivu-modal-content .table-scroll-main-header {
+    padding-right: 16px;
+    background-color: #eef3f5;
+}
+
+.ivu-modal-content .table-scroll-main-body {
+    overflow-y: scroll;
+}
+
+/*底部分页组件样式*/
+.table-panel .table-panel-footer {
+    height: 48px;
+    padding-right: 20px;
+    border-top: 1px solid #f5f5f5;
+}
+
+.table-panel .table-panel-pager {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    float: right;
+}
+
+.fixed-table-card .table-content-box {
+    max-height: 441px;
+    overflow-y: auto;
+}
+
+/*这个class主要是针对于table组件中的自定义图标*/
+[class^="tableCustomIco"] {
+    margin-left: 12px;
+    cursor: pointer;
+}
+
+.tableCustomIco_Up {
+    position: relative;
+    top: -1px;
+}
+
+/*1136 task*/
+[class^="tableCustomIco"]:hover {
+    color: #33a6ff;
+}
+
+.table-head-cell-icon i:hover,
+.table-column-setting-icon i:hover {
+    color: #33a6ff;
+}
+
+
+.check-result-0 {
+    background-color: orangered;
+    color: #fff !important;
+    width: 60px;
+    text-align: center;
+    padding: 4px 0 2px;
+    border-radius: 3px;
+}
+.check-result-1 {
+    background-color: #1e9fff;
+    color: #fff !important;
+    width: 60px;
+    text-align: center;
+    padding: 4px 0 2px;
+    border-radius: 3px;
+}
+.check-result-2 {
+    border: 1px solid #e8e8e8;
+    width: 60px;
+    text-align: center;
+    padding: 4px 0 2px;
+    border-radius: 3px;
+}
+
+
+/*.table-select-box .ivu-select-dropdown{*/
+    /*position: static !important;*/
+    /*margin-bottom: 0;*/
+    /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);*/
+/*}*/
+/*.table-select-box .ivu-icon-arrow-down-b {*/
+    /*top: 15px;*/
+/*}*/

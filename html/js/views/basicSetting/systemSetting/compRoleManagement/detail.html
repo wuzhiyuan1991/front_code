@@ -1,0 +1,76 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  :label="$t('ori.perm.authCode')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.authName')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable">
+						<!--<iv-input :value.sync="disableLable" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<span>{{disableLable}}</span>
+					</el-form-item>
+
+				</el-form>
+			</simple-card>
+			
+			<!--<simple-card class="fip-content-item fixed-table-card">-->
+				<!--<p slot="title"><i class="basicPng"></i><span>{{$t("bs.orl.personnel")}}</span></p>-->
+				<!--&lt;!&ndash;<iv-input&ndash;&gt;-->
+						<!--&lt;!&ndash;slot="extra"&ndash;&gt;-->
+						<!--&lt;!&ndash;:value.sync="tableModel.userTableModel.keyWord"&ndash;&gt;-->
+						<!--&lt;!&ndash;icon="ios-search"&ndash;&gt;-->
+						<!--&lt;!&ndash;v-show="mainModel.showSearchInput"&ndash;&gt;-->
+						<!--&lt;!&ndash;@on-click="doFilter"&ndash;&gt;-->
+						<!--&lt;!&ndash;@on-enter="doFilter"&ndash;&gt;-->
+						<!--&lt;!&ndash;style="width: 300px;position: absolute;right: 120px;top: -5px;"&ndash;&gt;-->
+				<!--&lt;!&ndash;&gt;</iv-input>&ndash;&gt;-->
+				<!--&lt;!&ndash;<a slot="extra" v-if="mainModel.isReadOnly" @click.prevent="toggleSearchInput	">&ndash;&gt;-->
+					<!--&lt;!&ndash;<span v-show="!mainModel.showSearchInput"><Icon type="ios-search"></Icon>搜索</span>&ndash;&gt;-->
+					<!--&lt;!&ndash;<span v-show="mainModel.showSearchInput">折叠</span>&ndash;&gt;-->
+				<!--&lt;!&ndash;</a>&ndash;&gt;-->
+				<!--<a slot="extra" v-if="mainModel.isReadOnly" @click.prevent="doShowUserSelectModel" >-->
+					<!--<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>-->
+				<!--</a>-->
+				<!--<vue-bootstrap-table-->
+					<!--:url="tableModel.userTableModel.url"-->
+					<!--:columns="tableModel.userTableModel.columns"-->
+					<!--:show-empty-row="false"-->
+					<!--:use-default-global-filter="false"-->
+					<!--:lazy-load="true"-->
+					<!--@on-del-row="doRemoveUsers"-->
+					<!--:filter-key.sync="tableModel.userTableModel.keyWord"-->
+					<!--v-ref:user-table-->
+					<!--&gt;-->
+				<!--</vue-bootstrap-table>-->
+			<!--</simple-card>-->
+
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+ 		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+	</div>
+</div>
+
+<!--<user-select-modal :visible.sync="selectModel.userSelectModel.visible"  @do-save="doSaveUsers" :filter-data="selectModel.userSelectModel.filterData"></user-select-modal>-->
+

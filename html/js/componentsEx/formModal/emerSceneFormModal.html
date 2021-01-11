@@ -1,0 +1,43 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">-->
+						<!--<iv-input  :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('accidentType') == -1)" label="事故类型" prop="accidentType">
+						<!--<iv-textarea  style="min-height: 85px;width:100%;" :rows="8" :value.sync="mainModel.vo.accidentType" :readonly="mainModel.isReadOnly" ></iv-textarea>-->
+						<iv-input :rows="4" type="textarea" :value.sync="mainModel.vo.accidentType" :disabled="(disabledFields.indexOf('accidentType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('accidentScene') == -1)" label="事故发生的区域、地点或装置的名称" prop="accidentScene">
+						<iv-input :rows="4" type="textarea" :value.sync="mainModel.vo.accidentScene" :disabled="(disabledFields.indexOf('accidentScene') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+						<!--<iv-textarea :rows="4" type="textarea"  style="min-height: 85px;width:100%;" :rows="8" :value.sync="mainModel.vo.accidentScene" :readonly="mainModel.isReadOnly" ></iv-textarea>-->
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('timeAndInfluence') == -1)" label="事故发生的可能时间，事故的危害严重程度及其影响范围" prop="timeAndInfluence">
+						<iv-input :rows="4" type="textarea" type="textarea" :value.sync="mainModel.vo.timeAndInfluence" :disabled="(disabledFields.indexOf('timeAndInfluence') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+						<!--<iv-textarea type="textarea" style="min-height: 85px;width:100%;" :rows="8" :value.sync="mainModel.vo.timeAndInfluence" :readonly="mainModel.isReadOnly" ></iv-textarea>-->
+					</el-form-item>
+
+					<!--<el-form-item v-if="(hiddenFields.indexOf('emerCardId') == -1)" label="应急处置卡" prop="emerCard.id">-->
+						<!--<input-select :value="mainModel.vo.emerCard" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('emerCard') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowEmerCardSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+
+
+					<el-form-item v-if="(hiddenFields.indexOf('sign') == -1)" label="事故前可能出现的征兆" prop="sign">
+						<iv-input  :rows="4" type="textarea" :value.sync="mainModel.vo.sign" :disabled="(disabledFields.indexOf('sign') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+						<!--<iv-textarea  style="min-height: 85px;width:100%;" :rows="8" :value.sync="mainModel.vo.sign" :readonly="mainModel.isReadOnly" ></iv-textarea>-->
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('derivativeEvents') == -1)" label="事故可能引发的次生、衍生事故" prop="derivativeEvents">
+						<iv-input :rows="4" type="textarea" :value.sync="mainModel.vo.derivativeEvents" :disabled="(disabledFields.indexOf('derivativeEvents') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+						<!--<iv-textarea  style="min-height: 85px;width:100%;" :rows="8" :value.sync="mainModel.vo.derivativeEvents" :readonly="mainModel.isReadOnly" ></iv-textarea>-->
+					</el-form-item>
+
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<emercard-select-modal :visible.sync="selectModel.emerCardSelectModel.visible" :filter-data="selectModel.emerCardSelectModel.filterData" single-select @do-save="doSaveEmerCard"></emercard-select-modal>

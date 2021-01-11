@@ -1,0 +1,23 @@
+<Modal :visible.sync="visible" :title="title" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content" style="background-color: #fff;">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+
+                <el-form-item  label="审核结果" prop="result">
+                    <iv-radio-group :model.sync="mainModel.vo.result">
+                        <iv-radio value="1">通过</iv-radio>
+                        <iv-radio value="2">退回</iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item  label="审批意见" prop="remark">
+                    <iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.remark"></iv-input>
+                </el-form-item>
+            </el-form>
+
+
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+        </div>
+    </div>
+</Modal>

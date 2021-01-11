@@ -1,0 +1,58 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<!--epc-content-row-space 控制每一行的间距-->
+			<simple-card class="fip-content-item epc-content-row-space">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  :label="$t('gb.common.caseName')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item   :label="$t('gb.common.contentDesInfo')" prop="content">
+						<!--<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly" :rows="4" type="textarea"></iv-input>-->
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.content" :width="380" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+
+				</el-form>
+			</simple-card>
+			<simple-card class="fip-content-item" :show-content.sync="isShowCardContent" v-if="mainModel.opType != 'create'">
+				<p slot="title"><i class="basicPng"></i><span>{{$t("bc.hal.enclosure")}}</span></p>
+
+				<image-list-simple-card :remark="$t('gb.common.picture')" class="fip-content-sub-item" :data="fileModel.rightPic.data" :config="fileModel.rightPic.cfg" :readonly="!hasAuth('edit')"> </image-list-simple-card>
+
+				<video-list-simple-card :remark="$t('gb.common.video')" class="fip-content-sub-item" :data="fileModel.wrongPic.data" :config="fileModel.wrongPic.cfg" :readonly="!hasAuth('edit')"> </video-list-simple-card>
+
+				<file-list-simple-card :remark="$t('gb.common.ReferenceMatery')" class="fip-content-sub-item" :data="fileModel.referMater.data" :config="fileModel.referMater.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-card>
+
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')"  type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+	<img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+	<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+
+

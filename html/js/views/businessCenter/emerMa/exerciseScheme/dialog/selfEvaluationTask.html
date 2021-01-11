@@ -1,0 +1,55 @@
+
+<div class="simple-card-head-padding-0">
+    <simple-card class="fip-content-item" style="background:#fff;width:1218px;margin-left:0px;" >
+        <!--<p slot="title"><i class="basicPng"></i><span>演练物资</span></p>-->
+        <p slot="title"><i class="basicPng"></i><span style="font-size:16px;">参演人员自评结果</span></p>
+        <!--<div @click="openWindow">打开</div>-->
+        <!-------人员种类 按钮------>
+        <!--<div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;">-->
+            <!--<ul style="display: inline-flex;">-->
+                <!--<li v-for="(index, item) in status"-->
+                    <!--class="lr-layout-li"-->
+                    <!--:class="{'checked': index === statusIndex}"-->
+                    <!--style="width: 100px;text-align: center;"-->
+                    <!--@click="doChangeStatus(index)">-->
+                    <!--<span style="font-size: 14px;">{{item.name}}</span>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <div class="main-special-box-1" style="float:none;padding-bottom: 10px;">
+            <a v-for="(index, item) in status" @click="doChangeStatus(index)" :style="statusIndex == index?'color:#33A6FF;margin-right:10px':'color:#666;margin-right:10px'" :class="{'checked': statusIndex === '0'}" class="main-special-item" href="javascript:void(0);">{{item.name}}</a>
+            <!--<a @click="doChangeInsider(1)" :style="insiderIndex == 1?'color:#33A6FF;':'color:#666;'" :class="{'checked': insiderIndex === '1'}" class="main-special-item"  href="javascript:void(0);">外部人员</a>-->
+        </div>
+        <vue-bootstrap-table
+                :setting="tableModel.selfEvaluationTaskTableModel"
+                @on-click-cell="onClickRow"
+                v-ref:selfevaluationtask-table
+                :values.sync="taskList"
+        >
+        </vue-bootstrap-table>
+    </simple-card>
+</div>
+
+
+<self-evaluation-detail v-ref:self-evaluation :visible.sync="dialogModel.selfEvaluationDetail.visible"  :vo="mainModel.vo"></self-evaluation-detail>
+
+<!-----   文件相关  ----->
+<vue-file-upload
+        v-ref:uploader
+        style="display: none;"
+        :multi-selection="true"
+        :params="uploadModel.params"
+        @on-before-upload="doUploadBefore"
+        @on-success-upload="doUploadSuccess"
+        @on-upload-complete="onUploadComplete"
+        :filters="uploadModel.filters">
+</vue-file-upload>
+
+<style>
+    .simple-card-head-padding-0 .simple-card-head{
+        padding:0 !important;
+    }
+</style>
+
+
+

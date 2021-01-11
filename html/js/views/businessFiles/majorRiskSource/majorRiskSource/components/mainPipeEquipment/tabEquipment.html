@@ -1,0 +1,92 @@
+<div class="flex-layout child-h100 h100">
+    <div class="mr10">
+        <base-according
+                style="min-height: 200px"
+                class="mr10"
+                :width="130"
+                :values="tabData"
+                first-text-align="center"
+                :current-index.sync="tabCurrentIndex"></base-according>
+    </div>
+    <div class="flex-layout-vertical">
+        <p class="link-ele flex-v-center" style="height: 32px">
+            <icon class="mr5" type="plus" @click="doAddEquipment">添加</icon>
+        </p>
+        <!--style h:50px 让其高度 flex 布局计算，-->
+        <div class="flex-grow1 over-auto" style="height: 50px">
+            <div class="bip-content base-border mb20 pdb20" v-for="(index,item) of data"
+                 v-show="tabCurrentIndex==0||index===tabCurrentIndex-1">
+                <div class="flex-layout-between">
+                    <span class="bg-gray square">{{index+1}}</span>
+                    <span class="link-ele bg-gray flex-v-center pdh10">
+                <icon @click="doEditEquipment(item)" type="edit" class="mr20">编辑</icon>
+                <icon @click="doDelEquipment(item)"   type="trash-a">删除</icon>
+            </span>
+                </div>
+                <el-form class="bip-content-form width-auto-ipt  elform-item-nopadleft pdh20">
+                    <div class="flex-layout ml20-between formitem-inline">
+                        <el-form-item label="设备名称">
+                            <iv-input :value.sync="item.name" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="数量">
+                            <iv-input :value.sync="item.quantity" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="规格型号">
+                            <iv-input :value.sync="item.specification" textonly></iv-input>
+                        </el-form-item>
+                    </div>
+                    <div class="flex-layout ml20-between formitem-inline">
+                        <el-form-item label="储存介质">
+                            <iv-input :value.sync="item.storageMedium" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="生产厂家">
+                            <iv-input :value.sync="item.manufacturer" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="出厂日期">
+                            <span class="el-form-item">{{item.productionDate.substr(0,10)}}</span>
+                            <!--                    <date-picker format="yyyy-MM-dd" :selected-date.sync="item.productionDate"></date-picker>-->
+                        </el-form-item>
+                    </div>
+                    <div class="flex-layout ml20-between formitem-inline">
+                        <el-form-item label="所属部门">
+                            <iv-input  :value="getDataDic('org', item.orgId)['deptName']" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="属地">
+                            <iv-input :value.sync="item.dominationArea&&item.dominationArea.name?item.dominationArea.name:''" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="">
+                            <span></span>
+                        </el-form-item>
+                    </div>
+                </el-form>
+                <div class="pdh20">
+                    <div class="flex-layout-between base-title-h">
+                        <span style="font-size: 14px;font-weight: 700">安全附件</span>
+                        <span class="link-ele"><icon class="mr5" type="plus"
+                                                     @click="doAddAttachment(item)">添加</icon></span>
+                    </div>
+                    <vue-bootstrap-table
+                            :setting="tableModel.attachment"
+                            :show-pager="false"
+                            :show-filter="false"
+                            :page-size-opts="[200]"
+                            :values="item.equipmentItems"
+                            @on-del-row="doDelAttachment"
+                            @on-edit-row="doEditAttachment"
+                            @on-move-row="doMoveAttachment"
+                            v-ref:attachment-tables
+                    >
+                    </vue-bootstrap-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<modal-equipment
+        @on-success="saveEquipmentSuccessAfter"
+        v-ref:dialog-equipment></modal-equipment>
+
+<modal-safe-attachment
+        @on-success="saveEquipmentSuccessAfter"
+        v-ref:dialog-safe-attachment></modal-safe-attachment>
+

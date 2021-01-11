@@ -1,0 +1,35 @@
+<Modal v-if="load" :title="title" :visible.sync="visible" :footer-hide="true" :width="600">
+    <div class="edit-pop-container">
+        <div class="epc-content repair-popper">
+            <el-form class="fip-content-item width-auto-ipt">
+                <el-form-item class="is-required" label="作业类型">
+                    <div class="flex-layout" style="justify-content: space-between">
+                        <div class="">
+                            <i-select @on-change="clearPtw" :model.sync="selWorkCatalogIndex" style="width:209px" :list="workCatalogList">
+                                <i-option v-for="(index,item) in workCatalogList"  :value="index">{{item.name}}</i-option>
+                            </i-select>
+                        </div>
+                        <div class="" v-if="levelList&&levelList.length>0">
+                            <i-select @on-change="clearPtw" :disabled="disabled"  :model.sync="selLevelIndex" size="small" style="width:209px" :list="levelList">
+                                <i-option v-for="(index,item) in levelList"  :value="index">{{item.name}}</i-option>
+                            </i-select>
+                        </div>
+                    </div>
+                </el-form-item>
+                <el-form-item label="作业票">
+                    <input-select :value="selWorkCard" id-field="id" :display-func="showValue" display-field="id" @click="doOpenSelPtwModel" ></input-select>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+    </div>
+    <ptw-work-card-select-modal
+        single-select :visible.sync="selectModel.ptwWorkCard.visible"
+        :filter-data="selectModel.ptwWorkCard.filterData" @do-save="doSavePtwWorkCard">
+    </ptw-work-card-select-modal>
+</Modal>

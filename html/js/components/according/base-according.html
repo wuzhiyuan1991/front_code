@@ -1,0 +1,26 @@
+<ul   :class="boxClass" class="border-t-l-b" :style="{'min-width':isNaN(width)?width:width+'px','width':isNaN(width)?width:width+'px'}">
+    <li class="lr-layout-li" style="border-left:1px solid #ddd;border-bottom: 1px solid #ddd;height:32px;position: relative;font-size: 14px"
+        v-for="(index,item) of values"
+        :class="{'checked': index ===selectedIndex}"
+        :style="getStyle(index,item)"
+        @click="doSelectItem(index,item)"
+    >
+        <span style="max-width:100%;" class="ellipsis inline-block" :title="getName(item)">{{getName(item)}}</span>
+    </li>
+</ul>
+
+<style>
+    .border-t-l-b{
+        height: 100%;
+        /*border-bottom: 1px solid #ddd;*/
+        /*border-left:1px solid #ddd;*/
+        border-top:1px solid #ddd;
+        text-align: left;
+        max-height: calc(100% - 24px);
+        overflow: auto;
+    }
+    .border-t-l-b-right{
+        border-right:1px solid #ddd;
+
+    }
+</style>

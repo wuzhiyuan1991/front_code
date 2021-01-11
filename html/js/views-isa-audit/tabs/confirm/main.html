@@ -1,0 +1,159 @@
+<div class="review-container">
+    <!-- 要素树 -->
+    <div class="review-left">
+        <div class="title">要素标准审核表</div>
+        <div class="tree-box">
+            <ul class="member-select-left-tree" style="margin-top: 5px;height: calc(100% - 50px);" v-show="treeModel.data.length > 0">
+                <iv-tree show-icon :model="treeModel.data" :selected-datas.sync="treeModel.selectedData" :show-checkbox="false" :single-select="true" :trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick" display-attr="elementName"></iv-tree>
+            </ul>
+        </div>
+    </div>
+    <!-- 审核项 -->
+    <div class="review-right" v-show="treeModel.data.length > 0" v-el:right-box>
+        <div class="top-head">
+            <Icon type="ios-photos"></Icon>
+            <span>审核</span>
+            <div class="right">
+                <iv-button @click.stop="doAudit('15')" style="margin-right: 4px;" v-if="!hasExamine && !mainModel.statistics" type="ghost">{{$t("gb.common.examine")}}
+                </iv-button>
+                <iv-button @click.stop="doAudit('10')" style="margin-right: 4px;" v-if="hasExamine && !mainModel.statistics" type="ghost">{{$t("bc.ria.abandoned")}}
+                </iv-button>
+                <iv-button @click.stop="doSave" style="margin-right: 4px;" v-if="!hasExamine" type="ghost">{{$t("gb.comnon.save")}}
+                </iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <!--<p slot="title"><i class="basicPng"></i><span>{{$t("gb.common.basicInfo")}}</span></p>-->
+
+        <div class="top-body" v-el:right-content>
+            <div class="table-box">
+                <div v-for="(ix,group) in groups.children" class="review-item" :id="group.id">
+                    <div class="review-item-title group-name">
+                        <Icon style="color: #ff9b32;margin-right: 5px;vertical-align: middle;" :size="18" type="document-text"></Icon>
+                        <span style="margin-right: 10px">{{group.elementName}}</span>
+                    </div>
+                    <div v-for="(index,item) in group.children" class="review-item">
+                        <div class="review-item-title">
+                            <span style="margin-right: 10px">{{item.elementName}}</span>
+                        </div>
+                        <table class="table mytranstablexx" style="table-layout: fixed;">
+                            <colgroup>
+                                <col style="width: 50px;">
+                                <col>
+                                <col>
+                                <col style="width: 100px;">
+                                <col style="width: 50px;">
+                                <col style="width: 70px;">
+                                <col style="width: 230px;">
+                                <col style="width: 110px;">
+                                <col style="width: 140px;">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>审核项内容</th>
+                                <th>评分说明</th>
+                                <th>评分标准</th>
+                                <th class="text-align-r">分值</th>
+                                <th>审核人</th>
+                                <th>评分意见</th>
+                                <th>实际得分</th>
+                                <th>附件</th>
+                            </tr>
+                            </thead>
+                            <tbody v-for="(idx, groupItem) in item.children">
+                            <tr>
+                                <td>{{idx + 1}}</td>
+                                <td>{{{replaceReturnKey(groupItem.elementName)}}}</td>
+                                <td>{{{replaceReturnKey(groupItem.remark)}}}</td>
+                                <td>{{displayCriterion(groupItem.auditElement.auditCriterion)}}</td>
+                                <td class="text-align-r">{{isNotItem(groupItem.auditElement) ? '/' :groupItem.auditElement.score}}</td>
+                                <td>{{showOwnerName(groupItem)}}</td>
+                                <td class="input-td" style="height: 0;">
+                                    <!--<textarea v-show="hasExamine" v-model="groupItem.comment"></textarea>-->
+                                    <textarea :readonly="hasExamine" @input="doChangPage" onpropertychange= "this.style.posHeight=this.scrollHeight" class="textarea-comments" style="height: 100%;border-radius: 5px;border:1px solid #ddd;padding:5px;" v-show="hasExamine" v-model="groupItem.comment"></textarea>
+
+                                    <div style="white-space: normal ;white-space: normal ;" v-show="!hasExamine">{{groupItem.comment}}</div>
+                                </td>
+                                <td class="input-td">
+                                    <div  v-show="!groupItem.children||groupItem.children.length===0">
+                                    <iv-input-number   @on-change="doChangPage" v-if="!isNotItem(groupItem.auditElement)" class="showIconBtnToDelIvInputNumber" v-show="!groupItem.children" :readonly="hasExamine" :max="groupItem.auditElement.score" :min="0" :value.sync="groupItem.actScore"></iv-input-number>
+                                    <span  v-else>
+                                        <span v-if="hasExamine">{{groupItem.attr1?'合格':'不合格'}}</span>
+                                        <span  v-else>是否合格<iv-checkbox  class="ml5" :checked.sync="groupItem.attr1"  @on-change="doChangPage"></iv-checkbox></span>
+                                    </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="files-box" v-for="(findex, file) in groupItem.files" v-show="file.dataType !== 'S3'">
+                                        <a :title="file.orginalName" :href="convertFilePath(file)">{{file.orginalName}}</a>
+<!--                                        <Icon type="close" @click=doDeleteFile(file.id,findex,groupItem)></Icon>-->
+                                    </div>
+<!--                                    <vue-file-upload v-if="!hasExamine" v-show="groupItem.files.length < 9" custom-style :params="uploadModel.params" :params-render="uploadModel.paramsRender" @on-success-upload="doUploadSuccess" :filters="uploadModel.filters">-->
+<!--                                        <a href="javascript:void(0);" @click="setRecordId(groupItem)">上传</a>-->
+<!--                                    </vue-file-upload>-->
+                                </td>
+                            </tr>
+                            <tr class="sub-item-tr" v-for="itemSet in groupItem.children">
+                                <td></td>
+                                <td>-&nbsp;{{{replaceReturnKey(itemSet.elementName)}}}</td>
+                                <td>{{{replaceReturnKey(itemSet.remark)}}}</td>
+                                <td>{{displayCriterion(itemSet.auditElement.auditCriterion)}}</td>
+                                <td class="text-align-r">{{isNotItem(itemSet.auditElement) ? '/' :itemSet.auditElement.score}}</td>
+                                <td>{{showOwnerName(itemSet)}}</td>
+                                <td class="input-td" style="height: 0px;">
+                                    <!--<textarea v-show="hasExamine" v-model="itemSet.comment"></textarea>-->
+                                    <textarea  :readonly="hasExamine" @input="doChangPage" style="height: 100%;border-radius: 5px;border:1px solid #ddd;padding:5px;" onpropertychange= "this.style.posHeight=this.scrollHeight" v-show="hasExamine" class="textarea-comments" style="height: 100%;display: block;"  v-model="itemSet.comment"></textarea>
+                                    <div style="white-space: normal;white-space: normal;" v-show="!hasExamine">{{itemSet.comment}}</div>
+                                </td>
+                                <td class="input-td">
+                                    <div  v-show="!itemSet.children||itemSet.children.length===0">
+                                    <iv-input-number  @on-change="doChangPage" v-if="!isNotItem(itemSet.auditElement)" class="showIconBtnToDelIvInputNumber" :readonly="hasExamine" :value.sync="itemSet.actScore" :max="itemSet.auditElement.score" :min="0"></iv-input-number>
+                                    <span  v-else>
+                                        <span v-if="hasExamine">{{itemSet.attr1?'合格':'不合格'}}</span>
+                                        <span  v-else>是否合格<iv-checkbox class="ml5"   @on-change="doChangPage"  :checked.sync="itemSet.attr1" ></iv-checkbox></span>
+                                    </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="files-box" v-for="(findex, file) in itemSet.files" v-show="file.dataType !== 'S3'">
+                                        <a :title="file.orginalName" :href="convertFilePath(file)">{{file.orginalName}}</a>
+<!--                                        <Icon type="close" @click=doDeleteFile(file.id,findex,itemSet)></Icon>-->
+                                    </div>
+<!--                                    <vue-file-upload v-if="!hasExamine" v-show="itemSet.files.length < 9" custom-style :params="uploadModel.params" :params-render="uploadModel.paramsRender" @on-success-upload="doUploadSuccess" :filters="uploadModel.filters">-->
+<!--                                        <a href="javascript:void(0);" @click="setRecordId(itemSet)">上传</a>-->
+<!--                                    </vue-file-upload>-->
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="review-right" v-show="treeModel.data.length === 0">
+        <p class="empty-tip">没有需要确认的项</p>
+    </div>
+</div>
+
+
+<style>
+    .mytranstablexx td{
+        white-space: normal !important;
+        word-break: break-all !important;
+        text-overflow: clip !important;
+    }
+    .showIconBtnToDelIvInputNumber{
+        display: block;
+    }
+    .textarea-comments {
+        width:100%;/*自动适应父布局宽度*/
+        overflow:auto;
+        word-break:break-all;/*在ie中解决断行问题(防止自动变为在一行显示，主要解决ie兼容问题，ie8中当设宽度为100%时，文本域类容超过一行时，当我们双击文本内容就会自动变为一行显示，所以只能用ie的专有断行属性“word-break或word-wrap”控制其断行)*/
+    }
+    .review-container .table tbody tr td,.review-container .table  tr th{
+        padding: 0;
+        padding: 5px 10px;
+    }
+</style>

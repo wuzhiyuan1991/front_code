@@ -1,0 +1,41 @@
+<div class="flex-layout" style="min-height: 150px;">
+     <div>
+         <div class="flex-layout-between">
+             <span style="font-size: 14px;font-weight: 700">公共</span>
+             <span class="link-ele"><icon class="mr5" type="plus"  @click="doAdd('common')">新增</icon></span>
+         </div>
+         <div>
+             <vue-bootstrap-table
+                     :setting="tableModel.info"
+                     :show-pager="true"
+                     :show-filter="false"
+                     @on-del-row="doDel"
+                     @on-edit-row="doEditCommon"
+                     @on-click-cell="doClickCellCommon"
+                     :values.sync="data.safetyEvaluationCommon"
+             >
+             </vue-bootstrap-table>
+         </div>
+     </div>
+ </div>
+<div class="flex-layout" style="min-height: 150px;">
+    <div>
+        <div class="flex-layout-between">
+            <span style="font-size: 14px;font-weight: 700">其他</span>
+            <span class="link-ele"><icon class="mr5" type="plus"  @click="doAdd('other')">新增</icon></span>
+        </div>
+        <div>
+            <vue-bootstrap-table
+                    :setting="tableModel.info"
+                    :show-pager="true"
+                    :show-filter="false"
+                    @on-del-row="doDel"
+                    @on-edit-row="doEdit"
+                    @on-click-cell="doClickCellOther"
+                    :values.sync="data.safetyEvaluation"
+            >
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+ <dialog-form v-ref:dialog-form  @on-success="saveAfter"></dialog-form>

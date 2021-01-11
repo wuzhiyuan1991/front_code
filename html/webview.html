@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--<script src="js/libs/rem/rem.js" ></script>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!--<link rel="stylesheet" href="https://unpkg.com/mint-ui@1/lib/style.css" />-->
+    <!--&lt;!&ndash; 引入组件库 &ndash;&gt;-->
+    <!--<script src="https://unpkg.com/mint-ui@1/lib/index.js"></script>-->
+    <script src="js/libs/jquery/jquery-2.0.3.min.js"></script>
+
+
+    <style type="text/css">
+        .m-toast-pop {display: none; position: fixed; width: 100%;top: 0;bottom: 0;right: 0;overflow: auto;text-align: center;}
+        .m-toast-inner {position: absolute;left:50%;top:50%;width: 100%; transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);text-align: center;}
+        .m-toast-inner-text{display: inline-block;margin: 0 22px; padding: 19px 21px;font-size: 16px;color: #FFFFFF;letter-spacing: 0;line-height: 22px;background: rgba(0,0,0,0.72);border-radius: 10px;}
+    </style>
+
+    <style>
+        /**{*/
+            /*-webkit-overflow-scrolling : touch*/
+        /*}*/
+        input, select, span{
+            background:  #f7f7f6;;
+        }
+        span{
+            font-size: 0.36rem;
+            color: rgb(51, 51, 51);
+            font-family: "Arial Normal", Arial;
+            display: inline-block;
+            width: auto !important;
+            text-align: left !important;
+        }
+        input[type='checkbox']{
+            width: 0.36rem;
+            height: 0.36rem;
+        }
+        input:focus{ outline:none; }
+        .myrow{
+            width:100%;
+            font-size: 0.3rem;
+            border:1px solid;
+        }
+        .myrow input{
+            border: none;
+            border-bottom:1px solid #123;
+        }
+        .groupItem{
+            /* border: 1px solid #e9e9e9; */
+            margin-bottom: 0.2rem
+        }
+        .riskSubmitBtn{
+            font-size: 0.32rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0rem;
+            color: #fff;
+            width: 96%;
+            display: flex;
+            justify-content: center;
+            background: #278dde;
+        }
+        .riskSubmitBtn div{
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 0.15rem;
+        }
+        .inClass{
+            border: none;
+            border-bottom: 1px solid red;
+            width: 100px;
+            /*color: #666;*/
+            font-size: 0.28rem;
+            padding:0.05rem 0.2rem;
+            text-align: center;
+            display: inline;
+            line-height: 0.3rem;
+        }
+        .h5-style{
+            background: #4086cc;
+            margin: 0;
+            color: #fff;
+            font-size: 0.3rem;
+            width: 100%;
+            /* overflow: hidden; */
+            /* white-space: nowrap; */
+            /* text-overflow: ellipsis; */
+            padding: 0.08rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .groupItemBody {
+            line-height: 0.6rem;
+            font-size: 0.28rem;
+            padding: 0.1rem;
+            background:  #f7f7f6;
+            position: relative;
+        }
+        #webview{
+            font-size: 0.25rem;
+            height: 90vh;
+            /*height: calc(100% + 1px);*/
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding-bottom: 0.8rem;
+            -webkit-overflow-scrolling : touch;
+        }
+        .check{
+            /*rdisplay: inline-flex !important;*/
+            display: inline !important;
+            align-items: center;
+            flex-wrap: wrap
+        }
+        .check span{
+            display: inline-flex;
+            align-items: center;
+        }
+        input[disabled]{color:#123;opacity:1}
+        .maskBorder{
+            background: rgba(0,0,0,0.2);
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .maskContent{
+            background: #fff;
+            font-size: 0.32rem;
+            text-align: center;
+            padding: 0.2rem;
+            border-radius: 0.1rem;
+            width: 5.5rem;
+            margin: 3.5rem auto;
+        }
+        .maskContentInfo{
+            min-height: 2rem;
+            border-bottom: 1px solid #ddd;
+            border-top: 1px solid #ddd;
+        }
+        .maskBtns{
+            margin-top:0.1rem;
+            display: flex;
+        }
+        .maskBtns-btn1, .maskBtns-btn2{
+            width:2.75rem;
+            border-right:1px solid #ddd;
+        }
+        .maskTitle{
+            padding-bottom: 0.1rem;
+        }
+        .input_date, .inputOperator{
+            font-size: 0.3rem;
+            padding:0.05rem 0.2rem;
+            text-align: center;
+            display: inline;
+            line-height: 0.3rem;
+        }
+        .inputOperatorImg{
+            width:0.6rem;
+            /*height:0.4rem;*/
+            padding-top:0.15rem;
+            display: inline-block;
+        }
+        .inputOperatorImg img{
+            width:100%;
+        }
+        .maskBg{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: rgba(204,204,204,0.5);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="webview" style="font-size: 0.28rem;height: 90vh;overflow-y: scroll;overflow-x: hidden;padding-bottom: 0.8rem;">
+
+    </div>
+
+    <div id="yongtu" style="font-size: 25px;display:none;" >55555</div>
+    <!--<div id='chenggong'  style='font-size:25px;position: fixed;top:100px;'></div>-->
+    <div class='riskSubmitBtn' id='pageBottom' >
+        <div  id='submitBtn'  onclick="showConfirm()"> 提交 </div>
+        <!--<div  id='submitBtn' style="display: none;" onclick="submitHtml()"> 提交 </div>-->
+        <!--<div  id='previewBtn' onclick="netPage(-1)"> 上一组 </div>-->
+        <!--<div  id='nextBtn'  onclick="netPage(1)"> 下一组 </div>-->
+    </div>
+    <div id="maskBorder" class="maskBorder"  style="display: none;">
+        <div class="maskContent">
+            <div class="maskTitle">提示</div>
+            <div class="maskContentInfo">确认提交研判内容？</div>
+            <div class="maskBtns">
+                <div class="maskBtns-btn1"   onclick="closeConfirm()" >取消</div>
+                <div style="color:#33a6ff;width:2.75rem;" onclick="submitHtml(1)" >确定</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signImg" class="maskBorder"  style="display: none;">
+        <div class="maskContent">
+            <div class="maskTitle">提示</div>
+            <div class="maskContentInfo">确认修改签名？</div>
+            <div class="maskBtns">
+                <div class="maskBtns-btn1"   onclick="closeConfirm()" >取消</div>
+                <div style="color:#33a6ff;width:2.75rem;" onclick="gotoSignImg()" >确定</div>
+            </div>
+        </div>
+    </div>
+
+<div id="m-toast-pop" class="m-toast-pop">
+    <div class="m-toast-inner"><div class="m-toast-inner-text" id="m-toast-inner-text">复制成功</div></div>
+</div>
+
+</body>
+
+    <script>
+       var groups = [];
+       var itemIndex = -1;
+       var nowPageStatus = 0;     // 判断是否是下属上报
+       var fromAppJson = {};
+       var yy = '{"code":"FCPYDEN5W1","compId":"f13tafbx19","createBy":"NILL","createDate":"2019-05-31 15:09:55","deleteFlag":0,"disable":0,"id":"fhbr03axr7","isComplete":1,"isrJudgmentLevelVos":[{"id":"fcmg9aesfr","levelName":"层级二","levelOrder":"2"},{"id":"fcmh2z4hyn","levelName":"层级三","levelOrder":"3"}],"levelName":"管理层","orgId":"f13tafbx19","ratedCompleteDate":"2019-05-31 10:00:00","riskJudgmentId":"fcok7qg8ai","riskJudgmentLevelId":"fcok7yfwrx","riskJudgmentUnitId":"fcomh864od","riskNum":0,"subordinateIds":"eitm3wrjz9","subordinateNum":1,"unitName":"AF 注释掉发s","user":{"code":"eitm3wrjz8","compId":"fa128yuad6","createDate":"2019-05-31 17:46:13","deleteFlag":0,"disable":0,"id":"eitm3wrjz8","leaderId":"1113TU001","loginName":"lanm","loginType":0,"mobile":"15728565671","name":"蓝明","nickname":"蓝明","orgId":"fa12ecg42z","status":0,"type":0,"username":"蓝明"},"userId":"eitm3wrjz8"}'
+
+       var oldGroups=[];
+       var isIos = false;
+       var baseUrl = window.location.protocol + "//" +window.location.host + "/";
+       var isShowsubmit = 0;
+       var promiseObj ={}; //承诺
+       var promiseContent = {};
+
+       // 获取签名
+       function getAsignFile() {
+            $.ajax({
+                url:baseUrl +"file/list?recordId="+fileId + '&FileType=FXYP&DateType=FXYP5',
+                success:function (res) {
+
+                }
+            })
+       }
+
+       // 这个方法app自行调用
+        function initData(arg, arg2, isIosType) {
+            if((typeof arg) == "string"){
+                fromAppJson = JSON.parse(arg);
+            }else{
+                fromAppJson = arg;
+            }
+            $.ajax({
+                url:baseUrl+ "riskjudgmenttask/"+fromAppJson.id,
+                success:function(res){
+                    initHtml(res.content, arg2, isIosType)
+                }
+            })
+        }
+
+       function initPromise (val) {
+           if(fromAppJson.isComplete == 1){
+               promiseObj  = JSON.parse(fromAppJson.riskTemplateConfig.content);
+               promiseObj.content = fromAppJson.promiseContent;
+
+               if(nowPageStatus == 0){
+                   promiseContent = deel(promiseObj,2)
+               }else if(nowPageStatus == 2){
+                   promiseContent = deel(promiseObj,2)
+               }else{
+                   promiseContent = deel(promiseObj,-1)
+               }
+           }else{
+               promiseObj = JSON.parse(val.promiseContent);
+               if(nowPageStatus == 0){
+                   promiseContent = deel(promiseObj,2)
+               }else if(nowPageStatus == 2){
+                   promiseContent = deel(promiseObj,2)
+               }else{
+                   promiseContent = deel(promiseObj,-1)
+               }
+           }
+           var str ="<div class='groupItem'><h5 class='h5-style'>"+fromAppJson.levelName+"承诺</h5><div class='groupItemBody' >" + promiseContent;
+           str+="</div></div>"
+//           $("#yongtu").html(val.promiseContent)
+           $("#webview").append(str);
+       }
+
+       function initHtml(arg, arg2, isIosType) {
+           nowPageStatus = arg2;  // 下属上报标志
+
+           if(isIosType == 1){
+               isIos =  true;
+           }
+
+           try{
+               if((typeof arg) == "string"){
+                   fromAppJson = JSON.parse(arg);
+               }else{
+                   fromAppJson = arg;
+               }
+           }catch (e){
+           }
+           if(fromAppJson.isComplete == 1){
+               $.ajax({
+                   url:baseUrl+ "riskjudgmenttaskdetail/list?riskJudgmentTaskId=" + fromAppJson.id ,
+                   success:function(res){
+                       oldGroups = res.content;
+                       initGroup(res.content)
+
+                       selectToHtml(-1)
+                       initPromise(fromAppJson);
+                   }
+               });
+
+               return ;
+           }
+
+           $.ajax({
+               url:baseUrl+"riskjudgmentrecord/task/" + fromAppJson.id ,
+               success:function(res){
+
+                   oldGroups = res.content;
+
+                   var arr = res.content.riskJudgmentRecordDetails;
+                   for(var i=0 ; i<arr.length; i++) {
+                       if(arr[i].riskTemplateConfig){
+                           var itemcontent = JSON.parse(arr[i].itemContent);
+                           arr[i].riskTemplateConfig.content = arr[i].itemContent;
+                           arr[i].itemContent = itemcontent.content;
+                           arr[i].itemContent = itemcontent.content;
+                       }
+                   }
+                   initGroup(arr);
+                   selectToHtml(-1);
+                   initPromise(res.content);
+               }
+           })
+       }
+
+       // 调试的时候用修改yy 里面的id即可 getTaskList测试用
+    //   getTaskList();
+       function getTaskList(){
+           b = JSON.parse(yy);
+           fromAppJson = b;
+           // 2 已完成
+           if(fromAppJson.isComplete == 2){
+               $.ajax({
+                   url:baseUrl+ "riskjudgmentrecord/task/" + fromAppJson.id ,
+                   success:function(res){
+                       oldGroups = res.content;
+
+//                       getAsignFile();
+
+                       var arr = res.content.riskJudgmentRecordDetails;
+                       for(var i=0 ; i<arr.length; i++) {
+                           if(arr[i].riskTemplateConfig){
+                               var itemcontent = JSON.parse(arr[i].itemContent);
+                               arr[i].riskTemplateConfig.content = arr[i].itemContent;
+                               arr[i].itemContent = itemcontent.content;
+                               arr[i].itemContent = itemcontent.content;
+                           }
+                       }
+                       initGroup(arr)
+                       selectToHtml(-1)
+                   }
+               });
+               return ;
+           }
+
+            $.ajax({
+                url:baseUrl+ "riskjudgmenttaskdetail/list?riskJudgmentTaskId="+fromAppJson.id,
+                success:function(res){
+                    oldGroups = res.content;
+                    initGroup(res.content)
+                    selectToHtml(-1)
+                    uploadAutographFileSuccess('',"input_operator_633901093")
+
+                }
+            })
+        }
+
+        // 更改遮罩
+        function initMask() {
+            for(var i=0; i<groups.length; i++){
+                if(groups[i] && groups[i].allExclude==1){
+                    $('.maskBg').eq(i).show()
+                }else
+                    $('.maskBg').eq(i).hide()
+            }
+        }
+
+       function changeBtnStatus(){
+           if((itemIndex == -1 && nowPageStatus == 0 && fromAppJson.isComplete == '1' )|| (itemIndex == -1 && nowPageStatus == 2 && fromAppJson.isComplete == '1') ){
+               document.getElementById("submitBtn").setAttribute("style","display:block");
+           }else if(fromAppJson.isComplete == '2' || nowPageStatus !=0 ){
+               document.getElementById("submitBtn").setAttribute("style","display:none");
+           }
+           else{
+               document.getElementById("submitBtn").setAttribute("style","display:none");
+           }
+       }
+
+       // 通过发送消息更新头部
+        function updateHeader(title, hasDialog, hideRightBtn, dialogDataJson ) {
+           
+           var title1, hasDialog1=0, hideRightBtn1=null, dialogDataJson1={};
+           if(title) title1=title;
+           if(hasDialog) hasDialog1 = hasDialog;
+           if(hideRightBtn) hideRightBtn1 = hideRightBtn;
+           if(dialogDataJson) dialogDataJson1 = dialogDataJson;
+ 
+           if(isIos){
+               var result ={
+                   title:title1,
+                   toolBarStyle:hasDialog1,
+                   rightText:hideRightBtn1,
+                   dialogDataJson: dialogDataJson1
+               }
+               window.webkit.messageHandlers.refreshTitleBar.postMessage(JSON.stringify(result));
+           }else{
+               JsToAndroid.refreshTitleBar(title1, hasDialog1,  (dialogDataJson1), hideRightBtn1 );
+           }
+        }
+
+        // 将dom字符串编译成obj
+       function toMyAttemplate(str, itemIndex){
+           if(str && str=='') return {content:''};
+
+           var textObj={};
+           var template = str;
+           // 去除div符号
+           while(template.indexOf("<div>")>-1 || template.indexOf("</div>")>-1){
+               template = template.replace("<div>", "");
+               template = template.replace("</div>", "");
+           }
+           var index = 0;
+           // 过滤下拉框
+           while(template.indexOf("<select")>-1){
+               var iEle =  document.getElementById("webview").getElementsByTagName("select");
+               var opt = iEle[index].getElementsByTagName("option");
+               var obj = {};
+               obj.list = [];
+               for(var i=0; i<opt.length; i++){
+                   obj.list.push(opt[i].innerHTML);
+               }
+               obj.class = iEle[index].className;
+               obj.id = iEle[index].id;
+               obj.value = iEle[index].value;
+               obj.name = iEle[index].name;
+               template = template.replace(/<select.+?\/select>/, "{templateSelect_"+iEle[index].id+"}");
+               textObj[obj.id] = obj;
+               index++;
+           }
+
+           // 过滤多选框
+           index=0;
+           while(template.indexOf("mycheckBox")>-1){
+               var obj = {};
+               var iEle = document.getElementById("webview").getElementsByTagName("p");
+               var opt = iEle[index].getElementsByTagName("input");
+               obj.list = [];
+               obj.value = [];
+               for(var i=0; i<opt.length; i++){
+                   obj.list.push(opt[i].value);
+                   if(opt[i].checked == true || opt[i].checked == 'true'){
+                       obj.value.push(opt[i].value);
+                   }
+               }
+               obj.class = iEle[index].className;
+               obj.id = iEle[index].id;
+               obj.name = iEle[index].name;
+               template = template.replace(/<p .+?mycheckBox.+?\/p>/, "{templateCheck_"+iEle[index].id+"}");
+               textObj[obj.id] = obj;
+               index++;
+           }
+           // 过滤输入框
+           index=0;
+           while( template.indexOf("<span")>=0 && template.indexOf("mycheckBox")<0){
+               var obj ={};
+//               var iEle = document.getElementById("webview").getElementsByTagName("input");
+               var iEle = $($(".groupItemBody")[itemIndex]).find('[name="myInput"]');
+
+               if(itemIndex == 4){
+                   obj.class = iEle[index].className;
+               }
+
+               obj.id = iEle[index].id;
+               obj.value = iEle[index].value;
+               obj.value = iEle[index].innerHTML;
+               obj.name = iEle[index].name;
+               template = template.replace(/<span.+?name.+?>.+?<\/span>/, "{input_"+iEle[index].id+"}");
+               textObj[obj.id] = obj;
+               index++;
+           }
+           textObj.content = template;
+           return textObj;
+       }
+
+        function selectToHtml(val){
+           var arr = [];
+            if(val == -1){
+                arr = groups;
+                itemIndex = -1;
+                toHtmlList(arr)
+                changeBtnStatus();
+                initMask();
+
+                if(nowPageStatus==0){
+                    updateHeader("执行细则",1);
+                }else if(nowPageStatus == 1){
+                    updateHeader("下级上报", 0);
+                }else if(nowPageStatus == 2){
+                    updateHeader("执行细则", 1);
+                }
+            }else{
+                itemIndex =  val;
+                groups[val].content = deel(groups[val].textObj, val);
+                arr.push(groups[val]);
+                toHtmlList(arr);
+                changeBtnStatus();
+                initMask();
+
+                var titleList =[];
+                for(var i=0;i<oldGroups.length; i++){
+                    titleList.push({'name':oldGroups[i].groupName,'index':i})
+                }
+                var str = + (parseInt(itemIndex) + 1)  +"/"+oldGroups.length;
+                updateHeader(groups[itemIndex].name, 2, str, JSON.stringify(titleList));
+            }
+       }
+
+        function showList() {
+            initGroup(res.content);
+            toHtmlList();
+        }
+
+        // 保存填写内容
+       function getVal(textObj) {
+           for(var item in textObj){
+               if(item.indexOf("control")>-1){
+                  textObj[item].value =  $("#"+textObj[item].id).html();
+                  if(textObj[item].class == 'input_date'){
+                      var now = new Date();
+                      textObj[item].value = now.getFullYear() + " 年"+ (parseInt(now.getMonth())+1) + ' 月' + now.getDate() + " 日"
+                  }
+               }else if(item.indexOf("myBox")>-1){
+                   textObj[item].value = [];
+                   var childs = $("#"+textObj[item].id).find("[type='checkBox']");
+                   for(var i=0;i<childs.length; i++){
+                       if($(childs[i]).is(':checked')){
+                           textObj[item].value.push($(childs[i]).val());
+                       }
+                   }
+
+               }
+           }
+       }
+
+       // 提交弹框
+       function  showConfirm() {
+//           document.getElementById("maskBorder").style="display:block";
+           var riskJudgmentRecordDetails = [];
+
+           var eles = $(".groupItem .groupItemBody");
+           var isTrue = true;
+           var dataInfo = [];
+
+           for(var i=0; i<groups.length; i++){
+               getVal(groups[i].textObj)
+           }
+
+           for(var i=0; i<groups.length;i++){
+               var obj = {};
+               obj = groups[i].textObj;
+               obj.content = oldGroups[i].itemContent;
+               dataInfo.push(obj);
+           }
+
+           getVal(promiseObj);
+           dataInfo.push(promiseObj);
+           for(var i=0; i<dataInfo.length; i++){
+               if(oldGroups[i] && oldGroups[i].allExclude == 1) continue;
+               if(dataInfo[i]){
+                   for(var item in dataInfo[i]){
+                       if(item == "content"){
+                           continue;
+                       }
+                       if(dataInfo[i][item].value && dataInfo[i][item].value.length>0 && dataInfo[i][item].value!=''){
+                           continue;
+                       }else{
+                           isTrue = false;
+                       }
+                   }
+               }
+           }
+
+           if(!isTrue) {
+               $('#m-toast-inner-text').text('信息尚未填写完整');
+               $('#m-toast-pop').fadeIn();
+               setTimeout(function() {
+                   $('#m-toast-pop').fadeOut();
+               }, 2000);
+               return;
+           }
+
+           $('#maskBorder').fadeIn();
+       }
+       function closeConfirm() {
+//           document.getElementById("maskBorder").style="display:none";
+           $('#maskBorder').fadeOut();
+           $('#signImg').fadeOut();
+       }
+
+       // 签名上传完成时候回调
+       function uploadAutographFileSuccess(fileId, type) {
+            for(var item in promiseObj){
+                if(item == "content"){
+                    continue;
+                }
+                if(promiseObj[item].id && promiseObj[item].id == type){
+                    promiseObj[item].fileId =  fileId;
+                    promiseObj[item].value = fileId;
+                }
+            }
+
+            if(type && fileId){
+                var a = parseInt(Math.random() * 100000)
+                $("#"+type).html("<img class='inputOperatorImg' src='"+baseUrl+"file/image/"+fileId+"/scale？indexx="+a+"' />").css("border","none")
+            };
+       }
+
+       // 弹出签名框签名
+       function gotoSign(id) {
+
+           var fileId = '';
+           for(var item in promiseObj){
+               if(item == "content"){
+                   continue;
+               }
+               if(promiseObj[item].id && promiseObj[item].id == id && promiseObj[item].fileId){
+                    fileId = promiseObj[item].fileId;
+               }
+           }
+ 
+           // 添加跳转
+           if(isIos){
+               window.webkit.messageHandlers.autograph.postMessage(JSON.stringify({relId:fromAppJson.id,typeId:id, srcFileId:fileId}));
+               return ;
+           }
+           JsToAndroid.autograph(fromAppJson.id, id, fileId);
+       }
+
+        // 提交
+        function submitHtml(uploadImg) {
+            closeConfirm();
+            var riskJudgmentRecordDetails = [];
+
+            var eles = $(".groupItem .groupItemBody");
+            var isTrue = true;
+            var dataInfo = [];
+
+            for(var i=0; i<groups.length; i++){
+                getVal(groups[i].textObj)
+            }
+
+            for(var i=0; i<groups.length;i++){
+                var obj = {}
+                obj = groups[i].textObj;
+                obj.content = oldGroups[i].itemContent;
+                dataInfo.push(obj);
+            }
+
+            getVal(promiseObj);
+
+            dataInfo.push(promiseObj)
+            for(var i=0; i<dataInfo.length; i++){
+                if(oldGroups[i] && oldGroups[i].allExclude == 1) continue;
+                if(dataInfo[i]){
+                    for(var item in dataInfo[i]){
+                        if(item == "content"){
+                            continue;
+                        }
+                        if(dataInfo[i][item].value && dataInfo[i][item].value.length>0 && dataInfo[i][item].value!=''){
+                            continue;
+                        }else{
+                            isTrue = false;
+                        }
+                    }
+                }
+            }
+
+            if(!isTrue) {
+                $('#m-toast-inner-text').text('信息尚未填写完整');
+                $('#m-toast-pop').fadeIn();
+                setTimeout(function() {
+                    $('#m-toast-pop').fadeOut();
+                }, 2000);
+                return;
+//                console.log("存在未填写项");
+            }
+
+            for(var i=0; i<dataInfo.length-1; i++){
+
+                var str = '';
+                var objText = {};
+
+                str = JSON.stringify(dataInfo[i]);
+                // 因为dataInfo包含了承诺的内容 oldGroups有溢出
+                if(oldGroups[i] && oldGroups[i].allExclude){
+                    var allExclude = oldGroups[i].allExclude;
+                }else if(oldGroups[i] && oldGroups[i].allExclude==0){
+                    var allExclude = 0;
+                }
+                else{
+                    var allExclude = 3;
+                }
+                var obj = {
+                    riskJudgmentTaskId:fromAppJson.id,
+                    groupId:oldGroups[i].groupId,
+                    groupName: oldGroups[i].groupName,
+                    riskAssessLevelId:fromAppJson.riskJudgmentLevelId,
+                    lastTemplateConId:oldGroups[i].lastTemplateConId,
+                    itemContent:str,
+                    allExclude:allExclude,
+                    groupOrderNo: oldGroups[i].groupOrderNo
+                };
+                riskJudgmentRecordDetails.push(obj);
+            }
+
+            var npromiseContent = JSON.stringify(dataInfo[i]);
+
+            $.ajax({
+                url:baseUrl + "riskjudgmentrecord",
+                type:"POST",
+                dataType: "json",
+                processData:false,
+                contentType: "application/json",
+                data:JSON.stringify({
+                    compId:fromAppJson.compId,
+                    judgmentTaskId:fromAppJson.id,
+                    userId:fromAppJson.userId,
+                    riskJudgmentLevelId:fromAppJson.riskJudgmentLevelId,
+                    riskJudgmentUnitId:fromAppJson.riskJudgmentUnitId,
+                    riskJudgmentRecordDetails: (riskJudgmentRecordDetails),
+                    promiseContent:npromiseContent
+                }),
+                success:function (res) {
+                    if(isIos){
+                        window.webkit.messageHandlers.finishTask.postMessage("oaiau");
+                    }else{
+                        JsToAndroid.finishTask();
+                    }
+                }
+            })
+        }
+
+        function changeItem(val){
+            getHtmlText(); // 保存当前数据
+            itemIndex = val;
+            selectToHtml(itemIndex)
+       }
+
+
+       function netPage(val) {
+
+            getHtmlText(); // 保存当前数据
+            itemIndex = parseInt(itemIndex);
+            if(val > 0){
+                itemIndex += parseInt(1);
+            }else{
+                itemIndex -= parseInt(1);
+            }
+            if(itemIndex>=groups.length){
+                itemIndex = -1;
+            }else if(itemIndex < 0){
+                itemIndex = -1;
+            }
+
+            selectToHtml(itemIndex);
+
+       }
+
+       // 获取当前项  groupItemBody
+       function getHtmlText() {
+            var index = itemIndex;
+
+
+             var obj = toMyAttemplate($(".groupItemBody").eq(0).html());
+
+             groups[index].content = deel(obj, -1);
+             groups[index].textObj = obj;
+
+       }
+
+       function changeCheckBoxValue(index, val, that){
+            var isCheck = $(that).prop("checked");
+           
+            if(isCheck){
+                if(val == 1){
+                    if($(".groupItem").eq(index).find("input").eq(1).prop("checked")){
+                        $(".groupItem").eq(index).find("input").eq(1).prop("checked", false);
+                    }
+                }else if(val == 0){
+                    if($(".groupItem").eq(index).find("input").eq(0).prop("checked")){
+                        $(".groupItem").eq(index).find("input").eq(0).prop("checked", false);
+                    }
+                }
+                oldGroups[index].allExclude = val;
+                groups[index].allExclude = val;
+            }
+            if(!isCheck){
+                if(val == 1){
+                    if(!$(".groupItem").eq(index).find("input").eq(1).prop("checked")){
+                        $(".groupItem").eq(index).find("input").eq(1).prop("checked", true);
+                    }
+                    oldGroups[index].allExclude = 0;
+                    groups[index].allExclude = 0;
+                }else if(val == 0){
+                    if(!$(".groupItem").eq(index).find("input").eq(0).prop("checked")){
+                        $(".groupItem").eq(index).find("input").eq(0).prop("checked", true);
+                    }
+                    oldGroups[index].allExclude = 1;
+                    groups[index].allExclude = 1;
+                }
+            }
+
+            initMask();
+       }
+
+        function toHtmlList(arr) {
+            var str = ''
+            for(var i =0; i<arr.length; i++){
+                str+="<div class='groupItem' data-val='"+i+"' ><h5  class='h5-style'>"+arr[i].name;
+                if(arr[i].allExclude!=3){
+                    if(fromAppJson.isComplete == 2){
+                        str+=arr[i].allExclude==1?'（不涉及）':'（涉及）';
+                    }else{
+                        if(nowPageStatus!=1){
+                            str+="<input type='checkbox'  value='1' onchange='changeCheckBoxValue("+i+",this.value, this);return false;' />不涉及";
+                            str+="<input type='checkbox' checked=true value='0' onchange='changeCheckBoxValue("+i+",this.value, this);return false;' />涉及";
+                        }else{
+                            str+="<input disabled=true type='checkbox'  value='1' onchange='changeCheckBoxValue("+i+",this.value, this);return false;' />不涉及";
+                            str+="<input disabled=true type='checkbox' checked=true value='0' onchange='changeCheckBoxValue("+i+",this.value, this);return false;' />涉及";
+                        }
+                    }
+                }
+                str+="</h5>";
+
+                str+="<div class='groupItemBody'><div class='maskBg'></div>" + arr[i].content +"</div>" +"</div>";
+            }
+            document.getElementById("webview").innerHTML = str;
+
+            $(".groupItemBody span").unbind('keyup').bind('keyup', function(){
+                $(this).width(textWidth($(this).val()));
+                if($(this).val().length>0){
+                    $(this).css("border-color","blue");
+                }else{
+                    $(this).css("border-color","red");
+                }
+            });
+            $("[type='checkBox']").unbind('click').bind('click', function () {
+                $(this).parent().parent().css("border-color", "red")
+                var childs = $(this).parent().parent().find("[type='checkBox']");
+                for(var i=0;i<childs.length; i++){
+                    if($(childs[i]).is(':checked')){
+                        $(this).parent().parent().css("border-color", "blue")
+                    }
+                }
+
+            })
+
+
+//            if(itemIndex==-1 && nowPageStatus==0 && fromAppJson.isComplete == 1){
+//                $(".groupItem").click(function() {
+//                    itemIndex = parseInt(this.getAttribute("data-val"));
+//                    selectToHtml(itemIndex);
+//                    return false;
+//                })
+//            }
+        }
+
+       function textWidth(val) {
+           if(val !='' && val.length>0){
+               return ((val.length + 2) *12) +"px"
+           }
+           return ''
+       }
+
+        function initGroup(valArr){
+            var arr = valArr;
+            groups = [];
+            
+            for(var i=0; i<arr.length; i++){
+                var obj = {name: '', content:' ', textObj:null};
+                var o ={};
+                obj.name = arr[i].groupName;
+               
+                if((fromAppJson.isComplete == 2 && arr[i].allExclude) || (fromAppJson.isComplete == 2 && arr[i].allExclude==0)){
+                    obj.allExclude = arr[i].allExclude
+                }
+                else if(arr[i].allExclude==1 && fromAppJson.isComplete == 1){
+                    obj.allExclude = 0;
+                    oldGroups[i].allExclude = 0;
+                }else{
+                    obj.allExclude = 3;
+                    if(oldGroups[i]) oldGroups[i].allExclude = 3;
+                }
+                
+                obj.id = arr[i].id;
+                if(arr[i].itemContent) o.content = arr[i].itemContent;
+                else o.content = '';
+                if(valArr[i].riskTemplateConfig && arr[i].riskTemplateConfig.content!=''){
+                    var temp = JSON.parse(arr[i].riskTemplateConfig.content);
+                    for(var item in temp){
+                        o[item] = temp[item];
+                    }
+                }
+                
+                if(nowPageStatus == 0){
+                    obj.content = deel(o,2) //,arr[i].allExclude
+                }else if(nowPageStatus == 2){
+                    obj.content = deel(o,2)
+                }else{
+                    obj.content = deel(o,-1)
+                }
+                obj.textObj = o;
+                groups.push(obj);
+            }
+        }
+
+       function deel(textObj, status, allExclude) {
+            var template = textObj.content;
+            var isDisable = '';
+            var val = status;
+            if(val ==-1 || fromAppJson.isComplete == 2 || allExclude==1){
+                 isDisable = 'disabled'
+            }
+            if(template == '') return '';
+            for(var item in textObj){
+                if(item == "content") continue;
+
+                // 过滤input
+                if(template.indexOf("{input_"+textObj[item].id+"}")>-1){
+                    var textVal = textObj[item].value?textObj[item].value:'';
+                    if(fromAppJson.isComplete == 2 || val==-1 || allExclude==1){
+                        var str = "<label  class='"+textObj[item].class+"' style='min-width:1rem;border:none;' >"+textVal+"</label>"
+                        var order = '{input_'+item +"}";
+
+                        if(textObj[item].class == "inputOperator" && textObj[item].fileId){
+                            str = "<span ><img class='inputOperatorImg' src='"+baseUrl+"file/image/"+textObj[item].fileId+"/scale'/></span>";
+                        }
+
+                    }else if(fromAppJson.isComplete == 1 && val!=-1 && allExclude!=1){
+                        if( textObj[item].class == "inputOperator"){
+                            var str = "<span placeholder='请输入' onclick='gotoSign(this.id)' style='border-color:red;text-align: right;border-bottom:1px solid red;'  value='"+textObj[item].value+"' id='"+textObj[item].id+"' name='"+textObj[item].name+"' class='"+textObj[item].class+"' >" +
+                                "" +
+                                "</span>";
+                        }else if(textObj[item].class == "input_date"){
+                            var now = new Date();
+                            str = "<span id='"+textObj[item].id+"' name='"+textObj[item].name+"' class='"+textObj[item].class+"' >"+ now.getFullYear() + " 年"+ (parseInt(now.getMonth())+1) + ' 月' + now.getDate() + " 日"+"</span>"
+                            textObj[item].value = now.getFullYear() + " 年"+ (parseInt(now.getMonth())+1) + ' 月' + now.getDate() + " 日";
+                        }
+
+                        else{
+                            var str = "<span  contenteditable value='"+textObj[item].value+"' style='width:1rem;padding:auto 0.1rem;border-bottom:1px solid red;' id='"+textObj[item].id+"' name='"+textObj[item].name+"' class='"+textObj[item].class+"'  ></span>"
+
+                        }
+
+                        var order = '{input_'+item +"}";
+                    }
+                    template = template.replace(order, str);
+                }
+                // 过滤select
+                if(template.indexOf("templateSelect_"+textObj[item].id)>-1){
+
+                    var str = "<select  "+isDisable+" value='"+textObj[item].value+"' id='"+textObj[item].id+"' name='";
+                    str+= textObj[item].name+"' class='"+textObj[item].class+"' >"
+                    str+= "<option>"+textObj[item].value+"</option>"
+                    for(var i=0; i<textObj[item].list.length; i++){
+                        if(textObj[item].list[i] == textObj[item].value) continue;
+                        str+= "<option>"+textObj[item].list[i]+"</option>"
+                    }
+                    str+="</select>"
+                    var order = '{templateSelect_'+textObj[item].id+"}";
+                    template = template.replace(order, str);
+                }
+                // 过滤多选框
+                if(template.indexOf("templateCheck_"+textObj[item].id)>-1){
+
+                    var str = "<p class='"+textObj[item].class+"'" + "name='mycheckBox' id='"+textObj[item].id+"'  style='display: inline-flex;align-items: center;flex-wrap: wrap;'>";
+                    for(var i=0; i<textObj[item].list.length;i++){
+                        if(checkUserEdit(textObj[item].value,textObj[item].list[i]) >-1){
+                            str+=  textObj[item].list[i] + "<input "+isDisable+" type='checkBox' value='"+textObj[item].list[i]+"'  checked=true />" ;
+                        }else{
+                            str+=  textObj[item].list[i] + "<input "+isDisable+" type='checkBox' value='"+textObj[item].list[i]+"'/> " ;
+                        }
+                        // var order = 'templateSelect_'+textObj[item].id;
+                    }
+                    str+="</p>";
+                    var order = '{templateCheck_'+textObj[item].id+"}";
+                    template = template.replace(order, str);
+                }
+            }
+            return template;
+        }
+
+       function  checkUserEdit(arg1, arg2) {
+            var a = -1;
+           for(var i=0; i<arg1.length; i++){
+               if(arg1[i] == arg2){
+                   a = 1;
+               }
+           }
+           return a;
+        }
+
+//        window.onload = function () {
+//           // 插入文本
+////            window.onhashchange = hashChangeFire;
+////            function hashChangeFire(val) {
+////                console.log(val)
+////            }
+//
+//        }
+
+
+       window.onload = function(){
+           /*720代表设计师给的设计稿的宽度，你的设计稿是多少，就写多少;100代表换算比例，这里写100是
+             为了以后好算,比如，你测量的一个宽度是100px,就可以写为1rem,以及1px=0.01rem等等*/
+           getRem(750,100)
+       };
+       window.onresize = function(){
+           getRem(750,100)
+       };
+       function getRem(pwidth,prem){
+           var html = document.getElementsByTagName("html")[0];
+           var oWidth = document.body.clientWidth || document.documentElement.clientWidth;
+           html.style.fontSize = oWidth/pwidth*prem + "px";
+       }
+
+       // cookie相关操作方法
+       function setCookie(name,value)
+       {
+           var Days = 30;
+           var exp = new Date();
+           exp.setTime(exp.getTime() + Days*24*60*60*1000);
+           document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+       }
+
+       //读取cookies
+       function getCookie(name)
+       {
+           var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+
+           if(arr=document.cookie.match(reg))
+
+               return unescape(arr[2]);
+           else
+               return null;
+       }
+
+       //删除cookies
+       function delCookie(name)
+       {
+           var exp = new Date();
+           exp.setTime(exp.getTime() - 1);
+           var cval=getCookie(name);
+           if(cval!=null)
+               document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+       }
+    </script>
+</html>

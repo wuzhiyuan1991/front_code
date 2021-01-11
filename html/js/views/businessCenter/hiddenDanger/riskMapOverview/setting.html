@@ -1,0 +1,30 @@
+<div class="sw-risk-map" style="overflow: hidden;height: 100%;" @click="onBoxClick" v-el:container>
+    <div style="height: 100%;position: absolute;z-index: 5;width: 100%;user-select: none;opacity: 0;"
+         @mousedown="onmousedown" @click="onMaskClick" v-el:mask></div>
+
+    <div style="will-change: transform;width: 1920px; height: 1080px;position: relative;" v-el:box>
+        <canvas width="1920" height="1080" v-el:canvas class="front-canvas"></canvas>
+    </div>
+
+    <Modal :visible.sync="showBox" title="修改配置" :footer-hide="true">
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form>
+                    <el-form-item label="所属公司" prop="orgId">
+                        <company-tree-select :id.sync="vo.orgId"></company-tree-select>
+                    </el-form-item>
+                    <el-form-item label="X坐标" prop="x">
+                        <iv-input :value.sync="vo.x"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="Y坐标" prop="y">
+                        <iv-input :value.sync="vo.y"></iv-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doGoTo" class="pull-right">修改详细配置</vi-button>
+        </div>
+    </Modal>
+</div>

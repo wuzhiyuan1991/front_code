@@ -1,0 +1,202 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+				<div v-show="validText" class="status-rect-tag" :class="validClassNames" style="margin-left: 50px;">{{validText}}</div>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+				<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="证书类型" prop="certType.id" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.certTypeId" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<input-select :value="mainModel.vo.certType" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowCertTypeSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="持有机构" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="证件编号" prop="idNumber" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.idNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="领证日期" prop="issueDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.issueDate"></date-picker>
+						<iv-input v-else :value="displayIssueDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="生效日期" prop="effectiveDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.effectiveDate"></date-picker>
+						<iv-input v-else :value="displayEffectiveDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="失效日期" prop="expiryDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.expiryDate" :begin="mainModel.vo.effectiveDate"></date-picker>
+						<iv-input v-else :value="displayExpiryDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="发证机构" prop="certifyingAuthority" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.certifyingAuthority" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+
+					<el-form-item label="作业类别" prop="jobClass" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.jobClass" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="操作项目" prop="jobContent" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.jobContent" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="地址信息" prop="address" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.address" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="负责人" prop="principals" class="small-info-box" >
+						<multiple-input-select
+								:selected-multiple.sync="mainModel.vo.principals"
+								:textonly="mainModel.isReadOnly"
+								@on-click="doShowPrincipalSelectModal"
+						></multiple-input-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="证件周期复审" prop="isRecheckRequired" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('itm_cert_is_recheck_required', mainModel.vo.isRecheckRequired) }}</span>
+						<!--<i-select v-else :model.sync="mainModel.vo.isRecheckRequired" :list="getDataDicList('itm_cert_is_recheck_required')" clearable></i-select>-->
+						<iv-radio-group v-else :model.sync="mainModel.vo.isRecheckRequired" @on-change="changeCheckedRequired">
+							<iv-radio :value="item.id" v-for="item in checkRequiredList">
+								<span>{{item.value}}</span>
+							</iv-radio>
+						</iv-radio-group>
+					</el-form-item>
+					<div v-if="mainModel.vo.isRecheckRequired === '1'">
+						<el-form-item label="复审周期" prop="retrialCycle" class="small-info-box" >
+							<iv-input :value.sync="mainModel.vo.retrialCycle" type="number" :textonly="mainModel.isReadOnly">
+								<span slot="append">月</span>
+							</iv-input>
+						</el-form-item>
+						<el-form-item label="复审提前提醒时间" prop="noticeMonthsInAdvance" class="small-info-box" >
+							<iv-input :value.sync="mainModel.vo.noticeMonthsInAdvance" type="number" :textonly="mainModel.isReadOnly">
+								<span slot="append">月</span>
+							</iv-input>
+						</el-form-item>
+						<el-form-item label="复审提前通知人员" prop="users" class="small-info-box" >
+							<multiple-input-select
+									:selected-multiple.sync="mainModel.vo.users"
+									:textonly="mainModel.isReadOnly"
+									@on-click="doShowUserSelectModal(3)"
+							></multiple-input-select>
+						</el-form-item>
+					</div>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="证书上传" prop="cloudFiles" class="small-info-box" >
+						<ul>
+							<li v-for="(index, file) in mainModel.vo.cloudFiles" class="cert-file-item" @click="doViewImages(index)">
+								<div class="cert-file-name">{{file.orginalName}}</div>
+								<Icon type="close-circled" v-if="!mainModel.isReadOnly" @click.stop="removeFile(file.id, index)"></Icon>
+							</li>
+						</ul>
+						<a @click="uploadClicked" v-if="!mainModel.isReadOnly && mainModel.vo.cloudFiles.length < 9" href="javascript:void(0);"  class="form-upload-href">上传文件</a>
+					</el-form-item>
+					<el-form-item  label="备注" prop="remark" class="small-info-box-2span" >
+						<iv-input :value.sync="mainModel.vo.remark" type="textarea" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<!--
+				<iv-row class="bip-content-item">
+
+					<el-form-item label="证书状态" prop="status" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('itm_cert_status', mainModel.vo.status) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('itm_cert_status')" clearable></i-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="关联培训任务" prop="trainTaskId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.trainTaskId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+-->
+			</el-form>
+		</div>
+
+		<image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+
+		<vue-file-upload
+				v-ref:uploader
+				style="display: none;"
+				:multi-selection="false"
+				:params="uploadModel.params"
+				@on-before-upload="doUploadBefore"
+				@on-success-upload="doUploadSuccess"
+				@on-upload-complete="onUploadComplete"
+				:filters="uploadModel.filters">
+		</vue-file-upload>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}" v-show="showCertretrialCard">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.certRetrialCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>证书复审记录</span></p>
+				<a slot="extra" @click.prevent="cardModel.certRetrialCardModel.showContent = !cardModel.certRetrialCardModel.showContent;" >
+					<span v-if="cardModel.certRetrialCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCertRetrialFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.certRetrialTableModel"
+					show-seq
+					@on-del-row="doRemoveCertRetrials"
+					@on-edit-row="doShowCertRetrialFormModal4Update"
+					@on-click-cell="clickedTableRow"
+					v-ref:certretrial-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+	</div>
+
+
+</div>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUsers"></user-select-modal>
+<course-select-modal :visible.sync="selectModel.courseSelectModel.visible" :filter-data="selectModel.courseSelectModel.filterData" single-select @do-save="doSaveCourse"></course-select-modal>
+<certtype-select-modal :visible.sync="selectModel.certTypeSelectModel.visible" :filter-data="selectModel.certTypeSelectModel.filterData" single-select @do-save="doSaveCertType"></certtype-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible2" :filter-data="selectModel.userSelectModel.filterData" @do-save="doSaveUsers"></user-select-modal>
+<user-select-modal :visible.sync="selectModel.principalSelectModel.visible" :filter-data="selectModel.principalSelectModel.filterData" @do-save="doSavePrincipals"></user-select-modal>
+
+<certretrial-form-modal
+		:visible.sync="formModel.certRetrialFormModel.show"
+		:cert-id="mainModel.vo.id"
+		@do-save="doUpdateCertRetrial"
+		@do-update="doUpdateCertRetrial"
+		:query-url="formModel.certRetrialFormModel.queryUrl"
+		:hidden-fields="formModel.certRetrialFormModel.hiddenFields"
+		v-ref:certretrial-form-modal>
+</certretrial-form-modal>
+
+

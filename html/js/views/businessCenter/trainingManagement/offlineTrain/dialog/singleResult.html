@@ -1,0 +1,121 @@
+<Modal :visible.sync="visible" :title="mainModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <!--结果表单-->
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform v-if="showVoForm">
+
+                <el-form-item label="培训结果" prop="status">
+                    <iv-radio-group :model.sync="mainModel.vo.status" @on-change="changeStatus">
+                        <iv-radio value="2">通过</iv-radio>
+                        <iv-radio value="1">不通过</iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item label="通过时间" prop="trainDate" v-if="mainModel.vo.status === '2'">
+                    <date-picker  format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.trainDate"></date-picker>
+                </el-form-item>
+
+                <el-form-item v-show="isCertRequired">
+                    <iv-checkbox :checked.sync="isFillCertInformation" :disabled="mainModel.vo.status === '1'" @on-change="changeCertInformation">填写培训通过对应的取证（证书）信息</iv-checkbox>
+                </el-form-item>
+            </el-form>
+
+            <!--证书表单-->
+            <el-form v-if="showCertVoForm" :model="mainModel.certVo" :rules="mainModel.certRules" v-ref:certruleform >
+                <el-form-item label="证书类型" prop="certType.id">
+                    <!--<iv-input :value.sync="mainModel.vo.certTypeId"></iv-input>-->
+                    <input-select :value="mainModel.certVo.certType" id-field="id" display-field="name" @click="doShowCertTypeSelectModal" ></input-select>
+                </el-form-item>
+                <el-form-item label="持有人" prop="user.id" class="small-info-box">
+                    <iv-input disabled :value="mainModel.certVo.user.name"></iv-input>
+                    <!--<input-select :value="mainModel.vo.user" id-field="id" display-field="name" @click="(!mainModel.isReadOnly) && (doShowUserSelectModal(2))" ></input-select>-->
+                </el-form-item>
+                <el-form-item label="关联课程" prop="relCourse.id">
+                    <iv-input disabled :value="mainModel.certVo.course.name"></iv-input>
+                    <!--<input-select :value="mainModel.vo.course" id-field="id" display-field="name" clearable @click="(!mainModel.isReadOnly) && (doShowCourseSelectModal())" ></input-select>-->
+                </el-form-item>
+                <el-form-item label="证件编号" prop="idNumber">
+                    <iv-input :value.sync="mainModel.certVo.idNumber"></iv-input>
+                </el-form-item>
+                <el-form-item label="作业类别" prop="jobClass">
+                    <iv-input :value.sync="mainModel.certVo.jobClass"></iv-input>
+                </el-form-item>
+                <el-form-item label="操作项目" prop="jobContent">
+                    <iv-input :value.sync="mainModel.certVo.jobContent"></iv-input>
+                </el-form-item>
+                <el-form-item label="领证日期" prop="issueDate">
+                    <date-picker format="yyyy-MM-dd" :selected-date.sync="mainModel.certVo.issueDate"></date-picker>
+                </el-form-item>
+                <el-form-item label="生效日期" prop="effectiveDate">
+                    <date-picker format="yyyy-MM-dd" :selected-date.sync="mainModel.certVo.effectiveDate"></date-picker>
+                </el-form-item>
+                <el-form-item label="失效日期" prop="expiryDate">
+                    <date-picker format="yyyy-MM-dd" :selected-date.sync="mainModel.certVo.expiryDate" :begin="mainModel.vo.effectiveDate"></date-picker>
+                </el-form-item>
+                <el-form-item label="发证机构" prop="certifyingAuthority">
+                    <iv-input :value.sync="mainModel.certVo.certifyingAuthority"></iv-input>
+                </el-form-item>
+                <el-form-item label="证件周期复审" prop="isRecheckRequired">
+                    <!--<i-select v-else :model.sync="mainModel.vo.isRecheckRequired" :list="getDataDicList('itm_cert_is_recheck_required')" clearable></i-select>-->
+                    <iv-radio-group :model.sync="mainModel.certVo.isRecheckRequired" @on-change="changeCheckedRequired">
+                        <iv-radio :value="item.id" v-for="item in checkRequiredList">
+                            <span>{{item.value}}</span>
+                        </iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <div v-if="mainModel.certVo.isRecheckRequired === '1'">
+                    <el-form-item label="复审周期" prop="retrialCycle">
+                        <iv-input :value.sync="mainModel.certVo.retrialCycle" type="number">
+                            <span slot="append">月</span>
+                        </iv-input>
+                    </el-form-item>
+                    <el-form-item label="复审提前提醒时间" prop="noticeMonthsInAdvance">
+                        <iv-input :value.sync="mainModel.certVo.noticeMonthsInAdvance" type="number">
+                            <span slot="append">月</span>
+                        </iv-input>
+                    </el-form-item>
+                    <el-form-item label="复审提前通知人员" prop="users">
+                        <multiple-input-select
+                                :selected-multiple.sync="mainModel.certVo.users"
+                                @on-click="doShowUserSelectModal(3)"
+                        ></multiple-input-select>
+                    </el-form-item>
+                </div>
+
+                <el-form-item label="备注" prop="remark">
+                    <iv-input type="textarea" :value.sync="mainModel.certVo.remark"></iv-input>
+                </el-form-item>
+
+                <el-form-item label="证书上传" prop="cloudFiles">
+                    <ul>
+                        <li v-for="(index, file) in mainModel.certVo.cloudFiles" class="cert-file-item" @click="doViewImages(index)">
+                            <div class="cert-file-name">{{file.orginalName}}</div>
+                            <Icon type="close-circled" @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <a @click="uploadClicked" href="javascript:void(0);"  class="form-upload-href">上传文件</a>
+                </el-form-item>
+            </el-form>
+
+            <vue-file-upload
+                    v-ref:uploader
+                    style="display: none;"
+                    :multi-selection="false"
+                    :params="uploadModel.params"
+                    @on-before-upload="doUploadBefore"
+                    @on-success-upload="doUploadSuccess"
+                    @on-upload-complete="onUploadComplete"
+                    :filters="uploadModel.filters">
+            </vue-file-upload>
+
+            <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave()" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+
+<certtype-select-modal :visible.sync="selectModel.certTypeSelectModel.visible" :filter-data="selectModel.certTypeSelectModel.filterData" single-select @do-save="doSaveCertType"></certtype-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" @do-save="doSaveUsers"></user-select-modal>

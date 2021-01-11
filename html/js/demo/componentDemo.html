@@ -1,0 +1,713 @@
+<div class="wrap">
+	<!--<select-tree-list :treedata="treedata" :listdata="listdata"></select-tree-list>-->
+	<!--<set-select :treedata="treedata" multiple :listdata="listdata"></set-select>-->
+		<div class="select-tree">
+			<!--:transfer-data="model" :selected-datas="model"-->
+		<main-select :treedata="treeSelectData"  :model="model" :serch-filterable="true" :parent-node="true" :department="true"></main-select>
+		</div>
+	<div class="select-tree">
+		<!--:transfer-data="model" :selected-datas="model"-->
+		<main-select :treedata="treeSelectData1"  :model="model1"></main-select>
+	</div>
+	<ivu-spin size="large" fix ></ivu-spin>
+	<div class="content-wrapper">
+		<section class="nav-tabs-custom" id="body-content"
+				 style="margin-bottom: 0px">
+
+			<ul id="appTab" class="nav nav-tabs">
+				<li class="active"><a href="#home" data-toggle="tab"><i
+						class="icon icon-heart"></i><span>Home</span><i class="tab_remove">×</i></a>
+				</li>
+			</ul>
+			<div id="appTabContent" class="tab-content">
+				<div class="tab-pane fade in active" id="home">
+
+					<style>
+
+					</style>
+
+
+
+					<script type="text/x-template" id="item-template">
+						<li>
+							<div
+									:class="{bold: isFolder}"
+									@click="toggle"
+									@dblclick="changeType">
+								{{model.name}}
+								<span v-if="isFolder">[{{open ? '-' : '+'}}]</span>
+							</div>
+							<ul v-show="open" v-if="isFolder">
+								<item
+										class="item"
+										v-for="model in model.children"
+										:model="model">
+								</item>
+								<li @click="addChild">+</li>
+							</ul>
+						</li>
+					</script>
+					<all-class></all-class>
+						<!-- 					all-class -->
+					<p>(You can double click on an item to turn it into a folder.)</p>
+
+					<!-- <ul id="demo"> -->
+
+					<!-- 	<div class="col-xs-6"> -->
+					<!-- 		<iv-tree :model="treeData2"  -->
+					<!-- 					:selected-datas.sync="selectedDatas" -->
+					<!-- 					id-attr="id" -->
+					<!-- 					pid-attr="pid" -->
+					<!-- 					display-attr="name" -->
+					<!-- 					:single-select="true" -->
+					<!-- 					:allow-parent-checked="true" -->
+					<!-- 					></iv-tree> -->
+
+					<!-- 	</div> -->
+					<!-- 	<div class="col-xs-6"> -->
+					<!-- 		<iv-tree :model="treeData2"  -->
+					<!-- 				:selected-datas.sync="selectedDatas" -->
+					<!-- 				id-attr="id" -->
+					<!-- 				pid-attr="pid" -->
+					<!-- 				display-attr="name" -->
+					<!-- 				></iv-tree>			 -->
+					<!-- 	</div> -->
+
+					<!--      <iv-tree-select :model.sync="ttt"  -->
+					<!--      			:list="treeData2" -->
+					<!-- 				id-attr="id" -->
+					<!-- 				display-attr="name" -->
+					<!--      			style="width:240px"> -->
+
+					<!--         <iv-tree :model="treeData2"  -->
+					<!-- 			:selected-datas.sync="selectedDatas" -->
+					<!-- 			id-attr="id" -->
+					<!-- 			pid-attr="pid" -->
+					<!-- 			display-attr="name" -->
+					<!-- 			:single-select="true" -->
+					<!-- 			></iv-tree> -->
+					<!--     </iv-tree-select> -->
+
+
+					<!--   <vi-button type="primary" @click="printComboTreeSelectedData">打印combobox 里面 TreeSelectedData的值</vi-button> -->
+
+					<!--   <vi-button type="primary" @click="printTreeSelectedData">打印TreeSelectedData</vi-button> -->
+
+					<!-- </ul> -->
+<!-- 					<ivu-btn-group> -->
+<!-- 						<iv-button>取消</iv-button> -->
+<!-- 						<iv-button type="primary">确定</iv-button> -->
+<!-- 					</ivu-btn-group> -->
+<!-- 					<ivu-btn-group> -->
+<!-- 						<iv-button type="ghost" icon="ios-color-wand-outline"></iv-button> -->
+<!-- 						<iv-button type="ghost" icon="ios-sunny-outline"></iv-button> -->
+<!-- 						<iv-button type="ghost" icon="ios-crop"></iv-button> -->
+<!-- 						<iv-button type="ghost" icon="ios-color-filter-outline"></iv-button> -->
+<!-- 					</ivu-btn-group> -->
+<!-- 					<ivu-btn-group> -->
+<!-- 						<iv-button type="primary"> -->
+<!-- 							<Icon type="chevron-left"></Icon> -->
+<!-- 							前进 -->
+<!-- 						</iv-button> -->
+<!-- 						<iv-button type="primary"> -->
+<!-- 							后退 -->
+<!-- 							<Icon type="chevron-right"></Icon> -->
+<!-- 						</iv-button> -->
+<!-- 					</ivu-btn-group> -->
+					<!--加载组件spin-->
+					<iv-row>
+						<iv-col span="12">
+							<iv-row style="height:50px">
+								<iv-col class="demo-spin-col" span="8">
+									<ivu-spin fix>加载中...</ivu-spin>
+								</iv-col>
+								<iv-col class="demo-spin-col" span="8">
+									<ivu-spin fix>
+										<iv-icon type="load-c" size=18 class="demo-spin-icon-load"></iv-icon>
+										<div>Loading</div>
+									</ivu-spin>
+								</iv-col>
+							</iv-row>
+						</iv-col>
+					</iv-row>
+
+
+
+					<iv-row>
+						<iv-col span="12">
+							<vi-date-picker type="date" placeholder="选择日期" style="width: 200px"></vi-date-picker>
+						</iv-col>
+						<iv-col span="12">
+							<vi-date-picker type="daterange" placement="bottom-end" placeholder="选择日期" style="width: 200px"></vi-date-picker>
+						</iv-col>
+					</iv-row>
+
+                                    <iv-dropdown style="margin-left: 20px" trigger="click" placement="bottom-end">
+                                        <iv-button type="primary">
+                                            下拉菜单
+                                            <iv-icon type="arrow-down-b"></iv-icon>
+                                        </iv-button>
+                                        <iv-dropdown-menu slot="list">
+                                            <iv-dropdown-item>驴打滚</iv-dropdown-item>
+                                            <iv-dropdown-item>炸酱面</iv-dropdown-item>
+                                            <iv-dropdown-item disabled>豆汁儿</iv-dropdown-item>
+                                            <iv-dropdown-item>冰糖葫芦</iv-dropdown-item>
+                                            <iv-dropdown-item divided>北京烤鸭</iv-dropdown-item>
+                                        </iv-dropdown-menu>
+                                    </iv-dropdown>
+
+
+                                    <iv-input>
+                                        <iv-button slot="append" icon="ios-search"></iv-button>
+                                    </iv-input>
+                                    <iv-input icon="ios-clock-outline" placeholder="请输入..." style="width: 200px"></iv-input>
+                                    <div class="filetr"><span class="filteTitle">检查人名称飒飒的:</span>
+                                    <span class="filterBody">qweqwewwwaaa</span>
+                                    <Icon type="close-round"></Icon>
+                                    </div>
+                                    <!--<vue-calendar></vue-calendar>-->
+					<!--<div class="rili">-->
+						<!--<calendar :show.sync="calendar.show"></calendar>-->
+					<!--</div>-->
+					<p>Hello world!!
+					<div>view app</div>
+					<player-demo></player-demo>
+					<cascader-demo></cascader-demo>
+					<transfer-demo></transfer-demo>
+					<form-demo></form-demo>
+					<!--                   	<div id="app"> -->
+					<!-- 					  {{ data.message }} -->
+					<!-- 					  <input v-model="data.message"> -->
+					<!--                   		<div> -->
+					<!--                   			我的变化来自另外一个view {{vuexDesc}} -->
+					<!--                   		</div> -->
+
+					<!-- 					  <button @click="reverseMessage">Reverse Message</button> -->
+					<!-- 					  <div> -->
+					<!-- 					  	<button @click="showData">log data</button> -->
+					<!-- 					  </div> -->
+
+					<!-- 					  <div> -->
+					<!-- 					  	<input v-model="newTodo" @keyup.enter="addTodo"> -->
+					<!-- 					  </div> -->
+
+					<!-- 					  <div> -->
+					<!-- 					  	<button @click="toggleActive">toggleActive</button> -->
+					<!-- 					  </div> -->
+
+					<!-- 					  <ul> -->
+					<!-- 					    <li v-for="todo in data.todos"> -->
+					<!-- 					      {{ todo.text }} -->
+					<!-- 					    <button @click="removeTodo($index)">X</button> -->
+					<!-- 					    </li> -->
+
+					<!-- 					    <p>{{isActiveDesc}}</p> -->
+					<!-- 					    <p v-if="isActive">active!</p> -->
+					<!-- 					  </ul> -->
+					<!-- 					</div> -->
+
+
+
+					<div>**************************************************************************************************</div>
+					<div>view app_vuex</div>
+
+					<vi-button type="primary" shape="circle" icon="ios-search"></vi-button>
+
+					<iv-input :value.sync="inputValue" placeholder="请输入..." style="width: 300px"></iv-input>
+
+					<iv-row>
+						<iv-col span="12">col-12</iv-col>
+						<iv-col span="12">col-12</iv-col>
+					</iv-row>
+					<br>
+					<iv-row>
+						<iv-col span="8">col-8</iv-col>
+						<iv-col span="8">col-8</iv-col>
+						<iv-col span="8">col-8</iv-col>
+					</iv-row>
+					<br>
+					<iv-row>
+						<iv-col span="6">col-6</iv-col>
+						<iv-col span="6">col-6</iv-col>
+						<iv-col span="6">col-6</iv-col>
+						<iv-col span="6">col-6</iv-col>
+					</iv-row><iv-row>
+					<iv-col span="6">col-6</iv-col>
+					<iv-col span="6">col-6</iv-col>
+					<iv-col span="6">col-6</iv-col>
+					<iv-col span="6">col-6</iv-col>
+				</iv-row>
+
+					<icon type="checkmark" size="32"></icon>
+					<div id="app_vuex">
+
+
+
+						<cb-test></cb-test>
+						<tree-test></tree-test>
+						<!-- 					tree-test -->
+
+
+						<icon type="checkmark" size="32"></icon>
+
+
+
+						<style>
+							.demo-affix {
+								display: inline-block;
+								color: #fff;
+								padding: 10px 30px;
+								text-align: center;
+								background: rgba(0, 153, 229, .9);
+							}
+						</style>
+						<!-- 						<Affix :offset-top="100" @on-change="affixChange"> <span -->
+						<!-- 							class="demo-affix">我是 Affix 组件， 固定在距离顶部 100px 的位置</span> </Affix> -->
+
+
+						<!--
+					<Buttonss>12312</Buttonss>
+
+
+					<Buttonss type="primary" shape="circle" icon="ios-search"></Buttonss>
+				    <Buttonss type="primary" icon="ios-search">搜索</Buttonss>
+				    <br>
+				    <Buttonss type="ghost" shape="circle">
+				        <Icon type="ios-search"></Icon>
+				    </Buttonss>
+				    -->
+						<vi-button type="primary" shape="circle"> <Icon
+								type="ios-search"></Icon> </vi-button>
+						<vi-button type="primary"> <Icon type="ios-search"></Icon>
+							搜索 </vi-button>
+						<vi-button type="ghost" shape="circle"> <Icon
+								type="ios-search"></Icon> </vi-button>
+						<vi-button type="ghost"> <Icon type="ios-search"></Icon>
+							搜索 </vi-button>
+
+						<vi-button type="primary" loading>Loading...</vi-button>
+						<vi-button type="primary" loading>Loading...</vi-button>
+
+						<vi-button type="dashed">Dashed</vi-button>
+						<vi-button type="text">Text</vi-button>
+
+
+						<Breadcrumb> <Breadcrumb-item href="/">Home</Breadcrumb-item>
+							<Breadcrumb-item href="/components/breadcrumb">Components</Breadcrumb-item>
+							<Breadcrumb-item>Breadcrumb</Breadcrumb-item> </Breadcrumb>
+
+
+						<Tag closable color="blue">标签一</Tag>
+						<Tag closable color="green">标签二</Tag>
+						<Tag closable color="red">标签三</Tag>
+						<Tag closable color="yellow">标签四</Tag>
+
+						<i class="ivu-icon ivu-icon-checkmark"></i>
+						<Icon type="arrow-right-a"></Icon>
+
+						<iv-radio :checked.sync="single">Radio</iv-radio>
+
+						<iv-radio-group :model.sync="phone"> <iv-radio
+								value="apple"> <Icon type="social-apple"></Icon> <span>Apple</span>
+						</iv-radio> <iv-radio value="android"> <Icon type="social-android"></Icon>
+							<span>Android</span> </iv-radio> <iv-radio value="windows"> <Icon
+								type="social-windows"></Icon> <span>Windows</span> </iv-radio> </iv-radio-group>
+						<iv-radio-group :model.sync="animal"> <iv-radio
+								value="金斑蝶"></iv-radio> <iv-radio value="爪哇犀牛"></iv-radio> <iv-radio
+								value="印度黑羚"></iv-radio> </iv-radio-group>
+
+						<!-- 						<iv-checkbox :checked.sync="single">Checkbox</iv-checkbox> -->
+
+						<!-- 						<iv-checkbox-group :model.sync="social"> <iv-checkbox -->
+						<!-- 							value="twitter"> <Icon type="social-twitter"></Icon> -->
+						<!-- 						<span>Twitter</span> </iv-checkbox> <iv-checkbox value="facebook"> -->
+						<!-- 						<Icon type="social-facebook"></Icon> <span>Facebook</span> </iv-checkbox> <iv-checkbox -->
+						<!-- 							value="github"> <Icon type="social-github"></Icon> -->
+						<!-- 						<span>Github</span> </iv-checkbox> <iv-checkbox value="snapchat"> -->
+						<!-- 						<Icon type="social-snapchat"></Icon> <span>Snapchat</span> </iv-checkbox> </iv-checkbox-group> -->
+						<!-- 						<iv-checkbox-group :model.sync="fruit"> <iv-checkbox -->
+						<!-- 							value="香蕉"></iv-checkbox> <iv-checkbox value="苹果"></iv-checkbox> -->
+						<!-- 						<iv-checkbox value="西瓜"></iv-checkbox> </iv-checkbox-group> -->
+
+
+						<div>{{vuexDesc}}</div>
+						<div>
+							<button @click="showData()">log data</button>
+							<vi-button @click="info">iview message 测试</vi-button>
+							<vi-button @click="notice">iview notice 测试</vi-button>
+							<vi-button type="primary" @click="modal1 = true">显示对话框</vi-button>
+							<vi-button type="primary" @click="changeSelectDataProvider">切换模态对话框中select的数据源</vi-button>
+							<vi-button type="primary" @click="changeSelectBindData">设置select绑定的数据</vi-button>
+							<vi-button type="primary" @click="printSelectBindData">打印select绑定的数据</vi-button>
+							<vi-button type="primary" @click="showRight = true">显示strapvue的Aside</vi-button>
+
+
+
+
+
+							<!--<i-select :model.sync="modelSelectMulti" size="small"-->
+									  <!--:list="cityList"  style="width:240px" :filterable="true" :data-query.sync="dataquery">-->
+								<!--&lt;!&ndash;| filterBy dataquery&ndash;&gt;-->
+								<!--<i-option v-for="item in cityList | filterBy dataquery" :value="item.value">{{item.label }}</i-option> </i-select>-->
+
+							<!--//'size="small" '+-->
+							<i-select :model.sync="modelSelectMulti" size="small" :serch-filterable="true"
+							:list="cityList"  style="width:240px" :data-query.sync="dataquery">
+							<i-option v-for="item in cityList | filterBy dataquery" :value="item.value">{{item.label }}</i-option> </i-select>
+							<!--<i-select :model.sync="modelSelectMulti" size="small"-->
+									  <!--:list="cityList"  style="width:240px" >-->
+								<!--&lt;!&ndash;| filterBy dataquery&ndash;&gt;-->
+								<!--<i-option v-for="item in cityList" :value="item.value">{{item.label }}</i-option> </i-select>-->
+							<p>1111111111111111111111111111111111111111111111111111111111</p>
+
+
+							<Modal :visible.sync="modal1" title="普通的Modal对话框标题" @on-ok="ok"
+								   @on-cancel="cancel">
+								<p>对话框内容</p>
+								<p>对话框内容</p>
+								<p>对话框内容</p>
+
+
+
+								<vi-button @click="resetTriggerFlag=!resetTriggerFlag">reset数据</vi-button>
+
+								<vi-button @click="modifyTableColumn">动态修改table
+									column</vi-button>
+								<vue-bootstrap-table :columns="columns2"
+													 :filter-column="filterColumn"
+													 :show-filter="true" :show-column-picker="false"
+													 :show-pager="true" :selected-datas.sync="selectedDatas"
+													 :url="url" @on-view-row="viewRowHandler"
+													 @on-edit-row="editRowHandler" :url-delete="urlDelete"
+													 :reset-trigger-flag="resetTriggerFlag" :page-size-opts="[5]">
+								</vue-bootstrap-table>
+								<!--
+         <i-select :model.sync="modelSelect.value" :list.sync="cityList" style="width:240px">
+            <i-option v-for="item in cityList" :value="item.value">{{ item.label }}</i-option>
+        </i-select>
+        --> </Modal>
+
+
+							<aside :show.sync="showRight" placement="right" header="Title"
+								   width="350">
+								ASDFASDFASDFASDFA
+
+
+
+								<!--
+     <i-select :model.sync="modelSelect.value" :list="cityList" style="width:240px">
+        <i-option v-for="item in cityList" :value="item.value">{{ item.label }}</i-option>
+    </i-select>
+    -->
+
+
+
+								<Modal :visible.sync="modal1" title="普通的Modal对话框标题" @on-ok="ok"
+									   @on-cancel="cancel">
+									<p>对话框内容</p>
+									<p>对话框内容</p>
+									<p>对话框内容</p>
+
+									<i-select :model.sync="modelSelect.value" :list="cityList"
+											  style="width:240px"> <i-option
+											v-for="item in cityList" :value="item.value">{{
+										item.label }}</i-option> </i-select> </Modal>
+
+
+
+								<vi-button @click="modal1 = true">延时1秒显示</vi-button>
+
+
+
+
+
+
+							</aside>
+
+
+							<Page :total="100" show-sizer @on-change="printPage()"></Page>
+
+							<Timeline> <Timeline-item>
+								<p class="time">1976年</p>
+								<p class="content">Apple I 问世</p>
+							</Timeline-item> <Timeline-item>
+								<p class="time">1984年</p>
+								<p class="content">发布 Macintosh</p>
+							</Timeline-item> <Timeline-item>
+								<p class="time">2007年</p>
+								<p class="content">发布 iPhone</p>
+							</Timeline-item> <Timeline-item>
+								<p class="time">2010年</p>
+								<p class="content">发布 iPad</p>
+							</Timeline-item> <Timeline-item>
+								<p class="time">2011年10月5日</p>
+								<p class="content">史蒂夫·乔布斯去世</p>
+							</Timeline-item> </Timeline>
+
+
+
+							<Progress :percent="25"></Progress>
+							<Progress :percent="45" status="active"></Progress>
+							<Progress :percent="65" status="wrong"></Progress>
+							<Progress :percent="100"></Progress>
+							<Progress :percent="25" hide-info></Progress>
+							<Progress :percent="25" :stroke-width="5"></Progress>
+							<Progress :percent="100">
+								<Icon type="checkmark-circled"></Icon>
+								<span>成功</span>
+							</Progress>
+
+
+							<div>
+								<Badge count="100"> <a href="#" class="demo-badge"></a>
+								</Badge>
+
+								<Badge dot> <a href="#" class="demo-badge"></a> </Badge>
+								<Badge dot> <Icon type="ios-bell-outline" size="26"></Icon>
+								</Badge>
+								<Badge dot> <a href="#">可以是一个链接</a> </Badge>
+
+								<Badge count="100"> <a href="#" class="demo-badge"></a>
+								</Badge>
+								<Badge count="1000" overflow-count="999"> <a href="#"
+																			 class="demo-badge"></a> </Badge>
+							</div>
+
+
+							<Card style="width:350px">
+								<p slot="title">
+									<Icon type="ios-film-outline"></Icon>
+									经典电影
+								</p>
+								<a href="#" slot="extra" @click.prevent="changeLimit"> <Icon
+										type="ios-loop-strong"></Icon> 换一换
+								</a>
+								<ul>
+									<li v-for="item in movieList | limitBy limitNum limitFrom">
+										<a :href="item.url" target="_blank">{{ item.name }}</a> <span>
+										<Icon type="ios-star" v-for="n in 4"></Icon>
+										<Icon type="ios-star" v-if="item.rate >= 9.5"></Icon>
+										<Icon type="ios-star-half" v-else></Icon> {{ item.rate }}
+								</span>
+									</li>
+								</ul>
+							</Card>
+
+
+
+
+							<Card style="width:500px" :show-content.sync="isShowCardContent">
+								<p slot="title">
+									<Icon type="ios-film-outline"></Icon>
+									检查方法
+								</p>
+								<a href="#" slot="extra"
+								   @click.prevent="isShowCardContent = !isShowCardContent"> <span
+										v-if="isShowCardContent"> <Icon type="arrow-up-b"></Icon>
+									收起
+							</span> <span v-else> <Icon type="arrow-down-b"></Icon> 展开
+							</span>
+								</a> <a href="#" slot="extra" @click.prevent="changeLimit"> <Icon
+									type="plus"></Icon> 添加
+
+							</a> <vue-bootstrap-table :columns="columns2" :show-filter="false"
+													  :show-column-picker="false" :show-pager="true"
+													  :selected-datas.sync="selectedDatas" :url.sync="url"
+													  @on-view-row="viewRowHandler" @on-edit-row="editRowHandler"
+													  :url-delete.sync="urlDelete">
+							</vue-bootstrap-table> </Card>
+
+
+							<el-tabs v-if="showTabs"> <el-tab-pane label="用户管理">111</el-tab-pane>
+								<el-tab-pane label="角色管理">333</el-tab-pane> <el-tab-pane
+										v-for="item in tabsList" :label="'配置管理 + ' + item.label">{{item.value}}222</el-tab-pane>
+								<el-tab-pane label="定时任务补偿">444</el-tab-pane> </el-tabs>
+
+
+							<!--   <el-tabs type="card"> -->
+							<!--     <el-tab-pane label="用户管理">111</el-tab-pane> -->
+							<!--     <el-tab-pane label="配置管理">222</el-tab-pane> -->
+							<!--     <el-tab-pane label="角色管理">333</el-tab-pane> -->
+							<!--     <el-tab-pane label="定时任务补偿">444</el-tab-pane> -->
+							<!--   </el-tabs> -->
+
+
+							<!--   <el-tabs type="card" :closable="true"> -->
+							<!--     <el-tab-pane label="用户管理">111</el-tab-pane> -->
+							<!--     <el-tab-pane label="配置管理">222</el-tab-pane> -->
+							<!--     <el-tab-pane label="角色管理">333</el-tab-pane> -->
+							<!--     <el-tab-pane label="定时任务补偿">444</el-tab-pane> -->
+							<!--   </el-tabs> -->
+
+							<!--   <el-tabs type="border-card"> -->
+							<!--   <el-tab-pane label="用户管理">111</el-tab-pane> -->
+							<!--   <el-tab-pane label="配置管理">222</el-tab-pane> -->
+							<!--   <el-tab-pane label="角色管理">333</el-tab-pane> -->
+							<!--   <el-tab-pane label="定时任务补偿">444</el-tab-pane> -->
+							<!-- </el-tabs> -->
+
+
+							<div style="padding: 30px">
+
+								<Poptip trigger="hover" title="提示标题" content="提示内容"> <vi-Button>hover
+									激活</vi-Button> </Poptip>
+								<Poptip title="提示标题" content="提示内容"> <vi-Button>click
+									激活</vi-Button> </Poptip>
+								<Poptip trigger="focus" title="提示标题" content="提示内容"> <vi-Button>focus
+									激活</vi-Button> </Poptip>
+
+
+								<Circle :percent="80"> <span class="demo-circle-inner"
+															 style="font-size: 24px">80%</span> </Circle>
+								<Circle :percent="100" stroke-color="#5cb85c"> <Icon
+										type="ios-checkmark-empty" size="60" style="color:#5cb85c"></Icon>
+								</Circle>
+								<Circle :percent="35" stroke-color="#ff5500"> <span
+										class="demo-circle-inner"> <Icon type="ios-close-empty"
+																		 size="50" style="color:#ff5500"></Icon>
+								</span> </Circle>
+
+
+								<Poptip confirm title="您确认删除这条内容吗？" @on-ok="okPoptip"
+										@on-cancel="cancelPoptip"> <vi-button>删除</vi-button> </Poptip>
+								<Poptip confirm title="Are you sure delete this task?"
+										@on-ok="okPoptip" @on-cancel="cancelPoptip" ok-text="yes"
+										cancel-text="no"> <vi-button>国际化</vi-button> </Poptip>
+
+
+								<Tooltip content="这里是提示文字"> 当鼠标经过这段文字时，会显示一个气泡框 </Tooltip>
+
+
+								<Tooltip placement="top"> <vi-button>多行</vi-button>
+									<div slot="content">
+										<p>显示多行信息</p>
+										<p>
+											<i>可以自定义样式</i>
+										</p>
+									</div>
+								</Tooltip>
+
+
+								<Tooltip placement="top" content="Tooltip 文字提示" :delay="1000">
+									<vi-button @click="disabled = true">延时1秒显示</vi-button> </Tooltip>
+
+
+
+								<div style="padding: 20">
+
+									<Steps :current="current"> <Step title="步骤1"></Step> <Step
+											title="步骤2"></Step> <Step title="步骤3"></Step> <Step
+											title="步骤4"></Step> </Steps>
+									<vi-button type="primary" @click="next">下一步</vi-button>
+
+								</div>
+
+							</div>
+
+
+							<vi-button type="primary" @click="printSelectedDatas">printSelectedDatas</vi-button>
+							<vi-button type="primary" @click="changeTableDataScource">changeTableDataScource</vi-button>
+
+
+							<vue-bootstrap-table :columns="columns" :values="values"
+												 :show-filter="showFilter" :show-column-picker="showPicker"
+												 :selected-datas.sync="selectedDatas">
+							</vue-bootstrap-table>
+
+<!-- 							<treegrid :items="content" :url="urlTree" -->
+<!-- 									  @on-edit-tree="viewTree"></treegrid> -->
+							<vi-button type="primary" @click="printSelectedDate">print
+								selectedDate</vi-button>
+							<vi-button type="primary" @click="changeSelectedDate">change
+								selectedDate</vi-button>
+							<!--//:format="format" 默认格式为yyyy-mm-dd 00:00:00 可以不需要写-->
+							<!--<date-picker :selected-date.sync="selectedDate" 	dataitem="minData"></date-picker>-->
+							<!--<date-picker :selected-date.sync="selectedDatetwo"  dataitem="maxData"></date-picker>-->
+
+							<date-picker :selected-date.sync="selectedDate"></date-picker>
+							<p >最大值跟最小值</p>
+							<date-picker :selected-date.sync="selectedDateone" :end="selectedDatetwo"></date-picker>
+							<date-picker :selected-date.sync="selectedDatetwo" :begin="selectedDateone"></date-picker>
+
+							<input class="input" size="50" type="text"
+								   @click.stop="open($event,'picker1')"
+								   v-model="calendar.items.picker1.value"
+								   placeholder="普通日期模式，但限制了开始结束日期，使用了自定义星期标题"><br> <input
+								class="input" size="50" type="text"
+								@click.stop="open($event,'picker2')"
+								v-model="calendar.items.picker2.value"
+								placeholder="选择一段时间，不限制开始结束日期，间隔符号使用“.”"><br> <input
+								class="input" size="50" type="text"
+								@click.stop="open($event,'picker3')"
+								v-model="calendar.items.picker3.value" placeholder="日期时间模式"><br>
+
+							<input class="input" size="50" type="text"
+								   @click.stop="open($event,'picker4')"
+								   v-model="calendar.items.picker4.value" placeholder="时间模式"><br>
+
+							<calendar :show.sync="calendar.show" :type="calendar.type"
+									  :value.sync="calendar.value" :x="calendar.x" :y="calendar.y"
+									  :begin.sync="calendar.begin" :end.sync="calendar.end"
+									  :range.sync="calendar.range" :weeks="calendar.weeks"
+									  :months="calendar.months" :sep.sync="calendar.sep"> </calendar>
+
+						</div>
+					</div>
+					</p>
+
+
+					<!--国际化开始-->
+					<!--<p>{{ $t("message.hello") }}</p>
+					<p>{{ $t("message.name") }}</p>-->
+					<vi-button @click="dochangelang('zn')">中文</vi-button>
+					<vi-button @click="dochangelang('en')">英文</vi-button>
+					<!--国际化结束-->
+					<!--全部分类开始-->
+
+			 		<!--全部分类结束-->
+					<!-- 验证开始-->
+					<!-- 					<table class="form" id="validatortab"> -->
+					<!-- 						<tr v-class="invalidText: !validator.form.name.valid"> -->
+					<!-- 							<td>First name</td> -->
+					<!-- 							<td><input type="text" v-model="form.name" -->
+					<!-- 								v-valid="required,numeric" value="" /> (lazy) <span -->
+					<!-- 								v-if="validator.form.name.modified">modified</span></td> -->
+					<!-- 						</tr> -->
+					<!-- 						<tr v-class="invalidText: !validator.form.age.valid"> -->
+					<!-- 							<td>Age</td> -->
+					<!-- 							<td><input type="text" v-model="form.age" -->
+					<!-- 								v-valid="required,integer,min: 10" /></td> -->
+					<!-- 						</tr> -->
+					<!-- 						<tr> -->
+					<!-- 							<td></td> -->
+					<!-- 							<td><button v-on="click: onSave">Save</button> <span -->
+					<!-- 								v-if="isModified">modified</span></td> -->
+					<!-- 						</tr> -->
+					<!-- 					</table> -->
+					<!-- 验证结束-->
+					<!-- 			<div id="uploadorDemo"> -->
+					<!-- 				<input v-model="params.recordId"/> -->
+					<!-- 				<vue-file-upload :url="url" :events="cbEvents" :params="params" :filters="filters"> -->
+					<!-- 				</vue-file-upload> -->
+					<!-- 				<jscolor :value.sync="colorValue"></jscolor> -->
+					<!-- 				<button @click="doPrint">打印</button> -->
+					<!-- 			</div> -->
+				</div>
+			</div>
+
+
+		</section>
+
+		<div id="list">
+			<vue-bootstrap-table :columns="columns" :values="valuestwo"
+								 :show-filter="showFilter" :show-column-picker="showPicker"
+								 :selected-datas.sync="selectedDatastwo">
+			</vue-bootstrap-table>
+		</div>
+		<!--//图表-->
+		<div class="wanghuai">
+<!-- 		<vuecharts :options="polar"></vuecharts> -->
+		</div>
+	</div>
+</div>
+<div id="_appDialog"></div>

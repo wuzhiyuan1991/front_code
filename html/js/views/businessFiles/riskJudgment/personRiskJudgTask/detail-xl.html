@@ -1,0 +1,377 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+            <div class="bip-header-btn-group">
+                <iv-button type="ghost" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+            </div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form"   :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<!--<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >-->
+						<!--<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >-->
+						<!--<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>-->
+					<!--</el-form-item>-->
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="人员" prop="user.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="研判层级" prop="levelName" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.levelName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="研判负责单位" prop="unitName" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.unitName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >-->
+						<!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>-->
+						<!--<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+					<!--</el-form-item>-->
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<!--<el-form-item label="额定完成时间" prop="completeDate" class="small-info-box" >-->
+						<!--<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.completeDate" clearable></date-picker>-->
+						<!--<iv-input v-else :value.sync="mainModel.vo.completeDate" textonly class="inp"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item label="额定完成时间" prop="completeDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.ratedCompleteDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.ratedCompleteDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="实际完成时间" prop="completeDate" class="small-info-box" v-if='mainModel.vo.completeDate' >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.completeDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.completeDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="研判和承诺书" prop="" class="small-info-box" >
+						<!--<a href="/file/down/{{mainModel.docVo.id}}" target="_blank" title="下载">{{mainModel.docVo.orginalName}}</a>-->
+						<a style="display: block" v-for="(index, item) in mainModel.docVo" href="/file/down/{{item.id}}" target="_blank" title="下载">{{item.orginalName}}</a>
+					</el-form-item>
+					<!--<el-form-item label="1:未完成,2:已完成" prop="isComplete" class="small-info-box" >-->
+						<!--<iv-input :value.sync="mainModel.vo.isComplete" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item label="风险研判" prop="isrRiskJudgmentId" class="small-info-box" >-->
+						<!--<iv-input :value.sync="mainModel.vo.isrRiskJudgmentId" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item label="研判层级" prop="isrRiskJudgmentLevelId" class="small-info-box" >-->
+						<!--<iv-input :value.sync="mainModel.vo.isrRiskJudgmentLevelId" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="额定完成时间" prop="ratedCompleteDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.ratedCompleteDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.ratedCompleteDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险数" prop="riskNum" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskNum" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="下属Ids" prop="subordinateIds" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.subordinateIds" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="下级数量" prop="subordinateNum" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.subordinateNum" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+		</div>
+		-->
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="itemPng"></i>执行细则</p>
+				<div class="rel-info-panel-content-tabs">
+					<div class="el-tabs" active-key="relTab" style="padding-bottom: 20px;">
+						<div class="el-tabs__header">
+							<div
+									v-show.sync="mainModel.vo.subordinateNum > 0 || tab.id == 1"
+									@click="doTabClick(tab.id)"
+									class="el-tabs__item"
+									:class="{'is-active': tab.id === activeTabId}"
+									v-for="tab in tabs">
+								<b>{{tab.name}}</b>
+							</div>
+							<!-- 执行按钮 -->
+							<div class="btnGroups" v-show.sync="activeTabId === '1'">
+								<!--<iv-button type="ghost" @click.stop="doExecute" v-if="hasAuth('execute') && mainModel.vo.isComplete === '1'&&!isAction">执行</iv-button>-->
+								<iv-button type="ghost" @click.stop="doExecute" v-if="mainModel.vo.isComplete === '1'&&!isAction">执行</iv-button>
+								<iv-button type="ghost" @click.stop="doSave" v-show="isAction&&mainModel.vo.isComplete === '1'">保存</iv-button>
+								<iv-button type="ghost" @click.stop="doCancel" v-show="isAction&&mainModel.vo.isComplete === '1'">取消</iv-button>
+							</div>
+						</div>
+						<div class="el-tabs__content" v-show="activeTabId === '1'" style="padding-bottom: 70px;">
+							<!--  遮罩 -->
+							<div class="mask" v-show.sync="mainModel.vo.isComplete === '1'&&!isAction" >请点击“执行”按钮，开启填写研判内容</div>
+							<simple-card id='webview' class="fip-content-item">
+								<div class="clearfix"></div>
+								<div v-for="(index,tir) in groups"   style='border:1px solid #e9e9e9;padding:0 0 10px 10px;margin-bottom: 20px;'>
+									<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+										<div class="left" style="width: 500px;border-bottom:1px solid #e9e9e9;" >
+											{{tir.name}}
+											<iv-checkbox v-show="tir.allExclude!=3 && mainModel.vo.isComplete !=2" :disabled='mainModel.vo.isComplete==2' :checked="tir.allExclude==0" @on-change="filterBySelect(tir)" style="padding-left:0;">涉及</iv-checkbox>
+											<iv-checkbox v-show="tir.allExclude!=3 && mainModel.vo.isComplete !=2" :disabled='mainModel.vo.isComplete==2' :checked="tir.allExclude==1" @on-change="filterBySelect(tir)" style="padding-left:0;">不涉及</iv-checkbox>
+										</div>
+										<!--<div class="right" style="display: flex;align-items: center;">-->
+										<!--<input type="checkbox" v-model="tir.select">研判时整组内容可排除</Checkbox>-->
+										<!--<vi-button type="text" icon="plus" @click="isShowEdition(tir, index)" >编辑</vi-button>-->
+										<!--</div>-->
+									</div>
+									<!--<div class='riskItemContent'>研判项内容</div>-->
+									<div style='display: flex;justify-content: space-between;'>
+										<div :class="{'riskJudgTaskMask': tir.allExclude==1}" class=" myContent editContent" v-if='tir.content!=""' v-html="tir.content" name="myContent">
+
+										</div>
+										<!--<div >附件</div>-->
+									</div>
+								</div>
+							</simple-card>
+							<simple-card>
+								<div   style='border:1px solid #e9e9e9;padding:0 0 10px 10px;margin-bottom: 20px;'>
+									<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+										<div class="left" style="width: 300px;border-bottom:1px solid #e9e9e9;" >研判承诺</div>
+									</div>
+									<div style='display: flex;justify-content: space-between;'>
+										<div class="myContent editContent" v-if='promiseContent!=""' v-html="promiseContent" name="myContent">
+
+										</div>
+									</div>
+								</div>
+							</simple-card>
+						</div>
+						<div class="el-tabs__content"  v-show="activeTabId === '2'" style='display:flex;padding-top:14px;'>
+							<!--- 左侧导航 ---->
+							<!--<div class="lr-layout-l" style="border: 1px solid #ddd;width: 120px;">-->
+							<!--<ul>-->
+							<!--<li v-for="(index, item) in riskJudgmentLevelList"-->
+							<!--class="lr-layout-li"-->
+							<!--:class="{'checked': index === checkedUserIndex}"-->
+							<!--style="display: flex;"-->
+							<!--@click="doSelectDepartment(index)">-->
+							<!--<span :title="area.name">{{item.name}}</span>-->
+							<!--</li>-->
+							<!--</ul>-->
+							<!--</div>-->
+							<div class="lr-layout" style="padding: 0;height: 560px;background-color: #fff;">
+								<div class="lr-layout-l"  style="display: block;margin-right: 0;" >
+									<ul  style="border:1px solid #ddd;border-right: none;">
+										<li v-for="(index, item) in riskJudgmentLevelList"
+											class="lr-layout-li"
+											:class="{'checked': index === checkedUserIndex}"
+											style="display: flex;font-size:14px;height: 32px;"
+											@click="doSelectDepartment(index)">
+											<span :title="area.name">{{item.name}}</span>
+										</li>
+									</ul>
+								</div>
+								<!--- 表格 ---->
+								<div class="lr-layout-r" style="padding: 10px;overflow-y: visible;height:600px;border:1px solid #ddd;">
+									<!-------已办 未办 按钮------>
+									<div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;">
+										<ul style="display: inline-flex;">
+											<li v-for="(index, item) in orderStatus"
+												class="lr-layout-li"
+												:class="{'checked': index === orderStatusIndex}"
+												style="width: 100px;text-align: center;"
+												@click="doSelectComplete(index)">
+												<span>{{item.name}}</span>
+											</li>
+										</ul>
+									</div>
+									<!--<lite-table-->
+									<!--:columns="tableModel.underlingTableModel.columns"-->
+									<!--:values="currentTaskList"-->
+									<!--@on-click="onTaskClicked"-->
+									<!--show-page-->
+									<!--&gt;</lite-table>-->
+									<div style='height:540px;'>
+										<vue-bootstrap-table
+												:columns="tableModel.underlingTableModel.columns"
+												:url="tableModel.underlingTableModel.url"
+												:default-filter-value="tableModel.underlingTableModel.qryParam"
+												:show-filter="true"
+												:filter-column="tableModel.underlingTableModel.filterColumns"
+												:show-column-picker="false"
+												:show-pager="true"
+												resizeable
+												lazy-load
+												v-show.sync = 'ids.length>0'
+												@on-click-cell='showDetailInfo'
+												v-ref:rpt-details-table>
+										</vue-bootstrap-table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</simple-card>
+		</div>
+	</div>
+</div>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>
+<risk-judgment-task-info :visible.sync="selectModel.riskJudgmentTaskInfoModel.visible" v-ref:detail-info ></risk-judgment-task-info>
+
+<Modal :visible.sync="checkDataModel.visible" footer-hide title="提示">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<p style="font-size: 14px;margin-bottom: 5px;">当前任务已被其他人执行，系统会自动取消，无需再执行；点击“确定”，会从“未完成”列表中删除</p>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doDefine()" class="pull-right">确定</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<style>
+	.input_date, .inputOperator{
+		/*display: block;*/
+		/*text-align: right;*/
+		display: inline;
+	}
+	.btnGroups{
+		display: flex;
+		float:right;
+		width:300px;
+		flex-direction: row-reverse;
+		align-items: center;
+	}
+	.btnGroups .ivu-btn{
+		border: 1px solid #aacd03;
+		margin: 0 2px;
+		font-size: 14px;
+		line-height: 1.5;
+		border-radius: 4px;
+		padding: 4px 15px;
+	}
+	.btnGroups .ivu-btn:hover{
+		background:#aacd03 ;
+		color:#fff;
+	}
+	.el-tabs__content .mask{
+		width: 100%;
+		height: 100%;
+		background: rgba(204,204,204,0.5);
+		position: absolute;
+		z-index: 1;
+		display: flex;
+		font-size: 28px;
+		color: #fff;
+		align-items: center;
+		justify-content: center;
+		font-weight: 600;
+		/*padding-top: 200px;*/
+	}
+
+	.check{
+		/*rdisplay: inline-flex !important;*/
+		display: inline !important;
+		align-items: center;
+		flex-wrap: wrap
+	}
+	.check span{
+		display: inline-flex;
+		align-items: center;
+	}
+	.myrow{
+		width:100%;
+		font-size: 0.3rem;
+		border:1px solid;
+	}
+	.myrow input{
+		border: none;
+		border-bottom:1px solid #123;
+	}
+	.groupItem{
+		border:1px solid #e9e9e9;
+	}
+	.riskSubmitBtn{
+		font-size: 0.32rem;
+		text-align: center;
+		position: fixed;
+		bottom: 0rem;
+		color: #6b68e2;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		background: #fff;
+	}
+	.riskSubmitBtn div{
+		width: 350px;
+		border: 1px solid #ddd;
+		padding: 0.15rem;
+	}
+	.inClass{
+		border: none;
+		border-bottom: 1px solid #d9d9d9;
+		width: 100px;
+		color: #666;
+		font-size: 0.12rem;
+		height: 26px;
+		text-align: center;
+		padding: 5px 10px;
+		line-height: 1.2rem;
+	}
+	.h5-style{
+		background: #4086cc;
+		margin: 0;
+		color: #fff;
+	}
+	.groupItemBody {
+		line-height: 0.8rem;
+		font-size: 0.24rem;
+	}
+	#webview{
+
+	}
+	.longRow{
+		width: 500px !important;
+		padding-left:10px;
+	}
+	.longRow label{
+		width:140px !important;
+	}
+	.longRow .el-form-item__content{
+		margin-left:140px !important;
+	}
+	.newEditionClass .simple-card-head{
+		display: none !important;
+	}
+	select{
+		/*height: 20px;*/
+	}
+	.riskItemContent{
+		font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","\5FAE\8F6F\96C5\9ED1",Arial,sans-serif;
+		font-size: 14px;
+		line-height: 40px;
+		color: #666666;
+		background: #eef3f5;
+		text-align: center;
+		font-weight: bold;
+		height: 40px;
+	}
+	.editContent{
+		/*background-color: #f9f9f9;*/
+		font-size: 14px;
+		padding: 10px;
+		line-height: 34px;
+		width: 100%;
+	}
+</style>
+
+

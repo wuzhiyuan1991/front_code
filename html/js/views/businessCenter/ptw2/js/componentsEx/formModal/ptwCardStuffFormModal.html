@@ -1,0 +1,31 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('stuffType') == -1)" label="类型" prop="stuffType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_stuff_stuff_type', mainModel.vo.stuffType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.stuffType" :list="getDataDicList('iptw_card_stuff_stuff_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('tplId') == -1)" label="作业票模板" prop="tpl.id">
+						<input-select :value="mainModel.vo.ptwCardTpl" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('ptwCardTpl') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowPtwCardTplSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('stuffId') == -1)" label="风险库/气体检测指标" prop="stuff.id">
+						<input-select :value="mainModel.vo.ptwStuff" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('ptwStuff') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowPtwStuffSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('ppeCatalogId') == -1)" label="个人防护设备类型" prop="ppeCatalogId">
+						<iv-input :value.sync="mainModel.vo.ppeCatalogId" :disabled="(disabledFields.indexOf('ppeCatalogId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<ptwcardtpl-select-modal :visible.sync="selectModel.ptwCardTplSelectModel.visible" :filter-data="selectModel.ptwCardTplSelectModel.filterData" single-select @do-save="doSavePtwCardTpl"></ptwcardtpl-select-modal>
+<ptwcatalog-select-modal :visible.sync="selectModel.gasCatalogSelectModel.visible" :filter-data="selectModel.gasCatalogSelectModel.filterData" single-select @do-save="doSaveGasCatalog"></ptwcatalog-select-modal>
+<ptwstuff-select-modal :visible.sync="selectModel.ptwStuffSelectModel.visible" :filter-data="selectModel.ptwStuffSelectModel.filterData" single-select @do-save="doSavePtwStuff"></ptwstuff-select-modal>

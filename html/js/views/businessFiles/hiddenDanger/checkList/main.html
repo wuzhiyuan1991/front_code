@@ -1,0 +1,107 @@
+<div class="tab-container">
+  <div class="main-panel">
+    <div class="mp-header formTitle">
+      <iv-row $main-header-row-attr-default-display>
+
+        <iv-col $main-header-condition-div-attr-default>
+          <all-classification $main-header-classification-attr-mixBusiness>
+          </all-classification>
+          <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+        </iv-col>
+        <iv-col $main-header-func-div-attr-default>
+          <div class="prelative addButton pull-right">
+            <vi-button v-if="isEmer && hasAuth('addToEmer')" @click="(doShowCheckTableSelectModal())">添加</vi-button>
+            <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+            <iv-dropdown trigger="click" placement="bottom-end">
+              <vi-button type="ghost" icon="chevron-down"></vi-button>
+              <iv-dropdown-menu slot="list">
+                <iv-dropdown-item>
+                  <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a>
+                  </div>
+                  <!--<vue-file-upload file-ext="xls,xlsx" vue-file-upload :url="uploadModel.url" file-ext="xls,xlsx" @on-success-upload="doSuccessUpload" custom-style>-->
+                  <!--<div class="uploadAport"  v-if="hasPermission('1020001004')"><a>{{$t("gb.common.import")}}</a></div>-->
+                  <!--</vue-file-upload>-->
+                </iv-dropdown-item>
+                <iv-dropdown-item>
+                  <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel">
+                    <a>{{$t("gb.common.export")}}</a></div>
+                </iv-dropdown-item>
+                $main-header-dropdown-item-tag-common-display
+              </iv-dropdown-menu>
+            </iv-dropdown>
+          </div>
+          $main-header-refresh-button
+        </iv-col>
+      </iv-row>
+
+      <iv-row $main-header-row-attr-default-hidden>
+        <iv-col span="24">
+          <vi-button type="text" class="mp-header-item-btn">
+            {{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+          <vi-button type="text" class="mp-header-item-btn"
+            v-if="hasAuth('edit') && tableModel.selectedDatas.length == 1" @click="doUpdate">{{$t("gb.common.edition")}}
+          </vi-button>
+          <vi-button v-if="hasAuth('enable') && tableModel.selectedDatas.length == 1" type="text"
+            class="mp-header-item-btn" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+          <vi-button type="text" class="mp-header-item-btn"
+            v-if="hasAuth('copy') && tableModel.selectedDatas.length == 1" @click="doAdd4Copy">复制</vi-button>
+          <vi-button type="text" class="mp-header-item-btn"
+            v-if="hasAuth('copy') && tableModel.selectedDatas.length > 1" @click="doAdd4BatchCopy">复制</vi-button>
+          <vi-button v-if="hasAuth('delete') && tableModel.selectedDatas.length == 1" type="text"
+            class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+          <vi-button v-if="isEmer && hasAuth('removeFromEmer') && tableModel.selectedDatas.length == 1" type="text"
+            class="mp-header-item-btn" @click="doRemoveFromEmer">移除</vi-button>
+        </iv-col>
+      </iv-row>
+
+    </div>
+    <div class="mp-content">
+      <div style="position: absolute;bottom: 11px;left: 20px;">
+        <iv-checkbox :checked.sync="isCheckKind" :middle="isHalfCheck" :disabled="" @change.stop="checkSelect"> 多选
+        </iv-checkbox>
+      </div>
+      <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+      </vue-bootstrap-table>
+    </div>
+  </div>
+</div>
+<Modal :visible.sync="batchCopyModel.show" :title="batchCopyModel.title" footer-hide>
+  <div class="edit-pop-container">
+    <div class="epc-content">
+      <el-form :model="batchCopyModel" :rules="batchCopyModel.rules" v-ref:ruleform label-width="130px"
+        style="width:390px">
+        <el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+          <company-tree-select :id.sync="batchCopyModel.compId"></company-tree-select>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="epc-footer">
+      <vi-button type="primary" @click="doCopyBatch" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+  </div>
+</modal>
+<Modal :visible.sync="mainModel.showBatchCopyResult" title="提示" :footer-hide="true">
+  <div class="epc-header"></div>
+  <div class="edit-pop-container">
+    <div class="epc-content" style="font-size: 14px;background: #fff;">
+      <span>{{mainModel.successMsg}}</span><br>
+      <span>{{mainModel.faildMsg}}</span><br>
+      <div style='    border: 1px solid #ddd;padding: 5px;font-size: 14px;margin-top: 5px;min-height: 250px;'>
+        <ul>
+          <li class="rank-item" v-for="item in mainModel.failedReason" style="margin-top: 3px;">
+            <span class="rank-pos">{{item}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</Modal>
+<!-- 右滑弹框 -->
+<aside :show.sync="detailModel.show" placement="right" class="large-info-aside" transition>
+  <detailComponent></detailComponent>
+</aside>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url"
+  :import-model.sync="importProgress.show"></import-progress>
+
+<check-table-select-modal :visible.sync="selectModel.checkTableSelectModel.visible" @do-save="doSaveEmerTables">
+</check-table-select-modal>

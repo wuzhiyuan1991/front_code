@@ -1,0 +1,96 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{$t('gb.common.detail')}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+						<!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>-->
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="岗位/角色" class="small-info-box">-->
+						<!--<i-select  :model.sync="mainModel.type" :list="getDataDicList('management_role')"  v-if="!mainModel.isReadOnly">-->
+							<!--<i-option  v-for="trainType in getDataDicList('management_role')"  :value="trainType.id">{{trainType.value}}</i-option>-->
+						<!--</i-select>-->
+						<!--<span v-else>{{getDataDic('management_role', mainModel.type)}}</span>-->
+					<!--</el-form-item>-->
+					<el-form-item :label="$t('bs.orl.post')" class="small-info-box" v-if="mainModel.type == 0">
+						<!--<input-select  :value="mainModel.position" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowPositionSelectModal())" ></input-select>-->
+						<span>{{mainModel.vo.name}}</span>
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.role')"  class="small-info-box" v-else>
+						<!--<input-select :value="mainModel.position" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowHseSelectModal())" ></input-select>-->
+						<span>{{mainModel.vo.name}}</span>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+
+			<!--<simple-card class="fip-content-item" :show-content.sync="cardModel.courseCategoryCardModel.showContent">-->
+				<!--<p slot="title"><i class="basicPng"></i><span>对应课程</span></p>-->
+				<!--<a slot="extra" @click.prevent="cardModel.courseCategoryCardModel.showContent = !cardModel.courseCategoryCardModel.showContent;" >-->
+					<!--<span v-if="cardModel.courseCategoryCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>-->
+					<!--<span v-else><Icon type="arrow-down-b"></Icon>展开</span>-->
+				<!--</a>-->
+				<!--<a slot="extra"  @click.prevent="doShowCourseSelectModal()" >-->
+					<!--<span><Icon type="plus"></Icon>添加</span>-->
+				<!--</a>-->
+				<!--<ul>-->
+					<!--<li class="treeview" icon="icon-hammer" v-for="parent in mainModel.vo.course">-->
+						<!--<div style="border-bottom: solid 1px #eee; padding: 10px 0px;">-->
+							<!--<a>-->
+								<!--<span>{{parent.name}}</span>-->
+	                            <!--<span class="icon icon-folder" style="float: right">-->
+									<!--<span @click="doDeleteCourse(parent.id)" ><Icon type="trash-a"></Icon>删除</span>-->
+
+	                            <!--</span>-->
+							<!--</a>-->
+						<!--</div>-->
+				<!--</li>-->
+				<!--</ul>-->
+			<!--</simple-card>-->
+			<simple-card class="fip-content-item" :show-content.sync="cardModel.courseCategoryCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>{{$t("bc.ria.courseCorrespond")}}</span></p>
+				<a slot="extra" @click.prevent="cardModel.courseCategoryCardModel.showContent = !cardModel.courseCategoryCardModel.showContent;" >
+					<span v-if="cardModel.courseCategoryCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
+				</a>
+				<a slot="extra"  @click.prevent="doShowCourseSelectModal()" v-if="hasPermission('4020006001')">
+					<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+				</a>
+				<vue-bootstrap-table
+						:url="tableModel.courseCategoryTableModel.url"
+						:columns="tableModel.courseCategoryTableModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:lazy-load="true"
+						@on-del-row="doRemoveCourseCategories"
+						v-ref:course-table
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<!--<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>-->
+		<!--<iv-button  type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		<!--<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>-->
+		<!--<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>-->
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>
+
+<course-select-modal :visible.sync="selectModel.courseSelectModel.visible"  :filter-data="selectModel.courseSelectModel.filterData" @do-save="doSaveCourse"></course-select-modal>
+<position-select-modal single-select :visible.sync="selectModel.positionSelectModel.visible" :filter-data="selectModel.positionSelectModel.filterData"  @do-save="doSavePosition"></position-select-modal>

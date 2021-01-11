@@ -1,0 +1,56 @@
+<div class="contacts" style="padding: 0;">
+        <div class="home-header">
+            <Icon type="document-text" class="home-ico"></Icon>
+            <span>文档资料</span>
+            <div class="homeHeaderCenter">
+                <div class="homeSelect">
+                    <company-tree-select  :serch-filterable="false"  :id.sync="mainModel.vo.compId"></company-tree-select>
+                </div>
+                <div class="homeHeaderRigthIco" style="margin-right: 20px" v-if="parentId">
+                    <vue-file-upload  :url="url" custom-style :params="pictures.params" :filters="pictures.filters" @on-success-upload="doUpload">
+                        <iv-button style="background: none;border:0px;width: 21px;padding: 0px"><i class="homeUploadIco"></i></iv-button>
+                    </vue-file-upload>
+                </div>
+                <div class="homeHeaderRigthIco" @click="doAddFile">
+                    <Icon type="ios-gear-outline"></Icon>
+                </div>
+            </div>
+        </div>
+        <div class="home-content" style="padding: 10px 10px;">
+            <iv-input icon="ios-search-strong" :value.sync="searchDatas" style="width:380px" @on-click="doIconClickSearch" @on-enter="doEnterSearch"></iv-input>
+            <div style="margin: 10px 0" class="homeFileTitle">
+                <breadcrumb>
+                    <breadcrumb-item @click.stop="showCategoryNode(tempTopCategory)">{{tempTopCategory.title}}</breadcrumb-item>
+                    <breadcrumb-item v-for="category in tempNodeCategory"
+                    @click.stop="showCrumbs(category)">{{category.name}}</breadcrumb-item>
+                </breadcrumb>
+            </div>
+            <ul class="dealt homeFileWarp" v-loadscroll="loadMore">
+                <li v-for="item in nodeData" @click="doNode(item)" :class="{ 'homeInfoTo':textInfo && item.type != 2 }">
+                    <div class="notice">
+                            <div class="nodeChiledCheck"><iv-checkbox v-if="item.type == 2" :checked.sync="item.checked" @click="toggle(item)"></iv-checkbox></div>
+                            <div class="nodeChiledItem">
+                                <Icon v-if="item.type == 2"  type="document-text" class="homeDocumentTextIco"></Icon>
+                                <Icon v-if="item.type == 1" class="homeIosFolderIco" type="ios-folder"></Icon>{{item.name}}
+                                <!--删除按钮-->
+                                <i class="ivu-icon ivu-icon-trash-a" v-if="item.type == 2" @click="doDelete(item)"></i>
+                                <i class="ivu-icon  file-down" v-if="item.type == 2" @click="doDown(item)"></i>
+                                <p :class="{ 'homeInfoTo': item.type == 2 }">创建时间:{{item.createDate}}</p>
+                            </div>
+                        </div>
+
+                    <!--<div :class="[  item.type == 2 ? 'notSend' : 'send']">创建时间:{{item.createDate}}</div>-->
+                </li>
+            </ul>
+            <div class="homeFooter" v-if="selectedDatas && selectedDatas.length > 0">
+                <iv-checkbox :checked.sync="checkedAll"  @click="doCheckAll">全选</iv-checkbox>
+                <i class="ivu-icon ivu-icon-trash-a" @click="doAllDel" style="font-size: 16px;"></i>
+                <i class="ivu-icon  file-down"  @click="doAllDown"></i>
+
+            </div>
+        </div>
+</div>
+
+<Modal :visible.sync="addFileModal.show"  :title="addFileModal.title" :footer-hide="true" @on-cancel="doClose">
+    <add-file-modal @do-file-finshed="doFileFinshed"></add-file-modal>
+</Modal>

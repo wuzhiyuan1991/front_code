@@ -1,0 +1,39 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="编码" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="禁用标识" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mcotMaxReserves') == -1)" label="最大储量" prop="mcotMaxReserves">
+						<iv-input :value.sync="mainModel.vo.mcotMaxReserves" :disabled="(disabledFields.indexOf('mcotMaxReserves') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('dataType') == -1)" label="数据类型" prop="dataType">
+						<iv-input :value.sync="mainModel.vo.dataType" :disabled="(disabledFields.indexOf('dataType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('alias') == -1)" label="别名" prop="alias">
+						<iv-input :value.sync="mainModel.vo.alias" :disabled="(disabledFields.indexOf('alias') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mcotCasNumber') == -1)" label="CAS编码" prop="mcotCasNumber">
+						<iv-input :value.sync="mainModel.vo.mcotCasNumber" :disabled="(disabledFields.indexOf('mcotCasNumber') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mcotClassify') == -1)" label="类别" prop="mcotClassify">
+						<iv-input :value.sync="mainModel.vo.mcotClassify" :disabled="(disabledFields.indexOf('mcotClassify') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('unit') == -1)" label="单位" prop="unit">
+						<iv-input :value.sync="mainModel.vo.unit" :disabled="(disabledFields.indexOf('unit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

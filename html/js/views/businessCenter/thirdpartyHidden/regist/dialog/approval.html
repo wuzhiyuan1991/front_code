@@ -1,0 +1,22 @@
+
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="rules" label-width="80px" v-ref:ruleform >
+            <el-form-item label="审批结果" prop="status">
+                <i-select :model.sync="mainModel.vo.status" :list.sync="mainModel.status">
+                    <i-option v-for="s in mainModel.status" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+            <el-form-item v-if="selectModal.enableUpdateUsers" label="审批人" prop="users">
+                <multi-select-input :selected-multiple="selectModal.userSelectModel.users" id-field="id" display-field="name" @on-click="doSelectUsers()"></multi-select-input>
+            </el-form-item>
+            <el-form-item label="审批意见" prop="remark">
+                <iv-input type="textarea" :value.sync="mainModel.vo.remark"></iv-input>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<user-select-modal :visible.sync="selectModal.userSelectModel.visible"	@do-save="doSaveUser"></user-select-modal>

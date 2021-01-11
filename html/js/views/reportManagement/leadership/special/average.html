@@ -1,0 +1,74 @@
+<style>
+    .asmt-report-date {
+        width:100%;overflow: inherit;
+    }
+    .asmt-report-date .datepicker_main {
+        overflow: inherit;
+    }
+    .asmt-report-date .ivu-select-visible .ivu-select-selection {
+        box-shadow: none;
+    }
+    .report .reportChart .echarts {
+        height: calc(100% - 50px);
+    }
+    .special-s {
+        width: 70px;
+        float: left;
+        text-align: center;
+        background-color: #eee;
+        border: 1px solid #d9d9d9;
+        height: 30px;
+        border-right: 0;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        font-size: 12px;
+        line-height: 28px;
+    }
+    .special-s + .ivu-select-single .ivu-select-selection {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+</style>
+<div class="reportChartMain">
+    <div class="mp-header formTitle" style="margin-left: 10px;">
+        <div class="basic">{{mainModel.title}}</div>
+    </div>
+    <div class="report-qry-head">
+        <el-form :model="qryModel" :rules="mainModel.qryRules" is-label-vertical v-ref:ruleform>
+            <iv-row style="padding-top: 8px;">
+                <iv-col span="24">
+                    <el-form-item prop="asmtTable.id" style="width:320px;overflow: inherit;" class="select-color">
+                        <input-select
+                                :value="qryModel.asmtTable"
+                                id-field="id"
+                                display-field="name"
+                                @click="doShowAsmtTableSelectModal()"
+                                placeholder="请选择自评表"
+                        ></input-select>
+                    </el-form-item>
+                    <el-form-item prop="dateType" style="width:200px;overflow: inherit;" class="select-color">
+                        <span class="special-s">考核周期</span>
+                        <i-select class="select-color" :model.sync="qryModel.dateType" style="width:120px;font-size: 12px;float: left;" :list="cycles">
+                            <i-option v-for="item in cycles" :value="item.id" >{{ item.name }}</i-option>
+                        </i-select>
+                    </el-form-item>
+                    <el-form-item prop="dateRange" class="asmt-report-date" style="width:240px;overflow: inherit;">
+                        <vi-date-picker type="daterange" :options="mainModel.datePickOpts" :value.sync="qryModel.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+                    </el-form-item>
+                    <el-form-item style="width: 60px;">
+                        <iv-button @click="doQry()">查询</iv-button>
+                    </el-form-item>
+                </iv-col>
+            </iv-row>
+        </el-form>
+    </div>
+    <div class="reportChart" style="height: calc(100% - 115px);">
+        <vuecharts  :options="mainModel.barChartOpt" v-ref:chart></vuecharts>
+    </div>
+</div>
+<asmt-table-select-modal
+        single-select
+        :visible.sync="asmtTableSelectModel.visible"
+        @do-save="doSaveAsmtTable">
+
+</asmt-table-select-modal>

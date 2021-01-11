@@ -1,0 +1,26 @@
+<simple-card style="width:750px;">
+    <p slot="title" class="ptw-title" style="width:950px;">个人防护</p>
+    <!--<div slot="title">-->
+        <!--<div class="flex-layout-between">-->
+             <!--<p class="ptw-title" style="width:950px;">个人防护</p>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="flex-layout  mb20 ul-style-none ml10" v-for="item of ppeList"  v-show="item.enable">
+        <div    class="form-item-label color-item-999" style="align-items: baseline;font-size:14px;color:#666;">{{item.name}}</div>
+        <!--<div  class="el-form-item ptw-border" style="width:100%;" >-->
+            <!--<ul class="ul-inside">-->
+                <!--<li v-for="ppeitem of getPPEItems(item)" >-->
+                    <!--<input type="checkbox" disabled :checked="ppeitem.checkResult == '2'" class="width-auto" />-->
+                    <!--{{ppeitem.isExtra==1?ppeitem.content:ppeitem.name}}</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <div  class="el-form-item ptw-border" style="width:100%;" >
+            <ul class="ul-inside">
+                <li v-for="ppeitem of item.lists" style="margin-bottom:5px;">
+                    <input type="checkbox" disabled :checked="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')" class="width-auto" />
+                    {{getItemName(ppeitem)}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</simple-card>

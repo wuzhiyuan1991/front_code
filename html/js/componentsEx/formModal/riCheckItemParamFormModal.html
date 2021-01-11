@@ -1,0 +1,40 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" :label="$t('gb.common.state')" prop="disable">
+						<span v-if="mainModel.isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+						<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkItemId') == -1)" label="巡检项" prop="checkItemId">
+						<iv-input :value.sync="mainModel.vo.checkItemId" :disabled="(disabledFields.indexOf('checkItemId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('unit') == -1)" label="单位" prop="unit">
+						<iv-input :value.sync="mainModel.vo.unit" :disabled="(disabledFields.indexOf('unit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('bigValue') == -1)" label="较大值" prop="bigValue">
+						<iv-input :value.sync="mainModel.vo.bigValue" :disabled="(disabledFields.indexOf('bigValue') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('maxValue') == -1)" label="最大值" prop="maxValue">
+						<iv-input :value.sync="mainModel.vo.maxValue" :disabled="(disabledFields.indexOf('maxValue') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('minValue') == -1)" label="最小值" prop="minValue">
+						<iv-input :value.sync="mainModel.vo.minValue" :disabled="(disabledFields.indexOf('minValue') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('smallValue') == -1)" label="较小值" prop="smallValue">
+						<iv-input :value.sync="mainModel.vo.smallValue" :disabled="(disabledFields.indexOf('smallValue') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('standardValue') == -1)" label="标准值" prop="standardValue">
+						<iv-input :value.sync="mainModel.vo.standardValue" :disabled="(disabledFields.indexOf('standardValue') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

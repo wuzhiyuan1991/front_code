@@ -1,0 +1,65 @@
+<!-- <div class="form-dialog" id="dialog-form" style="height: 700px;"> -->
+<div class="edit-pop-container">
+	<div class="epc-content">
+	        <iv-row >
+				<!--<div style="overflow: hidden; margin-bottom: 10px">-->
+					<!--<iv-col span="22" >-->
+						<!--<iv-input  :value.sync="mainModel.searchValue" onkeypress="if(event.keyCode==13) {return false;}"></iv-input>-->
+						<!--&lt;!&ndash;<input type="text" class="form-control" v-model="mainModel.searchValue" onkeypress="if(event.keyCode==13) {return false;}">&ndash;&gt;-->
+				  	<!--</iv-col>-->
+					<!--<iv-col span="2">-->
+						<!--<vi-button @click="doSearch">搜索</vi-button>-->
+					<!--</iv-col>-->
+				<!--</div>-->
+
+			<!--<iv-col span="24" class="menuFor7">-->
+	            <!--&lt;!&ndash;<div class="col-xs-12 remindM2">角色分配</div>&ndash;&gt;-->
+				<!--<iv-col span="24" class="remindM2">角色分配</iv-col>-->
+	            <!--&lt;!&ndash;一个框 当这里是一个框时 取消注释&ndash;&gt;-->
+	            <!--&lt;!&ndash;<div class="menuFor4">&ndash;&gt;-->
+	<!---->
+	            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+	            <!--&lt;!&ndash;一个框 当这里是一个框时 取消注释&ndash;&gt;-->
+	<!---->
+	            <!--&lt;!&ndash;两个框 当这里是一个框时 注释&ndash;&gt;-->
+	            <!--<div class="menuFor6 mr16">-->
+	                <!--<div class="not">未分配<span>{{mainModel.rLength}}</span></div>-->
+	                <!--<ul class="notUl" v-for="(i,p) in mainModel.rList">-->
+	                    <!--<li class="">{{p.name}}<span @click="doAddRole(p.id,p.name,i)">+</span></li>-->
+	                <!--</ul>-->
+	            <!--</div>-->
+	<!---->
+	            <!--<div class="menuFor6 ">-->
+	                <!--<div class="not">已分配<span>{{mainModel.roleLength}}</span></div>-->
+	                <!--<ul class="notUl" v-for="(i,p) in mainModel.vo.roleList">-->
+	                    <!--<li class="">{{p.name}}<span @click="doRemoveRole(p.id,p.name,i)">-</span></li>-->
+	                <!--</ul>-->
+	            <!--</div>-->
+	            <!--&lt;!&ndash;两个框 当这里是一个框时 注释&ndash;&gt;-->
+	     	<!--</iv-col>-->
+				<transfer v-ref:transfer
+						  :data="data1"
+						  :target-keys="targetKeys1"
+						  :render-format="render1"
+						  @on-change="handleChange1"
+						  :titles="titles"
+						  :filterable="filterable"
+						  :filter-method="filterMethod"
+				>
+				</transfer>
+		</iv-row>
+<!-- 	        <div class="pop_up_bottom"> -->
+<!-- 	            <div class="pop_up_botton"> -->
+
+<!-- 	                <button type="button" class="btn pop_up_button" @click="doSave">保存</button> -->
+<!-- 	                <button type="button" class="btn btn-default pop_up_button" @click="doCancel">取消</button> -->
+
+<!-- 	            </div> -->
+<!-- 	        </div> -->
+
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>	

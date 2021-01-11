@@ -1,0 +1,22 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="560" v-ref:tree :footer-hide="true" class="pointSelectModal">
+        <iv-col style="background-color: #eaf0f5;padding: 20px;">
+            <div class="member-select-left-tree" v-el:mtree>
+                <div class="loading-text" v-if="treeModel.showLoading">加载中</div>
+                <iv-tree
+                    id-attr="id"
+                    pid-attr="parentId"
+                    display-attr="name"
+                    :model="treeModel.data"
+                    :selected-datas.sync="treeModel.selectedDatas"
+                    :show-checkbox="false"
+                    :single-select="true"
+                    :trigger-parent-event="true"
+                ></iv-tree>
+            </div>
+        </iv-col>
+        <iv-col>
+            <div class="epc-footer" style="border-top:none;">
+                <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </iv-col>
+</Modal>

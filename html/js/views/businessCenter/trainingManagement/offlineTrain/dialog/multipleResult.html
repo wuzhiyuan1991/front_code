@@ -1,0 +1,52 @@
+<Modal :visible.sync="visible" :title="mainModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+
+            <div style="padding-bottom: 10px;margin-bottom: 10px;border-bottom: 1px dashed #ccc;display: flex;align-items: center;justify-content: space-between;">
+
+                <a href="javascript:void(0);" @click="doImport" style="font-size: 15px;">导入培训结果</a>
+
+            </div>
+
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform >
+
+                <el-form-item  label="通过时间" prop="trainDate">
+                    <date-picker  format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.trainDate"></date-picker>
+                </el-form-item>
+
+                <el-form-item label="通过学员">
+                    <div>
+                        <iv-checkbox :checked.sync="passChecked" @on-change="changePassCheck">所有学员（总共{{taskLength}}人）</iv-checkbox>
+                    </div>
+                    <multiple-input-select
+                            :selected-multiple.sync="mainModel.vo.passUsers"
+                            :disabled="passChecked"
+                            @on-click="doShowUserSelectModal('2')"
+                    ></multiple-input-select>
+                </el-form-item>
+                <el-form-item label="未通过学员">
+                    <div>
+                        <iv-checkbox :checked.sync="otherChecked" @on-change="changeOtherCheck" :disabled="passChecked">未选择的学员则未通过（总共{{unCheckedLength}}人）</iv-checkbox>
+                    </div>
+                    <multiple-input-select
+                            :selected-multiple.sync="mainModel.vo.users"
+                            :disabled="passChecked || otherChecked"
+                            @on-click="doShowUserSelectModal('1')"
+                    ></multiple-input-select>
+                </el-form-item>
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<import-progress :url="importProgress.uploadUrl" :templete-url="importProgress.downloadUrl" :import-model.sync="importProgress.show"></import-progress>
+
+<user-select-modal
+        :visible.sync="selectModel.userSelectModel.visible"
+        :filter-data="selectModel.userSelectModel.filterData"
+        @do-save="doSaveUsers"
+></user-select-modal>

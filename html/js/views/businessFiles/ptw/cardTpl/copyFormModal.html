@@ -1,0 +1,20 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width="600" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content el-form-item__label_light ptw-base-info" style="min-height:190px;">
+            <el-form style="width:522px;" class="ptw-base-info"  :model="mainModel.vo"
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item label="新模板名称" prop="name">
+                    <iv-input style="width:375px;" :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+
+
+
+

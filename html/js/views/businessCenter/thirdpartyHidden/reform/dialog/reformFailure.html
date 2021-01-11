@@ -1,0 +1,12 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="rules" label-width="80px" v-ref:ruleform >
+            <el-form-item label="受阻原因" prop="remark">
+                <iv-input type="textarea" :value.sync="mainModel.vo.remark"></iv-input>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>

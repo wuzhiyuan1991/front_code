@@ -1,0 +1,122 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true" width='600' @on-cancel="doClose">
+    <div class="modal-box-default modal-valve-param" style="background: #fff;">
+		<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+		    <el-form-item label="阀室号" prop="number">
+				<!-- <div style="width: 433px;" class="ivu-select-dropdown-width433"> -->
+				<div style="width: 348px;" class="ivu-select-dropdown-width348">
+					<i-select :model.sync="mainModel.number" @on-change="changeValue" v-show="mainModel.number != 'newAdd'">
+						<i-option v-for="item in mainModel.valveNum" :value="item">{{ item }}</i-option>
+						<!-- <i-option value="newAdd" v-show="mainModel.showSelect">新增</i-option> -->
+						<i-option value="newAdd">新增</i-option>
+					</i-select>
+					<i-select :model.sync="mainModel.number" @on-change="changeValue" v-show="mainModel.number == 'newAdd'" class="select-short">
+						<i-option v-for="item in mainModel.valveNum" :value="item">{{ item }}</i-option>
+						<!-- <i-option value="newAdd" v-show="mainModel.showSelect">新增</i-option> -->
+						<i-option value="newAdd">新增</i-option>
+					</i-select>
+					<iv-input class="select-input" v-show="mainModel.number == 'newAdd'" type="textarea" :rows="1" :value.sync="mainModel.vo.number" placeholder="请输入"></iv-input>
+				</div>
+		    </el-form-item>
+		    <el-form-item label="天气、其他内容" prop="weather">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.weather" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="汇报时间" prop="reportTime">
+				<date-picker format="yyyy-MM-dd HH:mm" :begin="reportTime":selected-date.sync="mainModel.vo.reportTime" time-zero type="datetime"></date-picker>
+		    </el-form-item>
+		    <el-form-item label="温 度" prop="temperature">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.temperature" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="压 力" prop="pressure">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.pressure" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="气缸压力" prop="cylinderPressure">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.cylinderPressure" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="电池电压" prop="batteryPressure">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.batteryPressure" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="直流电压" prop="directVoltage">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.directVoltage" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		</el-form>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<style>
+	.modal-valve-param .ivu-select-dropdown-width433 .ivu-select-dropdown {
+		width: 433px;
+	}
+	
+	.modal-valve-param .ivu-select-dropdown-width348 .ivu-select-dropdown {
+		width: 348px;
+	}
+	
+	.modal-valve-param .el-form {
+		width: 85%;
+	}
+	
+	.modal-valve-param .el-form-item__label {
+		width: 150px !important;
+	}
+	
+	.modal-valve-param .el-form-item__content {
+		margin-left: 150px !important;
+	}
+	
+	.select-input {
+		position: absolute;
+		/* width: -webkit-calc(100% - 149px);
+		width: -moz-calc(100% - 149px);
+		width: -ms-calc(100% - 149px);
+		width: -o-calc(100% - 149px);
+		width: calc(100% - 149px); */
+		width: -webkit-calc(100% - 119px);
+		width: -moz-calc(100% - 119px);
+		width: -ms-calc(100% - 119px);
+		width: -o-calc(100% - 119px);
+		width: calc(100% - 119px);
+	}
+	
+	.select-short {
+		/* width: 150px !important; */
+		width: 120px !important;
+	}
+	
+	.select-short .ivu-select-selection {
+		-webkit-border-top-right-radius: 0 !important;
+		-moz-border-top-right-radius: 0 !important;
+		-ms-border-top-right-radius: 0 !important;
+		-o-border-top-right-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+		-webkit-border-bottom-right-radius: 0 !important;
+		-moz-border-bottom-right-radius: 0 !important;
+		-ms-border-bottom-right-radius: 0 !important;
+		-o-border-bottom-right-radius: 0 !important;
+		border-bottom-right-radius: 0 !important;
+	}
+	
+	.select-input .ivu-input {
+		height: 30px !important;
+		border-left: 0;
+		-webkit-border-top-left-radius: 0;
+		-moz-border-top-left-radius: 0;
+		-ms-border-top-left-radius: 0;
+		-o-border-top-left-radius: 0;
+		border-top-left-radius: 0;
+		-webkit-border-bottom-left-radius: 0;
+		-moz-border-bottom-left-radius: 0;
+		-ms-border-bottom-left-radius: 0;
+		-o-border-bottom-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+</style>

@@ -1,0 +1,106 @@
+
+<!--class="rip-item"-->
+        <div v-for="(index,reform) in mainModel.reforms" class="fip-content-item">
+            <simple-card  :show-content="mainModel.activeReformId == reform.id && mainModel.isShowContent">
+                <p slot="title"><i class="basicPng"></i> {{$t("hag.hazc.rectification")}}{{index+1}}</p>
+                <a slot="extra"  @click.prevent="doShowCardContent(reform.id)" style="line-height: 30px">
+                    <span v-if="mainModel.activeReformId == reform.id && mainModel.isShowContent"><Icon type="chevron-down"></Icon></span>
+                    <span v-else><Icon type="chevron-right"></Icon></span>
+                </a>
+                <simple-card class="fip-content-item">
+                    <p slot="title"><span>{{$t('gb.common.basicInfo')}}</span></p>
+                    <el-form :model="mainModel.vo" :rules="rules" class="fip-content-item-form" v-ref:ruleform>
+                        <el-form-item :label="$t('hag.hazc.rectifyPerson')" prop="checkObject.name">
+                            <iv-input :value.sync="reform.dealName" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="整改时间" prop="dealDate">
+                            <iv-input :value.sync="reform.dealDate" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="整改期限" prop="maxDealDate" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.maxDealDate" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item :label="$t('hag.hazc.rectifyReson')" prop="dealDemand" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.dealDemand" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+
+                        <el-form-item label="进度详情" v-if="isNormalReform" width>
+                        <table class="scheduleDetail" border="1">
+                            <tr >
+                                <td width="32px">&nbsp;</td>
+                                <td width="66px"> 整改人 </td>
+                                <td width="120px"> 时间 </td>
+                                <td> 整改进度 </td>
+                            </tr>
+                            <tr v-for="(i,schedule) in reform.scheduleList">
+                                <td>{{i+1}}</td>
+                                <td>{{schedule.operatorName}}</td>
+                                <td>{{schedule.date}}</td>
+                                <td style="text-align: left;padding-left: 10px;">{{schedule.detail}}</td>
+                            </tr>
+                        </table>
+                        </el-form-item>
+
+                        <el-form-item label="整改方案(措施)" prop="dealStep" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.dealStep" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item :label="$t('hag.hazc.interimRemed')" prop="emergencyStep" v-if="isNormalReform">
+                            <iv-input type="textarea" :value.sync="reform.emergencyStep" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+
+                        <el-form-item :label="$t('hat.hazt.Verifier')" prop="accepterName" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.accepterName" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item :label="$t('hat.hazt.verifTime')" prop="acceptDate" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.acceptDate" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="验证期限" prop="maxAcceptDate" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.maxAcceptDate" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <!--<el-form-item label="整改详情" prop="dealStep" v-if="isNormalReform">-->
+                            <!--<iv-input type="textarea" :value.sync="reform.dealStep" data-options="required:true" textonly></iv-input>-->
+                        <!--</el-form-item>-->
+                        <el-form-item :label="$t('hat.hazt.verifRemarks')" prop="acceptRemark" v-if="isNormalReform">
+                            <iv-input :value.sync="reform.acceptRemark" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                        <el-form-item label="整改验证结果" prop="vaildReformResult" v-if="!isNormalReform">
+                            <iv-input :value.sync="reform.vaildReformResult" data-options="required:true" textonly></iv-input>
+                        </el-form-item>
+                    </el-form>
+                </simple-card>
+                <simple-card class="fip-content-item">
+                    <p slot="title"><span>{{$t('bc.hal.enclosure')}}</span></p>
+                    <simple-card class="fip-content-sub-item" v-if="reformPic.show[index]">
+                        <span slot="title">整改后的图片</span>
+                        <lite-box v-for="pic in reformPic.reformPics[index]" :show-close="false">
+                            <!--<img :src="convertPicPath(pic.fileId)" @click="doPic(pic.fileId)">-->
+                            <div :style='{ backgroundImage: backgroundStyle(pic.fileId)}' style="background-size: cover;width:100%;height:100%;background-repeat: no-repeat;background-position: center center" @click="doPic(pic.fileId)"></div>
+                        </lite-box>
+                    </simple-card>
+                    <simple-card class="fip-content-sub-item" v-if="reformVideo.show[index]">
+                        <span slot="title">整改后的视频</span>
+                        <lite-box v-for="video in reformVideo.reformVideos[index]" :show-close="false">
+                            <img :src="convertPath()" @click="doPlay(video.fileId)">
+                        </lite-box>
+                    </simple-card>
+                    <simple-card class="fip-content-sub-item" v-if="verifyPic.show[index]">
+                        <span slot="title">验证图片</span>
+                        <lite-box v-for="pic in verifyPic.verifyPics[index]" :show-close="false">
+                            <img :src="convertPicPath(pic.fileId)" @click="doPic(pic.fileId)">
+                        </lite-box>
+                    </simple-card>
+                    <simple-card class="fip-content-sub-item" v-if="verifyVideo.show[index]">
+                        <span slot="title">验证视频</span>
+                        <lite-box v-for="video in verifyVideo.verifyVideos[index]" :show-close="false">
+                            <img :src="convertPath()" @click="doPlay(video.fileId)">
+                        </lite-box>
+                    </simple-card>
+                </simple-card>
+            </simple-card>
+        </div>
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')" style="height:365px; width:400px;">
+</Modal>

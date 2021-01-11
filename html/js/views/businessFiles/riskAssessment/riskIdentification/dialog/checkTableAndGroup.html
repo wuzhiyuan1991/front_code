@@ -1,0 +1,45 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="1300" :footer-hide="true" class="userSelectModal">
+    <div class="sw-modal-body">
+        <div class="sw-cts-box">
+            <div class="sw-cts-left" style="width: 900px;">
+                <!--选择属地-->
+                <div class="sw-co-center sw-row">
+                    <div style="flex: 1;">
+                        <div class="sw-co-bar">
+                            <div>
+                                <iv-input :value.sync="checkTableKey"></iv-input>
+                                <iv-button @click="doQueryCheckTable">查询</iv-button>
+                            </div>
+                        </div>
+                        <vue-bootstrap-table :url="checkTableModel.url" :columns="checkTableModel.columns"
+                            :filter-column="checkTableModel.filterColumn" :show-pager="true" :is-single-check="true"
+                            :selected-datas.sync="checkTableModel.selectedDatas"
+                            :default-filter-value="checkTableModel.defaultFilterValue" lazy-load v-ref:check-table
+                            style="height: 493px;">
+                        </vue-bootstrap-table>
+                    </div>
+                </div>
+            </div>
+            <div class="sw-cts-right">
+                <div class="sw-co-bar">
+                    <!--                    <span>分组：</span>-->
+                    <!--                    <div>-->
+                    <!--                        <iv-input :value.sync="groupKey"></iv-input>-->
+                    <!--                        <iv-button @click="doQueryArea">查询</iv-button>-->
+                    <!--                    </div>-->
+                </div>
+                <vue-bootstrap-table :columns="groupModel.columns" :show-pager="true"
+                    :selected-datas.sync="groupModel.selectedDatas" :is-single-check="true" :show-page-number="true"
+                    :values="groupModel.groupList" @on-data-loaded="onRightDataLoaded" data-onload="" lazy-load
+                    style="height: 493px;" v-ref:group-table>
+                </vue-bootstrap-table>
+            </div>
+        </div>
+
+
+        <div class="sw-co-footer">
+            <iv-button type="primary" @click="doSave" style="margin-right: 20px;">确定</iv-button>
+            <iv-button @click="doClose">取消</iv-button>
+        </div>
+    </div>
+</Modal>

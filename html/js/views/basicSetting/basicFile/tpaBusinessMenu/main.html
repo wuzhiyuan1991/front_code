@@ -1,0 +1,114 @@
+<div class="businessMenuInfo" v-el:viewbox :class="{'business-menu':viewScllow}">
+    <iv-row type="flex" align="middle">
+        <iv-col class="menuList" span="24">
+            <el-tabs @tab-click="doTabs" :top-type.sync="topSubMenu" v-if="routeType === 'checkTable'">
+                <!--检查表-->
+                <el-tab-pane :label="$t('bd.hal.tpaCheckTableClass')">
+                    <iv-row type="flex" align="middle" class="mp-header-item-func" :style="{ top: topSubMenu + 'px' }">
+                        <iv-col span="24" class="menuTitle">
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeList">{{$t('bs.bac.expandAll')}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeListHide">{{$t('bs.bac.collapseAll')}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('listTableType')">添加</vi-button>
+                        </iv-col>
+                    </iv-row>
+                    <iv-tree-grid :model="listTableType.data" v-ref:treegridList
+                                  :selected-datas.sync="selectedTreeDatas"
+                                  id-attr="id"
+                                  pid-attr="parentId"
+                                  display-attr="name"
+                                  :single-select="true"
+                                  :show-checkbox="false"
+                                  :allow-parent-checked="true"
+                                  @on-add-node="listTableTypeDoAddNode"
+                                  @on-edit-node="listTableTypeDoEditNode"
+                                  @on-del-node="listTableTypeDoDelNode"
+                                  :edit="true"
+                                  :open="listTableType.showHide"
+                    ></iv-tree-grid>
+                </el-tab-pane>
+
+                <!--检查项-->
+                <el-tab-pane :label="$t('bd.hal.tpaRiskType')">
+                    <iv-row type="flex" align="middle" class="mp-header-item-func" :style="{ top: topSubMenu + 'px' }">
+                        <iv-col span="24" class="menuTitle">
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeListTpaRiskType">{{$t('bs.bac.expandAll')}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeListHideTpaRiskType">{{$t('bs.bac.collapseAll')}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('tpaRiskType')">添加</vi-button>
+                        </iv-col>
+                    </iv-row>
+                    <iv-tree-grid :model="tpaRiskType.data" v-ref:TpaRiskType
+                                  :selected-datas.sync="selectedTreeDatas"
+                                  id-attr="id"
+                                  pid-attr="parentId"
+                                  display-attr="name"
+                                  :single-select="true"
+                                  :show-checkbox="false"
+                                  :allow-parent-checked="true"
+                                  @on-add-node="tpaRiskTypeDoAddNode"
+                                  @on-edit-node="tpaRiskTypeDoEditNode"
+                                  @on-del-node="tpaRiskTypeDoDelNode"
+                                  :edit="true"
+                                  :open="tpaRiskType.showHide"
+                    ></iv-tree-grid>
+                </el-tab-pane>
+            </el-tabs>
+
+            <el-tabs @tab-click="doTabs" :top-type.sync="topSubMenu" v-if="routeType === 'basicSetting'">
+                <!--设备设施-->
+                <el-tab-pane :label="$t('bd.hal.CBequipmentType')">
+                    <iv-row type="flex" align="middle" class="mp-header-item-func" :style="{ top: topSubMenu + 'px' }">
+                        <iv-col span="24" class="menuTitle">
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeListCBEquipment">{{$t('bs.bac.expandAll')}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeListHideCBEquipment">{{$t('bs.bac.collapseAll')}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('cbEquipmentType')">添加</vi-button>
+                        </iv-col>
+                    </iv-row>
+                    <iv-tree-grid :model="cbEquipmentType.data" v-ref:CBequipment
+                                  :selected-datas.sync="selectedTreeDatas"
+                                  id-attr="id"
+                                  pid-attr="parentId"
+                                  display-attr="name"
+                                  :single-select="true"
+                                  :show-checkbox="false"
+                                  :allow-parent-checked="true"
+                                  @on-add-node="cbEquipmentTypeDoAddNode"
+                                  @on-edit-node="cbEquipmentTypeDoEditNode"
+                                  @on-del-node="cbEquipmentTypeDoDelNode"
+                                  :edit="true"
+                                  :open="cbEquipmentType.showHide"
+                    ></iv-tree-grid>
+                </el-tab-pane>
+            </el-tabs>
+
+            <el-tabs @tab-click="doTabs" :top-type.sync="topSubMenu" v-if="routeType === 'checkBase'">
+                <!--检查依据-->
+                <el-tab-pane :label="$t('bc.ria.lawsRegulat')">
+                    <iv-row type="flex" align="middle" class="mp-header-item-func">
+                        <iv-col span="24" class="menuTitle">
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkBasisType')">添加
+                            </vi-button>
+                        </iv-col>
+                    </iv-row>
+                    <iv-tree-grid :model="checkbasistype.data" v-ref:treegrid
+                                  :selected-datas.sync="selectedTreeDatas"
+                                  id-attr="id"
+                                  pid-attr="parentId"
+                                  display-attr="name"
+                                  :single-select="true"
+                                  :show-checkbox="false"
+                                  :allow-parent-checked="true"
+                                  @on-add-node="checkBasisTypeDoAddNode"
+                                  @on-edit-node="checkBasisTypeDoEditNode"
+                                  @on-del-node="checkBasisTypeDoDelNode"
+                                  :edit="true"
+                                  :open="checkbasistype.showHide"
+                                  :add-level="2"
+                    ></iv-tree-grid>
+                </el-tab-pane>
+            </el-tabs>
+        </iv-col>
+    </iv-row>
+</div>
+<Modal :visible.sync="addModel.show" :title="addModel.title" width="520" :footer-hide="true">
+    <editcomponent @doupdate="doUpdate" @doeditadd="doEditAdd"></editcomponent>
+</Modal>

@@ -1,0 +1,38 @@
+<div>
+    <div class="flex-v-center"   style="margin-bottom: 20px;">
+        <span>个人防护措施现场落实核对人</span>
+        <vi-button size="small" class="ml5 mr5">{{permitModel.ppeVerifier.name}}</vi-button>
+        <div>(<span @click="doChangeUser" class="link-ele">修改</span>)</div>
+    </div>
+    <div class="flex-layout  mb20 pdt10" v-for="item of ppeList">
+        <div style="width:110px" class="txt-center">
+            <iv-checkbox checked="true" @change="doChangePEE(item)"   style="visibility:hidden;" >
+              
+            
+            </iv-checkbox>
+                  <div  style="margin-right: 20px;"  >  {{item.name}}</div>
+        
+        </div>
+        <div style="width:400px;max-width: 400px">
+            <div class="disabled-container">
+                <div class="disabled-mask border-ele" v-show="item.enable"></div>
+                <div class="disabled-content el-form-item__content">
+                    <div class=" ivu-checkbox-group group-vertical border-form">
+                        <iv-checkbox
+                                :checked.sync="ppeitem.attr1"
+                                true-value="1" false-value="0"
+                                :class="{'flex-v-center':weihaibsList.length==index+1}"
+                                v-for="(index,ppeitem) of item.ppes"
+                                @on-change="doChangePPEItem($arguments,ppeitem)"
+                                style="display: flex;align-items: center">
+                            <p>{{ppeitem.name}}</p>
+                            <p v-if="ppeitem.isExtra==1" class="flex-grow1">
+                                <iv-input class="ml5" @on-change="doChangePPEText($arguments,ppeitem)" :value.sync="ppeitem.content" size="small"></iv-input>
+                            </p>
+                        </iv-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

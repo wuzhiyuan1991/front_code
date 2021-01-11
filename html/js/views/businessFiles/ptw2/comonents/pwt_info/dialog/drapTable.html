@@ -1,0 +1,133 @@
+<div v-if="fixTitle" style="padding-right: 17px;">
+    <table class="layout-table" style="margin-bottom: 0;">
+        <colgroup>
+            <col style="width: 50px;" v-if="showSequence">
+            <col v-for="col in columns" :style="{'width': col.width}" v-if="!col.hide">
+            <col :style="toolColumnStyle" v-if="showTools">
+        </colgroup>
+        <thead>
+        <tr class="layout-table-tr">
+            <th class="text-center" v-if="showSequence">{{showSequenceName}}</th>
+            <th v-for="col in columns"  v-if="!col.hide">{{col.title}}</th>
+            <th v-if="showTools"></th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div class="layout-table-box" :style="getStye" v-if="draping">
+    <table class="layout-table">
+        <colgroup>
+            <col style="width: 50px;" v-if="showSequence">
+            <col v-for="col in columns" :style="{'width': col.width}" v-if="!col.hide">
+            <col :style="toolColumnStyle" v-if="showTools">
+        </colgroup>
+        <thead v-if="!fixTitle">
+        <tr class="layout-table-tr">
+            <th class="text-center" v-if="showSequence">{{showSequenceName}}</th>
+            <th v-for="col in columns"  v-if="!col.hide">{{col.title}}</th>
+            <th v-if="showTools"></th>
+        </tr>
+        </thead>
+        <tbody @click="onBodyClick">
+        <tr v-for="(i, item) in filteredValues"
+            @dragend="doDragEnd"
+            class="layout-table-tr" v-dragging="{ item : item, list : filteredValues, group : 'item', key : i}">
+            <!--checkbox列-->
+            <!--序号列-->
+            <td class="text-center" v-if="showSequence">{{calculateSequenceNumber(i)}}</td>
+            <td v-for="(index, col) in columns "   v-if="!col.hide" :class="{'pointer': col.event}" :data-index="index" :data-num="i">{{{renderTdText(item, col)}}}</td>
+            <!--操作列-->
+            <td class="text-center" v-if="showTools" style="white-space: normal;padding: 8px 3px;">
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('move')" type="button" @click="doMove(-1, item, i, calculateSequenceNumber(i))">
+                    <i class="ivu-icon ivu-icon-arrow-up-a"></i>
+                </button>
+
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('move')" type="button" @click="doMove(1, item, i, calculateSequenceNumber(i))">
+                    <i class="ivu-icon ivu-icon-arrow-down-a"></i>
+                </button>
+
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('update')" type="button" @click="doUpdate(item, calculateSequenceNumber(i))">
+                    <i class="ivu-icon ivu-icon-compose"></i>
+                </button>
+
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('del')" type="button" @click="doDelete(item, i)">
+                    <i class="ivu-icon ivu-icon-trash-a"></i>
+                </button>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div v-if="showPageBox">
+        <Page
+                :current.sync="pageObj.curPage"
+                :total="pageObj.totalSize"
+                :page-size.sync="pageObj.pageSize"
+                :page-size-opts="pageSizeOpts"
+                @on-change="doPageChanged"
+                show-sizer
+                show-total
+        ></Page>
+    </div>
+
+
+</div>
+<div class="layout-table-box" :style="getStye" v-if="!draping">
+    <table class="layout-table">
+        <colgroup>
+            <col style="width: 50px;" v-if="showSequence">
+            <col v-for="col in columns" :style="{'width': col.width}" v-if="!col.hide">
+            <col :style="toolColumnStyle" v-if="showTools">
+        </colgroup>
+        <thead v-if="!fixTitle">
+        <tr class="layout-table-tr">
+            <th class="text-center" v-if="showSequence">{{showSequenceName}}</th>
+            <th v-for="col in columns"  v-if="!col.hide">{{col.title}}</th>
+            <th v-if="showTools"></th>
+        </tr>
+        </thead>
+        <tbody @click="onBodyClick">
+        <tr v-for="(i, item) in filteredValues"
+            class="layout-table-tr" >
+            <!--checkbox列-->
+            <!--序号列-->
+            <td class="text-center" v-if="showSequence">{{calculateSequenceNumber(i)}}</td>
+            <td v-for="(index, col) in columns "   v-if="!col.hide" :class="{'pointer': col.event}" :data-index="index" :data-num="i">{{{renderTdText(item, col)}}}</td>
+            <!--操作列-->
+            <td class="text-center" v-if="showTools" style="white-space: normal;padding: 8px 3px;">
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('move')" type="button" @click="doMove(-1, item, i, calculateSequenceNumber(i))">
+                    <i class="ivu-icon ivu-icon-arrow-up-a"></i>
+                </button>
+
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('move')" type="button" @click="doMove(1, item, i, calculateSequenceNumber(i))">
+                    <i class="ivu-icon ivu-icon-arrow-down-a"></i>
+                </button>
+
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('update')" type="button" @click="doUpdate(item, calculateSequenceNumber(i))">
+                    <i class="ivu-icon ivu-icon-compose"></i>
+                </button>
+
+                <button class="ivu-btn ivu-btn-text" v-if="showTool('del')" type="button" @click="doDelete(item, i)">
+                    <i class="ivu-icon ivu-icon-trash-a"></i>
+                </button>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div v-if="showPageBox">
+        <Page
+                :current.sync="pageObj.curPage"
+                :total="pageObj.totalSize"
+                :page-size.sync="pageObj.pageSize"
+                :page-size-opts="pageSizeOpts"
+                @on-change="doPageChanged"
+                show-sizer
+                show-total
+        ></Page>
+    </div>
+
+
+</div>

@@ -1,0 +1,114 @@
+<div class="report train-chart">
+    
+    <!--左侧-->
+    <div class="train-content">
+        <div class="mp-header formTitle" style="margin-left: 10px;">
+            <div class="basic">作业数量统计</div>
+        </div>
+      
+        <div class="train-filter">
+            <div class="filter" style="width: 200px;">
+                <company-tree-select :id.sync="compId"></company-tree-select>
+            </div>
+            <div class="filter" style="width: 200px;">
+               
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="dateRange" placeholder="选择日期范围" style="width:100%">
+                </vi-date-picker>
+            </div>
+            <!-- <div class="filter" style="width: 150px;">
+             <iv-input value="细化分级" disabled> <span slot="append"> <iv-checkbox :checked.sync="checked" ></iv-checkbox></span> </iv-input>
+            </div> -->
+            <div class="filter" style="width: 300px;">
+             <i-select multiple :model.sync="type">
+              
+                 <i-option v-for="item in list" :value='item.xId'>{{item.xName}}</i-option>
+              
+             </i-select>
+            </div>
+           
+
+            <iv-button type="primary" @click="doQuery" style=" margin-right: 10px;">查询</iv-button>
+           
+        </div>
+
+        <div>
+            <!-- <div v-show="tableHeader.length==0" style="margin: 300px auto;text-align: center;">暂无数据</div> -->
+            <vuecharts style="height: calc( 100vh - 430px);margin:0 70px"  :options="charts.opt" v-ref:chart></vuecharts>
+            <div  v-show="tableHeader.length>0" style="text-align: right;"><a @click="doExport" style="margin-right: 120px;">导出</a> </div>
+            <table   cellspacing="0" cellpadding="0" class="totalTable" style="border-collapse:collapse;">
+                <tbody >
+                    <tr class="theader">
+                        <td rowspan="2" id="lineTd">
+                            <span  style="float:left;margin-top:30px;">作业状态</span>
+                            <span style="float:right;margin-top:0px;">作业类型</span>
+                        </td>
+                        <td class="autoWidth" v-for="item in tableHeader" :colspan="item.col" :rowspan="item.row?1:2">{{item.val}}</td>
+                        
+                    </tr>
+                    <tr class="theader" >
+                        
+                        <td  v-for="item in tableHeader1" >{{item.val}}</td>
+                       
+                    </tr>
+                    <tr class="tbody" >
+                        <td>已完成</td>
+                        <td class="autoWidth" v-for="item in tableData1">{{item.val}}</td>
+                      
+                    </tr>
+                    <tr class="tbody" >
+                        <td>未完成</td>
+                        <td class="autoWidth" v-for="item in tableData2">{{item.val}}</td>
+                      
+                    </tr>
+                    <tr class="tbody" >
+                        <td>小计</td>
+                        <td class="autoWidth" v-for="item in tableData3">{{item.val}}</td>
+                      
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+     
+    </div>
+
+
+</div>
+<dept-select-modal  :visible.sync="deptSelectModel.visible" @do-save="doSaveDepts" :single-select="true"
+	:filter-data="deptSelectModel.filterData"></dept-select-modal>
+<style>
+    .train-filter .filter {
+        margin-right: 10px;
+    }
+    #lineTd {
+		background: #fff url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxsaW5lIHgxPSIwIiB5MT0iMCIgeDI9IjEwMCUiIHkyPSIxMDAlIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=) no-repeat 100% center;
+	}
+    .totalTable{
+        width: calc( 100% - 200px) ;
+		margin: 0 100px;
+	}
+	.totalTable .theader td:first-child{
+		width: 120px;
+		text-align: center;
+       
+		border: solid 1px #333333;
+	} 
+	.totalTable .tbody td:first-child{
+		width: 120px;
+		text-align: center;
+		height: 35px;
+		border: solid 1px #333333;
+	}
+    .totalTable .theader td{
+		min-width: 50px;
+		text-align: center;
+        height: 30px;
+       
+		border: solid 1px #333333;
+	} 
+	.totalTable .tbody td{
+		min-width: 50px;
+		text-align: center;
+		height: 35px;
+		border: solid 1px #333333;
+	}
+</style>

@@ -1,0 +1,149 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.compCode')" prop="code">
+						<!--<iv-input   :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.compName')" prop="name">
+						<iv-input  :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.abbreviat')" prop="attr5">
+						<iv-input  :value.sync="mainModel.vo.attr5" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="parentId" v-if="showComp">
+						<company-tree-select :id.sync="mainModel.vo.parentId" v-ref:company v-if="!mainModel.isReadOnly"></company-tree-select>
+						<iv-input v-if="mainModel.isReadOnly" :value="getDataDic('org',mainModel.vo.parentId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('bs.bac.compGenre')" prop="organizationExt.genre">
+						<i-select :model.sync="mainModel.vo.organizationExt.genre" :list="mainModel.compDate"  v-if="!mainModel.isReadOnly">
+							<i-option v-for="item in mainModel.compDate" :value="item.value">{{ item.name}}</i-option>
+						</i-select>
+						<span v-else>{{genre}}</span>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="所属行业" prop="organizationExt.industry" v-show="!mainModel.isReadOnly">
+						<iv-tree-select
+								:model.sync="mainModel.vo.organizationExt.industry"
+								:list="industryList"
+								id-attr="id"
+								display-attr="name">
+							<iv-tree
+									:model="industryList"
+									:serch-filterable="true"
+									:selected-datas.sync="selectedDataHazard"
+									id-attr="id"
+									pid-attr="parentId"
+									display-attr="name"
+									:single-select="true"
+									:allow-parent-checked="true"></iv-tree>
+						</iv-tree-select>
+					</el-form-item>
+
+					<el-form-item label="所属行业" v-show="mainModel.isReadOnly">
+						{{industryName}}
+					</el-form-item>
+					<!--行政区域-->
+					<el-form-item :label="$t('ori.perm.divis')" style="height: 40px; overflow: hidden">
+						<i-select
+								:list="mainModel.vo.countryList"
+								:model.sync="mainModel.countryId"
+								clearable
+								filterable
+							   	style="width:127px;float: left"
+								v-if="!mainModel.isReadOnly"
+						>
+							<i-option v-for="item in mainModel.vo.countryList" :value="item.id">{{ item.name }}</i-option>
+						</i-select>
+						<!--@on-change="doChangeCity"-->
+						<i-select
+								:list="mainModel.vo.provinceList"
+								:model.sync="mainModel.provinceId"
+								clearable
+								filterable
+								style="width:127px;float: left; margin-left: 5px"
+								v-if="!mainModel.isReadOnly"
+						>
+							<i-option v-for="item in mainModel.vo.provinceList" :value="item.id">{{ item.name }}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly">{{mainModel.countryIdName}}</span>
+						<span v-if="mainModel.isReadOnly">{{mainModel.provinceIdName}}</span>
+					</el-form-item>
+
+					<el-form-item>
+						<i-select
+								:model.sync="mainModel.vo.regionId"
+								:list="mainModel.vo.cityList"
+								clearable
+								filterable
+								v-if="!mainModel.isReadOnly"
+						>
+							<i-option v-for="item in mainModel.vo.cityList" :value="item.id">{{ item.name }}</i-option>
+						</i-select>
+						<span v-else>{{mainModel.regionIdName}}</span>
+					</el-form-item>
+
+
+						<el-form-item  :label="$t('bs.bac.compPerson')">
+							<iv-input :value.sync="mainModel.vo.organizationExt.legalPerson" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item  :label="$t('bs.bac.orgCode')">
+							<iv-input :value.sync="mainModel.vo.organizationExt.orgCode" :textonly="mainModel.isReadOnly" ></iv-input>
+						</el-form-item>
+						<el-form-item  :label="$t('bs.bac.regNumber')">
+							<iv-input :value.sync="mainModel.vo.organizationExt.regno" :textonly="mainModel.isReadOnly" ></iv-input>
+						</el-form-item>
+
+					<el-form-item  :label="$t('bs.bac.peopleNumber')" prop="organizationExt.population">
+						<iv-input :value.sync="mainModel.vo.organizationExt.population" :textonly="mainModel.isReadOnly" ></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bs.bac.outputValue')" prop="organizationExt.production">
+						<iv-input :value.sync="mainModel.vo.organizationExt.production" :textonly="mainModel.isReadOnly" ></iv-input>
+					</el-form-item>
+						<!--//行业-->
+						<el-form-item :label="$t('bs.bac.contactNumber')">
+							<iv-input  :value.sync="mainModel.vo.organizationExt.phone"  :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item :label="$t('bs.bac.electronics')">
+							<iv-input  :value.sync="mainModel.vo.organizationExt.email"  :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item :label="$t('ori.perm.introduct')">
+							<iv-input  :value.sync="mainModel.vo.remarks" type="textarea" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item :label="$t('ori.perm.detailAddr')">
+							<iv-input  :value.sync="mainModel.vo.address" type="textarea" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+				</el-form>
+			</simple-card>
+
+
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost" icon="ios-minus-outline"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+	</div>
+</div>
+
+

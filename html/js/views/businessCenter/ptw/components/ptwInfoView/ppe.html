@@ -1,0 +1,56 @@
+<simple-card style="width:750px;">
+    <p slot="title" class="ptw-title" style="width:950px;">个人防护</p>
+    <div class="flex-layout  mb20 ul-style-none ml10">
+        <div    class="form-item-label color-item-999" style="align-items: baseline;font-size:14px;color:#666;">防护措施</div>
+
+        <div style="position: absolute;top: 0px;right:0;">
+            <div v-if="verNumList.length>1">
+                修改历史
+                <i-select placement="bottom-end" :popper-fixed="false" class="ivu-select-selection-none ivu-select-width-auto" style="width:80px;" :display-fn="displayFn" :model.sync="selectVerNum" @on-change="changeVersion" :list="verNumList" >
+                    <i-option v-for="item in verNumList" :value="item.verNum">
+                        <div class="flex-layout-between">
+                            <!--<div>#{{ item.verNum }} &nbsp;&nbsp;{{item.workPersonnelName}}</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{item.username}} &nbsp;&nbsp;{{item.verifyTime}}</div>-->
+                            <div>#{{ item.verNum }} &nbsp;&nbsp;{{index==verNumList.length-1?'作业申请':'作业会签'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.workPersonnelName ? item.workPersonnelName+'/':''}}{{item.username}}</div><div> &nbsp;&nbsp;{{item.verifyTime}}</div>
+                        </div>
+
+                    </i-option>
+                </i-select>
+            </div>
+        </div>
+
+        <div  class="el-form-item ptw-border" style="width:100%;" >
+            <ul class="ul-inside">
+                <!--<template v-for="item in ppeList" >-->
+                    <!--<li v-for="ppeitem of item.lists" style="margin-bottom:5px;">-->
+                        <!--<input type="checkbox" disabled :checked="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')" class="width-auto" />-->
+                        <!--{{getItemName(ppeitem)}}-->
+                    <!--</li>-->
+                <!--</template>-->
+
+                <li v-for="ppeitem of allPPEList" style="margin-bottom:5px;">
+                <!--<input type="checkbox" disabled :checked="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')" class="width-auto" />-->
+                    <!--<input type="checkbox" v-if="selectVerNum==-1" disabled :checked="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')" class="width-auto" />-->
+                    <!--<input type="checkbox" v-else disabled :checked="getCheckResult(ppeitem)" class="width-auto" />-->
+                    <Icon v-if="getCheckResult(ppeitem)" type="android-checkbox-outline"></Icon>
+                    <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                    {{getItemName(ppeitem)}}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="flex-layout  mb20 ul-style-none ml10" v-if="getFiles(model.fileList,'PTW30').length>0">
+        <div    class="form-item-label color-item-999" style="align-items: baseline;font-size:14px;color:#666;">图片</div>
+        <div  class="el-form-item " style="width:100%;" >
+            <image-view :images="getFiles(model.fileList,'PTW30')" :show-close="false"></image-view>
+        </div>
+    </div>
+
+    <div class="flex-layout  mb20 ul-style-none ml10" v-if="getFiles(model.fileList,'PTW19').length>0">
+        <div    class="form-item-label color-item-999" style="align-items: baseline;font-size:14px;color:#666;">签名</div>
+        <div  class="el-form-item" style="width:100%;" >
+            <image-view :image-style="imageStyle" :images="getFiles(model.fileList,'PTW19')" :show-close="false"></image-view>
+        </div>
+    </div>
+
+</simple-card>

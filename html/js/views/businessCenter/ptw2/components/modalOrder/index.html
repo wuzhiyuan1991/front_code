@@ -1,0 +1,73 @@
+<Modal v-if="load" title="作业票预约" :visible.sync="show" width="800" :footer-hide="true">
+    <div class="modal-box-default">
+    <div class="box-base flex-layout-vertical over-auto" style="width:100%;">
+        <div style="max-height: 500px;width:100%;" class="flex-grow1 pd10">
+            <el-form style="width: 500px;" label-width="120px">
+                <el-form-item class="is-required" label="作业时限" style="overflow: inherit;">
+                    <!--<vi-date-picker type="daterange" :value.sync="dateRange" placeholder="选择作业时间范围"-->
+                    <!--style="width: 200px;"></vi-date-picker>-->
+                    <span style="display: inline-block;width:172px;">
+                            <date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                                         :selected-date.sync="formOrder.workStartTime"></date-picker>
+                        </span>
+                    ~~
+                    <span style="display: inline-block;width:172px;">
+                            <date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                                         :selected-date.sync="formOrder.workEndTime"></date-picker>
+                        </span>
+
+                </el-form-item>
+                <el-form-item class="is-required" label="作业类型" style="overflow:visible">
+                    <iv-radio-group v-ref:radio-group class="group-vertical" :model.sync="selWorkCatalogIndex">
+                        <iv-radio :value="index" v-for="(index,item) of workCatalogList">
+                            {{item.name}}
+                            <span v-if="item.levelList&&item.levelList.length>0&&selWorkCatalogIndex==index">
+                                    (
+                                    <iv-radio-group :model.sync="selectedWorLevelId">
+                                        <iv-radio :value="level.id" v-for="level of item.levelList">{{level.name}}
+                                        </iv-radio>
+                                    </iv-radio-group>
+                                    )
+                                </span>
+                        </iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item class="is-required" label="生产单位" prop="prodUnitId" >
+                    <div class="width378">
+                    <department-tree-select default-comp-id :id.sync="formOrder.prodUnitId" >
+                    </department-tree-select>
+                    </div>
+                </el-form-item>
+                <el-form-item class="is-required" label="作业地点" style="overflow: inherit;">
+                    <iv-input :value.sync="formOrder.workPlace"></iv-input>
+                </el-form-item>
+                <el-form-item label="作业所在的设备" >
+                    <iv-input type="textarea" :rows="6" :value.sync="formOrder.workEquipment"></iv-input>
+                </el-form-item>
+                <el-form-item class="is-required " label="作业内容">
+                    <iv-input type="textarea" :rows="8" :value.sync="formOrder.workContent"></iv-input>
+                </el-form-item>
+                <el-form-item class="is-required " label="审批人">
+                    <input-select :value="formOrder.auditor" id-field="id" display-field="name"
+                                  @click="showUserSelectModal=true"></input-select>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-Button type="primary"   class="pull-right" @click="doFormOrderSubmit">提交</vi-Button>
+        </div>
+    </div>
+<!--    <template slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="cancel">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large" @click="doFormOrderSubmit">提交</vi-Button>-->
+<!--    </template>-->
+</Modal>
+<user-select-modal single-select :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>
+<style>
+    .width378 .ivu-select{
+        width: 378px !important;
+    }
+</style>

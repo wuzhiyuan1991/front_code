@@ -1,0 +1,37 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform >
+			<el-form-item :label="$t('gb.common.code')" prop="code">
+				<iv-input  v-if="mainModel.opType == 'create'" :value.sync="mainModel.vo.code"></iv-input>
+				<iv-input  v-if="mainModel.opType == 'update'" :value.sync="mainModel.vo.code" disabled></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('bs.orl.securityRoleName')" prop="name">
+                <iv-input  :value.sync="mainModel.vo.name"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.name">-->
+			</el-form-item>
+			<!--<el-form-item label="岗位类型" prop="postType">-->
+			    <!--<i-select :model.sync="mainModel.vo.postType" :list="mainModel.vo.posList" >-->
+		            <!--<i-option v-for="item in mainModel.vo.posList" :value="item.value">{{ item.label }}</i-option>-->
+		        <!--</i-select>-->
+			<!--</el-form-item>-->
+			<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+				<company-tree-select  :id.sync="mainModel.vo.compId"></company-tree-select>
+			</el-form-item>
+			<!--<el-form-item :label="$t('gb.common.ownedDept')" prop="organizationId">
+			    &lt;!&ndash;<input type="hidden" name="id" v-model="id">&ndash;&gt;
+                &lt;!&ndash;&lt;!&ndash;<iv-input type="hidden" :value.sync="id"></iv-input>&ndash;&gt;&ndash;&gt;
+			    &lt;!&ndash;<i-select :model.sync="mainModel.vo.organizationId" :list="mainModel.vo.orgList" >&ndash;&gt;
+			        &lt;!&ndash;<i-option v-for="item in mainModel.vo.orgList" :value="item.id">{{item.name}}</i-option>&ndash;&gt;
+			    &lt;!&ndash;</i-select>&ndash;&gt;
+				<user-tree-select  :model.sync="mainModel.vo.perId" :org-id.sync ="mainModel.vo.orgIdData"></user-tree-select>
+			</el-form-item>-->
+			<el-form-item :label="$t('bc.hal.safeRespon')" prop="remarks">
+                <iv-input type="textarea" :value.sync="mainModel.vo.remarks"></iv-input>
+			    <!--<textarea rows="3" class="h80" v-model="mainModel.vo.remarks"></textarea>-->
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+	</div>	
+</div>	

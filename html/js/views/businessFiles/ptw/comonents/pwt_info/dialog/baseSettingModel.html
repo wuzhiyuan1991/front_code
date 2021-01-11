@@ -1,0 +1,89 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container" style="width: 900px">
+        <div class="do-add-btn" >
+            <div class="left main-special-box-1 pl30" style="line-height: 1;padding-left: 21px;padding-top: 3px;">
+                <span class="main-special-item" :class="{'checked':tableModel.cure=='all'}" @click="getCureList('all')">所有</span>
+                <span class="main-special-item" :class="{'checked':tableModel.cure=='inherent'}" @click="getCureList('inherent')">固有字段</span>
+                <span class="main-special-item" :class="{'checked':tableModel.cure=='custom'}" @click="getCureList('custom')">自定义字段</span>
+                <span class="main-special-item" :class="{'checked':tableModel.cure=='disable'}" @click="getCureList('disable')">已启用</span>
+
+            </div>
+            <span @click="doShowBaseSettingFormModel">
+                <span style="margin-right:10px;" @click.stop="gotoPreviewSetting">配置显示预览模板</span>
+                <span style="color:#666;margin-right:10px;" v-show="isAll" @click.stop="selectAll('1')">  <label class="ivu-checkbox-wrapper"><span style="margin-right:0" class="ivu-checkbox ivu-checkbox-checked"><span style="margin-right:0" class="ivu-checkbox-inner"></span><input  type="checkbox" class="ivu-checkbox-input"></span><span style="display: none;"></span></label> 全部启用固有字段</span>
+                <span style="color:#666;margin-right:10px;" v-show="!isAll" @click.stop="selectAll('0')"> <label class="ivu-checkbox-wrapper"><span style="margin-right:0" class="ivu-checkbox"><span style="margin-right:0" class="ivu-checkbox-inner"></span><input  type="checkbox" class="ivu-checkbox-input"></span><span style="display: none;"></span></label> 全部启用固有字段</span>
+                添加
+            </span>
+        </div>
+        <div class="epc-content epc-content-scroll"  style="background: #fff;height: 600px;">
+
+            <!--<vue-bootstrap-table-->
+                    <!--:columns="tableModel.columns"-->
+                    <!--:filter-column="tableModel.filterColumn"-->
+                    <!--:show-pager="true"-->
+                    <!--:selected-datas.sync="mainModel.selectedDatas"-->
+                    <!--:url="tableModel.url"-->
+                    <!--:reset-trigger-flag="tableModel.resetTriggerFlag"-->
+                    <!--:default-filter-value="tableModel.defaultFilterValue"-->
+                    <!--@on-dbclick-cell="onDbClickCell"-->
+                    <!--:is-cache-selected-data="isCacheSelectedData"-->
+                    <!--lazy-load-->
+                    <!--:resizeable="tableModel.resizeable"-->
+                    <!--v-ref:table-->
+            <!--&gt;-->
+            <!--</vue-bootstrap-table>-->
+
+            <drap-table
+                :columns="tableModel.columns"
+                :values="tableModel.list"
+                :tools="tableTools"
+                @on-tr-click="onTrClick"
+                @on-click="onRowClicked"
+                @on-update="doUpdateItem"
+                @on-move="doItemMove"
+                @on-delete="doDeleteItem"
+                :page-size-opts=[1000]
+                show-page=false
+                tool-column-style='min-width:70px;'
+                fix-title
+                is-show-page-box=false
+                draping
+                @drap-end="drapEnd"
+                v-ref:main-table
+            ></drap-table>
+            <!--<vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>-->
+
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+
+    <form-model v-ref:form-model @do-update='doUpdateDetail' @do-save="doSaveDetail" :visible.sync="formModel.show"></form-model>
+    <preview-setting v-ref:preview-setting ></preview-setting>
+
+</Modal>
+
+
+<style>
+    .do-add-btn{
+        background: #fff;
+        font-size: 14px;
+        color: #56b5ff;
+        cursor: pointer;
+        text-align: right;
+        padding-right: 22px;
+        padding-top: 5px;
+    }
+    .dis-none-after .ivu-checkbox-inner:after{
+        display: none;
+    }
+    .isDragEnd{
+        background: #0075d3!important;
+        color: #fff!important;
+    }
+    .isDragEnd button{
+        color: #fff!important;
+    }
+</style>
+

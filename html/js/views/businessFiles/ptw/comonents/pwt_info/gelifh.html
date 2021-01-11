@@ -1,0 +1,269 @@
+
+<simple-card class="ptw-base-info" style="width:860px;">
+    <p slot="title">能量隔离</p>
+    <div class="mb50 pdt10 ml10">
+        <!--<div class="flex-layout-between"></div>-->
+        <div >
+            <span v-show="model.enableProcessIsolation=='2' || model.enableProcessIsolation=='0'"><iv-checkbox :checked.sync="model.enableProcessIsolation" style="color:#33a6ff;" true-value="2" false-value="0">工艺隔离</iv-checkbox></span>
+            <span v-show="model.enableProcessIsolation=='1' "><iv-checkbox :checked.sync="model.enableProcessIsolation" style="color:#33a6ff;" true-value="1" false-value="0">工艺隔离</iv-checkbox></span>
+            <span style="margin-left:3px;"><iv-checkbox :checked.sync="model.enableProcessIsolation" style="color:#33a6ff;" true-value="1" false-value="2">作业票申请时必须启用</iv-checkbox></span>
+            <div  class="pdb10 pdr10 contentWrap" :class="{'rel-info-panel-mask1 border-style-dashed':(model.enableProcessIsolation!='1'&& model.enableProcessIsolation!='2')}">
+                <!--<div class="form-disabled-mask"></div>-->
+                <div class="pad-form-item">
+                    <el-form class="width-auto-ipt">
+                        <el-form-item label="工艺管道">
+                            <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="隔离点">
+                            <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="隔离方法">
+                            <div class="flex-layout">
+                                <div class="flex-grow1 form-disabled bgw h80">
+                                    <div class="ele-disabled-mask"></div>
+                                    <iv-checkbox-group class="group-vertical">
+                                        <iv-checkbox disabled v-for="item of geliffList">{{item.name}}</iv-checkbox>
+                                        <iv-checkbox disabled>其他________________</iv-checkbox>
+                                    </iv-checkbox-group>
+
+                                </div>
+                                <div class="link-ele pdl5 flex-noshrink"  @click="doCustomContent(5)">定制内容</div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="挂牌上锁">
+                            <div class="form-disabled">
+                                <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="隔离位置示意图">
+                            <div class="form-disabled">
+                                <div class="link-disabled">上传文件</div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="隔离实施人">
+                            <div class="geli-sign">
+                        <span class="form-disabled mr10">作业申请人选择人员
+                        </span>
+                                <label class="sign-time">隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                                签名<span class="form-disabled ml10">操作人签名</span>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="解除隔离实施人">
+                            <div class="geli-sign">
+                        <span class="form-disabled mr10">作业申请人选择人员
+                        </span>
+                                <label class="sign-time" >解除隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                                签名<span class="form-disabled ml10">操作人签名</span>
+                            </div>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 pdt10 ml10" >
+        <div>
+            <span v-show="model.enableMechanicalIsolation=='2' || model.enableMechanicalIsolation=='0'"><iv-checkbox :checked.sync="model.enableMechanicalIsolation" style="color:#33a6ff;" true-value="2" false-value="0">机械隔离</iv-checkbox></span>
+            <span v-show="model.enableMechanicalIsolation=='1' "><iv-checkbox :checked.sync="model.enableMechanicalIsolation" style="color:#33a6ff;" true-value="1" false-value="0">机械隔离</iv-checkbox></span>
+            <span style="margin-left:3px;"><iv-checkbox :checked.sync="model.enableMechanicalIsolation" style="color:#33a6ff;" true-value="1" false-value="2">作业票申请时必须启用</iv-checkbox></span>
+            <div  class="pdb10 pdr10 contentWrap" :class="{'rel-info-panel-mask1 border-style-dashed':(model.enableMechanicalIsolation!='1'&& model.enableMechanicalIsolation!='2')}">
+            <!--<span class="link-btn-color" ><iv-checkbox :checked.sync="model.enableMechanicalIsolation" true-value="1"  false-value="0">机械隔离</iv-checkbox></span>-->
+            <!--<div style="border:1px solid #ddd;width:760px;" class="pdb10 pdr10" :class="{'rel-info-panel-mask border-style-dashed':model.enableMechanicalIsolation!='1'}">-->
+                <!--<div class="form-disabled-mask"></div>-->
+                <div class="pad-form-item">
+                    <el-form class="width-auto-ipt">
+                        <el-form-item label="设施设备">
+                            <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="机械隔离部位 ">
+                            <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="挂牌上锁">
+                            <div class="form-disabled">
+                                <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="隔离实施人">
+                            <div class="geli-sign">
+                    <span class="form-disabled mr10">作业申请人选择人员
+                    </span>
+                                <label class="sign-time">隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                                签名<span class="form-disabled ml10">操作人签名</span>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="解除隔离实施人">
+                            <div class="geli-sign">
+                        <span class="form-disabled mr10">作业申请人选择人员
+                        </span>
+                                <label class="sign-time">解除隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                                签名<span class="form-disabled ml10">操作人签名</span>
+                            </div>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 pdt10 ml10">
+        <div >
+            <span v-show="model.enableElectricIsolation=='2' || model.enableElectricIsolation=='0'"><iv-checkbox :checked.sync="model.enableElectricIsolation" style="color:#33a6ff;" true-value="2" false-value="0">电气隔离</iv-checkbox></span>
+            <span v-show="model.enableElectricIsolation=='1' "><iv-checkbox :checked.sync="model.enableElectricIsolation" style="color:#33a6ff;" true-value="1" false-value="0">电气隔离</iv-checkbox></span>
+            <span style="margin-left:3px;"><iv-checkbox :checked.sync="model.enableElectricIsolation" style="color:#33a6ff;" true-value="1" false-value="2">作业票申请时必须启用</iv-checkbox></span>
+            <div  class="pdb10 pdr10 contentWrap" :class="{'rel-info-panel-mask1 border-style-dashed':(model.enableElectricIsolation!='1'&& model.enableElectricIsolation!='2')}">
+            <!--<span class="link-btn-color"><iv-checkbox :checked.sync="model.enableElectricIsolation" true-value="1"  false-value="0">电气隔离</iv-checkbox></span>-->
+            <!--<div style="border:1px solid #ddd;width:760px;" class="pdb10 pdr10" :class="{'rel-info-panel-mask border-style-dashed':model.enableElectricIsolation!='1'}" >-->
+                <div class="form-disabled-mask"></div>
+                <el-form class="width-auto-ipt pad-form-item">
+                    <el-form-item label="电气设施设备">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="电气隔离部位">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="隔离实施人">
+                        <div class="geli-sign">
+                    <span class="form-disabled mr10">作业申请人选择人员
+                    </span>
+                            <label class="sign-time">隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                            签名<span class="form-disabled ml10">操作人签名</span>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="解除隔离实施人">
+                        <div class="geli-sign">
+                        <span class="form-disabled mr10">作业申请人选择人员
+                        </span>
+                            <label class="sign-time">解除隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                            签名<span class="form-disabled ml10">操作人签名</span>
+                        </div>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 pdt10 ml10" >
+        <div>
+            <span v-show="model.enableSystemMask=='2' || model.enableSystemMask=='0'"><iv-checkbox :checked.sync="model.enableSystemMask" style="color:#33a6ff;" true-value="2" false-value="0">系统屏蔽</iv-checkbox></span>
+            <span v-show="model.enableSystemMask=='1' "><iv-checkbox :checked.sync="model.enableSystemMask" style="color:#33a6ff;" true-value="1" false-value="0">系统屏蔽</iv-checkbox></span>
+            <span style="margin-left:3px;"><iv-checkbox :checked.sync="model.enableSystemMask" style="color:#33a6ff;" true-value="1" false-value="2">作业票申请时必须启用</iv-checkbox></span>
+            <div class="pdb10 pdr10 contentWrap" :class="{'rel-info-panel-mask1 border-style-dashed':(model.enableSystemMask!='1'&& model.enableSystemMask!='2')}">
+
+            <!--<span class="link-btn-color"><iv-checkbox :checked.sync="model.enableSystemMask" true-value="1"  false-value="0">系统屏蔽</iv-checkbox></span>-->
+            <!--<div style="border:1px solid #ddd;width:760px;" class="pdb10 pdr10" :class="{'rel-info-panel-mask border-style-dashed':model.enableSystemMask!='1'}">-->
+                <div class="form-disabled-mask"></div>
+                <el-form class="width-auto-ipt pad-form-item">
+                    <el-form-item label="保护系统名称">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="保护系统子件名称">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="隔离实施人">
+                        <div class="geli-sign">
+                    <span class="form-disabled mr10">作业申请人选择人员
+                    </span>
+                            <label class="sign-time">隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                            签名<span class="form-disabled ml10">操作人签名</span>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="解除隔离实施人">
+                        <div class="geli-sign">
+                        <span class="form-disabled mr10">作业申请人选择人员
+                        </span>
+                            <label class="sign-time">解除隔离时间</label><span class="form-disabled mr10">操作人录入（年月日时分）</span>
+                            签名<span class="form-disabled ml10">操作人签名</span>
+                        </div>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 pdt10 ml10" >
+        <div>
+            <span v-show="model.enableBlindPlate=='2' || model.enableBlindPlate=='0'"><iv-checkbox :checked.sync="model.enableBlindPlate" style="color:#33a6ff;" true-value="2" false-value="0">盲板抽堵</iv-checkbox></span>
+            <span v-show="model.enableBlindPlate=='1' "><iv-checkbox :checked.sync="model.enableBlindPlate" style="color:#33a6ff;" true-value="1" false-value="0">盲板抽堵</iv-checkbox></span>
+            <span style="margin-left:3px;"><iv-checkbox :checked.sync="model.enableBlindPlate" style="color:#33a6ff;" true-value="1" false-value="2">作业票申请时必须启用</iv-checkbox></span>
+            <div  class="pdb10 pdr10 contentWrap" :class="{'rel-info-panel-mask1 border-style-dashed':(model.enableBlindPlate!='1'&& model.enableBlindPlate!='2')}">
+
+                <!--<span class="link-btn-color"><iv-checkbox :checked.sync="model.enableSystemMask" true-value="1"  false-value="0">系统屏蔽</iv-checkbox></span>-->
+                <!--<div style="border:1px solid #ddd;width:760px;" class="pdb10 pdr10" :class="{'rel-info-panel-mask border-style-dashed':model.enableSystemMask!='1'}">-->
+                <div class="form-disabled-mask"></div>
+                <div style="padding:5px;">
+                    <!--<vue-bootstrap-table-->
+                            <!--:columns="columns"-->
+                            <!--:filter-column="tableModel.filterColumn"-->
+                            <!--:show-pager="true"-->
+                            <!--:selected-datas.sync="mainModel.selectedDatas"-->
+                            <!--:default-filter-value="tableModel.defaultFilterValue"-->
+                            <!--@on-dbclick-cell="onDbClickCell"-->
+                            <!--lazy-load-->
+                            <!--:show-filter="false"-->
+                            <!--v-ref:table2-->
+                    <!--&gt;-->
+                    <!--</vue-bootstrap-table>-->
+                    <div  style="padding-right: 17px;">
+                        <table class="layout-table" style="margin-bottom: 0;">
+                            <!--<colgroup>-->
+                                <!--<col  v-if="showSequence">-->
+                                <!--<col  >-->
+                            <!--</colgroup>-->
+                            <thead style="text-align: center">
+                            <tr class="layout-table-tr">
+                                <th rowspan="2">设备管道名称</th>
+                                <th rowspan="2">介质</th>
+                                <th rowspan="2">温度</th>
+                                <th rowspan="2">压力</th>
+                                <th colspan="3">盲板</th>
+                                <th colspan="2">实施时间</th>
+                                <th colspan="2">作业人</th>
+                                <th colspan="2">监护人</th>
+                            </tr>
+                            <tr class="layout-table-tr">
+                                <th>材质</th>
+                                <th>规格</th>
+                                <th>编号</th>
+                                <th>堵</th>
+                                <th>抽</th>
+                                <th>堵</th>
+                                <th>抽</th>
+                                <th>堵</th>
+                                <th>抽</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="layout-table-tr"><td> &nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="layout-table-tr"><td> &nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</simple-card>
+<style>
+    .geli-sign .form-disabled{
+        display: inline-flex;
+        width: auto;
+    }
+    .contentWrap{
+        border:1px solid #ddd;width:760px;margin-left:84px;position: relative;
+    }
+</style>

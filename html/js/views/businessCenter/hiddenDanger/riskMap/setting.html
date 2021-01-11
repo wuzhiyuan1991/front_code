@@ -1,0 +1,61 @@
+<div style="padding: 20px;background-color: #fff;">
+
+    <div>
+        <iv-button @click="doSave">保存</iv-button>
+    </div>
+
+    <ul style="display: flex;flex-wrap: wrap;justify-content: space-around;">
+        <li v-for="item in items" style="width: 300px;margin: 0 20px 20px 0;border:1px solid #ddd;padding: 10px;border-radius: 5px;background-color: #f2f2f2;">
+            <div style="display: flex;align-items: center;margin-bottom: 10px;">
+                <label for="" style="margin-right: 5px;">AreaId</label>
+                <iv-input :value.sync="item.areaId"></iv-input>
+            </div>
+            <div style="display: flex;align-items: center;margin-bottom: 10px;">
+                <label for="" style="margin-right: 5px;">AreaName</label>
+                <iv-input :value.sync="item.areaName"></iv-input>
+            </div>
+            <div style="display: flex;align-items: center;margin-bottom: 10px;">
+                <label for="" style="margin-right: 5px;">AreaGroupId</label>
+                <iv-input :value.sync="item.areaGroupId"></iv-input>
+            </div>
+            <div style="display: flex;align-items: center;margin-bottom: 10px;">
+                <label for="" style="margin-right: 5px;">OrgId</label>
+                <!--<iv-input :value.sync="item.orgId"></iv-input>-->
+                <company-tree-select :id.sync="item.orgId"></company-tree-select>
+            </div>
+            <div style="display: flex;align-items: center;margin-bottom: 10px;  ">
+                <label for="" style="margin-right: 5px;">OrgName</label>
+                <iv-input :value.sync="item.orgName"></iv-input>
+            </div>
+            <div style="display: flex;align-items: center;margin-bottom: 10px;  ">
+                <label for="" style="margin-right: 5px;">PictureId</label>
+                <iv-input :value.sync="item.pictureId"></iv-input>
+            </div>
+            <div style="display: flex;align-items: center;margin-bottom: 10px;  ">
+                <label for="" style="margin-right: 5px;">DrawOrgId</label>
+                <!--<iv-input :value.sync="item.drawOrgId"></iv-input>-->
+                <department-tree-select :id.sync="item.drawOrgId" :comp-id.sync ="item.orgId"></department-tree-select>
+            </div>
+            <ul>
+                <li v-for="id in item.dominationAreaIds">
+                    <div style="display: flex;align-items: center;margin-bottom: 10px;  ">
+                        <label for="" style="margin-right: 5px;">DominationAreaIds</label>
+                        <iv-input :value.sync="id"></iv-input>
+                    </div>
+                </li>
+            </ul>
+            <ul>
+                <li v-for="point in item.points" style="display: flex;margin-bottom: 10px;">
+                    <div style="display: flex;align-items: center;margin-right: 10px;">
+                        <label for="" style="margin-right: 5px;">X</label>
+                        <iv-input :value.sync="point.x"></iv-input>
+                    </div>
+                    <div style="display: flex;align-items: center;">
+                        <label for="" style="margin-right: 5px;">Y</label>
+                        <iv-input :value.sync="point.y"></iv-input>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

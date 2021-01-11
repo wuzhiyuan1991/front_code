@@ -1,0 +1,10 @@
+<div :style="echartStyle"  class="reportChartCalc">
+	<iv-row type="flex" justify="end" v-if="showHeader">
+	<!--	<iv-col>
+			<iv-button type="text" @click="changeMethod('org');" :class="{active:method == 'org'}">公司</iv-button>
+			<span>|</span>
+			<iv-button type="text" v-if="!disableAvg" @click="changeMethod('specialty');" style="margin-right: 20px;" :class="{active:method == 'specialty'}">专业</iv-button>
+		</iv-col>-->
+	</iv-row>
+	<vuecharts :style="echartStyle" :options="charts.opt" v-ref:echarts></vuecharts>
+</div>

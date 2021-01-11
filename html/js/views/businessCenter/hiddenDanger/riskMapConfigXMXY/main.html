@@ -1,0 +1,52 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle" style="height: 98px;border:none;">
+            <div style="padding-top:10px;width:900px;">
+                <p style="margin-bottom:15px;">风险地图显示--配置选择“标准模型”；配置其他模型和“标准模型”之间的映射关系；</p>
+                <!--<p>配置选择“标准模型”；</p>-->
+                <!--<p>配置其他模型和“标准模型”之间的映射关系；</p>-->
+                <p>
+                    选择标准评估模型：
+                    <i-select :model.sync="modelRiskModel.id" :list="modelRiskModel.list" style="width:240px;" @on-change="modelChange">
+                        <i-option v-for="item in modelRiskModel.list" :value="item.id">{{ item.name }}</i-option>
+                    </i-select>
+                    <vi-button class="pull-right" type="primary" @click="doSaveConfig" >保存</vi-button>
+                </p>
+
+            </div>
+
+        </div>
+        <div class="mp-content" style="overflow:auto;height: calc(100% - 120px);margin-top:10px;">
+            <div style="width:430px;padding:5px 20px;">
+                <lite-table
+                        :columns="baseTableModel.columns"
+                        :values="baseTableModel.list"
+                        :tools="tableTools"
+                        @on-click="onRowClicked"
+
+                ></lite-table>
+            </div>
+            <div  style="width:1000px;">
+                <!--<div style="text-align: right;padding-right: 30px;padding-bottom:8px;">-->
+                    <!--<span v-show="showConfig" style="color:#33a6ff;cursor: pointer;" @click="gotoConfig">配置匹配</span>-->
+                <!--</div>-->
+                <p style="padding-left:24px;padding-bottom:8px;">其他模型和选为标准的评估模型之间的“等级映射”关系:</p>
+                <div style="padding:0px 20px;overflow: auto">
+                    <lite-table
+                            :columns="tableModel.columns"
+                            :values="tableModel.list"
+                            :tools="tableTools"
+                            @on-click="getClickFn"
+                            :page-size-opts=[100,50,20,10]
+
+                    ></lite-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<config-modal @update-info="upDateSelect" :visible.sync="configModel.show"  v-ref:config-modal ></config-modal>
+
+

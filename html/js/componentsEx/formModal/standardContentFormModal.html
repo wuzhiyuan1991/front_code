@@ -1,0 +1,64 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container" style="overflow-y: visible;">
+		<div style="overflow-y: visible;z-index: 1;background-color: #fff;padding:10px 20px;">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item label="章节">
+					<div style="padding-top: 5px;">
+						{{mainModel.vo.standardChapter.name}}
+					</div>
+
+				</el-form-item>
+				<el-form-item label="内容" prop="content">
+					<div class="ivu-select-100pre" style="max-height: 300px;overflow-y: auto;">
+						<iv-textarea rows=6 :value.sync="mainModel.vo.content" :readonly="mainModel.isReadOnly">
+						</iv-textarea>
+					</div>
+				</el-form-item>
+				<el-form-item label="排序位置" prop="insertPointObjId" v-if="!mainModel.isReadOnly">
+					<div class="flex-v-center  ivu-select-100pre" style="width: 244px;">
+						<span
+							:style="positionKey=='middle'?'width:35%;display: inline-block;':'width:100%;display: inline-block;'">
+							<i-select :model.sync="positionKey" :popper-fixed="false" :list="positionList">
+								<i-option v-for="position of positionList" :value="position.key">{{position.name}}
+								</i-option>
+							</i-select>
+						</span>
+
+						<span style="width:64%;display: inline-block;margin-left:1%;" v-if="positionKey=='middle'">
+							<i-select class="flex-grow1" style="width: 173px;z-index: 10;" :popper-fixed="false"
+								:model.sync="mainModel.vo.insertPointObjId" clearable :list="selectList">
+								<i-option v-for="upper in selectList" :value="upper.id">{{upper.content}}</i-option>
+							</i-select>
+						</span>
+
+
+					</div>
+
+				</el-form-item>
+				<el-form-item label="图片">
+					<div>
+						<div v-for='(index,item) in fileList' v-if='fileList.length>0'
+							style="position: relative;width: 50px;display: inline-block;margin: 0 3px;"><span
+								@click='doClickFile(index)' style="cursor: pointer;"><img
+									style="width: 50px;height: 50px;" :src="detailImg(item)" alt=""></span>
+							<Icon @click.stop="removeFile(item.id, index)" type="close-circled"
+								style="margin-left: 10px ; cursor: pointer; color: #aaa;position: absolute;top:2px;right: 2px;">
+							</Icon>
+						</div>
+					</div>
+
+					<vue-file-upload v-ref:uploader style="display: none;" :multi-selection="true"
+						:params="uploadModel.params" @on-before-upload="doUploadBefore"
+						@on-success-upload="doUploadSuccess" @on-upload-complete="onUploadComplete"
+						:filters="uploadModel.filters">
+					</vue-file-upload>
+					<span v-if='!mainModel.isReadOnly' class="link-ele" @click="uploadClicked">添加</span>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

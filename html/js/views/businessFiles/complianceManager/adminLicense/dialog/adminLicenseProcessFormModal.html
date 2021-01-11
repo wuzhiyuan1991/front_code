@@ -1,0 +1,30 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true" @on-cancel="cancel">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+<!--					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+<!--						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item v-if="(hiddenFields.indexOf('adminLicId') == -1)" label="行政许可ID" prop="adminLic.id">-->
+<!--						<input-select :value="mainModel.vo.adminLicense" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('adminLicense') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowAdminLicenseSelectModal())" ></input-select>-->
+<!--					</el-form-item>-->
+
+				<el-form-item v-if="(hiddenFields.indexOf('operate') == -1)" label="操作" prop="operate">
+					<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_admin_lic_process_operate', mainModel.vo.operate) }}</span>
+					<i-select v-else :model.sync="mainModel.vo.operate" :list="getDataDicList('icm_admin_lic_process_operate')" clearable></i-select>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('operateDate') == -1)" label="操作时间" prop="operateDate">
+					<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.operateDate" :disabled="(disabledFields.indexOf('operateDate') != -1)" clearable></date-picker>
+					<iv-input v-else :value="formatYMD(mainModel.vo.operateDate)" :disabled="(disabledFields.indexOf('operateDate') != -1)" textonly class="inp"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="内容" prop="content">
+					<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<file-list-simple-form-item :label="$t('bc.hal.enclosure')" :prop="mainModel.files" class="fip-content-sub-item" :data="fileModel.file.data" :config="fileModel.file.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

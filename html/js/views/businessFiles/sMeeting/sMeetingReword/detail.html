@@ -1,0 +1,144 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item> -->
+				
+					<el-form-item label="会议名称" prop="meetingName">
+						<iv-input :value.sync="mainModel.vo.meetingName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="会议类型" prop="type">
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.type":list="getDataDicList('aqhy_type')" >
+                           
+						</i-select>
+						<span v-else> {{getDataDic('aqhy_type',mainModel.vo.type)}}</span>
+					</el-form-item>
+					<el-form-item label="会议地点" prop="site">
+						<iv-input :value.sync="mainModel.vo.site" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="开始时间" prop="startDate">
+						<date-picker v-if="!mainModel.isReadOnly" type="datetime" format="yyyy-MM-dd HH:mm:ss" 
+						:selected-date.sync="mainModel.vo.startDate" clearable></date-picker>
+				<iv-input v-else :value.sync="mainModel.vo.startDate" textonly></iv-input>
+						<!-- <iv-input :value.sync="mainModel.vo.startDate" :textonly="mainModel.isReadOnly"></iv-input> -->
+					</el-form-item>
+					<el-form-item label="结束时间" prop="endDate">
+						<date-picker v-if="!mainModel.isReadOnly" type="datetime" format="yyyy-MM-dd HH:mm:ss" 
+						:selected-date.sync="mainModel.vo.endDate" clearable></date-picker>
+				<iv-input v-else :value.sync="mainModel.vo.endDate" textonly></iv-input>
+						<!-- <iv-input :value.sync="mainModel.vo.endDate" :textonly="mainModel.isReadOnly"></iv-input> -->
+					</el-form-item>
+
+					<el-form-item label="主持人" prop="compere.id">
+						<input-select :value.sync="mainModel.vo.compere"
+						id-field="id" display-field="name" :textonly="mainModel.isReadOnly"  clearable @click="(!mainModel.isReadOnly) && (doSelectUser(1))"></input-select>
+					</el-form-item>
+					<el-form-item label="记录人" prop="registrar.id">
+						<input-select :value.sync="mainModel.vo.registrar"
+						id-field="id" display-field="name" :textonly="mainModel.isReadOnly"  clearable @click="(!mainModel.isReadOnly) && (doSelectUser(2))"></input-select>
+					</el-form-item>
+					<el-form-item label="审批人" prop="approver.id">
+						<input-select :value.sync="mainModel.vo.approver"
+						 id-field="id" display-field="name" :textonly="mainModel.isReadOnly"  clearable @click="(!mainModel.isReadOnly) && (doSelectUser(3))"></input-select>
+						 <img v-if="mainModel.isReadOnly" @click="doViewImages" style="width: 25px;position: absolute;right: 191px;bottom: -5px;" src="" alt="">
+					</el-form-item>
+
+					<el-form-item  label="会议内容" prop="content">
+						<iv-textarea :rows="16" :value.sync="mainModel.vo.content" :width="450" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+
+					<el-form-item label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<input-select v-else :value.sync="getDataDic('org', mainModel.vo.compId)"
+						 id-field="id" display-field="compName" textonly  ></input-select>
+					</el-form-item>
+					<!-- <el-form-item label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item> -->
+				</el-form>
+			</simple-card>
+			<style>
+				.ul-lite-box{
+					display: none;
+				}
+			</style>
+
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+				<simple-card class="fip-content-item"  filter filter-when @click="doViewImages1">
+					<p slot="title"><i class="basicPng"></i><span>参会人员</span></p>
+					<!-- <a slot="extra" v-show="mainModel.opType != 'create'&& hasAuth('edit')" @click.prevent="doSelectGroup" >
+						<span><Icon type="plus"></Icon>添加分组</span>
+					</a> -->
+					<vue-bootstrap-table
+						:setting="tableModel.meetingParticipantTableModel"
+						@on-del-row="doRemoveMeetingParticipant"
+						:show-pager="false"
+						v-ref:meetingparticipant-table
+						>
+					</vue-bootstrap-table>
+				</simple-card>
+			</div>
+
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+				<simple-card class="fip-content-item"  filter filter-when>
+					<p slot="title"><i class="basicPng"></i><span>抄送人员</span></p>
+					<!-- <a slot="extra" v-show="mainModel.opType != 'create'&& hasAuth('edit')" @click.prevent="doSelectUser(4)" >
+						<span><Icon type="plus"></Icon>添加</span>
+					</a> -->
+					<vue-bootstrap-table
+						:setting="tableModel.meetingRecipientsTableModel"
+						@on-del-row="doRemoveMeetingRecipients"
+					
+						:show-pager="false"
+						v-ref:meetingrecipients-table
+						>
+					</vue-bootstrap-table>
+				</simple-card>
+			</div>
+
+
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': false}">
+				<file-list-simple-card title="会议附件" class="fip-content-item" readonly :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+			</div>
+
+
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button icon="android-document" v-if='mainModel.opType!="create"' icon="close-round" type="ghost" @click="doPreview">预览</iv-button>
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly&&mainModel.vo.status==1" type="ghost" @click="doPublic" icon="android-document">发布</iv-button>
+		<iv-button v-if="mainModel.isReadOnly&&mainModel.vo.status==2" type="ghost" @click="doSubmit" icon="android-document">提交</iv-button>
+		<iv-button v-if="mainModel.isReadOnly&&mainModel.vo.status==3" type="ghost" @click="doApproval" icon="android-document">审批</iv-button> -->
+		<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+		<!-- <iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button> -->
+	</div>
+</div>
+
+<image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+<company-select-model @do-save='doSaveCompany' :visible.sync="companySelectModel.show"
+	:filter-data="companySelectModel.filterData" single-select></company-select-model>
+	<dept-select-modal :visible.sync="deptSelectModel.visible" @do-save="doSaveDepts" single-select
+	:filter-data="deptSelectModel.filterData"></dept-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false" @do-save="doSaveUsers"
+	:filter-data="selectModel.userSelectModel.filterData" :single-select="single">
+</user-select-modal>
+<select-group :visible.sync="selectGroup.show"  @do-save='doSaveMeetingParticipant'>
+
+</select-group>

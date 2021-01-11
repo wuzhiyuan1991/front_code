@@ -1,0 +1,201 @@
+<!-- 左浮动框 -->
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{$t("gb.common.basicInfo")}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button type="ghost" @click="doSave" v-if="!isReadOnly">{{$t("gb.comnon.save")}}</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+
+            <el-form   v-if="mainModel.vo.type==0" class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="rules"  v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.checkedType')" class="small-info-box" v-if="isReadOnly ">
+                        <!--<span>{{getDataDic('checkTable_type',mainModel.vo.type)}}</span>-->
+                        <span>{{getDataDic('tpaCheckTable_type',mainModel.vo.type)}}</span>
+
+                        <!--<iv-input v-else  textonly   :value.sync="getDataDic('checkTable_type',mainModel.vo.checkTable.type)"  ></iv-input>-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.checkUser')" class="small-info-box">
+                        <!--<iv-input type="text" v-if="!isReadOnly" display-type="popselect" @click="addSelectChecklist"  :value.sync="mainModel.vo.checkUser.username" readOnly ></iv-input>-->
+                        <user-select v-if="!isReadOnly" @do-save="doSaveUser" :data-model="mainModel.vo.checkUser.username" single-select></user-select>
+                        <iv-input v-else textonly :value.sync="mainModel.vo.checkUser.username"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.checkTime')" class="small-info-box">
+                        <date-picker  v-if="!isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>
+                        <iv-input v-else textonly :value.sync="mainModel.vo.checkDate"></iv-input>
+                        <!--<input v-else type="text" class="inp" name="checkDate" placeholder="无" v-model="mainModel.vo.checkDate" readOnly >-->
+                    </el-form-item>
+                    <!--<el-form-item :label="$t('gb.common.subjectObj')" class="small-info-box" prop="checkObject.name">-->
+                    <!--<checkobject-select-modal v-if="!isReadOnly"  :data-model="mainModel.vo.checkObject.name" :single-select="true"  @do-save="doSaveObject"></checkobject-select-modal>-->
+                    <!--<iv-input textonly :value.sync="mainModel.vo.checkObject.name" v-if="isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item :label="$t('gb.common.check')" class="small-info-box">
+                        <checklist-select-modal v-if="!isReadOnly"  :data-model="mainModel.vo.tpaCheckTable.name" :default-filter-value="mainModel.checkTableFilterValue" :single-select="true"  @do-save="doSelectCheckTableList"></checklist-select-modal>
+                        <iv-input v-else  :value.sync="mainModel.vo.tpaCheckTable.name" textonly ></iv-input>
+                    </el-form-item>
+                    <!--<el-form-item :label="$t('gb.common.checkPlanName')" class="small-info-box" prop="checkPlan.name" v-if="!isReadOnly">-->
+                    <!--<checkplan-select-modal :data-model="mainModel.vo.checkPlan.name" :default-filter-value="mainModel.checkplanSelectFilterValue" :single-select="true"  @do-save="doSelectCheckPlanList"></checkplan-select-modal>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item :label="$t('bd.ria.result')" prop="content"class="small-info-box" v-else>-->
+                    <!--<span>{{getDataDic('checkResult',mainModel.vo.checkResult)}}</span>-->
+                    <!--&lt;!&ndash;<iv-input v-else  :value.sync="getDataDic('checkResult',mainModel.vo.checkResult)" textonly ></iv-input>&ndash;&gt;-->
+                    <!--</el-form-item>-->
+
+
+                </iv-row>
+                <iv-row class="bip-content-item">
+
+
+                    <el-form-item :label="$t('gb.common.ownedComp')" class="small-info-box">
+                        <iv-input  :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                        <!--<date-picker  v-if="!isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>-->
+                        <!--<iv-input v-else textonly :value.sync="mainModel.vo.checkDate"></iv-input>-->
+                        <!--<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >-->
+                        <!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+                        <!---->
+                        <!--</el-form-item>-->
+                        <!--<input v-else type="text" class="inp" name="checkDate" placeholder="无" v-model="mainModel.vo.checkDate" readOnly >-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedDept')" class="small-info-box">
+                        <iv-input  :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+                        <!--<date-picker  v-if="!isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>-->
+                        <!--<iv-input v-else textonly :value.sync="mainModel.vo.checkDate"></iv-input>-->
+                        <!--<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >-->
+                        <!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+                        <!---->
+                        <!--</el-form-item>-->
+                        <!--<input v-else type="text" class="inp" name="checkDate" placeholder="无" v-model="mainModel.vo.checkDate" readOnly >-->
+                    </el-form-item>
+                    <el-form-item :label="$t('bc.hal.source')" class="small-info-box" v-if="isReadOnly">
+                        <span>{{getDataDic('checkSource',mainModel.vo.checkSource)}}</span>
+                        <!--<iv-input v-else  :value.sync="getDataDic('checkSource',mainModel.vo.checkSource)" textonly ></iv-input>-->
+                    </el-form-item>
+
+                    <el-form-item :label="$t('gb.common.state')" class="small-info-box"  v-if="isReadOnly">
+                        <iv-input v-else  :value.sync="mainModel.vo.checkResultDetail" textonly ></iv-input>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+            <el-form   v-if="mainModel.vo.type == 100 || mainModel.vo.type == 200" class="bip-content-form" style="height:300px;"  :model="mainModel.vo" is-label-vertical :rules="rules"  v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.checkedType')" class="small-info-box" v-if="isReadOnly ">
+                        <span>{{getDataDic('tpaCheckTable_type',mainModel.vo.type)}}</span>
+                        <!--<iv-input v-else  textonly   :value.sync="getDataDic('checkTable_type',mainModel.vo.checkTable.type)"  ></iv-input>-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.checkUser')" class="small-info-box" >
+                        <!--<iv-input type="text" v-if="!isReadOnly" display-type="popselect" @click="addSelectChecklist"  :value.sync="mainModel.vo.checkUser.username" readOnly ></iv-input>-->
+                        <user-select v-if="!isReadOnly" @do-save="doSaveUser" :data-model="mainModel.vo.checkUser.username" single-select></user-select>
+                        <iv-input v-else textonly :value.sync="mainModel.vo.checkUser.username"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.inspectTask')" class="small-info-box" >
+                        <span style="overflow: hidden;text-overflow: ellipsis; white-space: nowrap;max-width: 265px;-o-text-overflow: ellipsis;display: block;" v-if="mainModel.vo.tpaCheckPlan.name">{{mainModel.vo.tpaCheckPlan.name}}<span v-if="mainModel.vo.tpaCheckTask.num">-</span>{{mainModel.vo.tpaCheckPlan.num}}</span>
+                        <!--<iv-input type="text" v-if="!isReadOnly" display-type="popselect" @click="addSelectChecklist"  :value.sync="mainModel.vo.checkUser.username" readOnly ></iv-input>-->
+                        <!--<user-select v-if="!isReadOnly" :data-model="mainModel.vo.checkTask" single-select></user-select>-->
+                        <!--<iv-input v-else textonly :value.sync="mainModel.vo.checkTask.num"></iv-input>-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.check')" class="small-info-box" >
+                        <checklist-select-modal v-if="!isReadOnly"  :data-model="mainModel.vo.tpaCheckTable.name" :default-filter-value="mainModel.checkTableFilterValue" :single-select="true"  @do-save="doSelectCheckTableList"></checklist-select-modal>
+                        <iv-input v-else  :value.sync="mainModel.vo.tpaCheckTable.name" textonly ></iv-input>
+                    </el-form-item>
+                    <!--<el-form-item :label="$t('gb.common.checkPlanName')" class="small-info-box" prop="checkPlan.name" v-if="!isReadOnly">-->
+                    <!--<checkplan-select-modal :data-model="mainModel.vo.checkPlan.name" :default-filter-value="mainModel.checkplanSelectFilterValue" :single-select="true"  @do-save="doSelectCheckPlanList"></checkplan-select-modal>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item :label="$t('bd.ria.result')" prop="content"class="small-info-box" v-else>-->
+                    <!--<span>{{getDataDic('checkResult',mainModel.vo.checkResult)}}</span>-->
+                    <!--&lt;!&ndash;<iv-input v-else  :value.sync="getDataDic('checkResult',mainModel.vo.checkResult)" textonly ></iv-input>&ndash;&gt;-->
+                    <!--</el-form-item>-->
+
+
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <!--<el-form-item :label="$t('gb.common.subjectObj')" class="small-info-box" prop="checkObject.name">-->
+                    <!--<checkobject-select-modal v-if="!isReadOnly"  :data-model="mainModel.vo.checkObject.name" :single-select="true"  @do-save="doSaveObject"></checkobject-select-modal>-->
+                    <!--<iv-input textonly :value.sync="mainModel.vo.checkObject.name" v-if="isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item :label="$t('gb.common.checkTime')" class="small-info-box" >
+                        <date-picker  v-if="!isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>
+                        <iv-input v-else textonly :value.sync="mainModel.vo.checkDate"></iv-input>
+                        <!--<input v-else type="text" class="inp" name="checkDate" placeholder="无" v-model="mainModel.vo.checkDate" readOnly >-->
+                    </el-form-item>
+                    <el-form-item  :label="$t('gb.common.startTime')" class="small-info-box" >
+                        <iv-input v-else :value.sync="mainModel.vo.tpaCheckTask.startDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item  :label="$t('gb.common.endTime')" class="small-info-box" >
+                        <iv-input v-else :value.sync="mainModel.vo.tpaCheckTask.endDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('bc.hal.source')" class="small-info-box" v-if="isReadOnly">
+                        <span>{{getDataDic('checkSource',mainModel.vo.checkSource)}}</span>
+                        <!--<iv-input v-else  :value.sync="getDataDic('checkSource',mainModel.vo.checkSource)" textonly ></iv-input>-->
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+
+                    <el-form-item :label="$t('gb.common.ownedComp')" class="small-info-box"  >
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                        <!--<date-picker  v-if="!isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>-->
+                        <!--<iv-input v-else textonly :value.sync="mainModel.vo.checkDate"></iv-input>-->
+                        <!--<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >-->
+                        <!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+                        <!---->
+                        <!--</el-form-item>-->
+                        <!--<input v-else type="text" class="inp" name="checkDate" placeholder="无" v-model="mainModel.vo.checkDate" readOnly >-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedDept')" class="small-info-box" >
+                        <iv-input  :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+                        <!--<date-picker  v-if="!isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>-->
+                        <!--<iv-input v-else textonly :value.sync="mainModel.vo.checkDate"></iv-input>-->
+                        <!--<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >-->
+                        <!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+                        <!---->
+                        <!--</el-form-item>-->
+                        <!--<input v-else type="text" class="inp" name="checkDate" placeholder="无" v-model="mainModel.vo.checkDate" readOnly >-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.state')" class="small-info-box" v-if="isReadOnly">
+                        <iv-input v-else  :value.sync="mainModel.vo.checkResultDetail" textonly ></iv-input>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+    <!--<div class="few-info-sider pull-right">-->
+    <!--<iv-button type="ghost" @click="doClose" icon="close-round">关闭</iv-button>-->
+    <!--</div>-->
+    <div class="rel-info-panel" v-if="isReadOnly">
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title">
+                    <i class="itemPng"></i>
+                    <span>{{$t('bd.hal.checkItem')}}</span></p>
+                <simple-card class="bip-content-sub-item" v-for="group in mainModel.vo.checkRecordDetailVoList">
+                    <span slot="title">{{group.groupName}}</span>
+                    <vue-bootstrap-table
+                            :columns="itemColumns"
+                            :show-filter="false"
+                            :show-column-picker="false"
+                            :show-pager="true"
+                            :values="group.itemList"
+                            @on-click-cell="viewDetail"
+                            :show-empty-row="false"
+                    >
+                    </vue-bootstrap-table>
+                </simple-card>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+</div>
+<!-- 检查项不合格弹框 -->
+<Modal :visible.sync="viewDetailModel.show" :title="viewDetailModel.title" width="520" :footer-hide="true">
+    <viewDetailComponent></viewDetailComponent>
+</Modal>
+<!-- 编辑检查结果弹框 -->
+<!--<Modal :visible.sync="viewDetailModel1.show" :title="viewDetailModel1.title" width="800" :footer-hide="true">
+	<view-Edit-Component></view-Edit-Component>
+</Modal>-->
+

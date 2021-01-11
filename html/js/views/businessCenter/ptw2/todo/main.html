@@ -1,0 +1,56 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAddPtw">发起作业</vi-button>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="mainModel.vo.status>2 && mainModel.vo.workPermit.cardTplId&&mainModel.vo.enableReservation && hasAuth('preview')" type="text" class="mp-header-item-btn"
+                               @click="gotoPreview">预览
+                    </vi-button>
+                    <vi-button v-if="hasAuth('deal')" type="text" class="mp-header-item-btn"
+                    @click="gotoDeal">处理
+                    </vi-button>
+                    <vi-button  v-if="hasAuth('relate')" type="text" class="mp-header-item-btn" @click="doConcatPtw">关联作业
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<preview :visible.sync="mainModel.previewShow" v-ref:preview ></preview>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel @show-preview="showPreview" v-ref:detail-panel></detail-panel>
+</aside>
+<order-modal :show.sync="orderModel.show" @success="reloadTable"></order-modal>
+<sel-tpl-modal  v-ref:modal-sel-tpl :visible.sync="selTplModel.show"></sel-tpl-modal>
+
+<ptw-fill-modal v-ref:ptw-fill></ptw-fill-modal>
+
+
+<job-approval @do-save="doSaveStatus" :visible.sync="formModel.jobApprovalFormModel.show"></job-approval>
+<!--<job-sign @do-save="doSaveSign" :visible.sync="formModel.jobSignFormModel.show" :workcard="mainModel.vo" :work-personnel="mainModel.workPersonnel"></job-sign>-->
+<not-handel-tip-modal :visible.sync="showNotHandleTip"></not-handel-tip-modal>
+<select-type-modal visible.sync="formModel.selectTypeModal.show" v-ref:modal-select-type></select-type-modal>
+<contact-ptw v-ref:contact-ptw></contact-ptw>

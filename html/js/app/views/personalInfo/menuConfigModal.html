@@ -1,0 +1,35 @@
+
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<iv-row>
+			<iv-col span="24" >
+				<div class="menuFor8 mr16">
+					<div class="not">{{$t("bs.orl.modelSel")}}</div>
+					<div class="menu-and-func" style="padding: 10px">
+						<iv-checkbox style="margin-left: 20px;"  :checked.sync="mainModel.vo.selectAll" @click="toggle(mainModel.vo.data,2,mainModel.vo.data)" >全选</iv-checkbox>
+						<div v-for="(index,first) in mainModel.vo.data">
+							<div>
+								<i class="glyphicon" style="cursor: pointer;margin-right: 5px;" :class = "['', first.add ? 'glyphicon-minus' : 'glyphicon-plus']"
+								   @click = "first.add = !first.add"></i>
+								<iv-checkbox   :checked.sync="first.isChecked" @click="toggle(first,0,first)" >{{first.name}}</iv-checkbox>
+							</div>
+							<div v-for="second in first.children" style="margin-left: 40px" v-show ="first.add" >
+								<div>
+									<iv-checkbox   :checked.sync="second.isChecked" @click="toggle(first,0,second,first)" >{{second.name}}</iv-checkbox>
+								</div>
+								<div v-for="third in second.children" style="margin-left: 20px;display: flex">
+									<div style="width: 120px">
+										<iv-checkbox   :checked.sync="third.isChecked" @click="toggle(first,0,third,first,second)" >{{third.name}}</iv-checkbox>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</iv-col>
+		</iv-row>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+	</div>
+</div>

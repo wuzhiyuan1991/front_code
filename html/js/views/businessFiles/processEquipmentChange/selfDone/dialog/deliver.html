@@ -1,0 +1,20 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+           
+            <el-form-item label="被转交人" prop="assigneeId">
+                <multi-input-select :values="user" @click="doShowSelectUserModal(item)"></multi-input-select>
+            </el-form-item>
+            <el-form-item label="转交理由" prop="reason">
+                <iv-textarea :value.sync="mainModel.vo.reason"></iv-textarea>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<user-select-modal :visible.sync="userSelectModel.show" :filter-data="userSelectModel.filterData" @do-save="doSaveSelect" single-select></user-select-modal>

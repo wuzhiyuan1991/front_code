@@ -1,0 +1,16 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform >
+	        <el-form-item label="巡检区域" prop="groupName">
+	            <iv-input type="text" :value.sync="mainModel.vo.groupName"></iv-input>
+	        </el-form-item>
+            <el-form-item label="属地" prop="dominationAreaId">
+                <input-select  :value="mainModel.vo.dominationArea" id-field="id" display-field="name"  @do-clear-input="doClearDominationArea" @click="doSelectDominationArea" clearable></input-select>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<domination-area-select-modal :visible.sync="mainModel.selectModel.dominationAreaSelectModel.visible" :filter-data="mainModel.selectModel.dominationAreaSelectModel.filterData"  single-select @do-save="doSaveDominationArea"></domination-area-select-modal>

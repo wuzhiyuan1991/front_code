@@ -1,0 +1,189 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasPermission('3060003002')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && hasPermission('3060003001')" type="ghost" @click="doSave" style="margin-right: 4px">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+                <iv-button v-if="mainModel.isReadOnly && hasPermission('3060003003') && mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="证书名称"  prop="name"  class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="证书编号" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="证书类别" prop="itemType" class="small-info-box" >
+                        <i-select :model.sync="mainModel.vo.itemType" :list="getDataDicList('itemType')"  v-if="!mainModel.isReadOnly" >
+                            <i-option v-for="item in getDataDicList('itemType')" :value="item.id">{{item.value}}</i-option>
+                        </i-select>
+                        <span v-else>{{getDataDic('itemType', mainModel.vo.itemType)}}</span>
+					</el-form-item>
+					<el-form-item  label="发证日期" prop="awardDate" class="small-info-box" >
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.awardDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.awardDate" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+                    <el-form-item  label="发证机构" prop="compId"  class="small-info-box">
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                    </el-form-item>
+					<el-form-item  label="有效日期"   prop="validDate" class="small-info-box" >
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.validDate" format="yyyy-MM-dd 23:59:59"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.validDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="中间检验"  prop="periodDate" class="small-info-box" >-->
+                        <!--<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.periodDate"></date-picker>-->
+                        <!--<iv-input v-else :value.sync="mainModel.vo.periodDate" textonly class="inp"></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item  label="年度检验"  class="small-info-box" >-->
+                        <!--<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.yearDate"></date-picker>-->
+                        <!--<iv-input v-else :value.sync="mainModel.vo.yearDate" textonly class="inp"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item :label="$t('gb.common.equipmentAndFacilities')" prop="tpaEquipment.id" class="small-info-box">
+                        <input-select :value.sync="mainModel.vo.tpaEquipment" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowTpaBoatEquipmentSelectModal())" ></input-select>
+                    </el-form-item>
+                    <el-form-item  label="备注"  class="small-info-box" >
+                        <iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+				</iv-row>
+                <!--<iv-row class="bip-content-item">-->
+                    <!--<el-form-item :label="$t('gb.common.equipmentAndFacilities')" prop="tpaEquipment.id" class="small-info-box">-->
+                        <!--<input-select :value.sync="mainModel.vo.tpaEquipment" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowEquipmentSelectModel())" ></input-select>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item  label="备注"  class="small-info-box" >-->
+                        <!--<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+
+                <!--</iv-row>-->
+
+
+			</el-form>
+		</div>
+	</div>
+
+	<!--<div class="rel-info-panel">-->
+		<!--<div class="rip-item">-->
+			<!--<simple-card :show-content.sync="cardModel.accidentCaseCardModel.showContent">-->
+				<!--<p slot="title"><i class="basicPng"></i><span>事故案例</span></p>-->
+				<!--<a slot="extra" @click.prevent="cardModel.accidentCaseCardModel.showContent = !cardModel.accidentCaseCardModel.showContent;" >-->
+					<!--<span v-if="cardModel.accidentCaseCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>-->
+					<!--<span v-else><Icon type="arrow-down-b"></Icon>展开</span>-->
+					<!--</a>-->
+				<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowAccidentCaseSelectModal()" >-->
+					<!--<span><Icon type="plus"></Icon>添加</span>-->
+				<!--</a>-->
+				<!--<vue-bootstrap-table-->
+					<!--:url="tableModel.accidentCaseTableModel.url"-->
+					<!--:columns="tableModel.accidentCaseTableModel.columns"-->
+					<!--:show-empty-row="false"-->
+					<!--:use-default-global-filter="false"-->
+					<!--:lazy-load="true"-->
+					<!--@on-del-row="doRemoveAccidentCases"-->
+					<!--v-ref:accidentcase-table-->
+					<!--&gt;-->
+				<!--</vue-bootstrap-table>-->
+			<!--</simple-card>-->
+		<!--</div>-->
+
+	<!--</div>-->
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.checkMethodCardModel.showContent">
+                <p slot="title"><i class="checkFunPng"></i><span>{{$t("gb.common.inspectMethond")}}</span></p>
+                <a slot="extra" @click.prevent="cardModel.checkMethodCardModel.showContent = !cardModel.checkMethodCardModel.showContent;" >
+                    <span v-if="cardModel.checkMethodCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}</span>
+                    <span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCheckMethodSelectModel" >
+                    <span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+                </a>
+                <vue-bootstrap-table
+                        :url="tableModel.checkMethodTableModel.url"
+                        :columns="tableModel.checkMethodTableModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        @on-del-row="delCheckMethod"
+                        v-ref:checkmethod-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.checkBasisTableModel.showContent">
+                <p slot="title">
+                    <i class="inspectionPng"></i>
+                    {{$t("gb.common.inspectBasis")}}
+                </p>
+                <a  slot="extra"
+                    @click.prevent="cardModel.checkBasisTableModel.showContent = !cardModel.checkBasisTableModel.showContent">
+					<span v-if="cardModel.checkBasisTableModel.showContent">
+					<Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}
+					</span>
+					<span v-else> <Icon type="arrow-down-b"></Icon> {{$t("bd.ria.open")}}
+					</span>
+                </a>
+                <a  slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCheckBasisSelectModel">
+                    <Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+                </a>
+                <vue-bootstrap-table :url="tableModel.checkBasisTableModel.url"
+                                     :columns="tableModel.checkBasisTableModel.columns"
+                                     :show-empty-row="false"
+                                     :use-default-global-filter="false"
+                                     :lazy-load="true"
+                                     @on-del-row="delCheckBasis"
+                                     v-ref:checkbasis-table>
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.checkAccidentcaseTableModel.showContent">
+                <p slot="title">
+                    <i class="accidentPng"></i>
+                    {{$t("gb.common.accidentCase")}}
+                </p>
+                <a slot="extra"
+                   @click.prevent="cardModel.checkAccidentcaseTableModel.showContent = !cardModel.checkAccidentcaseTableModel.showContent">
+					 <span v-if="cardModel.checkAccidentcaseTableModel.showContent">
+					 <Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}
+					 </span>
+					 <span v-else><Icon type="arrow-down-b"></Icon> {{$t("bd.ria.open")}}
+					 </span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowAccidentCaseSelectModel" >
+                    <span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+                </a>
+                <vue-bootstrap-table
+                        :url="tableModel.checkAccidentcaseTableModel.url"
+                        :columns="tableModel.checkAccidentTableModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        @on-del-row="delAccidentCase"
+                        v-ref:checkaccidentcase-table>
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+
+    </div>
+</div>
+<checkmethod-select-modal :visible.sync="selectModel.checkMethodSelectModel.visible"   @do-save="doSaveCheckMethods"></checkmethod-select-modal>
+<check-basis-select-modal :visible.sync="selectModel.checkBasisSelectModel.visible"   @do-save="doSaveCheckBasis"></check-basis-select-modal>
+<accident-case-select-modal :visible.sync="selectModel.accidentCaseSelectModel.visible"   @do-save="doSaveAccident"></accident-case-select-modal>
+
+<tpa-item-boat-equipment-select-modal :visible.sync="selectModel.tpaBoatEquipmentSelectModel.visible"   @do-save="doSaveEquipment" :filter-data="selectModel.tpaBoatEquipmentSelectModel.filterData" single-select></tpa-item-boat-equipment-select-modal>
+<!--<tpaequipment-select-modal :visible.sync="selectModel.tpaEquipmentSelectModel.visible" :filter-data="selectModel.tpaEquipmentSelectModel.filterData"  @do-save="doSaveTpaEquipment"></tpaequipment-select-modal>-->
+<!--<accidentcase-select-modal :visible.sync="selectModel.accidentCaseSelectModel.visible" :filter-data="selectModel.accidentCaseSelectModel.filterData"  @do-save="doSaveAccidentCases"></accidentcase-select-modal>-->
+
+
+

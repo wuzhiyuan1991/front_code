@@ -1,0 +1,7 @@
+<div>
+    <el-tabs v-if="show">
+        <el-tab-pane v-for="qryInfo in reportQryInfos" :label="qryInfo.title" :key="qryInfo.id" v-ref:echart-tabs>
+            <echart-component :echart-style = WIDTH :show-header="false"></echart-component>
+        </el-tab-pane>
+    </el-tabs>
+</div>

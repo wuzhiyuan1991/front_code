@@ -1,0 +1,36 @@
+<div class="reportChartMain">
+    <div class="mp-header formTitle" style="margin-left: 10px;">
+        <div class="basic">{{qryInfoModel.title}}</div>
+    </div>
+    <div class="report-qry-head">
+        <iv-row style="padding-top: 6px;" style="line-height: 30px;">
+            <iv-col span="5">
+                <iv-radio-group :model.sync="qryInfoModel.qryDateType" @on-change="changeQryDate">
+                    <iv-radio value="1">
+                        <span>本年度</span>
+                    </iv-radio>
+                    <iv-radio value="2">
+                        <span>本季度</span>
+                    </iv-radio>
+                    <iv-radio value="3">
+                        <span>本月度</span>
+                    </iv-radio>
+                </iv-radio-group>
+            </iv-col>
+            <!--<iv-col span="4">-->
+                <!--<span style="float: left;">年份：</span>-->
+                <!--<vi-date-picker style="float: left;width:60%;font-size: 12px" type="year" @on-change="changeQryYear"></vi-date-picker>-->
+            <!--</iv-col>-->
+            <iv-col span="6">
+                <obj-select type="frw" :values.sync="qryInfoModel.vo.objRange"></obj-select>
+            </iv-col>
+            <iv-col span="4" style="padding-left: 16px;">
+                <iv-button @click="doQry()">统计</iv-button>
+            </iv-col>
+        </iv-row>
+    </div>
+    <div class="reportChart">
+        <vuecharts :options="pieChartOpt" v-ref:pie-chart></vuecharts>
+        <vuecharts :options="barChartOpt" v-ref:bar-chart></vuecharts>
+    </div>
+</div>

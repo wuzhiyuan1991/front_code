@@ -1,0 +1,632 @@
+/******************************************************************草青色主题****************************************************************/
+.skin_greenGrass .main-sidebar,
+.skin_greenGrass .left-side,
+.skin_greenGrass .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background: #43a047 !important;
+    margin-left: 0px;
+}
+.skin_greenGrass .top-header .headerCenter .v-link-active a {
+    color: #81c784;
+}
+.skin_greenGrass .leftLogo {
+    background-color: #43a047;
+}
+.skin_greenGrass .ivu-btn-text.active,
+.skin_greenGrass .ivu-btn-text:active,
+.skin_greenGrass .ivu-btn-text:hover {
+    color: #43a047;
+}
+.skin_greenGrass .table tbody tr td span.text-link {
+    color: #81c784;
+}
+.skin_greenGrass .main-sidebar .sidebar .sidebar-menu > li a span,
+.skin_greenGrass .sidebar-menu .treeview-menu > li > a {
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.skin_greenGrass .sidebar-menu .treeview-menu > li > a.active,
+.skin_greenGrass .sidebar-menu .treeview-menu > li > a:hover,
+.skin_greenGrass .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li > .v-link-active,
+.skin_greenGrass .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li :hover {
+    background: #368039 !important;
+}
+.skin_greenGrass .sidebar-menu .treeview-menu > li > a.active {
+    border-left: 5px solid #c0ca33;
+}
+.skin_greenGrass .top-header .headerCenter .text-blue:hover,
+.skin_greenGrass .top-header .headerCenter .text-blue.v-link-active {
+    color: #81c784;
+}
+.skin_greenGrass .prelative.addButton button {
+    background: #c0ca33;
+}
+.skin_greenGrass .mp-header {
+    border-bottom: 2px solid #81c784;
+}
+.skin_greenGrass .ivu-page-item:hover,
+.skin_greenGrass .ivu-page-item,
+.skin_greenGrass .ivu-page-item:hover a {
+    border-color: #81c784;
+}
+.skin_greenGrass .ivu-page-item-active {
+    background-color: #81c784;
+}
+.skin_greenGrass .ivu-modal-header {
+    background: #43a047;
+}
+.skin_greenGrass .edit-pop-container .epc-footer button,
+.skin_greenGrass .ivu-checkbox-checked .ivu-checkbox-inner,
+.skin_greenGrass .ivu-checkbox-middle .ivu-checkbox-inner {
+    background: #c0ca33;
+    border-color: #c0ca33;
+}
+.skin_greenGrass .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.skin_greenGrass .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover {
+    background-color: #43a047 !important;
+}
+.skin_greenGrass .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li:first-child {
+    border-top: 1px solid #43a047 !important;
+}
+.skin_greenGrass .headerCenter .header-item-home.v-link-active,
+.skin_greenGrass .headerCenter .header-item-home:hover {
+    background: url(../images/all.png) no-repeat -115px -138px transparent;
+}
+.skin_greenGrass .el-tabs__item.is-active,
+.skin_greenGrass .prev-month,
+.skin_greenGrass .next-month,
+.skin_greenGrass .MatterColor,
+.skin_greenGrass .TrainingList li:first-child {
+    color: #81c784 !important;
+}
+.skin_greenGrass .tabInfo .tabList .active {
+    border-bottom: 3px solid #81c784;
+}
+.skin_greenGrass .parameter button.btn,
+.skin_greenGrass .btnSave {
+    background: #43a047;
+}
+.skin_greenGrass .parameter button.btn:hover,
+.skin_greenGrass .btnSave:hover {
+    border-color: #409a44;
+    background: #409a44;
+}
+.skin_greenGrass .prelative.addButton button:hover,
+.skin_greenGrass .edit-pop-container .epc-footer button:hover {
+    border-color: #cdd55c;
+    background: #cdd55c;
+}
+.skin_greenGrass .classificationLeft {
+    background: #43a047 !important;
+}
+.skin_greenGrass .classificationLeft li.active {
+    background: #368039 !important;
+}
+.skin_greenGrass .detail-large-container .bip-header-btn-group .ivu-btn-ghost:hover {
+    color: #ffffff;
+    border-color: #c0ca33;
+    background: #c0ca33;
+}
+/******************************************************************绿色主题******************************************************************/
+.skin_green .main-sidebar,
+.skin_green .left-side,
+.skin_green .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background: #00897b !important;
+    margin-left: 0px;
+}
+.skin_green .top-header .headerCenter .v-link-active a {
+    color: #00897b;
+}
+.skin_green .leftLogo {
+    background-color: #00897b;
+}
+.skin_green .ivu-btn-text.active,
+.skin_green .ivu-btn-text:active,
+.skin_green .ivu-btn-text:hover {
+    color: #00897b;
+}
+.skin_green .table tbody tr td span.text-link {
+    color: #00897b;
+}
+.skin_green .main-sidebar .sidebar .sidebar-menu > li a span,
+.skin_green .sidebar-menu .treeview-menu > li > a {
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.skin_green .sidebar-menu .treeview-menu > li > a.active,
+.skin_green .sidebar-menu .treeview-menu > li > a:hover,
+.skin_green .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li > .v-link-active,
+.skin_green .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li :hover {
+    background: #006e62 !important;
+}
+.skin_green .sidebar-menu .treeview-menu > li > a.active {
+    border-left: 5px solid #aed581;
+}
+.skin_green .top-header .headerCenter .text-blue:hover,
+.skin_green .top-header .headerCenter .text-blue.v-link-active {
+    color: #00897b;
+}
+.skin_green .prelative.addButton button {
+    background: #aed581;
+}
+.skin_green .mp-header {
+    border-bottom: 2px solid #00897b;
+}
+.skin_green .ivu-page-item:hover,
+.skin_green .ivu-page-item,
+.skin_green .ivu-page-item:hover a {
+    border-color: #81c784;
+}
+.skin_green .ivu-page-item-active {
+    background-color: #81c784;
+}
+.skin_green .ivu-modal-header {
+    background: #00897b;
+}
+.skin_green .edit-pop-container .epc-footer button,
+.skin_green .ivu-checkbox-checked .ivu-checkbox-inner,
+.skin_green .ivu-checkbox-middle .ivu-checkbox-inner {
+    background: #aed581;
+    border-color: #aed581;
+}
+.skin_green .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.skin_green .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover {
+    background-color: #00897b !important;
+}
+.skin_green .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li:first-child {
+    border-top: 1px solid #00897b !important;
+}
+.skin_green .headerCenter .header-item-home.v-link-active,
+.skin_green .headerCenter .header-item-home:hover {
+    background: url(../images/all.png) no-repeat -155px -138px transparent;
+}
+.skin_green .el-tabs__item.is-active,
+.skin_green .prev-month,
+.skin_green .next-month,
+.skin_green .MatterColor,
+.skin_green .TrainingList li:first-child {
+    color: #00897b !important;
+}
+.skin_green .tabInfo .tabList .active {
+    border-bottom: 3px solid #00897b;
+}
+.skin_green .parameter button.btn,
+.skin_green .btnSave {
+    background: #00897b;
+}
+.skin_green .parameter button.btn:hover,
+.skin_green .btnSave:hover {
+    border-color: #006e62;
+    background: #006e62;
+}
+.skin_green .prelative.addButton button:hover,
+.skin_green .edit-pop-container .epc-footer button:hover {
+    border-color: #bedd9a;
+    background: #bedd9a;
+}
+.skin_green .classificationLeft {
+    background: #00897b !important;
+}
+.skin_green .classificationLeft li.active {
+    background: #006e62 !important;
+}
+.skin_green .detail-large-container .bip-header-btn-group .ivu-btn-ghost:hover {
+    color: #ffffff;
+    border-color: #aed581;
+    background: #aed581;
+}
+/******************************************************************红色主题******************************************************************/
+.skin_red .main-sidebar,
+.skin_red .left-side,
+.skin_red .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background: #cf5e00 !important;
+    margin-left: 0px;
+}
+.skin_red .top-header .headerCenter .v-link-active a {
+    color: #fb8c00;
+}
+.skin_red .leftLogo {
+    background-color: #cf5e00;
+}
+.skin_red .ivu-btn-text.active,
+.skin_red .ivu-btn-text:active {
+    color: #cf5e00;
+}
+.skin_red .table tbody tr td span.text-link {
+    color: #fb8c00;
+}
+.skin_red .main-sidebar .sidebar .sidebar-menu > li a span,
+.skin_red .sidebar-menu .treeview-menu > li > a {
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.skin_red .sidebar-menu .treeview-menu > li > a.active,
+.skin_red .sidebar-menu .treeview-menu > li > a:hover,
+.skin_red .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li > .v-link-active,
+.skin_red .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li :hover {
+    background: #a64b00 !important;
+}
+.skin_red .sidebar-menu .treeview-menu > li > a.active {
+    border-left: 5px solid #ffb300;
+}
+.skin_red .top-header .headerCenter .text-blue:hover,
+.skin_red .top-header .headerCenter .text-blue.v-link-active {
+    color: #fb8c00;
+}
+.skin_red .prelative.addButton button {
+    background: #ffb300;
+}
+.skin_red .mp-header {
+    border-bottom: 2px solid #fb8c00;
+}
+.skin_red .ivu-page-item:hover,
+.skin_red .ivu-page-item,
+.skin_red .ivu-page-item:hover a {
+    border-color: #81c784;
+}
+.skin_red .ivu-page-item-active {
+    background-color: #81c784;
+}
+.skin_red .ivu-modal-header {
+    background: #cf5e00;
+}
+.skin_red .edit-pop-container .epc-footer button,
+.skin_red .ivu-checkbox-checked .ivu-checkbox-inner,
+.skin_red .ivu-checkbox-middle .ivu-checkbox-inner {
+    background: #ffb300;
+    border-color: #ffb300;
+}
+.skin_red .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.skin_red .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover {
+    background-color: #cf5e00 !important;
+}
+.skin_red .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li:first-child {
+    border-top: 1px solid #cf5e00 !important;
+}
+.skin_red .headerCenter .header-item-home.v-link-active,
+.skin_red .headerCenter .header-item-home:hover {
+    background: url(../images/all.png) no-repeat -195px -138px transparent;
+}
+.skin_red .el-tabs__item.is-active,
+.skin_red .prev-month,
+.skin_red .next-month,
+.skin_red .MatterColor,
+.skin_red .TrainingList li:first-child {
+    color: #fb8c00 !important;
+}
+.skin_red .tabInfo .tabList .active {
+    border-bottom: 3px solid #fb8c00;
+}
+.skin_red .parameter button.btn,
+.skin_red .btnSave {
+    background: #cf5e00;
+}
+.skin_red .parameter button.btn:hover,
+.skin_red .btnSave:hover {
+    border-color: #a64b00;
+    background: #a64b00;
+}
+.skin_red .prelative.addButton button:hover,
+.skin_red .edit-pop-container .epc-footer button:hover {
+    border-color: #ffc233;
+    background: #ffc233;
+}
+.skin_red .classificationLeft {
+    background: #00897b !important;
+}
+.skin_red .classificationLeft li.active {
+    background: #006e62 !important;
+}
+.skin_red .detail-large-container .bip-header-btn-group .ivu-btn-ghost:hover {
+    color: #ffffff;
+    border-color: #ffb300;
+    background: #ffb300;
+}
+/******************************************************************紫色主题******************************************************************/
+.skin_purple .main-sidebar,
+.skin_purple .left-side,
+.skin_purple .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background: #5e35b1 !important;
+    margin-left: 0px;
+}
+.skin_purple .top-header .headerCenter .v-link-active a {
+    color: #9575cd;
+}
+.skin_purple .leftLogo {
+    background-color: #5e35b1;
+}
+.skin_purple .ivu-btn-text.active,
+.skin_purple .ivu-btn-text:active {
+    color: #5e35b1;
+}
+.skin_purple .table tbody tr td span.text-link {
+    color: #9575cd;
+}
+.skin_purple .main-sidebar .sidebar .sidebar-menu > li a span,
+.skin_purple .sidebar-menu .treeview-menu > li > a {
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.skin_purple .sidebar-menu .treeview-menu > li > a.active,
+.skin_purple .sidebar-menu .treeview-menu > li > a:hover,
+.skin_purple .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li > .v-link-active,
+.skin_purple .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li :hover {
+    background: #4b2a8e !important;
+}
+.skin_purple .sidebar-menu .treeview-menu > li > a.active {
+    border-left: 5px solid #7986cb;
+}
+.skin_purple .top-header .headerCenter .text-blue:hover,
+.skin_purple .top-header .headerCenter .text-blue.v-link-active {
+    color: #9575cd;
+}
+.skin_purple .prelative.addButton button {
+    background: #7986cb;
+}
+.skin_purple .mp-header {
+    border-bottom: 2px solid #9575cd;
+}
+.skin_purple .ivu-page-item:hover,
+.skin_purple .ivu-page-item,
+.skin_purple .ivu-page-item:hover a {
+    border-color: #9575cd;
+}
+.skin_purple .ivu-page-item-active {
+    background-color: #9575cd;
+}
+.skin_purple .ivu-modal-header {
+    background: #5e35b1;
+}
+.skin_purple .edit-pop-container .epc-footer button,
+.skin_purple .ivu-checkbox-checked .ivu-checkbox-inner,
+.skin_purple .ivu-checkbox-middle .ivu-checkbox-inner {
+    background: #7986cb;
+    border-color: #7986cb;
+}
+.skin_purple .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.skin_purple .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover {
+    background-color: #5e35b1 !important;
+}
+.skin_purple .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li:first-child {
+    border-top: 1px solid #5e35b1 !important;
+}
+.skin_purple .headerCenter .header-item-home.v-link-active,
+.skin_purple .headerCenter .header-item-home:hover {
+    background: url(../images/all.png) no-repeat -235px -138px transparent;
+}
+.skin_purple .el-tabs__item.is-active,
+.skin_purple .prev-month,
+.skin_purple .next-month,
+.skin_purple .MatterColor,
+.skin_purple .TrainingList li:first-child {
+    color: #9575cd !important;
+}
+.skin_purple .tabInfo .tabList .active {
+    border-bottom: 3px solid #9575cd;
+}
+.skin_purple .parameter button.btn,
+.skin_purple .btnSave {
+    background: #5e35b1;
+}
+.skin_purple .parameter button.btn:hover,
+.skin_purple .btnSave:hover {
+    border-color: #4b2a8e;
+    background: #4b2a8e;
+}
+.skin_purple .prelative.addButton button:hover,
+.skin_purple .edit-pop-container .epc-footer button:hover {
+    border-color: #949ed5;
+    background: #949ed5;
+}
+.skin_purple .classificationLeft {
+    background: #5e35b1 !important;
+}
+.skin_purple .classificationLeft li.active {
+    background: #4b2a8e !important;
+}
+.skin_purple .detail-large-container .bip-header-btn-group .ivu-btn-ghost:hover {
+    color: #ffffff;
+    border-color: #7986cb;
+    background: #7986cb;
+}
+/******************************************************************蓝色主题******************************************************************/
+.skin_blue .main-sidebar,
+.skin_blue .left-side,
+.skin_blue .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background: #00467d !important;
+    margin-left: 0px;
+}
+.skin_blue .leftLogo {
+    background-color: #00467d;
+}
+.skin_blue .ivu-btn-text.active,
+.skin_blue .ivu-btn-text:active,
+.skin_blue .ivu-btn-text:hover {
+    color: #33a6ff;
+}
+.skin_blue .table tbody tr td span.text-link {
+    color: #33a6ff;
+}
+.skin_blue .main-sidebar .sidebar .sidebar-menu > li a span,
+.skin_blue .sidebar-menu .treeview-menu > li > a {
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.skin_blue .sidebar-menu .treeview-menu > li > a.active,
+.skin_blue .sidebar-menu .treeview-menu > li > a:hover,
+.skin_blue .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li > .v-link-active,
+.skin_blue .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li :hover {
+    background: #0075d3 !important;
+}
+.skin_blue .sidebar-menu .treeview-menu > li > a.active {
+    border-left: 5px solid #aacd03;
+}
+.skin_blue .top-header .headerCenter .text-blue:hover,
+.skin_blue .top-header .headerCenter .text-blue.v-link-activ e {
+    color: #33a6ff;
+}
+.skin_blue .prelative.addButton button {
+    background: #aacd03;
+}
+.skin_blue .mp-header {
+    border-bottom: 2px solid #33a6ff;
+}
+.skin_blue .ivu-page-item:hover,
+.skin_blue .ivu-page-item,
+.skin_blue .ivu-page-item:hover a {
+    border-color: #aacd03;
+}
+.skin_blue .ivu-page-item-active {
+    background-color: #aacd03;
+}
+.skin_blue .ivu-modal-header {
+    background: #00467d;
+}
+.skin_blue .edit-pop-container .epc-footer button,
+.skin_blue .ivu-checkbox-checked .ivu-checkbox-inner,
+.skin_blue .ivu-checkbox-middle .ivu-checkbox-inner {
+    background: #aacd03;
+    border-color: #aacd03;
+}
+.skin_blue .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.skin_blue .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover {
+    background-color: #00467d !important;
+}
+.skin_blue .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li:first-child {
+    border-top: 1px solid #00467d !important;
+}
+.skin_blue .parameter button.btn:hover,
+.skin_blue .btnSave:hover {
+    border-color: #00467d;
+    background: #00467d;
+}
+.skin_blue .classificationLeft {
+    background: #00467d !important;
+}
+.skin_blue .classificationLeft li.active {
+    background: #0075d3 !important;
+}
+.skin_blue .detail-large-container .bip-header-btn-group .ivu-btn-ghost:hover {
+    color: #ffffff;
+    border-color: #aacd03;
+    background: #aacd03;
+}
+/******************************************************************黑色主题******************************************************************/
+.skin_black .main-sidebar,
+.skin_black .left-side,
+.skin_black .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    background: #323537 !important;
+    margin-left: 0px;
+}
+.skin_black .top-header .headerCenter .v-link-active a {
+    color: #56b5ff;
+}
+.skin_black .leftLogo {
+    background-color: #323537;
+}
+.skin_black .ivu-btn-text.active,
+.skin_black .ivu-btn-text:active,
+.skin_black .ivu-btn-text:hover {
+    color: #56b5ff;
+}
+.skin_black .table tbody tr td span.text-link {
+    color: #56b5ff;
+}
+.skin_black .main-sidebar .sidebar .sidebar-menu > li a span,
+.skin_black .sidebar-menu .treeview-menu > li > a {
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.skin_black .sidebar-menu .treeview-menu > li > a.active,
+.skin_black .sidebar-menu .treeview-menu > li > a:hover,
+.skin_black .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li > .v-link-active,
+.skin_black .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li :hover {
+    background: #282a2c !important;
+}
+.skin_black .sidebar-menu .treeview-menu > li > a.active {
+    border-left: 5px solid #90a4ae;
+}
+.skin_black .top-header .headerCenter .text-blue:hover,
+.skin_black .top-header .headerCenter .text-blue.v-link-active {
+    color: #56b5ff;
+}
+.skin_black .prelative.addButton button {
+    background: #90a4ae;
+}
+.skin_black .mp-header {
+    border-bottom: 2px solid #56b5ff;
+}
+.skin_black .ivu-page-item:hover,
+.skin_black .ivu-page-item,
+.skin_black .ivu-page-item:hover a {
+    border-color: #56b5ff;
+}
+.skin_black .ivu-page-item-active {
+    background-color: #56b5ff;
+}
+.skin_black .ivu-modal-header {
+    background: #323537;
+}
+.skin_black .edit-pop-container .epc-footer button,
+.skin_black .ivu-checkbox-checked .ivu-checkbox-inner,
+.skin_black .ivu-checkbox-middle .ivu-checkbox-inner {
+    background: #90a4ae;
+    border-color: #90a4ae;
+}
+.skin_black .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.skin_black .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover {
+    background-color: #323537 !important;
+}
+.skin_black .sidebar-mini.sidebar-collapse .sidebar-menu > .treeview > .treeview-menu > li:first-child {
+    border-top: 1px solid #323537 !important;
+}
+.skin_black .headerCenter .header-item-home.v-link-active,
+.skin_black .headerCenter .header-item-home:hover {
+    background: url(../images/all.png) no-repeat -35px -58px transparent;
+}
+.skin_black .el-tabs__item.is-active,
+.skin_black .prev-month,
+.skin_black .next-month,
+.skin_black .MatterColor,
+.skin_black .TrainingList li:first-child {
+    color: #56b5ff !important;
+}
+.skin_black .tabInfo .tabList .active {
+    border-bottom: 3px solid #56b5ff;
+}
+.skin_black .parameter button.btn,
+.skin_black .btnSave {
+    background: #323537;
+}
+.skin_black .parameter button.btn:hover,
+.skin_black .btnSave:hover {
+    border-color: #003967;
+    background: #003967;
+}
+.skin_black .prelative.addButton button:hover,
+.skin_black .edit-pop-container .epc-footer button:hover {
+    border-color: #282a2c;
+    background: #282a2c;
+}
+.skin_black .classificationLeft {
+    background: #323537 !important;
+}
+.skin_black .classificationLeft li.active {
+    background: #282a2c !important;
+}
+.skin_black .detail-large-container .bip-header-btn-group .ivu-btn-ghost:hover {
+    color: #ffffff;
+    border-color: #90a4ae;
+    background: #90a4ae;
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>赛为</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <script type="text/javascript" src="js/libs/jquery/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/libs/RSA_Stripped.js"></script>
+    <script type="text/javascript" src="js/libs/BigInt.js"></script>
+    <script type="text/javascript" src="js/libs/Barrett.js"></script>
+    <script data-baseurl="./" src="js/libs/require.js"></script>
+</head>
+<body>
+<div class="login">
+    <h1>欢迎登陆安全眼系统</h1>
+    <form>
+        <div class="input">
+            <input class="inputItem" placeholder="请输入用户名" id="loginName">
+        </div>
+        <div class="input">
+            <input type="password" class="inputItem" placeholder="请输入密码" id="password" type="password">
+        </div>
+        <button id="loginButton">登&nbsp;录</button>
+    </form>
+</div>
+</body>
+
+<style>
+    html {
+        overflow: hidden;
+        height: 100%;
+    }
+
+    body {
+        /*background: url(images/bg.jpg)no-repeat bottom center fixed;*/
+        /*background:url(images/bg.jpg)no-repeat bottom center fixed,-webkit-linear-gradient(top, rgba(255,255,0,0.5),rgba(0,255,0,0));*/
+        background: url(images/bg.jpg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-attachment: fixed;
+    " font-family: " 方正兰亭黑简体 "; height: 100 %; overflow: hidden;
+    }
+
+    h1 {
+        font-size: 30px;
+        margin-top: 37px;
+    }
+
+    .login {
+        width: 480px;
+        color: #00467c;
+        position: absolute;
+        top: 30%;
+        left: 35%;
+        text-align: center;
+        background: #eaf1f7;
+        border-radius: 5px;
+        height: 320px;
+    }
+
+    .login form {
+        height: 58%;
+    }
+
+    .login form .input {
+        width: 80%;
+        left: 10%;
+        position: relative;
+    }
+
+    .login form .input .inputItem {
+        width: 100%;
+        height: 40px;
+        line-height: 38px;
+        overflow: hidden;
+        text-indent: 15px;
+        font-size: 16px;
+        outline: none;
+        border-radius: 40px;
+        margin-top: 20px;
+        border: 1px solid #c8c8c8;
+        color: #333333;
+    }
+
+    .login form button {
+        width: 80%;
+        height: 45px;
+        line-height: 38px;
+        overflow: hidden;
+        font-size: 24px;
+        outline: none;
+        border-radius: 40px;
+        margin-top: 20px;
+        border: 1px solid #c8c8c8;
+        background: #31a8ff;
+        color: #fff;
+    }
+
+    .login form button:hover {
+        cursor: pointer;
+        background: #2886cc;
+    }
+</style>
+</html>
+<script>
+    var baseReqUrl = "js";
+    require.config({
+        baseUrl: baseReqUrl
+    });
+    require(["const"],
+            function (CONST) {
+
+                var key = "";
+                var ctxpath = CONST.url;
+                var address = "";
+
+                //从服务器获取加密钥匙
+                $.getJSON(ctxpath + "/user/key", function (data) {
+                    if (data && data.content) {
+                        setMaxDigits(130);
+                        key = new RSAKeyPair(data.content.e, "", data.content.m);
+                    } else {
+                        alert("服务器异常,请联系管理员!");
+                    }
+                });
+
+                //获取焦点之后border的颜色
+                $("input").focus(function () {
+                    $(this).css('border', '1px solid #32a7ff')
+                }),
+                        $("input").blur(function () {
+                            $(this).css('border', '1px solid #c8c8c8')
+                        })
+                //获取登录使用的地理位置
+                $.ajax({
+                    url: "http://pv.sohu.com/cityjson?ie=utf-8",
+                    type: 'GET',
+                    dataType: 'script',
+                    success: function () {
+                        address += returnCitySN.cname + "(" + returnCitySN.cip + ")";
+                    }
+                });
+
+                //登录
+                $("#loginButton").on("click", function (e) {
+                    e.preventDefault();
+                    var loginName = $("#loginName").val();
+                    var password = $("#password").val();
+
+                    var plainText = {"loginName": loginName, "password": password};
+                    var encryText = encryptedString(key, JSON.stringify(plainText));
+                    $.ajax({
+                        type: "post",
+                        url: ctxpath + '/user/login',
+                        data: "key=" + encryText + "&address=" + address,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#loginBtn").attr({"disabled": true}).css("background-color", "#2F32A5");
+                        },
+                        success: function (data) {
+                            if (data.error == "0") {
+                                window.location.href = ctxpath + "/html/main.html";
+                            } else {
+                                alert("登录账户或密码错误,请联系管理员！")
+                            }
+                        },
+                        complete: function () {
+                        },
+                        error: function () {
+                            alert("登录异常,请联系管理员！")
+                        }
+                    });
+
+                });
+
+            });
+
+
+</script>

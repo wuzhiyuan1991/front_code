@@ -1,0 +1,30 @@
+<div :class="classes" v-clickoutside="handleClose" class="ivu-select-top">
+    <div
+            :class="inputClazz"
+            v-el:reference
+            @mouseenter="doMouseEnter"
+            @mouseleave="doMouseLeave"
+            v-if="!textonly"
+            :style='style'
+    >
+        <div class="ivu-tag" v-for="item in selectedMultiple">
+            <span class="ivu-tag-text" v-text="showLabel(item)"></span>
+            <Icon v-if="!readonly" type="ios-close-empty" @click.stop="removeTag($index)"></Icon>
+        </div>
+
+        <Icon   @click="toggleMenu" type="plus" v-if="hover" class="iconPlus" ></Icon>
+    </div>
+    <div v-else style="text-align: justify;word-break: keep-all;">{{displayText}}</div>
+</div>
+<style>
+    .iconPlus{
+        position: absolute;
+        right: 0;
+        top: 5px;
+        color: #666666;
+        width: 28px;
+        height: 30px;
+        text-align: center;
+        line-height: 28px
+    }
+</style>

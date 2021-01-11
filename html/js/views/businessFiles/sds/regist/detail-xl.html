@@ -1,0 +1,103 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="化学品名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="规格" prop="standard" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.standard" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="化学名" prop="chemicalName" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.chemicalName" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="英文名" prop="enName" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.enName" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="类别" prop="category" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.category" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="危规号" prop="latentNo" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.latentNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="剧毒" prop="toxic" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.toxic" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="危化品目录序号" prop="sortNo" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.sortNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item  label="生产或使用地点" prop="useAt" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.useAt" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="储存地点" prop="storeAt" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.storeAt" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="储量单位" prop="storeUnit" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.storeUnit" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="最大储量" prop="maxStore" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.maxStore" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="生产能力" prop="capacity" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.capacity" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="包装类别" prop="package" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.package" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="构成重大危险源" prop="danger" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.danger" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="登记号" prop="registerNo" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.registerNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="登记日期" prop="registerDate" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.registerDate" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="登记部门" prop="orgId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.orgId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+			</el-form>
+		</div>
+	</div>
+
+
+
+	<!-- 无需附件上传请删除此段代码 -->
+	<!--<div class="rel-info-panel" v-show="mainModel.opType !== 'create'">-->
+		<!--<div class="rip-item">-->
+			<!--<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>-->
+		<!--</div>-->
+	<!--</div>-->
+</div>
+
+
+
+

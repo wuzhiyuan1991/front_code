@@ -1,0 +1,14 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item label="分组名称" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

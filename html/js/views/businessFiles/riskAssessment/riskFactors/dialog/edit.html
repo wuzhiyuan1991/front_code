@@ -1,0 +1,40 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform>
+			<el-form-item :label="$t('gb.common.code')" prop="code">
+				<iv-input :textonly="mainModel.opType == 'update'" :value.sync="mainModel.vo.code"></iv-input>
+				<!--<input type="text" v-model="mainModel.vo.code" :readonly="mainModel.opType == 'update'">-->
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.ownedComp')" prop="orgId">
+				<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.name')" prop="name">
+				<iv-input :value.sync="mainModel.vo.name"></iv-input>
+			    <!--<input type="text" v-model="mainModel.vo.name">-->
+			</el-form-item>
+			<el-form-item :label="$t('bd.hal.classInfo')">
+			    <iv-tree-select :model.sync="mainModel.vo.parentId" 
+			     			:list="hazardfactorTypeList"
+							id-attr="id"
+							display-attr="name">
+			        <iv-tree :model="hazardfactorTypeList" 
+						:selected-datas.sync="selectedDatas"
+					    :serch-filterable="true"
+						id-attr="id"
+						pid-attr="parentId"
+						display-attr="name"
+						:single-select="true"
+						:allow-parent-checked="true"
+						></iv-tree>
+			    </iv-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.describe')" prop="description">
+				<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.description"></iv-input>
+			    <!--<textarea  rows="3" v-model="mainModel.vo.description"></textarea>-->
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>	
+</div>

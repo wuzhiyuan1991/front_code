@@ -1,0 +1,56 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="唯一标识" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('accuracy') == -1)" label="正确率" prop="accuracy">
+						<iv-input :value.sync="mainModel.vo.accuracy" :disabled="(disabledFields.indexOf('accuracy') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('analysis') == -1)" label="试题解析" prop="analysis">
+						<iv-input :value.sync="mainModel.vo.analysis" :disabled="(disabledFields.indexOf('analysis') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('answer') == -1)" label="正确选项" prop="answer">
+						<iv-input :value.sync="mainModel.vo.answer" :disabled="(disabledFields.indexOf('answer') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="试题内容" prop="content">
+						<iv-input :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="禁用标识，" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('errorTime') == -1)" label="该试题被做错过多少次" prop="errorTime">
+						<iv-input :value.sync="mainModel.vo.errorTime" :disabled="(disabledFields.indexOf('errorTime') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('examSubjectId') == -1)" label="专业分类id" prop="examSubjectId">
+						<iv-input :value.sync="mainModel.vo.examSubjectId" :disabled="(disabledFields.indexOf('examSubjectId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('flag') == -1)" label="标志" prop="flag">
+						<iv-input :value.sync="mainModel.vo.flag" :disabled="(disabledFields.indexOf('flag') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('rightTime') == -1)" label="该试题被做正确过多少道" prop="rightTime">
+						<iv-input :value.sync="mainModel.vo.rightTime" :disabled="(disabledFields.indexOf('rightTime') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('time') == -1)" label="做过的次数" prop="time">
+						<iv-input :value.sync="mainModel.vo.time" :disabled="(disabledFields.indexOf('time') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="试题类型" prop="type">
+						<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

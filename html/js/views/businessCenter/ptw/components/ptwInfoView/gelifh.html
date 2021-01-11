@@ -1,0 +1,421 @@
+<simple-card  style="width:1150px;" class="el-form-item__label-padding-0 simple-card-head-border-none" >
+    <p slot="title" style="width:750px;" class="ptw-title">能量隔离</p>
+    <div class="mb50" style="padding-left:10px;" v-if="model.enableProcessIsolation==1">
+        <p class="flex-v-center ">
+            <span class="base-border-left-blue"></span>
+            <span style="font-size:12px;font-weight: 700">工艺隔离</span>
+            <!--<span>-->
+                 <!--<span><label class="mr10">隔离实施人</label>{{process.isolator.name}}</span>-->
+                <!--<span><label class="ml20 mr10">解除隔离实施人</label>{{process.disisolator.name}}</span>-->
+            <!--</span>-->
+        </p>
+        <div class="pad-form-item el-form-item__label-light" style="margin-left:8px;">
+            <el-form class="width-auto-ipt">
+                <el-form-item label="工艺管道">
+                    <span>{{process.facility}}</span>
+                </el-form-item>
+                <el-form-item label="隔离点">
+                    <span>{{process.position}}</span>
+                </el-form-item>
+                <el-form-item label="隔离方法">
+                    <div class=" ul-style-none">
+                        <ul class="ul-inside">
+                            <li v-for="item of geliffList" style="margin-bottom: 5px;">
+                                <!--<input type="checkbox" disabled :checked="item.checkResult=='2'" class="width-auto" />-->
+                                <Icon v-if="item.checkResult=='2'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                {{item.content || item.name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <!--<span>{{gelifunName}}</span>-->
+                </el-form-item>
+                <el-form-item label="挂牌上锁">
+                    <!--<iv-checkbox style="font-size: 14px;" disabled true-value="1" false-value="0" :checked.sync="mechanical.enableLoto">是（需要）-->
+                    <!--</iv-checkbox>-->
+                    <!--<input style="width:14px;" :checked="process.enableLoto=='1'" type="checkbox" disabled />-->
+                    <Icon v-if="process.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                    <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                    是（需要）
+                </el-form-item>
+                <el-form-item label="隔离位置示意图">
+                    <a v-for="item in getFilesNormal(process.cloudFiles,dataType.view)" :href="convertFilePath(item)" target="_blank" style="display: block;width:auto;" class="text-ellipsis link" >{{item.orginalName}}</a>
+                    <image-view  :images="getFileImgs(process.cloudFiles,dataType.view)" :show-close="false"></image-view>
+                    <lite-box v-for="video in getFileVideos(process.cloudFiles,dataType.view)" :show-close="false" @click="doPlay(video)">
+                        <img :src="convertPath(video.id)">
+                    </lite-box>
+                </el-form-item>
+                <el-form-item label="图片">
+                    <image-view  :images="getFileImgs(process.cloudFiles,'PTW29')" :show-close="false"></image-view>
+                </el-form-item>
+                <el-form-item label="隔离实施人">
+                    <div class="flex-layout">
+                        <span style="display: inline-block;width:90px;">{{getName(process.isolators)}}</span>
+                        <span class="color-item-999" style="display: inline-block;width:110px;">隔离时间</span>
+                        <span style="display: inline-block;width:140px;">{{process.isolateTime}}</span>
+                        <span class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                        <span class="lite-box-21">
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                             <image-view  :image-style="imageStyle" :images="getFiles(process.cloudFiles,dataType.isolate)" :show-close="false"></image-view>
+                        </span>
+                    </div>
+                </el-form-item>
+                <el-form-item label="解除隔离实施人">
+                    <div class="flex-layout">
+                        <span style="display: inline-block;width:90px;">{{getName(process.disisolators)}}</span>
+                        <span class="color-item-999" style="display: inline-block;width:110px;">解除隔离时间</span>
+                        <span  style="display: inline-block;width:140px;">{{process.disisolateTime}}</span>
+                        <span class="ml40 mr10 w9em color-item-999"  style="width:4em;">签名</span>
+                        <span class="lite-box-21">
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                             <image-view  :image-style="imageStyle" :images="getFiles(process.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>
+                        </span>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+    <div class="mb50 pl10" style="padding-left:10px;" v-if="model.enableMechanicalIsolation==1 || model.enableMechanicalIsolation==2">
+        <p class="flex-v-center">
+            <span class="base-border-left-blue"></span>
+            <span style="font-size:12px;font-weight: 700">机械隔离</span>
+            <!--<span>-->
+                <!--<span><label class="mr10">隔离实施人</label>{{mechanical.isolator.name}}</span>-->
+                <!--<span><label class="mr10 ml20">解除隔离实施人</label>{{mechanical.disisolator.name}}</span>-->
+            <!--</span>-->
+        </p>
+        <div class="pad-form-item" style="margin-left:8px;">
+            <el-form class="width-auto-ipt">
+                <el-form-item label="设施设备">
+                    <span>{{mechanical.facility}}</span>
+                </el-form-item>
+                <el-form-item label="机械隔离部位 ">
+                    <span>{{mechanical.position}}</span>
+                </el-form-item>
+                <el-form-item label="挂牌上锁">
+                    <!--<iv-checkbox disabled true-value="1" false-value="0" :checked.sync="mechanical.enableLoto">是（需要）-->
+                    <!--</iv-checkbox>-->
+                    <!--<input style="width:14px;" :checked="mechanical.enableLoto=='1'" type="checkbox" disabled /> 是（需要）-->
+                    <Icon v-if="mechanical.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                    <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                    是（需要）
+                </el-form-item>
+                <el-form-item label="图片">
+                    <image-view  :images="getFileImgs(mechanical.cloudFiles,'PTW29')" :show-close="false"></image-view>
+                </el-form-item>
+                <el-form-item label="隔离实施人">
+                    <div class="flex-layout">
+                        <span style="display: inline-block;width:90px;">{{getName(mechanical.isolators)}}</span>
+                        <span class="color-item-999" style="display: inline-block;width:110px;">隔离时间</span>
+                        <span style="display: inline-block;width:140px;">{{mechanical.isolateTime}}</span>
+                        <span class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                        <span>
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                            <image-view  :image-style="imageStyle" :images="getFiles(mechanical.cloudFiles,dataType.isolate)" :show-close="false"></image-view>
+                        </span>
+                    </div>
+                </el-form-item>
+                <el-form-item label="解除隔离实施人">
+                    <div class="flex-layout">
+                        <!--<span>{{mechanical.disisolateTime}}</span>-->
+                        <!--<span  class="ml40 mr10 w9em">解除隔离实施人签名</span>-->
+                        <!--<span >-->
+                             <!--<image-view  :images="getFiles(mechanical.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>-->
+                        <!--</span>-->
+
+                        <span style="display: inline-block;width:90px;">{{getName(mechanical.disisolators)}}</span>
+                        <span class="color-item-999" style="display: inline-block;width:110px;;">隔离时间</span>
+                        <span style="display: inline-block;width:140px;">{{mechanical.disisolateTime}}</span>
+                        <span class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                        <span>
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                            <image-view  :image-style="imageStyle" :images="getFiles(mechanical.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>
+                        </span>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+    <div class="mb50 pl10" style="padding-left:10px;" v-if="model.enableElectricIsolation==1 || model.enableElectricIsolation==2">
+        <p class="flex-v-center ">
+            <span class="base-border-left-blue"></span>
+            <span style="font-size:12px;font-weight: 700">电气隔离</span>
+            <!--<span>-->
+                <!--<span><label class="mr10">隔离实施人</label>{{electric.isolator.name}}</span>-->
+                <!--<span><label class="ml20 mr10">签名</label>{{electric.disisolator.name}}</span>-->
+            <!--</span>-->
+        </p>
+        <el-form class="width-auto-ipt pad-form-item el-form-item__label-light" style="margin-left:8px;">
+            <el-form-item label="电气设施设备">
+                <div class="">
+                    {{electric.facility}}
+                </div>
+            </el-form-item>
+            <el-form-item label="机械隔离部位">
+                <div class="el-form-item__content">
+                    {{electric.position}}
+                </div>
+            </el-form-item>
+            <el-form-item label="挂牌上锁">
+                <!--<iv-checkbox disabled true-value="1" false-value="0" :checked.sync="electric.enableLoto">是（需要）-->
+                <!--</iv-checkbox>-->
+                <!--<input style="width:14px;" :checked="electric.enableLoto=='1'" type="checkbox" disabled /> 是（需要）-->
+                <Icon v-if="electric.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                是（需要）
+            </el-form-item>
+            </el-form-item>
+            <!--<el-form-item label="隔离时间">-->
+                <!--<div class="flex-layout">-->
+                    <!--<span>{{electric.isolateTime}}</span>-->
+                    <!--<span class="color-item-999" class="ml40 mr10 w9em" style="width:4em;">签名</span>-->
+                    <!--<span>-->
+                             <!--<image-view :image-style="imageStyle" style="height:30px"  :images="getFiles(electric.cloudFiles,dataType.isolate)" :show-close="false"></image-view>-->
+                    <!--</span>-->
+                <!--</div>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="解除隔离时间">-->
+                <!--<div class="flex-layout">-->
+                    <!--<span>{{electric.disisolateTime}}</span>-->
+                    <!--<span  class="ml40 mr10 w9em">解除隔离实施人签名</span>-->
+                     <!--<span>-->
+                        <!--<image-view  :images="getFiles(electric.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>-->
+                    <!--</span>-->
+                <!--</div>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="隔离实施人">-->
+                <!--<div class="flex-layout">-->
+                    <!--<span style="display: inline-block;width:90px;">{{process.isolator.name}}</span>-->
+                    <!--<span style="display: inline-block;width:110px;">隔离时间</span>-->
+                    <!--<span style="display: inline-block;width:140px;">{{process.isolateTime}}</span>-->
+                    <!--<span class="ml40 mr10 w9em">隔离实施人签名</span>-->
+                    <!--<span>-->
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                        <!--&lt;!&ndash;<image-view  :images="getFiles(process.cloudFiles,dataType.isolate)" :show-close="false"></image-view>&ndash;&gt;-->
+                        <!--</span>-->
+                <!--</div>-->
+            <!--</el-form-item>-->
+            <el-form-item label="图片">
+                <image-view  :images="getFileImgs(electric.cloudFiles,'PTW29')" :show-close="false"></image-view>
+            </el-form-item>
+            <el-form-item label="隔离实施人">
+                <div class="flex-layout">
+                    <span style="display: inline-block;width:90px;">{{getName(electric.isolators)}}</span>
+                    <span style="display: inline-block;width:110px;">隔离时间</span>
+                    <span style="display: inline-block;width:140px;">{{electric.isolateTime}}</span>
+                    <span class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                    <span class="lite-box-21">
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                        <image-view  :image-style="imageStyle" :images="getFiles(electric.cloudFiles,dataType.isolate)" :show-close="false"></image-view>
+                        </span>
+                </div>
+            </el-form-item>
+            <el-form-item label="解除隔离实施人">
+                <div class="flex-layout">
+                    <span style="display: inline-block;width:90px;">{{getName(electric.disisolators)}}</span>
+                    <span class="color-item-999" style="display: inline-block;width:110px;">解除隔离时间</span>
+                    <span style="display: inline-block;width:140px;">{{electric.disisolateTime}}</span>
+                    <span class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                    <span class="lite-box-21">
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                        <image-view  :image-style="imageStyle" :images="getFiles(electric.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>
+                    </span>
+                </div>
+            </el-form-item>
+
+        </el-form>
+    </div>
+    <div class="mb50 pl10" style="padding-left:10px;" v-if="model.enableSystemMask==1 || model.enableSystemMask==2">
+        <p class="flex-v-center ">
+            <span class="base-border-left-blue"></span>
+            <span style="font-size:12px;font-weight: 700">系统屏蔽</span>
+            <!--<span>-->
+                <!--<span><label class="mr10">隔离实施人</label>{{systemMask.isolator.name}}</span>-->
+                <!--<span><label class="ml20 mr10" style="width:4em;font-size: 12px;color:#5e6d82;">签名</label>{{systemMask.disisolator.name}}</span>-->
+            <!--</span>-->
+        </p>
+        <el-form class="width-auto-ipt pad-form-item el-form-item__label-light" style="margin-left:8px;">
+            <el-form-item label="保护系统">
+                <div>
+                    {{systemMask.facility}}
+                </div>
+            </el-form-item>
+            <el-form-item label="保护系统子件名称">
+                <div class="el-form-item__content">
+                    {{systemMask.position}}
+                </div>
+            </el-form-item>
+            <el-form-item label="挂牌上锁">
+                <!--<iv-checkbox disabled true-value="1" false-value="0" :checked.sync="systemMask.enableLoto">是（需要）-->
+                <!--</iv-checkbox>-->
+                <!--<input style="width:14px;"  disabled type="checkbox" :checked="systemMask.enableLoto=='1'" />是（需要）-->
+                <Icon v-if="systemMask.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                是（需要）
+            </el-form-item>
+            <!--<el-form-item label="隔离时间">-->
+                <!--<div class="flex-layout">-->
+                    <!--<span>{{systemMask.isolateTime}}</span>-->
+                    <!--<span  class="ml40 mr10 w9em">隔离实施人签名</span>-->
+                    <!--<span >-->
+                             <!--<image-view  :images="getFiles(systemMask.cloudFiles,dataType.isolate)" :show-close="false"></image-view>-->
+                    <!--</span>-->
+                <!--</div>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="解除隔离时间">-->
+                <!--<div class="flex-layout">-->
+                    <!--<span>{{systemMask.disisolateTime}}</span>-->
+                    <!--<span class="ml40 mr10 w9em">解除隔离实施人签名</span>-->
+                    <!--<span >-->
+                             <!--<image-view  :images="getFiles(systemMask.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>-->
+                    <!--</span>-->
+                <!--</div>-->
+            <!--</el-form-item>-->
+            <el-form-item label="图片">
+                <image-view  :images="getFileImgs(systemMask.cloudFiles,'PTW29')" :show-close="false"></image-view>
+            </el-form-item>
+            <el-form-item label="隔离实施人">
+                <div class="flex-layout">
+                    <span style="display: inline-block;width:90px;">{{getName(systemMask.isolators)}}</span>
+                    <span class="color-item-999" style="display: inline-block;width:110px;">隔离时间</span>
+                    <span style="display: inline-block;width:140px;">{{systemMask.isolateTime}}</span>
+                    <span  class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                    <span class="lite-box-21">
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                        <image-view  :image-style="imageStyle" :images="getFiles(systemMask.cloudFiles,dataType.isolate)" :show-close="false"></image-view>
+                        </span>
+                </div>
+            </el-form-item>
+            <el-form-item label="解除隔离实施人">
+                <div class="flex-layout">
+                    <span style="display: inline-block;width:90px;">{{getName(systemMask.disisolators)}}</span>
+                    <span class="color-item-999" style="display: inline-block;width:110px;">解除隔离时间</span>
+                    <span style="display: inline-block;width:140px;">{{systemMask.disisolateTime}}</span>
+                    <span  class="ml40 mr10 w9em color-item-999" style="width:4em;">签名</span>
+                    <span class="lite-box-21">
+                            <!--<a class="link-btn-color">查看签名</a>-->
+                        <image-view  :image-style="imageStyle" :images="getFiles(systemMask.cloudFiles,dataType.disisolate)" :show-close="false"></image-view>
+                    </span>
+                </div>
+            </el-form-item>
+        </el-form>
+    </div>
+
+    <div class="mb50 pl10" style="padding-left:10px;" v-if="model.enableBlindPlate==1 || model.enableBlindPlate==2">
+        <p class="flex-v-center " style="margin-bottom:10px;">
+            <span class="base-border-left-blue"></span>
+            <span style="font-size:12px;font-weight: 700">盲板抽堵</span>
+            <!--<span>-->
+            <!--<span><label class="mr10">隔离实施人</label>{{systemMask.isolator.name}}</span>-->
+            <!--<span><label class="ml20 mr10" style="width:4em;font-size: 12px;color:#5e6d82;">签名</label>{{systemMask.disisolator.name}}</span>-->
+            <!--</span>-->
+        </p>
+        <p class="flex-v-center " style="margin-bottom:10px;">
+            <span style="margin-left:12px;font-size:12px;font-weight: 700">管道和盲板信息</span>
+        </p>
+        <div class="mytable-bg-white bandPlates" style="margin-left:12px;display: inline-block;">
+            <vue-bootstrap-table
+                    :values="tableList"
+                    :columns="tableModel.columns"
+                    :show-empty-row="false"
+                    :page-size-opts="[999]"
+                    :resizeable="true"
+                    :lazy-load='true'
+                    :show-scroll="true"
+                    :show-pager='false'
+                    @on-click-cell="doClickCell"
+                    :row-class="rowClass"
+                    show-loading v-ref:main-table>
+            </vue-bootstrap-table>
+
+            <div style="margin-top:5px;">
+                <span style="color:#999;font-size:12px;">盲板位置图</span>
+                <div>
+                    <image-view :images="getFiles(model.fileList, 'PTW32')" :show-close="false">
+                    </image-view>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</simple-card>
+
+<Modal title="盲板抽堵明细" :visible.sync="detailModelShow" footer-hide  width="550">
+    <div class="edit-pop-container">
+        <!--<div @click="doShowDisclose" style="text-align: right;border-bottom: 1px solid #ddd;padding:10px;background: #fff">-->
+            <!--<span style="cursor: pointer;color: #33a6ff">交底记录表</span>-->
+        <!--</div>-->
+        <div class="epc-content el-form-item__label-light simple-card-body" style="background: #fff;">
+            <el-form style="width:480px;" v-ref:ruleform>
+                <el-form-item  label="设备管道名称" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;"  :value.sync="vo.pipeName"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="介质" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;"  :value.sync="vo.medium"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="温度" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;" :value.sync="vo.temperature"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="压力" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;"  :value.sync="vo.pressure"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="盲板材质" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;"  :value.sync="vo.texture"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="盲板规格" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;"  :value.sync="vo.specification"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="盲板编号" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;"  :value.sync="vo.number"  textonly></iv-input>
+                </el-form-item>
+
+                <template v-for="item in vo.blindPlateOperations1" >
+                    <div style="border-top: 1px solid #ddd;margin-top: 16px;"></div>
+                    <el-form-item  label="实施操作" >
+                        {{item.type == '1'?'堵操作':'抽操作'}}
+                    </el-form-item>
+                    <el-form-item  label="实施时间" >
+                        {{item.operateTime}}
+                    </el-form-item>
+                    <el-form-item  label="作业人">
+                        <image-view :image-style="imageStyle" :images="getBlindPlatePic(item.workPersonnels, item.type, 1, 'PTW36')" :show-close="false"></image-view>
+                    </el-form-item>
+                    <el-form-item  label="监护人">
+                        <image-view :image-style="imageStyle" :images="getBlindPlatePic(item.workPersonnels, item.type, 2, 'PTW36')" :show-close="false"></image-view>
+                    </el-form-item>
+                    <el-form-item  label="图片">
+                        <image-view  :images="getFiles(item.cloudFiles,'PTW33')" :show-close="false"></image-view>
+                    </el-form-item>
+                    <el-form-item  label="视频" >
+                        <lite-box  :show-close="false">
+                            <img :src="convertPath(video.id)" v-for="video in getFiles(item.cloudFiles,'PTW35')" @click="doPlay(video)">
+                        </lite-box>
+                    </el-form-item>
+                </template>
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="detailModelShow=false" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+<Modal :visible.sync="playModel.show" width="450" class="type-video" :footer-hide="true">
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<style>
+    .simple-card-head-border-none .simple-card-head{
+        border:none;
+    }
+    .mytable-bg-white .vue-table .selected-row{
+        background-color: #fff !important;
+    }
+    .bandPlates  .table tbody tr td div.textarea1 {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-height: 14px;
+        word-break: break-all;
+    }
+</style>

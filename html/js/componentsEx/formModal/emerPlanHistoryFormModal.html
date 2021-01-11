@@ -1,0 +1,67 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('step') == -1)" label="步骤" prop="step">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_history_step', mainModel.vo.step) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.step" :list="getDataDicList('iem_emer_plan_history_step')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('versionId') == -1)" label="应急预案版本" prop="version.id">
+						<input-select :value="mainModel.vo.emerPlanVersion" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('emerPlanVersion') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowEmerPlanVersionSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('operatorId') == -1)" label="操作人" prop="operatorId">
+						<iv-input :value.sync="mainModel.vo.operatorId" :disabled="(disabledFields.indexOf('operatorId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('operateTime') == -1)" label="操作时间" prop="operateTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.operateTime" :disabled="(disabledFields.indexOf('operateTime') != -1)" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.operateTime" :disabled="(disabledFields.indexOf('operateTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('emerPlanId') == -1)" label="应急预案" prop="emerPlanId">
+						<iv-input :value.sync="mainModel.vo.emerPlanId" :disabled="(disabledFields.indexOf('emerPlanId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('participant') == -1)" label="参与人员" prop="participant">
+						<iv-input :value.sync="mainModel.vo.participant" :disabled="(disabledFields.indexOf('participant') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('result') == -1)" label="处理结果" prop="result">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_history_result', mainModel.vo.result) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.result" :list="getDataDicList('iem_emer_plan_history_result')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reviseFrequence') == -1)" label="修订频率" prop="reviseFrequence">
+						<iv-input :value.sync="mainModel.vo.reviseFrequence" :disabled="(disabledFields.indexOf('reviseFrequence') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reviseReason') == -1)" label="修订理由(枚举值用英文逗号拼接）" prop="reviseReason">
+						<iv-input :value.sync="mainModel.vo.reviseReason" :disabled="(disabledFields.indexOf('reviseReason') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reviseType') == -1)" label="修订类型" prop="reviseType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_history_revise_type', mainModel.vo.reviseType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.reviseType" :list="getDataDicList('iem_emer_plan_history_revise_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('rollbackStep') == -1)" label="回退节点" prop="rollbackStep">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_history_rollback_step', mainModel.vo.rollbackStep) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.rollbackStep" :list="getDataDicList('iem_emer_plan_history_rollback_step')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="预案类型" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_history_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('iem_emer_plan_history_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('verNo') == -1)" label="版本号" prop="verNo">
+						<iv-input :value.sync="mainModel.vo.verNo" :disabled="(disabledFields.indexOf('verNo') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<emerplanversion-select-modal :visible.sync="selectModel.emerPlanVersionSelectModel.visible" :filter-data="selectModel.emerPlanVersionSelectModel.filterData" single-select @do-save="doSaveEmerPlanVersion"></emerplanversion-select-modal>

@@ -1,0 +1,57 @@
+
+<div class="edit-pop-container">
+    <div class="epc-content">
+        <iv-row>
+            <iv-col span="24" >
+                <div class="menuFor8 mr16"  style="height:auto;">
+                    <div class="not">{{$t("bs.orl.modelSel")}}</div>
+                    <div id="web-sel" style="height:505px" class="menu-sel-box">
+                        <div class="menu-sel-left">
+                            <ul>
+                                <li :id="'linkedsel'+auth.id" v-for="auth in mainModel.vo.data" class="menu-sel-item"
+                                    @click="selModual(auth,$index)">
+                                    {{auth.name }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="menu-sel-right" style="height: 100%;overflow-y:auto;overflow-x: hidden">
+                            <div class="menu-and-func">
+                                <iv-checkbox  class="sel-selall" :checked.sync="mainModel.vo.selectAll" @click="toggle(mainModel.vo.data,2,mainModel.vo.data)" >全选</iv-checkbox>
+                                <div class="root" :id="'web'+first.id" v-for="first in mainModel.vo.data">
+                                    <div>
+                                        <i class="glyphicon" :class = "['', first.add ? 'glyphicon-minus' : 'glyphicon-plus']" @click = "doChangeModule(first)"></i>
+                                        <iv-checkbox   :checked.sync="first.isChecked" @click="toggle(first,0,first)" >{{first.name}}</iv-checkbox>
+                                    </div>
+                                    <div class="menu-and-func-sec" v-for="second in first.children" v-show ="first.add" >
+                                        <div>
+                                            <iv-checkbox   :checked.sync="second.isChecked" @click="toggle(first,0,second,first)" >{{second.name}}</iv-checkbox>
+                                        </div>
+                                        <div class="menu-and-func-thi" v-for="third in second.children">
+                                            <div class="menu-and-func-name">
+                                                <iv-checkbox   :checked.sync="third.isChecked" @click="toggle(first,0,third,first,second)" >{{third.name}}</iv-checkbox>
+                                            </div>
+                                            <div class="menu-third">
+                                                <div v-if="third.funcAuthList && third.funcAuthList.length >0">
+                                                    <iv-checkbox   :checked.sync="third.allChecked" @click="toggle(first,1,third)" :disabled = "!third.isChecked && !batchDeleteMode">全选</iv-checkbox>
+                                                </div>
+                                                <div v-for="func in third.funcAuthList">
+
+                                                    <iv-checkbox   :checked.sync="func.isChecked" @click="toggle(first,1,func,third)" :disabled = "!third.isChecked && !batchDeleteMode">{{func.name}}</iv-checkbox>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </iv-col>
+        </iv-row>
+    </div>
+    <div class="epc-footer">
+        <vi-button v-if="mainModel.disabled == false" type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+        <vi-button v-if="mainModel.disabled == true" type="primary" @click="doSaveBacth" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+    </div>
+</div>

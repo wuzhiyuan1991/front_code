@@ -1,0 +1,121 @@
+<style>
+	.ivu-select-dropdown{
+		overflow-x: hidden;
+	}
+	.el-tabs__header{
+		border-bottom: none;
+		padding: 0;
+		position: relative;
+		margin: 0;
+		font-size: 16px;
+	}
+	.el-tabs__item:first-child{
+		padding-left: 0;
+	}
+	.el-form-item__label{
+		width: 120px !important;
+	}
+	.el-form-item__content{
+		margin-left: 120px !important;
+	}
+	.basicBody{
+		min-height:400px;
+	}
+	.mp-header-item .mp-header-item-btn{
+		border-right: none;
+	}
+	.mp-header-item .mp-header-item-btn span{
+		font-size: 16px;
+	}
+	.setup .fade-transition.ivu-poptip-popper{
+		left:0 !important;
+	}
+	.setup .basicBody:first-child .el-form-item:nth-child(2) label{
+		position: absolute;
+		left: 20px;
+	}
+</style>
+<div class="tab-container setup">
+	<div class="mp-header formTitle">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" >
+				<vi-button type="text" class="mp-header-item-btn" @click="doShowCompanyInfo" :class="{active:mainModel.showCompanyInfo}">{{$t('bs.bac.compInfo')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="doShowIndustryInfo" :class="{active:mainModel.showIndustryInfo}">{{$t('ori.rolm.industry')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="doShowContactMethod" :class="{active:mainModel.showContactMethod}">{{$t('bs.bac.contactMode')}}</vi-button>
+			</iv-col>
+		</iv-row>
+	</div>
+	<el-form :model="mainModel" :rules="rules" label-width="80px" v-ref:ruleform style="min-height: 465px;overflow: auto;width:100%;background: #fff;padding:20px;">
+		<div v-if="mainModel.showCompanyInfo"  class="basicBody">
+			<el-form-item prop="name" class="small-info-box" :label="$t('bs.bac.compName')">
+				<input type="hidden" maxlength="10" name="id"  >
+				<!--<input type="text"  class="inp" v-model="mainModel.name">-->
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.name" ></iv-input>
+			</el-form-item>
+			<el-form-item prop="legalPerson" class="small-info-box" :label="$t('bs.bac.compPerson')">
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.legalPerson"></iv-input>
+				<!--<input type="text"  class="inp" v-model="mainModel.legalPerson">-->
+			</el-form-item>
+			<el-form-item prop="organizationCode" class="small-info-box" :label="$t('bs.bac.orgCode')">
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.organizationCode"  ></iv-input>
+				<!--<input type="text"  class="inp" v-model="mainModel.organizationCode">-->
+			</el-form-item>
+			<el-form-item prop="regno" class="small-info-box" :label="$t('bs.bac.regNumber')">
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.regno"  ></iv-input>
+				<!--<input type="text"  class="inp" v-model="mainModel.regno">-->
+			</el-form-item>
+			<el-form-item prop="attr1" style="overflow: initial" class="small-info-box" :label="$t('bs.bac.distribut')">
+				<Cascader :data="regionList" :value.sync="selectedRegionDatas"></Cascader>
+			</el-form-item>
+		</div>
+		<div v-if="mainModel.showIndustryInfo" class="basicBody">
+			<el-form-item prop="industry" style="overflow: initial" class="small-info-box" :label="$t('bs.bac.industry')">
+				<Cascader :data="industryList" :value.sync="selectedDatas"></Cascader>
+			</el-form-item>
+			<el-form-item prop="enterpriseType"  style="overflow: initial" class="small-info-box" :label="$t('bs.bac.enterpriseType')" >
+				<i-select :model.sync="mainModel.enterpriseType">
+					<i-option value="1">国有或国有控股</i-option>
+					<i-option value="2">股份有限</i-option>
+					<i-option value="3">有限责任</i-option>
+					<i-option value="4">中外合资</i-option>
+					<i-option value="5">外商独资</i-option>
+					<i-option value="6">股份合作</i-option>
+					<i-option value="7">集体</i-option>
+					<i-option value="8">合伙</i-option>
+					<i-option value="9">其他</i-option>
+				</i-select>
+			</el-form-item>
+			<!--企业规模-->
+			<el-form-item   style="overflow: initial" class="small-info-box" :label="$t('bs.bac.enterpriseScale')" >
+				<i-select :model.sync="mainModel.enterpriseScale" :list="enterpriseScaleList">
+					<i-option v-for="item in enterpriseScaleList" :value="item.value">{{ item.name }}</i-option>
+				</i-select>
+			</el-form-item>
+			<!--<el-form-item prop="businessModel" class="small-info-box" :label="$t('bs.bac.management')">-->
+				<!--<iv-input :textonly="isReadOnly" :value.sync="mainModel.businessModel"  ></iv-input>-->
+				<!--&lt;!&ndash;<input type="text"  class="inp" v-model="mainModel.businessModel">&ndash;&gt;-->
+			<!--</el-form-item>-->
+			<!--<el-form-item prop="registeredCapital" class="small-info-box" :label="$t('bs.bac.registeredCapital')">-->
+				<!--<iv-input :textonly="isReadOnly" :value.sync="mainModel.registeredCapital"  ></iv-input>-->
+				<!--&lt;!&ndash;<input type="text"  class="inp" v-model="mainModel.registeredCapital">&ndash;&gt;-->
+			<!--</el-form-item>-->
+		</div>
+		<div v-if="mainModel.showContactMethod" class="basicBody">
+			<el-form-item prop="phone" class="small-info-box" :label="$t('bs.bac.contactNumber')">
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.phone"  ></iv-input>
+				<!--<input type="text"  class="inp" v-model="mainModel.phone">-->
+			</el-form-item>
+			<el-form-item prop="email" class="small-info-box" :label="$t('bs.bac.electronics')">
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.email"  ></iv-input>
+				<!--<input type="text"  class="inp" v-model="mainModel.email">-->
+			</el-form-item>
+			<el-form-item prop="address" class="small-info-box" :label="$t('bs.bac.postalAr')">
+				<iv-input :textonly="isReadOnly" :value.sync="mainModel.address"  ></iv-input>
+				<!--<input type="text"  class="inp" v-model="mainModel.address">-->
+			</el-form-item>
+		</div>
+		<div class="col-xs-12" style="background: #fff;padding: 0;">
+			<a href="javascript:void(0)" class="btn btnSave" @click="doModify" id="submitBtn">{{$t("gb.comnon.save")}}</a>
+		</div>
+	</el-form>
+</div>

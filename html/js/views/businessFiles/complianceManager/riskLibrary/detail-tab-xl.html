@@ -1,0 +1,210 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button v-if="hasAuth('edit')" type="ghost" @click.stop="doShowIcmRiskAssessmentFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+<!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+<!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="检查项内容" prop="checkItemName" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.checkItemName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="管控等级" prop="controlLevel" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.controlLevel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="控制措施" prop="controlMeasures" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.controlMeasures" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="危害因素分类" prop="hazardFactorType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.hazardFactorType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="发生可能性" prop="possibility" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.possibility" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险等级(场景)" prop="riskLevelScene" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskLevelScene" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="风险点" prop="riskPoint" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskPoint" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险点分类" prop="riskPointType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskPointType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险分类" prop="riskType.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.icmRiskType" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowIcmRiskTypeSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="风险场景" prop="scene" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.scene" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="风险得分" prop="score" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.score" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="后果严重性" prop="severity" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.severity" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="类型" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+							</div>
+
+				</el-tab-pane>
+				<el-tab-pane label="资料" key="basTab">
+					<div class="rip-item">
+						<el-form :model="mainModel.vo" class="rip-item-form">
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">基本信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('角色编码')">
+											<span>{{mainModel.vo.code}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('状态')">
+											<span>{{mainModel.vo.disable}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('检查项内容')">
+											<span>{{mainModel.vo.checkItemName}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('管控等级')">
+											<span>{{mainModel.vo.controlLevel}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">详细信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('控制措施')">
+											<span>{{mainModel.vo.controlMeasures}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('危害因素分类')">
+											<span>{{mainModel.vo.hazardFactorType}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('发生可能性')">
+											<span>{{mainModel.vo.possibility}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('风险等级(场景)')">
+											<span>{{mainModel.vo.riskLevelScene}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('风险点')">
+											<span>{{mainModel.vo.riskPoint}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('风险点分类')">
+											<span>{{mainModel.vo.riskPointType}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('风险分类')">
+											<span>{{mainModel.vo.riskTypeId}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('风险场景')">
+											<span>{{mainModel.vo.scene}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('风险得分')">
+											<span>{{mainModel.vo.score}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('后果严重性')">
+											<span>{{mainModel.vo.severity}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('类型')">
+											<span>{{mainModel.vo.type}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>			
+						</el-form>
+					</div>	
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<div class="rip-item">
+				<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+			</div>
+        -->
+	</div>
+
+</div>
+
+<icmrisktype-select-modal :visible.sync="selectModel.icmRiskTypeSelectModel.visible" :filter-data="selectModel.icmRiskTypeSelectModel.filterData" single-select @do-save="doSaveIcmRiskType"></icmrisktype-select-modal>
+
+<icmriskassessment-form-modal
+		:visible.sync="formModel.icmRiskAssessmentFormModel.show"
+		@do-update="doUpdateIcmRiskAssessment"
+		:query-url="formModel.icmRiskAssessmentFormModel.queryUrl"
+		v-ref:icmriskassessment-form-modal>
+</icmriskassessment-form-modal>
+

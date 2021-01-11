@@ -1,0 +1,60 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+
+				<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="检查项名称" prop="name">
+					<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('riskTypeName') == -1)" class="small-info-box" :label="$t('gb.common.riskClassificat')" prop="riskTypeName" v-else>
+					<iv-input :value.sync="riskTypeName" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" :label="$t('gb.common.type')" prop="type" class="small-info-box">
+					<!--<span v-if="mainModel.isReadOnly">{{type}}</span>-->
+					<i-select :model.sync="mainModel.vo.type" :list="mainModel.typeList" v-else>
+						<i-option v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>
+					</i-select>
+				</el-form-item>
+				<!--<el-form-item  :label="$t('gb.common.state')" prop="disable" class="small-info-box" >-->
+					<!--<span v-if="mainModel.isReadOnly">{{mainModel.vo.disable==0?"启用":"停用"}}</span>-->
+					<!--<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else>-->
+						<!--<i-option v-for="item in getDataDicList('disable')" :value="item.id">{{ item.value }}</i-option>-->
+					<!--</i-select>-->
+				<!--</el-form-item>-->
+
+				<el-form-item  v-if="(hiddenFields.indexOf('compId') == -1) && !!mainModel.opType" :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+					<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+					<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+				</el-form-item>
+
+				<el-form-item v-if="(hiddenFields.indexOf('riskType.id') == -1)" :label="$t('gb.common.checkItemClass')" class="small-info-box" prop="riskTypeId"   v-if="!mainModel.isReadOnly">
+					<iv-tree-select :model.sync="mainModel.vo.riskType.id"
+									:list="riskTypeList"
+									id-attr="id"
+									display-attr="name" >
+						<iv-tree :model="riskTypeList"
+								 :selected-datas.sync="selectedDatas"
+								 :serch-filterable="true"
+								 id-attr="id"
+								 pid-attr="parentId"
+								 display-attr="name"
+								 :single-select="true"
+								 :allow-parent-checked="true"
+						></iv-tree>
+					</iv-tree-select>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" :label="$t('gb.common.describe')" prop="remarks" class="small-info-box" >
+					<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('equipmentId') == -1)" label="设备设施" prop="equipmentId" class="small-info-box" >
+					<input-select :value="mainModel.vo.tpaEquipment" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowEquipmentSelectModal())" ></input-select>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+<equipment-select-modal single-select :visible.sync="selectModel.equipmentSelectModel.visible"  @do-save="doSaveEquipment"></equipment-select-modal>
+<!--<risktype-select-modal single-select :visible.sync="mainModel.showRisktypeSelectModal"  @do-save="doSaveRisktype"></risktype-select-modal>-->

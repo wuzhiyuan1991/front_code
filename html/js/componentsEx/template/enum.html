@@ -1,0 +1,6 @@
+
+<el-form-item :label="$t('<%=displayName%>')" prop="<%=fieldName%>">
+    <i-select :model.sync="mainModel.vo.<%=fieldName%>" :list="getDataDicList('<%=dataDicCode%>')">
+        <i-option v-for="s in getDataDicList('<%=dataDicCode%>')" :value="s.id" :title="s.value">{{s.value}}</i-option>
+    </i-select>
+</el-form-item>

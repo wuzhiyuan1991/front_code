@@ -1,0 +1,22 @@
+<iv-tree-select
+        :model.sync="id"
+        :list="list"
+        id-attr="id"
+        display-attr="name"
+        @on-single-change="onSingleChange"
+        :style="styleObj"
+        display-custom
+        :display-func="displayFunc"
+        show-absent-tip
+>
+    <iv-tree
+            :model="list"
+            :selected-datas.sync="selectedDatas"
+            serch-filterable
+            id-attr="id"
+            pid-attr="parentId"
+            display-attr="name"
+            single-select
+            :allow-parent-checked="false">
+    </iv-tree>
+</iv-tree-select>

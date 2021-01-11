@@ -1,0 +1,180 @@
+    <div style="color:#33a6ff;cursor: pointer;margin-left:12px;" @click="doShowLicenseToClose">引用“作业签发”的“同名角色”人员</div>
+    <div class="flex-layout">
+        <div class="flex-grow1">
+            <div class="mb50 pdt10 ml10">
+                <div class="">
+                    <div  class="ptw-close-closebox" style="border-bottom: none;">
+                        <span class="ptw-close-span">作业完成</span>
+                    </div>
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10">
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业完成声明" >
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                            <!--{{model.comments?model.comments["7"]}}-->
+                                            {{getFinishDeclare}}
+                                        </div>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业申请人意见">
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                          手动填写意见
+                                        </div>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item class="el-form-item is-required" :label="item.signCatalog.name"  v-for="item of permitModel.closeRole['2']">
+                                    <div class="flex-layout ml10-child">
+                                         <span class="flex-grow1 flex-v-center base-border pdl5"  v-if="item.signCatalog && item.signCatalog.signerType==1">
+                                            {{item.users[0].name}}
+                                        </span>
+                                        <span  class="flex-grow1" v-else>
+                                             <multiple-input-select :selected-multiple.sync="item.users" @on-click="doShowSelectUserModal(item)" ></multiple-input-select>
+
+                                        </span>
+                                        <span class="form-disabled w100">人员签名</span>
+                                        <span class="form-disabled w100">签名日期时间</span>
+                                    </div>
+                                </el-form-item>
+
+                            </el-form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb50 pdt10 ml10" >
+                <div class="">
+                    <div  class="ptw-close-closebox" style="border-bottom: none;">
+                        <span class="ptw-close-span">作业取消</span>
+                    </div>
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10">
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item ">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业取消原因">
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 form-disabled bgw h80">
+                                            <div class="ele-disabled-mask"></div>
+                                            <iv-checkbox-group class="group-vertical">
+                                                <iv-checkbox disabled v-for="item of cancelReasonList">{{item.name}}</iv-checkbox>
+                                            </iv-checkbox-group>
+                                        </div>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业取消声明">
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                            <!--{{model.comments?model.comments["6"]}}-->
+                                            {{getCancelDeclare}}
+                                        </div>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item class="el-form-item is-required" :label="item.signCatalog.name"  v-for="item of permitModel.closeRole['3']">
+                                    <div class="flex-layout ml10-child">
+                                         <span class="flex-grow1 flex-v-center base-border pdl5"  v-if="item.signCatalog && item.signCatalog.signerType==1">
+                                            {{item.users[0].name}}
+                                        </span>
+                                        <span  class="flex-grow1" v-else>
+                                             <multiple-input-select :selected-multiple.sync="item.users" @on-click="doShowSelectUserModal(item)" ></multiple-input-select>
+                                        </span>
+                                        <span class="form-disabled w100">人员签名</span>
+                                        <span class="form-disabled w100">签名日期时间</span>
+                                    </div>
+                                </el-form-item>
+
+                            </el-form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb50 pdt10 ml10">
+                <div>
+                    <div  class="ptw-close-closebox" style="border-bottom: none;">
+                        <span class="ptw-close-span">作业延期</span>
+                    </div>
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10" >
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业有效期">
+                                    <div class="flex-layout">
+                                        <iv-input disabled type="number" :value.sync="permitModel.extensionTime">
+                                            <i-select :popper-fixed="false" slot="append" disabled
+                                                      :model.sync="permitModel.extensionUnit" :list="extensionTypeList"
+                                                      style="width: 100px"
+                                            >
+                                                <i-option  v-for="item of  extensionTypeList"
+                                                          :value="item.value">{{item.name}}</i-option>
+                                            </i-select>
+                                        </iv-input>
+                                    </div>
+                                </el-form-item>
+<!--                                <el-form-item label="" label-width=0>-->
+<!--                                    <div style="width:100%;border-top:1px solid #ddd;">-->
+<!--                                    </div>-->
+<!--                                </el-form-item>-->
+                                <el-form-item label="作业延期期限">
+                                    <div class="  form-disabled ">
+                                        自___年___月___日___时___分始， 至___年___月___日___时___分止
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业延期理由">
+                                    <div class="  form-disabled ">
+                                        手动录入
+                                    </div>
+                                </el-form-item>
+                                <el-form-item class="el-form-item is-required" :label="item.signCatalog.name"  v-for="item of permitModel.closeRole['4']">
+                                    <div class="flex-layout ml10-child">
+                                         <span class="flex-grow1 flex-v-center base-border pdl5"  v-if="item.signCatalog && item.signCatalog.signerType==1">
+                                            {{item.users[0].name}}
+                                        </span>
+                                        <span  class="flex-grow1" v-else>
+                                             <multiple-input-select :selected-multiple.sync="item.users" @on-click="doShowSelectUserModal(item)" ></multiple-input-select>
+                                        </span>
+                                        <span class="form-disabled w100">人员签名</span>
+                                        <span class="form-disabled w100">签名日期时间</span>
+                                    </div>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="mb50 pdt10 ml10" v-if="checkbox.delay">-->
+                <!--<div>-->
+                    <!--<div  class="ptw-close-closebox" style="border-bottom: none;">-->
+                        <!--<span class="ptw-close-span">作业延期</span>-->
+                    <!--</div>-->
+                    <!--<div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10" >-->
+                        <!--<div class="form-disabled-mask"></div>-->
+                        <!--<div class="pad-form-item">-->
+                            <!--<el-form class="width-auto-ipt" label-width="160px">-->
+                                <!--<el-form-item label="作业延期期限">-->
+                                    <!--<div class="  form-disabled ">-->
+                                        <!--自___年___月___日___时___分始， 至___年___月___日___时___分止                                        </div>-->
+                                <!--</el-form-item>-->
+                                <!--<el-form-item label="作业延期理由">-->
+                                    <!--<div class="  form-disabled ">-->
+                                        <!--手动录入-->
+                                    <!--</div>-->
+                                <!--</el-form-item>-->
+                                <!--<el-form-item :label="item.signCatalog.name"  v-for="item of permitModel.closeRole['4']">-->
+                                    <!--<div class="flex-layout ml10-child">-->
+                                        <!--<span  class="flex-grow1" >-->
+                                             <!--<multi-input-select :values="item.users" @click="doShowSelectUserModal(item)"></multi-input-select>-->
+                                        <!--</span>-->
+                                        <!--<span class="form-disabled w100">人员签名</span>-->
+                                        <!--<span class="form-disabled w100">签名日期时间</span>-->
+                                    <!--</div>-->
+                                <!--</el-form-item>-->
+                            <!--</el-form>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <user-select-modal :single-select="false" :visible.sync="userSelectModel.show" @do-save="doSaveUser"></user-select-modal>
+    </div>

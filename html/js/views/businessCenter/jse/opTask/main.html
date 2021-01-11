@@ -1,0 +1,84 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        <!--<iv-dropdown trigger="click" placement="bottom-end">-->
+							<!--<vi-button type="ghost" icon="chevron-down"></vi-button>-->
+                            <!--<iv-dropdown-menu slot="list">-->
+                                <!--<iv-dropdown-item>-->
+                                    <!--<div v-if="hasAuth('export') && showExport" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>-->
+                                <!--</iv-dropdown-item>-->
+                                <!--$main-header-dropdown-item-tag-common-display-->
+                            <!--</iv-dropdown-menu>-->
+						<!--</iv-dropdown>-->
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit') && tableModel.selectedDatas[0].status === '0'" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+<!--                    <vi-button v-if="hasAuth('submit') && showSubmit" type="text" class="mp-header-item-btn"-->
+<!--                               @click="doConfirmCallback('doSubmit', '确定提交审核?')">提交-->
+<!--                    </vi-button>-->
+<!--                    <vi-button v-if="hasAuth('audit') && showAudit" type="text" class="mp-header-item-btn"-->
+<!--                               @click="doAudit">审核-->
+<!--                    </vi-button>-->
+<!--                    <vi-button v-if="hasAuth('quit') && showQuit" type="text" class="mp-header-item-btn"-->
+<!--                               @click="doQuit">弃审-->
+<!--                    </vi-button>-->
+                    <vi-button v-if="hasAuth('send') && showQuit" type="text" class="mp-header-item-btn"
+                               @click="doSendTask">派送任务
+                    </vi-button>
+<!--                    <vi-button v-if="hasAuth('invalid') && showInvalid" type="text" class="mp-header-item-btn"-->
+<!--                               @click="doInvalid">失效-->
+<!--                    </vi-button>-->
+                    <vi-button v-if="hasAuth('copy') && showInvalid" type="text" class="mp-header-item-btn"
+                               @click="doAdd4Copy">复制
+                    </vi-button>
+                    <vi-button v-if="hasAuth('export') && showExport" type="text" class="mp-header-item-btn"
+                               @click="doExportExcel">导出
+                    </vi-button>
+                    <!--<vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"-->
+                               <!--@click="doEnableDisable">{{$t("gb.common.EnableDisable")}}-->
+                    <!--</vi-button>-->
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<Modal :visible.sync="auditObj.visible" footer-hide title="审核JSA工作安全分析">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <p style="font-size: 24px;">审核通过该JSA工作安全分析？</p>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doPass(100)" class="pull-right">不通过</vi-button>
+            <vi-button type="primary" @click="doPass(200)" class="pull-right">通过</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>

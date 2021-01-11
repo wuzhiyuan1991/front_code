@@ -1,0 +1,65 @@
+<div class="report train-chart">
+
+    <!--左侧-->
+    <div class="train-content">
+        <div class="train-tit">发现问题数统计</div>
+
+        <div class="train-filter">
+        
+            
+            <div class="train-date-range">
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange" placeholder="选择日期范围"></vi-date-picker>
+            </div>
+
+            <div class="train-obj-select" style="top: 0;">
+                <i-select :model.sync="qryParam.typeOfRange" v-ref:select :list="typeOfRanges" @on-change="changeTypeOfRange">
+                    <i-option v-for="item in typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                </i-select>
+            </div>
+
+            <div class="train-obj-select">
+                <obj-select :type="qryParam.typeOfRange" :values.sync="qryParam.objRange"></obj-select>
+            </div>
+            
+            <div class="train-obj-select" style="top: 0;">
+	            <i-select :model.sync="qryParam.riType" v-ref:select :list="riTypes" placeholder="类型">
+	                <i-option v-for="item in riTypes" :value="item.value">{{item.label}}</i-option>
+	            </i-select>
+            </div>
+            
+            <iv-button type="primary" @click="doQuery">查询</iv-button>
+        </div>
+
+        <iv-row type="flex" justify="end" style="padding: 0;">
+            <iv-col>
+                <iv-button type="text" @click="showMore" style="margin-right: 20px;">更多...</iv-button>
+            </iv-col>
+        </iv-row>
+
+        <vuecharts :options="charts.opt" style="height: calc(100% - 160px);" @chartclick="chartClick" v-ref:echarts></vuecharts>
+    </div>
+
+</div>
+
+<!-- 更多 -->
+	<Modal v-if="detailModel.show" class="userSelectModal" :visible.sync="detailModel.show" mask-closable :title="detailModel.title" width="1000" :footer-hide="true">
+		<div class="edit-pop-container" style="width: 1000px">
+            <div class="epc-header" style="background-color: #eaf0f5;text-align: right;padding: 10px 20px 0;">
+                <iv-button @click="doExport">导出</iv-button>
+            </div>
+            <div class="epc-content integral-table" style="padding-top: 10px;">
+				<vue-bootstrap-table
+                     :columns="detailModel.table.columns"
+                     :url="detailModel.table.url"
+                     :default-filter-value="detailModel.table.qryParam"
+                     :show-filter="false"
+                     :filter-column="detailModel.table.filterColumns"
+                     :show-column-picker="false"
+                     :show-pager="true"
+                     show-loading
+                     resizeable
+                     v-ref:rpt-details-table>
+				</vue-bootstrap-table>
+			</div>
+		</div>
+	</Modal>

@@ -1,0 +1,539 @@
+<style>
+	#proj2 .el-tabs__item b{
+		font-weight: 400;
+	}
+	#proj2 .is-active b{
+		font-weight: 700;
+	}
+ 
+	#proj1 .el-form-item__vertical_content{
+		flex:1;
+		line-height: 30px;
+	}
+	#proj1 .el-form-item_vertical{
+		display: flex;
+		align-self: baseline;
+		padding-left: 10px;
+		width: 25%;
+		/* width: 230px; */
+	}
+	.small-info-flex-box{
+		flex:1
+	}
+	#proj1 .el-form-item__vertical_label{
+		
+		min-width: 110px;
+		white-space:nowrap;
+		line-height: 30px;
+		height: 30px;
+	}
+	#proj1 .ivu-select-dropdown,.slide-up-transition{
+		width:180px;
+	}
+	#proj1 .inp,.ivu-input-wrapper,.ivu-input-type>div{
+		line-height: 30px;
+		height: 30px;
+	}
+</style>
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">
+					{{$t('gb.common.edition')}}</iv-button>
+				<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制
+				</iv-button> -->
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}
+				</iv-button>
+				<!-- <vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"
+					@click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost"
+					@click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.name')" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目性质" prop="nature" class="small-info-box">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icm_project_three_simultaneous_nature', mainModel.vo.nature) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.nature"
+							:list="getDataDicList('icm_project_three_simultaneous_nature')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="项目启动时间" prop="startDate" class="small-info-box">
+						<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+							:selected-date.sync="mainModel.vo.startDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.startDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目完成时间" prop="endDate" class="small-info-box">
+						<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+							:selected-date.sync="mainModel.vo.endDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.endDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="项目计划启动时间" prop="planStartDate" class="small-info-box">
+						<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+							:selected-date.sync="mainModel.vo.planStartDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.planStartDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目计划完成时间" prop="planEndDate" class="small-info-box">
+						<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+							:selected-date.sync="mainModel.vo.planEndDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.planEndDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目实际启动时间" prop="realStartDate" class="small-info-box">
+						<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+							:selected-date.sync="mainModel.vo.realStartDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.realStartDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目实际完成时间" prop="realEndDate" class="small-info-box">
+						<date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+							:selected-date.sync="mainModel.vo.realEndDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.realEndDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+
+
+
+
+
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="项目业主" prop="owner" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.owner" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目总包单位" prop="headDept" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.headDept" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目设计单位" prop="designDept" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.designDept" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目管理单位" prop="manageDept" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.manageDept" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="项目监理单位" prop="superviseDept" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.superviseDept" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目建设单位" prop="buildDept" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.buildDept" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="项目简述" prop="description" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.description" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly">
+						</iv-textarea>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="项目阶段" prop="phase" class="small-info-box">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icm_project_three_simultaneous_phase', mainModel.vo.phase) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.phase"
+							:list="getDataDicList('icm_project_three_simultaneous_phase')" clearable></i-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.projThrSimultaneousTaskCardModel.showContent"
+				style="position: relative;">
+				<p slot="title"><i class="basicPng"></i><span>三同时任务</span></p>
+				<div class="link-ele"  style="position: absolute;top: 5px;right: 10px;" @click='selectTaskType'>切换显示
+				</div>
+				<div class="lr-layout" style=" padding: 0;position: relative;background: #fff;">
+					<div class="lr-layout-l" style='width: 150px;border: 1px solid #ddd;margin-right: 0px;border-right: none;'>
+						<ul v-if="type==1">
+							<li class="lr-layout-li" style="display: flex;border-bottom: 1px solid #ddd;"
+								@click="doChangeStatus(tab.id)" :class="{'checked': tab.id == selectLrType}"
+								v-for="tab in getDataDicList('icm_project_three_simult_task_phase')">
+								<span
+									style="flex: 1;overflow: hidden;text-overflow: ellipsis;text-align: center;">{{tab.value}}</span>
+							</li>
+						</ul>
+						<ul v-else>
+
+							<li class="lr-layout-li" style="display: flex;border-bottom: 1px solid #ddd;"
+								@click="doChangeTabStatus(tab.id)" :class="{'checked': tab.id == selectType}"
+								v-for="tab in getDataDicList('icm_project_three_simult_task_type')">
+								<span
+									style="flex: 1;overflow: hidden;text-overflow: ellipsis;text-align: center;">{{tab.value}}</span>
+							</li>
+						</ul>
+					</div>
+					<div class="lr-layout-r" style="padding: 0 ;border-left: 1px solid #ddd;" id='proj2'>
+						<div v-if="type==1" class="el-tabs" active-key="relTab " style="width: 100%;"> 
+							<div class="el-tabs__header" >
+								<div :class="{'is-active': selectType == '全部'}" @click="doChangeTabStatus('全部')"
+									class="el-tabs__item"><b>全部</b></div>
+								<div @click="doChangeTabStatus(tab.id)" class="el-tabs__item"
+									:class="{'is-active': tab.id == selectType}"
+									v-for="tab in getDataDicList('icm_project_three_simult_task_type')">
+									<b>{{tab.value}}</b>
+								</div>
+							</div>
+						</div>
+						<div v-else class="el-tabs" active-key="relTab" style="width: 100%;">
+							<div class="el-tabs__header" >
+								<div :class="{'is-active': selectLrType == '全部'}" @click="doChangeStatus('全部')"
+									class="el-tabs__item"><b>全部</b></div>
+								<div @click="doChangeStatus(tab.id)" class="el-tabs__item"
+									:class="{'is-active': tab.id == selectLrType}"
+									v-for="tab in getDataDicList('icm_project_three_simult_task_phase')">
+									<b>{{tab.value}}</b>
+								</div>
+							</div>
+						</div>
+						<div v-if="type==1">
+							<div v-for="(index,tab) in getDataDicList('icm_project_three_simult_task_type')"
+								style="position: relative;border-bottom: solid 1px #ddd;margin:10px; " v-if="selectType==tab.id||selectType=='全部'">
+								<div style="position: absolute;border-left: 3px solid #33a6ff;top:4px;left:10px;height: 12px;"></div>
+								<div
+									style="position: absolute;top:0px ;left:15px;padding-left: 5px;">
+									{{tab.value}}</div>
+								<div style="display: flex;flex-direction: row-reverse;">
+									<div style="margin: 0 10px;" class="link-ele"
+										v-if="taskModel[index].isReadOnly  && hasAuth('edit')" type="ghost"
+										@click.stop="doEditTask(index)">
+										<Icon type="compose"></Icon>{{$t('gb.common.edition')}}
+									</div>
+									<div style="margin: 0 10px;" class="link-ele" v-if="!taskModel[index].isReadOnly "
+										type="ghost" @click="doSaveTask(tab.id,index)">
+										<Icon type="document"></Icon>{{$t('gb.comnon.save')}}
+									</div>
+									<!-- <div style="margin: 0 10px;" class="link-ele"
+										v-if="taskModel[index].isReadOnly  && taskModel[index].opType != 'create' && hasAuth('delete')"
+										type="ghost" @click="doDeleteTask">
+										<Icon type="ios-trash-outline"></Icon>{{$t("gb.common.del")}}
+									</div> -->
+									<div style="margin: 0 10px;" class="link-ele"
+										v-if="!taskModel[index].isReadOnly  " type="ghost" @click="doCancelTask(index)">
+										<Icon type="reply"></Icon>{{$t("gb.common.cancel")}}</div>
+								</div>
+
+								<div class="bip-content" id="proj1">
+									<el-form class="bip-content-form" :model="taskModel[index].vo" is-label-vertical
+										:rules="!taskModel[index].isReadOnly?taskModelRules:[]" :id='"ruleformtask"+tab.id'>
+										<!-- <iv-row class="bip-content-item">
+										<el-form-item label="类型" prop="type" class="small-info-box">
+											<span
+												v-if="taskModel.isReadOnly">{{ getDataDic('icm_project_three_simult_task_type', taskModel.vo.type) }}</span>
+											<i-select v-else :model.sync="taskModel.vo.type"
+												:list="getDataDicList('icm_project_three_simult_task_type')" clearable>
+											</i-select>
+										</el-form-item>
+										<el-form-item label="项目阶段" prop="phase" class="small-info-box">
+											<span
+												v-if="taskModel.isReadOnly">{{ getDataDic('icm_project_three_simult_task_phase', taskModel.vo.phase) }}</span>
+											<i-select v-else :model.sync="taskModel.vo.phase"
+												:list="getDataDicList('icm_project_three_simult_task_phase')" clearable>
+											</i-select>
+										</el-form-item>
+	
+									</iv-row> -->
+										<iv-row style="margin-bottom:5px;">
+
+											<el-form-item label="任务性质" prop="taskNature" class="small-info-flex-box">
+												<span
+													v-if="taskModel[index].isReadOnly ">{{ getDataDic('icm_project_three_simult_task_task_nature', taskModel[index].vo.taskNature) }}</span>
+												<i-select v-else :model.sync="taskModel[index].vo.taskNature" 
+													:list="getDataDicList('icm_project_three_simult_task_task_nature')"
+													clearable></i-select>
+											</el-form-item>
+											<el-form-item label="政府审查性质" prop="examineNature" class="small-info-flex-box">
+												<span
+													v-if="taskModel[index].isReadOnly ">{{ getDataDic('icm_project_three_simult_task_examine_nature', taskModel[index].vo.examineNature) }}</span>
+												<i-select v-else :model.sync="taskModel[index].vo.examineNature"
+													:list="getDataDicList('icm_project_three_simult_task_examine_nature')"
+													clearable></i-select>
+											</el-form-item>
+											<el-form-item label="执行单位" prop="execuDept" class="small-info-flex-box">
+												<iv-input style="width: 340px;" :value.sync="taskModel[index].vo.execuDept"
+													:textonly="taskModel[index].isReadOnly ">
+												</iv-input>
+											</el-form-item>
+
+										</iv-row>
+
+										<iv-row>
+											<el-form-item label="任务计划开始时间" prop="planStartDate" class="small-info-flex-box">
+												<date-picker :default-date="false" v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.planStartDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.planStartDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+											<el-form-item label="任务计划结束时间" prop="planEndDate" class="small-info-flex-box">
+												<date-picker :default-date="false" v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.planEndDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.planEndDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+											<el-form-item label="项目实际开始时间" prop="realStartDate" class="small-info-flex-box">
+												<date-picker :default-date="false" v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.realStartDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.realStartDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+											<el-form-item label="项目实际结束时间" prop="realEndDate" class="small-info-flex-box">
+												<date-picker :default-date="false" v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.realEndDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.realEndDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+										</iv-row>
+										<!--						<iv-row class="bip-content-item">-->
+										<!--							<el-form-item label="项目" prop="project.id" class="small-info-flex-box" >-->
+										<!--								<input-select :value="mainModel.vo.projThrSimultaneous" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowProjThrSimultaneousSelectModal())" ></input-select>-->
+										<!--							</el-form-item>-->
+										<!--						</iv-row>-->
+									</el-form>
+								</div>
+								<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+									<div >
+										<simple-card
+											:show-content.sync="taskModel[index].showContent">
+											<p slot="title"><i class="basicPng"></i><span style="font-size: 14px;font-weight: 400;">任务执行明细</span></p>
+											<a class="link-ele" slot="extra"
+												@click.prevent="taskModel[index].showContent = !taskModel[index].showContent;">
+												<span
+													v-if="taskModel[index].showContent">
+													<Icon type="arrow-up-b"></Icon>收起
+												</span>
+												<span v-else>
+													<Icon type="arrow-down-b"></Icon>展开
+												</span>
+											</a>
+											<a v-if='taskModel[index].vo.id' class="link-ele" slot="extra" v-show="taskModel[index].opType != 'create'"
+												@click.prevent="doShowProjThrSimultaneousTaskDetailFormModal4Create(index)">
+												<span>
+													<Icon type="plus"></Icon>添加
+												</span>
+											</a>
+											<vue-bootstrap-table :values="taskModel[index].values" :show-empty-row='false'
+												:columns="tableModel.projThrSimultaneousTaskDetailTableModel.columns"
+												@on-del-row="doRemoveProjThrSimultaneousTaskDetail"
+												@on-edit-row="doShowProjThrSimultaneousTaskDetailFormModal4Update"
+												:id="'projThrSimultaneousTaskDetailTableModel'+tab.id">
+											</vue-bootstrap-table>
+										</simple-card>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div v-if="type==0">
+							<div v-for="(index,tab) in getDataDicList('icm_project_three_simult_task_phase')"
+								style="position: relative;border-bottom: solid 1px #ddd;margin-bottom: 10px;" v-if="selectLrType==tab.id||selectLrType=='全部'">
+								<div style="position: absolute;border-left: 3px solid #33a6ff;top:4px;left:10px;height: 12px;"></div>
+								<div
+									style="position: absolute;top:0px ;left:15px;padding-left: 5px;">
+									{{tab.value}}</div>
+								<div style="display: flex;flex-direction: row-reverse;">
+									<div style="margin: 0 10px;" class="link-ele"
+										v-if="taskModel[index].isReadOnly  && hasAuth('edit')" type="ghost"
+										@click.stop="doEditTask(index)">
+										<Icon type="compose"></Icon>{{$t('gb.common.edition')}}
+									</div>
+									<div style="margin: 0 10px;" class="link-ele" v-if="!taskModel[index].isReadOnly "
+										type="ghost" @click="doSaveTask(tab.id,index)">
+										<Icon type="document"></Icon>{{$t('gb.comnon.save')}}
+									</div>
+									<!-- <div style="margin: 0 10px;" class="link-ele"
+										v-if="taskModel[index].isReadOnly  && taskModel[index].opType != 'create' && hasAuth('delete')"
+										type="ghost" @click="doDeleteTask">
+										<Icon type="ios-trash-outline"></Icon>{{$t("gb.common.del")}}
+									</div> -->
+									<div style="margin: 0 10px;" class="link-ele"
+										v-if="!taskModel[index].isReadOnly  " type="ghost" @click="doCancelTask(index)">
+										<Icon type="reply"></Icon>{{$t("gb.common.cancel")}}</div>
+								</div>
+
+								<div class="bip-content" id="proj1">
+									<el-form class="bip-content-form" :model="taskModel[index].vo" is-label-vertical
+										:rules="!taskModel[index].isReadOnly?taskModelRules:[]" :id='"ruleformtasktype"+tab.id'>
+										<!-- <iv-row class="bip-content-item">
+									<el-form-item label="类型" prop="type" class="small-info-flex-box">
+										<span
+											v-if="taskModel.isReadOnly">{{ getDataDic('icm_project_three_simult_task_type', taskModel.vo.type) }}</span>
+										<i-select v-else :model.sync="taskModel.vo.type"
+											:list="getDataDicList('icm_project_three_simult_task_type')" clearable>
+										</i-select>
+									</el-form-item>
+									<el-form-item label="项目阶段" prop="phase" class="small-info-flex-box">
+										<span
+											v-if="taskModel.isReadOnly">{{ getDataDic('icm_project_three_simult_task_phase', taskModel.vo.phase) }}</span>
+										<i-select v-else :model.sync="taskModel.vo.phase"
+											:list="getDataDicList('icm_project_three_simult_task_phase')" clearable>
+										</i-select>
+									</el-form-item>
+
+								</iv-row> -->
+										<iv-row style="margin-bottom:5px;">
+
+											<el-form-item label="任务性质" prop="taskNature" class="small-info-flex-box">
+												<span
+													v-if="taskModel[index].isReadOnly ">{{ getDataDic('icm_project_three_simult_task_task_nature', taskModel[index].vo.taskNature) }}</span>
+												<i-select v-else :model.sync="taskModel[index].vo.taskNature"
+													:list="getDataDicList('icm_project_three_simult_task_task_nature')"
+													clearable></i-select>
+											</el-form-item>
+											<el-form-item label="政府审查性质" prop="examineNature" class="small-info-flex-box">
+												<span
+													v-if="taskModel[index].isReadOnly ">{{ getDataDic('icm_project_three_simult_task_examine_nature', taskModel[index].vo.examineNature) }}</span>
+												<i-select v-else :model.sync="taskModel[index].vo.examineNature"
+													:list="getDataDicList('icm_project_three_simult_task_examine_nature')"
+													clearable></i-select>
+											</el-form-item>
+											<el-form-item label="执行单位" prop="execuDept" class="small-info-flex-box">
+												<iv-input style="width: 340px;" :value.sync="taskModel[index].vo.execuDept"
+													:textonly="taskModel[index].isReadOnly ">
+												</iv-input>
+											</el-form-item>
+
+										</iv-row>
+
+										<iv-row >
+											<el-form-item label="任务计划开始时间" prop="planStartDate" class="small-info-flex-box">
+												<date-picker v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+												:default-date="false"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.planStartDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.planStartDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+											<el-form-item label="任务计划结束时间" prop="planEndDate" class="small-info-flex-box">
+												<date-picker v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+												:default-date="false"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.planEndDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.planEndDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+											<el-form-item label="项目实际开始时间" prop="realStartDate" class="small-info-flex-box">
+												<date-picker v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+												:default-date="false"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.realStartDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.realStartDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+											<el-form-item label="项目实际结束时间" prop="realEndDate" class="small-info-flex-box">
+												<date-picker v-if="!taskModel[index].isReadOnly " format="yyyy-MM-dd"
+												:default-date="false"
+													data-format="yyyy-MM-dd 00:00:00"
+													:selected-date.sync="taskModel[index].vo.realEndDate" clearable>
+												</date-picker>
+												<iv-input v-else :value="formatYMD(taskModel[index].vo.realEndDate)"
+													textonly class="inp"></iv-input>
+											</el-form-item>
+										</iv-row>
+										<!--						<iv-row class="bip-content-item">-->
+										<!--							<el-form-item label="项目" prop="project.id" class="small-info-box" >-->
+										<!--								<input-select :value="mainModel.vo.projThrSimultaneous" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowProjThrSimultaneousSelectModal())" ></input-select>-->
+										<!--							</el-form-item>-->
+										<!--						</iv-row>-->
+									</el-form>
+								</div>
+								<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+									<div>
+										<simple-card
+											:show-content.sync="taskModel[index].showContent">
+											<p slot="title"><i class="basicPng"></i><span style="font-size: 14px;font-weight: 400;">任务执行明细</span></p>
+											<a class="link-ele" slot="extra"
+												@click.prevent="taskModel[index].showContent = !taskModel[index].showContent;">
+												<span
+													v-if="taskModel[index].showContent">
+													<Icon type="arrow-up-b"></Icon>收起
+												</span>
+												<span v-else>
+													<Icon type="arrow-down-b"></Icon>展开
+												</span>
+											</a>
+											<a v-if='taskModel[index].vo.id' class="link-ele" slot="extra" v-show="taskModel[index].opType != 'create'"
+												@click.prevent="doShowProjThrSimultaneousTaskDetailFormModal4Create(index)">
+												<span>
+													<Icon type="plus"></Icon>添加
+												</span>
+											</a>
+											<vue-bootstrap-table :values="taskModel[index].values" 
+											:show-empty-row='false'
+												:columns="tableModel.projThrSimultaneousTaskDetailTableModel.columns"
+												@on-del-row="doRemoveProjThrSimultaneousTaskDetail"
+												@on-edit-row="doShowProjThrSimultaneousTaskDetailFormModal4Update"
+												:id="'projThrSimultaneousTaskDetailTableModelType'+tab.id">
+											</vue-bootstrap-table>
+										</simple-card>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			</simple-card>
+		</div>
+
+	</div>
+
+
+</div>
+
+
+<!--<projthrsimultaneoustask-form-modal-->
+<!--		:visible.sync="formModel.projThrSimultaneousTaskFormModel.show"-->
+<!--		@do-save="doSaveProjThrSimultaneousTask"-->
+<!--		@do-update="doUpdateProjThrSimultaneousTask"-->
+<!--		:query-url="formModel.projThrSimultaneousTaskFormModel.queryUrl"-->
+<!--		:hidden-fields="formModel.projThrSimultaneousTaskFormModel.hiddenFields"-->
+<!--		v-ref:projthrsimultaneoustask-form-modal>-->
+<!--</projthrsimultaneoustask-form-modal>-->
+
+<projthrsimultaneoustaskdetail-form-modal :visible.sync="formModel.projThrSimultaneousTaskDetailFormModel.show"
+	@do-save="doSaveProjThrSimultaneousTaskDetail" @do-update="doUpdateProjThrSimultaneousTaskDetail"
+	@on-cancel='formModel.projThrSimultaneousTaskDetailFormModel.show=false'
+	:query-url="formModel.projThrSimultaneousTaskDetailFormModel.queryUrl"
+	:hidden-fields="formModel.projThrSimultaneousTaskDetailFormModel.hiddenFields"
+	v-ref:projthrsimultaneoustaskdetail-form-modal>
+</projthrsimultaneoustaskdetail-form-modal>
+
+<style scoped>
+	.file-items {
+		padding: 0px 5px;
+	}
+	.coloud-file-list {
+		word-break: break-word;
+		overflow:visible !important;
+		white-space: normal!important;
+	}
+	</style>

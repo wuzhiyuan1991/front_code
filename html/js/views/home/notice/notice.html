@@ -1,0 +1,12 @@
+<div class="home-notice-content">
+    <div class="notice-title">{{item.title}}</div>
+    <div class="notice-date">{{item.createDate}}</div>
+    <div class="notice-content">{{{replaceReturnKey(item.content)}}}</div>
+    <div v-if="item.file">
+        <icon type="document-text" style="margin-right: 5px;vertical-align: middle;"></icon>
+        <a :href="convertFilePath(item.file)" class="notice-document">{{item.file.orginalName}}</a>
+    </div>
+    <a href="javascript:void(0);" class="notice-delete" @click="doDelete" v-if="hasAuth('delete')">
+        <icon type="trash-a"></icon>
+    </a>
+</div>

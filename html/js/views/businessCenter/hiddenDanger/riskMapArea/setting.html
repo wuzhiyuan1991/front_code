@@ -1,0 +1,45 @@
+<div class="sw-risk-map" style="overflow: hidden;" v-el:container>
+
+    <div style="height: 100%;position: absolute;z-index: 5;width: 100%;user-select: none;opacity: 0;"
+         @mousedown="onmousedown" @click="onMaskClick" v-el:mask></div>
+
+    <div style="will-change: transform; width: 1920px; height: 960px;position: relative;" v-el:box>
+        <canvas width="1920" height="960" v-el:canvas class="front-canvas"></canvas>
+    </div>
+    <!--按钮-->
+    <div style="position: absolute;z-index:6;right: 30px;top: 20px;">
+        <button class="ivu-btn" type="button" style="padding: 1px 15px;width: 50px;" title="返回" @click="doBackToOverview"><Icon type="reply" size="22"></Icon></button>
+    </div>
+
+    <Modal :visible.sync="showBox" title="修改区域配置" :footer-hide="true">
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form>
+                    <el-form-item label="区域名称" prop="areaName">
+                        <iv-input :value.sync="vo.areaName"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="所属部门" prop="drawOrgId">
+                        <department-tree-select :id.sync="vo.drawOrgId" :comp-id.sync ="vo.orgId"></department-tree-select>
+                    </el-form-item>
+                    <el-form-item label="所辖属地">
+                        <!--<input-select :value="vo.dominationArea" id-field="id" display-field="name" @click="doShowDominationAreaSelectModal"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="vo.dominationAreas"
+                                @on-click="doShowDominationAreaSelectModal"
+                        ></multiple-input-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </Modal>
+
+    <!--属地-->
+    <dominationarea-select-modal
+            :visible.sync="showAreaModal"
+            :filter-data="filterData"
+            @do-save="doSaveDominationArea"
+    ></dominationarea-select-modal>
+</div>

@@ -1,0 +1,32 @@
+<div class="edit-pop-container homeFileCenter">
+	<div class="epc-content">
+		<iv-row>
+			<iv-col span="16" >
+				<iv-input  :value.sync="mainModel.vo.name"></iv-input>
+			</iv-col>
+			<iv-col span="4" >
+				<span @click="doNewFile" class="homeModelButton">添加目录</span>
+			</iv-col>
+			<iv-col span="24" >
+				<ul class="homeFilePopup" v-if="folderData && folderData.length>0">
+					<li v-for="(index,item) in folderData">
+						<span class="foderLeft">{{item.name}}</span>
+						    <span class="foderRigth" v-if="item.isEditable == 1">
+							<i class="ivu-icon ivu-icon-edit" @click="doEdit(item)" style="margin: 0px"></i>
+							<i class="ivu-icon ivu-icon-trash-a" @click="doDelNode(index,item)" style="margin: 0px"></i>
+							<i class="ivu-icon ivu-icon-arrow-up-c" v-if="index != readOnlySize" @click="doEditUp(1,index,item)" style="margin: 0px"></i>
+							<i class="ivu-icon ivu-icon-arrow-down-c" v-if="index != folderData.length-1 " @click="doEditUp(2,index,item)" style="margin: 0px"></i>
+						</span>
+					</li>
+				</ul>
+			</iv-col>
+
+		</iv-row>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+	</div>
+</div>
+<Modal :visible.sync="editModel.show" :title="editModel.title" width="520" :footer-hide="true" >
+	<editcomponent @do-edit-finshed="doEditFinshed"></editcomponent>
+</Modal>

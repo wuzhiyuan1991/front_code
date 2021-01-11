@@ -1,0 +1,27 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width:420 :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content el-form-item__label_light" style="min-height:290px;">
+            <div class="baseList">
+                <div class="flex-layout" style="margin-bottom:10px;align-items: center;" v-for="(index, item) in baseList">
+                    <div style="width:330px;">
+                        <multiple-input-select
+                            display-field="label"
+                            :selected-multiple.sync="item.list"
+                            @on-click="showTransfer(index)"
+                            @on-remove="removeItem"
+                        ></multiple-input-select>
+                    </div>
+                    <div style="font-size: 24px;margin-left:10px;margin-right:10px;"> = </div>
+                    <div style="font-size: 18px;"> {{item.name}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<base-transfer v-ref:transfer></base-transfer>
+
+

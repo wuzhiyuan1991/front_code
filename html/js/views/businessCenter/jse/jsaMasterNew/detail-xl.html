@@ -1,0 +1,201 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.vo.status === '0'" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.status === '0' && hasAuth('submit')" type="ghost" @click="doConfirmCallback('doSubmit', '确定修改完毕，提交审核?')">提交</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.status === '1' && hasAuth('audit')" type="ghost" @click="doAudit">审核</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.status === '2' && hasAuth('quit') && mainModel.vo.isPublish !== '2'" type="ghost" @click="doQuit">弃审</iv-button>
+
+				<vi-button v-if="mainModel.isReadOnly && hasAuth('send') && mainModel.vo.status === '2' && mainModel.vo.isPublish !== '2'" type="ghost" @click="doSendTask">派送任务</vi-button>
+				<vi-button v-if="mainModel.isReadOnly && hasAuth('invalid') && mainModel.vo.isPublish === '1'" type="ghost" @click="doInvalid">失效</vi-button>
+				<vi-button v-if="mainModel.isReadOnly && hasAuth('copy') && mainModel.vo.isPublish === '1'" type="ghost" @click="doAdd4Copy">复制</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.isPublish === '1' && hasAuth('export')" type="ghost" @click="doExportExcel">导出</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:350px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.compId)['compName']" disabled></iv-input>
+						<span v-else>{{getDataDic('org', mainModel.vo.compId)['compName']}}</span>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" disabled></iv-input>
+						<span v-else>{{getDataDic('org', mainModel.vo.orgId)['deptName']}}</span>
+					</el-form-item>
+					<el-form-item label="作业单位" prop="construction" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.construction" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业日期" prop="workDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.workDate" format="yyyy-MM-dd" clearable></date-picker>
+						<div v-else>{{workDateText}}</div>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="分析小组组长" prop="analyseLeader" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.analyseLeader" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="分析人员" prop="analysePerson" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.analysePerson" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业内容" prop="taskContent" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.taskContent" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="许可证编号" prop="taskLicense" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.taskLicense" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item  label="" class="small-info-box" style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
+						<iv-checkbox class="radios" :checked.sync="mainModel.vo.newTask" :disabled="mainModel.isReadOnly">是否新任务</iv-checkbox>
+					</el-form-item>
+					<el-form-item label="" class="small-info-box" style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
+						<iv-checkbox class="radios" :checked.sync="mainModel.vo.crossTask" :disabled="mainModel.isReadOnly">是否交叉作业</iv-checkbox>
+					</el-form-item>
+					<el-form-item label="" class="small-info-box" style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
+						<iv-checkbox class="radios" :checked.sync="mainModel.vo.contractor" :disabled="mainModel.isReadOnly">是否承包商作业</iv-checkbox>
+					</el-form-item>
+					<el-form-item label="票卡" prop="opCard.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.opCard" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowOpCardSelectModal())" ></input-select>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="" class="small-info-box" style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
+						<iv-checkbox class="radios" :checked.sync="mainModel.vo.specification" :disabled="mainModel.isReadOnly">是否有相关操作规程</iv-checkbox>
+					</el-form-item>
+					<el-form-item label="" class="small-info-box" style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
+						<iv-checkbox class="radios" :checked.sync="mainModel.vo.qualification" :disabled="mainModel.isReadOnly">特种作业人员资质证明</iv-checkbox>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.jsaDetailNewCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>步骤分析</span></p>
+				<a slot="extra" @click.prevent="cardModel.jsaDetailNewCardModel.showContent = !cardModel.jsaDetailNewCardModel.showContent;" >
+					<span v-if="cardModel.jsaDetailNewCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+				</a>
+				<!--<vue-bootstrap-table-->
+					<!--:setting="tableModel.jsaDetailNewTableModel"-->
+					<!--@on-del-row="doRemoveJsaDetailNews"-->
+					<!--@on-edit-row="doShowJsaDetailNewFormModal4Update"-->
+					<!--@on-move-row="doMoveJsaDetailNews"-->
+					<!--v-ref:jsadetailnew-table-->
+					<!--&gt;-->
+				<!--</vue-bootstrap-table>-->
+
+				<div v-show="beforeValues.length > 0">
+					<div style="display: flex;justify-content: space-between;margin-bottom: 10px;align-items: center;">
+						<div style="display: inline-flex;">
+							<span style="padding: 4px 8px;border: 1px solid #ddd;background-color: #e8e8e8;">作业阶段</span>
+							<span style="padding: 4px 8px;border: 1px solid #ddd;width: 300px;border-left: none;">作业前</span>
+						</div>
+						<!--<a  @click.prevent="doShowJsaDetailNewFormModal4Create('0')" >-->
+							<!--<span><Icon type="plus"></Icon>添加步骤</span>-->
+						<!--</a>-->
+					</div>
+					<lite-table
+							:columns="tableModel.columns"
+							:values="beforeValues"
+							:tools=tableTools
+							:page-size-opts="[1000]"
+							show-sequence
+							@on-update="doShowJsaDetailNewFormModal4Update"
+							@on-delete="doDeleteItem"
+					></lite-table>
+				</div>
+
+				<div v-show="middleValues.length > 0">
+					<div style="display: flex;justify-content: space-between;margin-bottom: 10px;align-items: center;">
+						<div style="display: inline-flex;">
+							<span style="padding: 4px 8px;border: 1px solid #ddd;background-color: #e8e8e8;">作业阶段</span>
+							<span style="padding: 4px 8px;border: 1px solid #ddd;width: 300px;border-left: none;">作业中</span>
+						</div>
+						<!--<a v-show="mainModel.opType != 'create'" @click.prevent="doShowJsaDetailNewFormModal4Create('1')" >-->
+							<!--<span><Icon type="plus"></Icon>添加步骤</span>-->
+						<!--</a>-->
+					</div>
+					<lite-table
+							:columns="tableModel.columns"
+							:values="middleValues"
+							:tools=tableTools
+							:page-size-opts="[1000]"
+							show-sequence
+							@on-update="doShowJsaDetailNewFormModal4Update"
+							@on-delete="doDeleteItem"
+					></lite-table>
+				</div>
+
+				<div v-show="afterValues.length > 0">
+					<div style="display: flex;justify-content: space-between;margin-bottom: 10px;align-items: center;">
+						<div style="display: inline-flex;">
+							<span style="padding: 4px 8px;border: 1px solid #ddd;background-color: #e8e8e8;">作业阶段</span>
+							<span style="padding: 4px 8px;border: 1px solid #ddd;width: 300px;border-left: none;">作业后</span>
+						</div>
+						<!--<a  v-show="mainModel.opType != 'create'" @click.prevent="doShowJsaDetailNewFormModal4Create('2')" >-->
+							<!--<span><Icon type="plus"></Icon>添加步骤</span>-->
+						<!--</a>-->
+					</div>
+					<lite-table
+							:columns="tableModel.columns"
+							:values="afterValues"
+							:tools=tableTools
+							:page-size-opts="[1000]"
+							show-sequence
+							@on-update="doShowJsaDetailNewFormModal4Update"
+							@on-delete="doDeleteItem"
+					></lite-table>
+				</div>
+			</simple-card>
+		</div>
+
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+
+</div>
+
+<card-select-modal
+		:visible.sync="selectModel.cardSelectModel.visible"
+		:filter-data="selectModel.cardSelectModel.filterData"
+		:card-type="mainModel.vo.type"
+		@do-save="doSaveOpCard"
+></card-select-modal>
+
+<jsadetailnew-form-modal
+		:visible.sync="formModel.jsaDetailNewFormModel.show"
+		@do-save="doSaveJsaDetailNew"
+		@do-update="doUpdateJsaDetailNew"
+		:query-url="formModel.jsaDetailNewFormModel.queryUrl"
+		:hidden-fields="formModel.jsaDetailNewFormModel.hiddenFields"
+		v-ref:jsadetailnew-form-modal>
+</jsadetailnew-form-modal>
+
+<Modal :visible.sync="auditObj.visible" footer-hide title="审核JSA工作安全分析">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<p style="font-size: 24px;">审核通过该JSA工作安全分析？</p>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doPass(100)" class="pull-right">不通过</vi-button>
+			<vi-button type="primary" @click="doPass(200)" class="pull-right">通过</vi-button>
+		</div>
+	</div>
+</Modal>

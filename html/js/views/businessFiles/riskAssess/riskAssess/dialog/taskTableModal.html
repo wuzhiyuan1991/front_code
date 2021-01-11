@@ -1,0 +1,28 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width="1000" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="background-color: #fff;padding-bottom: 0;">
+                <div v-for="(index,tir) in groups">
+                <div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+                    <div class="left" style="width: 300px;">{{tir.name}}</div>
+                </div>
+
+                <lite-table
+                        :columns="columns"
+                        :values="tir.items"
+                        @on-click="onRowClicked"
+                ></lite-table>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+        </div>
+        <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+    </div>
+</Modal>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<audio-player
+        :visible.sync="audioModel.visible"
+        :path="audioModel.path"
+></audio-player>

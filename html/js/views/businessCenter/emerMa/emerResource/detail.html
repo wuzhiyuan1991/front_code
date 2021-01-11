@@ -1,0 +1,253 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform >
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item :label="$t('gb.common.state')" prop="disable">-->
+						<!--<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>-->
+					<!--</el-form-item>  -->
+					<el-form-item label="种类" prop="rescueVehicleCategory" v-if="checkedGroupIndex=='3'">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_rescue_vehicle_category', mainModel.vo.rescueVehicleCategory) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.rescueVehicleCategory" :list='getDataDicList("iem_emer_resource_rescue_vehicle_category")' clearable></i-select>
+					</el-form-item>
+					<el-form-item label="种类" prop="rescueSupplyCategory" v-if="checkedGroupIndex=='4'">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_rescue_supply_category', mainModel.vo.rescueSupplyCategory) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.rescueSupplyCategory" :list='getDataDicList("iem_emer_resource_rescue_supply_category")' clearable></i-select>
+					</el-form-item>
+					<el-form-item label="技术要求或功能要求" prop="reqirement">
+						<iv-input :value.sync="mainModel.vo.reqirement" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item label="单位" prop="unit">-->
+						<!--<iv-input :value.sync="mainModel.vo.unit" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+
+					<el-form-item label="规格/型号" prop="specification">
+						<iv-input style="font-size:14px;" :value.sync="mainModel.vo.specification" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="数量" prop="quantity" class="quantity-ivu-input-number-input-wrap">
+
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{mainModel.vo.quantity}}&nbsp;&nbsp;{{mainModel.vo.unit}}</span>
+
+						<iv-input-number is-integer v-show="!mainModel.isReadOnly" :value.sync="mainModel.vo.quantity" :min="0" type="number" :textonly="mainModel.isReadOnly" style="width:78%;height: 28x;"></iv-input-number>
+						<iv-input v-show="!mainModel.isReadOnly" :value.sync="mainModel.vo.unit" :placeholder='"单位"' :textonly="mainModel.isReadOnly" style="width:20%;"></iv-input>
+					</el-form-item>
+
+					<el-form-item label="有效期" prop="validPeriod">
+						<!--<iv-input style="font-size:14px;" :value.sync="mainModel.vo.validPeriod" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.validPeriod"></date-picker>
+						<span v-else style="font-size: 14px;">{{mainModel.vo.validPeriod}}</span>
+					</el-form-item>
+					<el-form-item  label="属地" prop="dominationArea.id" >
+						<cascade-input-select :value="mainModel.vo.dominationArea" :cascade-id="mainModel.vo.compId" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())" ></cascade-input-select>
+					</el-form-item>
+					<el-form-item label="存储地点" prop="location">
+						<iv-input :value.sync="mainModel.vo.location" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="现场负责人" prop="user.id">
+						<div style="position: relative;cursor: pointer;" @click="doShowUserSelectModal(0)">
+							<multiple-input-select
+									:selected-multiple.sync="userInfo"
+									:textonly="mainModel.isReadOnly"
+									id-field="id"
+									@on-remove="doRemoveUserSelectModal(0)"
+									display-field="name"
+							></multiple-input-select>
+						</div>
+
+					</el-form-item>
+					<el-form-item label="联系电话" prop="contactNumber">
+						<iv-input :value.sync="mainModel.vo.contactNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item label="车间负责人" prop="workshopLeader.id">
+						<div style="position: relative;cursor: pointer;" @click="doShowUserSelectModal(1)">
+							<multiple-input-select
+									:selected-multiple.sync="workshopLeader"
+									:textonly="mainModel.isReadOnly"
+									id-field="id"
+									@on-remove="doRemoveUserSelectModal(1)"
+									display-field="name"
+							></multiple-input-select>
+						</div>
+
+					</el-form-item>
+					<el-form-item label="联系电话" prop="workshopLeaderNumber">
+						<iv-input :value.sync="mainModel.vo.workshopLeaderNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ mainModel.vo.remark }}</span>
+						<iv-input v-else type="textarea" :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly" :width="2600"></iv-input>
+					</el-form-item>
+
+					<el-form-item	label ="维护保养周期"	prop="maintPeriod">
+						<iv-input v-if="!mainModel.isReadOnly" type="number" :value.sync="mainModel.vo.maintPeriod">
+							<i-select :model.sync="mainModel.vo.maintPeriodUnit" slot="append" style="width: 70px" :list="getDataDicList('iem_emer_resource_period_unit')">
+							</i-select>
+						</iv-input>
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly && mainModel.vo.maintPeriod">{{mainModel.vo.maintPeriod}}{{ getDataDic('iem_emer_resource_period_unit', mainModel.vo.maintPeriodUnit) }}</span>
+					</el-form-item>
+
+					<el-form-item	label='下次维护保养日期'	prop="nextMaintTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.nextMaintTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.nextMaintTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+
+					<el-form-item   label='下次维护保养到期提前提醒' prop="maintNoticeTime">
+						<iv-input v-if="!mainModel.isReadOnly" type="number" :value.sync="mainModel.vo.maintNoticeTime">
+							<i-select :model.sync="mainModel.vo.maintNoticeTimeUnit" slot="append" style="width: 70px" :list="getDataDicList('iem_emer_resource_notice_time_unit')">
+							</i-select>
+						</iv-input>
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly && mainModel.vo.maintNoticeTime">{{mainModel.vo.maintNoticeTime}}{{ getDataDic('iem_emer_resource_notice_time_unit', mainModel.vo.maintNoticeTimeUnit) }}</span>
+					</el-form-item>
+
+					<el-form-item	label ="检验检测周期"	prop="inspectPeriod">
+						<iv-input v-if="!mainModel.isReadOnly" type="number" :value.sync="mainModel.vo.inspectPeriod">
+							<i-select :model.sync="mainModel.vo.inspectPeriodUnit" slot="append" style="width: 70px" :list="getDataDicList('iem_emer_resource_period_unit')">
+							</i-select>
+						</iv-input>
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly && mainModel.vo.inspectPeriod">{{mainModel.vo.inspectPeriod}}{{ getDataDic('iem_emer_resource_period_unit', mainModel.vo.inspectPeriodUnit) }}</span>
+					</el-form-item>
+
+					<el-form-item	label='下次检验检测日期'	prop="nextInspectTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.nextInspectTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.nextInspectTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+
+					<el-form-item   label='下次检验检测到期提前提醒' prop="inspectNoticeTime">
+						<iv-input v-if="!mainModel.isReadOnly" type="number" :value.sync="mainModel.vo.inspectNoticeTime">
+							<i-select :model.sync="mainModel.vo.inspectNoticeTimeUnit" slot="append" style="width: 70px" :list="getDataDicList('iem_emer_resource_notice_time_unit')">
+							</i-select>
+						</iv-input>
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly && mainModel.vo.inspectNoticeTime">{{mainModel.vo.inspectNoticeTime}}{{ getDataDic('iem_emer_resource_notice_time_unit', mainModel.vo.inspectNoticeTimeUnit) }}</span>
+					</el-form-item>
+
+					<el-form-item label="状态" prop="status">
+						<span style="font-size:14px;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_status', mainModel.vo.status) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('iem_emer_resource_status')" clearable></i-select>
+					</el-form-item>
+
+					<!--<el-form-item label="抢险救援物资种类" prop="rescueSupplyCategory">-->
+						<!--<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_rescue_supply_category', mainModel.vo.rescueSupplyCategory) }}</span>-->
+						<!--<i-select v-else :model.sync="mainModel.vo.rescueSupplyCategory" :list="getDataDicList('iem_emer_resource_rescue_supply_category')" clearable></i-select>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item label="抢险救援车辆种类" prop="rescueVehicleCategory">-->
+						<!--<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_rescue_vehicle_category', mainModel.vo.rescueVehicleCategory) }}</span>-->
+						<!--<i-select v-else :model.sync="mainModel.vo.rescueVehicleCategory" :list="getDataDicList('iem_emer_resource_rescue_vehicle_category')" clearable></i-select>-->
+					<!--</el-form-item>-->
+
+				</el-form>
+			</simple-card>
+			<div class="rel-info-panel-content-tabs" style="width: 800px;">
+				<div class="rel-info-panel el-tabs"  active-key="relTab" :class="{'rel-info-panel-mask': showPanelMask}">
+					<div class="el-tabs__header">
+						<div
+								@click="doTabClick(tab.id)"
+								class="el-tabs__item"
+								:class="{'is-active': tab.id === activeTabId}"
+								v-for="tab in tabs"
+								style="font-size:14px;"
+						>
+							<b>{{tab.name}}</b>
+						</div>
+					</div>
+					<simple-card class="fip-content-item"    v-show="activeTabId==='1'">
+						<!--<p slot="title"><i class="basicPng"></i><span></span></p>-->
+						<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowEmerInspectRecordFormModal4Create" >-->
+							<!--<span><Icon type="plus"></Icon>添加</span>-->
+						<!--</a>-->
+						<vue-bootstrap-table
+								:setting="tableModel.emerMaintRecordTableModel"
+								@on-del-row="doRemoveEmerInspectRecord"
+								@on-edit-row="doShowEmerInspectRecordFormModal4Update"
+								v-ref:emerinspectrecord-table
+						>
+						</vue-bootstrap-table>
+					</simple-card>
+
+					<simple-card class="fip-content-item"   v-show="activeTabId==='2'">
+						<!--<p slot="title"><i class="basicPng"></i><span></span></p>-->
+						<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowEmerMaintRecordFormModal4Create" >-->
+							<!--<span><Icon type="plus"></Icon>添加</span>-->
+						<!--</a>-->
+						<vue-bootstrap-table
+								:setting="tableModel.emerMaintRecordTableModel2"
+								@on-del-row="doRemoveEmerMaintRecord"
+								@on-edit-row="doShowEmerMaintRecordFormModal4Update"
+								v-ref:emermaintrecord-table2
+						>
+						</vue-bootstrap-table>
+					</simple-card>
+
+					<simple-card class="fip-content-item"   v-show="activeTabId==='3'">
+						<!--<p slot="title"><i class="basicPng"></i><span> </span></p>-->
+						<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowEmerMaintRecordFormModal4Create" >-->
+							<!--<span><Icon type="plus"></Icon>添加</span>-->
+						<!--</a>-->
+						<vue-bootstrap-table
+								:setting="tableModel.emerInspectRecordTableModel"
+								@on-del-row="doRemoveEmerMaintRecord"
+								@on-edit-row="doShowEmerMaintRecordFormModal4Update"
+								v-ref:emermaintrecord-table
+						>
+						</vue-bootstrap-table>
+					</simple-card>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<!--<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>-->
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible"  single-select @do-save="doSaveUser"></user-select-modal>
+
+
+
+<emerinspectrecord-form-modal
+		:visible.sync="formModel.emerInspectRecordFormModel.show"
+		@do-save="doSaveEmerInspectRecord"
+		@do-update="doUpdateEmerInspectRecord"
+		:query-url="formModel.emerInspectRecordFormModel.queryUrl"
+		:hidden-fields="formModel.emerInspectRecordFormModel.hiddenFields"
+		v-ref:emerinspectrecord-form-modal>
+</emerinspectrecord-form-modal>
+<emermaintrecord-form-modal
+		:visible.sync="formModel.emerMaintRecordFormModel.show"
+		@do-save="doSaveEmerMaintRecord"
+		@do-update="doUpdateEmerMaintRecord"
+		:query-url="formModel.emerMaintRecordFormModel.queryUrl"
+		:hidden-fields="formModel.emerMaintRecordFormModel.hiddenFields"
+		v-ref:emermaintrecord-form-modal>
+</emermaintrecord-form-modal>
+
+<dominationarea-select-modal :visible.sync="selectModel.dominationAreaSelectModel.visible" :filter-data="selectModel.dominationAreaSelectModel.filterData" single-select @do-save="doSaveDominationArea"></dominationarea-select-modal>
+
+<style>
+	.quantity-ivu-input-number-input-wrap .ivu-input-number-input-wrap{
+		height: 30px;
+	}
+</style>
+

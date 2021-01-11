@@ -1,0 +1,43 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <!--<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+                    <!--<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+                <!--</el-form-item>-->
+                <el-form-item v-if="(hiddenFields.indexOf('pipeName') == -1)" label="设备管道名称" prop="pipeName">
+                    <iv-input :value.sync="mainModel.vo.pipeName" :disabled="(disabledFields.indexOf('pipeName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('medium') == -1)" label="介质" prop="medium">
+                    <iv-input :value.sync="mainModel.vo.medium" :disabled="(disabledFields.indexOf('medium') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('temperature') == -1)" label="温度" prop="temperature">
+                    <iv-input :value.sync="mainModel.vo.temperature" :disabled="(disabledFields.indexOf('temperature') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('pressure') == -1)" label="压力" prop="pressure">
+                    <iv-input :value.sync="mainModel.vo.pressure" :disabled="(disabledFields.indexOf('pressure') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('texture') == -1)" label="盲板材质" prop="texture">
+                    <iv-input :value.sync="mainModel.vo.texture" :disabled="(disabledFields.indexOf('texture') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('specification') == -1)" label="盲板规格" prop="specification">
+                    <iv-input :value.sync="mainModel.vo.specification" :disabled="(disabledFields.indexOf('specification') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('number') == -1)" label="盲板编号" prop="number">
+                    <iv-input :value.sync="mainModel.vo.number" :disabled="(disabledFields.indexOf('number') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <!--<el-form-item v-if="(hiddenFields.indexOf('workPermitId') == -1)" label="作业许可" prop="workPermit.id">-->
+                    <!--<input-select :value="mainModel.vo.workPermit" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('workPermit') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowWorkPermitSelectModal())" ></input-select>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item v-if="(hiddenFields.indexOf('workCardId') == -1)" label="作业票" prop="workCardId">-->
+                    <!--<iv-input :value.sync="mainModel.vo.workCardId" :disabled="(disabledFields.indexOf('workCardId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<!--<ptwworkpermit-select-modal :visible.sync="selectModel.workPermitSelectModel.visible" :filter-data="selectModel.workPermitSelectModel.filterData" single-select @do-save="doSaveWorkPermit"></ptwworkpermit-select-modal>-->

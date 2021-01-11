@@ -1,0 +1,255 @@
+<div class="detail-container">
+
+    <div class="few-info-panel pull-left">
+
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{title}}</span>
+        </div>
+
+        <div class="fip-content">
+            <!-- 模型基础信息 -->
+            <simple-card class="fip-content-item">
+                <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+                <el-form class="fip-content-item-form" :model="mainModel.vo"
+                         :rules="mainModel.emptyRules" v-ref:ruleform>
+
+                    <!--详情-->
+                    <div v-if="mainModel.opType != 'create'">
+                        <el-form-item label="编码" label-width="150px">
+                            <iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item :label="$t('bd.trm.testName')" prop="userId" label-width="150px">
+                            <iv-input :value.sync="mainModel.vo.examPaper.name" :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="考试状态" label-width="150px">
+                            <!--	<iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>-->
+                            <span>{{statusValue}}</span>
+                        </el-form-item>
+
+                        <el-form-item label="允许考试时间（开始）"  label-width="150px">
+                            <iv-input :value.sync="mainModel.vo.exam.examDate" :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="允许考试时间（结束）"  label-width="150px">
+                            <iv-input :value.sync="mainModel.vo.exam.entryDeadline" :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="考试时长" label-width="150px">
+                            <!--<iv-input :value.sync="mainModel.vo.examPaper.replyTime" :textonly="mainModel.isReadOnly"></iv-input>-->
+                            <span>{{mainModel.vo.examPaper.replyTime}}分钟</span>
+                        </el-form-item>
+                        <el-form-item label="试卷总分" label-width="150px">
+                            <!--<iv-input :value.sync="mainModel.vo.examPaper.replyTime" :textonly="mainModel.isReadOnly"></iv-input>-->
+                            <span>{{mainModel.vo.examPaper.score}}分</span>
+                        </el-form-item>
+                        <el-form-item label="答题时长" label-width="150px">
+                            <!--<iv-input :value.sync="mainModel.vo.examPaper.replyTime" :textonly="mainModel.isReadOnly"></iv-input>-->
+                            <span>{{testTime}}</span>
+                        </el-form-item>
+                        <el-form-item label="考试得分" label-width="150px">
+                            <!--<iv-input :value.sync="mainModel.vo.examPaper.replyTime" :textonly="mainModel.isReadOnly"></iv-input>-->
+                            <span>{{userScore}} </span>
+                        </el-form-item>
+                        <el-form-item label="考试结果" label-width="150px">
+                            <!--<iv-input :value.sync="mainModel.vo.examPaper.replyTime" :textonly="mainModel.isReadOnly"></iv-input>-->
+                            <span v-if="mainModel.vo.paperRecord.id || mainModel.vo.status == 2">{{getDataDic("exam_result",mainModel.vo.result)}}</span>
+
+                        </el-form-item>
+                        <!--<el-form-item :label="$t('gb.common.placeExamination')" prop="userId">
+                            <iv-input :value.sync="mainModel.vo.exam.place" :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item :label="$t('gb.common.remarks')" prop="userId">
+                            <iv-input :value.sync="mainModel.vo.exam.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>-->
+                    </div>
+
+                    <!--随机练习-->
+                    <div v-else class="fip-testCenter">
+                        <!--知识点-->
+                        <el-form-item class="small-info-box" :label="$t('bd.trm.testCenter')" prop="examPoints">
+                            <div v-if="mainModel.isReadOnly" class="exam-paper-point">
+                                <div class="ivu-tag" v-for="tag in mainModel.vo.examPoints">
+                                    <span class="ivu-tag-text">{{tag.name}}</span>
+                                </div>
+                            </div>
+
+                            <div style="width: 290px;" v-else class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point" @click.prevent="doShowExamPointSelectModel()">
+                                <div class="ivu-select-selection" style="line-height: 24px;">
+                                    <div class="ivu-tag" v-for="(index, tag) in mainModel.vo.examPoints">
+                                        <span class="ivu-tag-text">{{tag.name}}</span>
+                                        <i class="ivu-icon ivu-icon-ios-close-empty" @click.stop="doRemoveExamPoints(index)"></i>
+                                    </div>
+                                </div>
+                                <span style="font-size: 16px;" class="select-ico-add">
+                                    <i class="ivu-icon ivu-icon-plus"></i>
+                                </span>
+                            </div>
+
+                        </el-form-item>
+
+                        <!--题型-->
+                        <el-form-item :label="$t('gb.common.questionsChoice')" style="width: 500px">
+
+                            <div class="custom">
+                                <div class="custom_warp">
+                                    <div class="custom_fl custom_customPaperTopic">
+                                        <iv-checkbox :checked.sync="customPaperTopic.type" style="font-size: 12px" :disabled="mainModel.isReadOnly"
+                                                     @on-change="doCustomPaperTopic">单选题
+                                        </iv-checkbox>
+                                    </div>
+                                    <div class="custom_fl custom_multiplePaperTopic">
+                                        <!--<iv-input type="number" :disabled="!customPaperTopic.type" :value.sync="customPaperTopic.num"-->
+                                                  <!--:textonly="mainModel.isReadOnly" style="width: 65%"></iv-input>-->
+                                        <iv-input-number
+                                                is-integer
+                                                :min="0"
+                                                :value.sync="customPaperTopic.num"
+                                                :disabled="!customPaperTopic.type"
+                                                style="width: 65%"
+                                        ></iv-input-number>
+
+                                        <span style="font-size: 12px; padding-left: 5px;">题</span>
+                                    </div>
+
+                                    <div class="custom_fl custom_judgmentPaperTopic"><span style="font-size: 12px;padding-right: 5px">每题</span>
+                                        <!--<iv-input :disabled="!customPaperTopic.type" type="number" :value.sync="customPaperTopic.score"-->
+                                                  <!--:textonly="mainModel.isReadOnly" style="width: 58%"></iv-input>-->
+                                        <iv-input-number
+                                                is-integer
+                                                :min="0"
+                                                :disabled="!customPaperTopic.type"
+                                                :value.sync="customPaperTopic.score"
+                                                style="width: 58%"
+                                        ></iv-input-number>
+                                        <span style="font-size: 12px;padding-left: 5px;">分</span>
+                                    </div>
+
+                                    <div class="exam_pt" v-if="customPaperTopic.type && mainModel.opType != 'view'">总共{{customLength > 0 ? customLength:0}}题
+                                    </div>
+                                </div>
+                                <div class="custom_warp">
+                                    <div class="custom_fl custom_customPaperTopic">
+                                        <iv-checkbox :checked.sync="multiplePaperTopic.type" style="font-size: 12px" :disabled="mainModel.isReadOnly"
+                                                     @on-change="doMultiplePaperTopic">多选题
+                                        </iv-checkbox>
+                                    </div>
+                                    <div class="custom_fl custom_multiplePaperTopic">
+                                        <!--<iv-input type="number" :disabled="!multiplePaperTopic.type" :value.sync="multiplePaperTopic.num"-->
+                                                  <!--:textonly="mainModel.isReadOnly" style="width: 65%"></iv-input>-->
+                                        <iv-input-number
+                                                is-integer
+                                                :min="0"
+                                                :disabled="!multiplePaperTopic.type"
+                                                :value.sync="multiplePaperTopic.num"
+                                                style="width: 65%"
+                                        ></iv-input-number>
+                                        <span style="font-size: 12px; padding-left: 5px;">题</span>
+                                    </div>
+
+                                    <div class="custom_fl custom_judgmentPaperTopic"><span style="font-size: 12px;padding-right: 5px">每题</span>
+                                        <!--<iv-input :disabled="!multiplePaperTopic.type" type="number" :value.sync="multiplePaperTopic.score"-->
+                                                  <!--:textonly="mainModel.isReadOnly" style="width: 58%"></iv-input>-->
+                                        <iv-input-number
+                                                is-integer
+                                                :min="0"
+                                                :disabled="!multiplePaperTopic.type"
+                                                :value.sync="multiplePaperTopic.score"
+                                                style="width: 58%"
+                                        ></iv-input-number>
+                                        <span style="font-size: 12px;padding-left: 5px;">分</span>
+                                    </div>
+
+                                    <div class="exam_pt" v-if="multiplePaperTopic.type && mainModel.opType != 'view'">总共{{multipleLength > 0 ?
+                                        multipleLength:0}}题
+                                    </div>
+                                </div>
+                                <div class="custom_warp">
+                                    <div class="custom_fl custom_customPaperTopic">
+                                        <iv-checkbox :checked.sync="judgmentPaperTopic.type" style="font-size: 12px" :disabled="mainModel.isReadOnly"
+                                                     @on-change="doJudgmentPaperTopic">判断题
+                                        </iv-checkbox>
+                                    </div>
+                                    <div class="custom_fl custom_multiplePaperTopic">
+                                        <!--<iv-input type="number" :disabled="!judgmentPaperTopic.type" :value.sync="judgmentPaperTopic.num"-->
+                                                  <!--:textonly="mainModel.isReadOnly" style="width: 65%"></iv-input>-->
+                                        <iv-input
+                                                is-integer
+                                                :min="0"
+                                                :disabled="!judgmentPaperTopic.type"
+                                                :value.sync="judgmentPaperTopic.num"
+                                                style="width: 65%"
+                                        ></iv-input>
+                                        <span style="font-size: 12px; padding-left: 5px;">题</span>
+                                    </div>
+
+                                    <div class="custom_fl custom_judgmentPaperTopic"><span style="font-size: 12px;padding-right: 5px">每题</span>
+                                        <!--<iv-input :disabled="!judgmentPaperTopic.type" type="number" :value.sync="judgmentPaperTopic.score"-->
+                                                  <!--:textonly="mainModel.isReadOnly" style="width: 58%"></iv-input>-->
+
+                                        <iv-input
+                                                is-integer
+                                                :min="0"
+                                                :disabled="!judgmentPaperTopic.type"
+                                                :value.sync="judgmentPaperTopic.score"
+                                                style="width: 58%"
+                                        ></iv-input>
+                                        <span style="font-size: 12px;padding-left: 5px;">分</span>
+                                    </div>
+
+                                    <div class="exam_pt" v-if="judgmentPaperTopic.type && mainModel.opType != 'view'">总共{{judgmentLength > 0 ?
+                                        judgmentLength:0}}题
+                                    </div>
+                                </div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item :label="$t('bd.trm.examInfoScore')" class="fip-total">
+                            <iv-input style="width: 290px;"  v-if="!mainModel.isReadOnly" :value.sync="total" disabled></iv-input>
+                            <span v-else>{{mainModel.vo.score}}分</span>
+                        </el-form-item>
+                    </div>
+                </el-form>
+            </simple-card>
+
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+        <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t("gb.common.practice")}}</iv-button>
+        <iv-button type="ghost" icon="close-round" @click="doStartExaming" type="ghost" v-if="mainModel.vo.status==1 && !mainModel.vo.examSubmit">
+            {{$t("bd.trm.examBegin")}}
+        </iv-button>
+        <iv-button type="ghost" icon="close-round" @click="doShowReport" type="ghost"
+                   v-if="mainModel.vo.paperRecord.id != '' || (mainModel.vo.status==2 && mainModel.vo.examPaper.createType == 0 )">{{$t("bd.trm.resolutionView")}}
+        </iv-button>
+    </div>
+</div>
+
+<exam-select-modal
+        :visible.sync="selectModel.examSelectModel.visible"
+        :filter-data="selectModel.examSelectModel.filterData"
+        @do-save="doSaveExam"
+></exam-select-modal>
+
+<paperrecord-select-modal
+        :visible.sync="selectModel.paperRecordSelectModel.visible"
+        :filter-data="selectModel.paperRecordSelectModel.filterData"
+        @do-save="doSavePaperRecord"
+></paperrecord-select-modal>
+
+<user-select-modal
+        :visible.sync="selectModel.userSelectModel.visible"
+        :filter-data="selectModel.userSelectModel.filterData"
+        @do-save="doSaveUser"
+></user-select-modal>
+
+<exampoint-select-modal :visible.sync="selectModel.examPointSelectModel.visible" @do-save="doSaveExamPoints"></exampoint-select-modal>
+
+<tree-modal
+        :single-select="false"
+        :visible.sync="examPointModel.visible"
+        :model="examPointModel.examPointModelData"
+        open
+        :default-open-layer="100"
+        :title="examPointModel.title"
+        @do-save="doSaveExamPoints"
+></tree-modal>
+

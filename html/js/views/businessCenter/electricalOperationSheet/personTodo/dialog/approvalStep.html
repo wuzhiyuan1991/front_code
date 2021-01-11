@@ -1,0 +1,21 @@
+<Modal :visible.sync="visible" title="审批操作票" width="500" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+      
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+            <el-form-item label="审批结果">
+                <iv-radio-group :model.sync="mainModel.vo.signResult">
+                    <iv-radio value="1">通过</iv-radio>
+                    <iv-radio value="2">不通过</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+            <el-form-item label="签发意见" >
+                <iv-textarea :value.sync="mainModel.vo.signOpinion"></iv-textarea>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>

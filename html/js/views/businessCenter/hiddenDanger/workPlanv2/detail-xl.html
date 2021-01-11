@@ -1,0 +1,115 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('editv2') && mainModel.vo.disable === '0' && isCreater" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+<!--				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>-->
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enablev2') && isCreater && mainModel.vo.disable === '0'" type="ghost"  @click="doEnableDisable">发布</vi-button>
+<!--				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable') && isCreater" type="ghost"  @click="doEnableDisable">{{mainModel.vo.disable === '0' ? "发布": "取消发布"}}</vi-button>-->
+
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delegatev2')" type="ghost"  @click="doDelegate">委托</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('deletev2') && isCreater" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:250px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+<!--					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >-->
+<!--						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+<!--					</el-form-item>-->
+					<el-form-item label="监督机构" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="监督部门" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="工作计划名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="计划发布人" prop="user.id" class="small-info-box" >
+						<input-select  :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && doShowUserSelectModal()" ></input-select>
+					</el-form-item>
+<!--					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >-->
+<!--						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>-->
+<!--					</el-form-item>-->
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="开始时间" prop="startDate" class="small-info-box" >
+						<date-picker format="yyyy-MM-dd 00:00:00" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate" :end.sync="mainModel.vo.endDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="结束时间" prop="endDate" class="small-info-box" >
+						<date-picker format="yyyy-MM-dd 23:59:59" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate" :begin.sync="mainModel.vo.startDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="被检单位" prop="checkedOrgId" class="small-info-box" >
+						<department-tree-select  v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.checkedOrgId" :select-all-comp="true"  clearable></department-tree-select>
+						<!-- :comp-id.sync ="mainModel.vo.compId" -->
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.checkedOrgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="被检单位负责人" prop="checkedUser.id" class="small-info-box" >
+						<input-select  :value="mainModel.vo.checkedUser" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && doShowcheckedUserSelectModal()" ></input-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.remarks')" prop="remarks" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+                </iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.checkPlanCardModel.showContent"  filter-when>
+				<p slot="title"><i class="basicPng"></i><span>检查计划</span></p>
+				<a slot="extra" @click.prevent="cardModel.checkPlanCardModel.showContent = !cardModel.checkPlanCardModel.showContent;" >
+					<span v-if="cardModel.checkPlanCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doAddCheckPlan()" >
+					<span><Icon type="plus"></Icon>新增</span>
+				</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCheckPlanSelectModal()" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.checkPlanTableModel"
+					@on-del-row="doRemoveCheckPlan"
+					v-ref:checkplan-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.operateRecordCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>操作记录</span></p>
+                <vue-bootstrap-table
+                        :setting="tableModel.operateRecordTableModel"
+                        v-ref:operaterecord-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+
+
+</div>
+<Modal :visible.sync="delegateModel.show" :title="delegateModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+	<work-plan-delegate-component :work-plan-id="delegateModel.workPlanId"></work-plan-delegate-component>
+</Modal>
+<checkplan-select-modal :visible.sync="selectModel.checkPlanSelectModel.visible" :filter-data="selectModel.checkPlanSelectModel.filterData"  @do-save="doSaveCheckPlans"></checkplan-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>
+
+

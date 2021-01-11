@@ -1,0 +1,18 @@
+<div v-if="!newView">
+    <ul class="ul-lite-box" v-el:image-box @hide="getHide">
+        <li class="lite-box" :style="imageStyle" v-for="(index, image) in files">
+            <Icon v-if="showClose" type="close-circled" @click.stop.prevent="doClose(image.fileId, index)"></Icon>
+            <img :style="imageStyle" :src="calcImageURL(image)" :alt="image.name" :data-src="image.fullSrc">
+        </li>
+    </ul>
+</div>
+
+
+<div v-else style="display: flex;align-items: center;flex-wrap: wrap;">
+    <ul class="ul-lite-box" v-el:image-box>
+        <li class="lite-box" :style="imageStyle" v-for="(index, image) in files">
+            <Icon v-if="showClose" type="close-circled" @click.stop.prevent="doClose(image.fileId, index)"></Icon>
+            <img :style="imageStyle" :src="calcImageURL(image)" :alt="image.name" :data-src="image.fullSrc">
+        </li>
+    </ul>
+</div>

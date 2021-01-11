@@ -1,0 +1,23 @@
+<!--<div v-if="load">-->
+<!--    <div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;">-->
+<!--        <ul style="display: inline-flex;">-->
+<!--            <li v-for="(index, item) in tabs"-->
+<!--                class="lr-layout-li"-->
+<!--                :class="{'checked': index === checkedTabIndex}"-->
+<!--                style="width: auto;text-align: center;min-width: 130px"-->
+<!--                @click="doChangeTab(index)">-->
+<!--                <span style="font-size: 14px;">{{item}}</span>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <div  v-show="checkedTabIndex===0">-->
+<!--            <tab-info :data="data.info" :model="model"></tab-info>-->
+<!--        </div>-->
+<!--        <div v-show="checkedTabIndex===1">-->
+<!--            <tab-record :is-safety-monitor="true" :mrs-equipment-type="['3']"  :data="data.record" :model="model"></tab-record>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<tab-record :is-safety-monitor="true" :mrs-equipment-type="['3']"  :data="data.record" :model="model">
+</tab-record>

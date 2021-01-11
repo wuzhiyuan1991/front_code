@@ -1,0 +1,177 @@
+<div class="detail-large-container" v-el:container>
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button v-if="hasAuth('edit') && mainModel.isReadOnly && mainModel.vo.disable === '0'" type="ghost"
+                           @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}
+                </iv-button>
+                <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+                <iv-button v-if="hasAuth('publish') && mainModel.vo.disable === '0' && mainModel.isReadOnly" type="ghost" @click="doPublish">
+                    {{$t('gb.common.release')}}
+                </iv-button>
+                <iv-button v-if="hasAuth('delete') && mainModel.isReadOnly && mainModel.vo.disable === '0'" type="ghost" @click="doDelete">
+                    {{$t("gb.common.del")}}
+                </iv-button>
+                <vi-button v-if="!mainModel.isReadOnly && mainModel.opType !== 'create'" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" style="height:200px;" :model="mainModel.vo" is-label-vertical
+                     :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <!--<el-form-item  label="编码" prop="code" class="small-info-box" >-->
+                    <!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item label="自评计划名称" prop="name" class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.name" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="自评表" prop="asmtTable.id" class="small-info-box">
+                        <input-select
+                                :value="mainModel.vo.asmtTable"
+                                id-field="id"
+                                display-field="name"
+                                :textonly="mainModel.isReadOnly"
+                                @click="(!mainModel.isReadOnly) && (doShowAsmtTableSelectModal())"
+                        ></input-select>
+                    </el-form-item>
+                    <el-form-item label="所属公司" prop="compId" class="small-info-box">
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item label="自评周期" prop="asmtPlanSetting.frequencyType" class="small-info-box">
+                        <i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.asmtPlanSetting.frequencyType" :list="mainModel.frequencyTypeList">
+                            <i-option v-for="ft in mainModel.frequencyTypeList" :value="ft.id">{{ft.name}}</i-option>
+                        </i-select>
+                        <span v-if="mainModel.isReadOnly">{{displayFrequencyType(mainModel.vo.asmtPlanSetting.frequencyType)}}</span>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.state')" prop="status" class="small-info-box">
+                        <span >{{getDataDic('isPublished', mainModel.vo.disable)}}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.startTime')" prop="startDate" class="small-info-box">
+                        <date-picker format="yyyy-MM-dd 00:00:00" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate"
+                                     :begin.sync="mainModel.now"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.endTime')" prop="endDate" class="small-info-box">
+                        <date-picker format="yyyy-MM-dd 23:59:59"
+                                     v-if="!mainModel.isReadOnly"
+                                     :selected-date.sync="mainModel.vo.endDate"
+                                     :begin.sync="mainModel.vo.startDate"
+                                     :end.sync="endDateLimit"
+                        ></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <!--<el-form-item  label="开始时间" prop="asmtPlanSetting.startTime" class="small-info-box" >-->
+                    <!--<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.asmtPlanSetting.startTime" :list="mainModel.timeList">-->
+                    <!--<i-option  v-for = "ft in mainModel.timeList" :value="ft.id">{{ft.name}}</i-option>-->
+                    <!--</i-select>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item  label="结束时间" prop="asmtPlanSetting.endTime" class="small-info-box" >-->
+                    <!--<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.asmtPlanSetting.endTime" :list="mainModel.timeList">-->
+                    <!--<i-option  v-for = "ft in mainModel.timeList" :value="ft.id">{{ft.name}}</i-option>-->
+                    <!--</i-select>-->
+                    <!--</el-form-item>-->
+                    <!--<el-form-item  label="所属部门" prop="orgId" class="small-info-box" >-->
+                    <!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>-->
+                    <!--<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+                    <!--</el-form-item>-->
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+
+    <div :class="{'rel-info-panel-mask': showPanelMask}">
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.userCardModel.showContent">
+                <div slot="title">
+                    <i class="basicPng"></i>
+                    <span>自评人</span>
+                    <poptip placement="right">
+
+                        <Icon type="help-circled" style="font-size: 18px;cursor: pointer;color: #f00;position: relative;top: 2px;"></Icon>
+
+                        <div slot="content">
+                            <table class="layout-table" style="width: 200px;margin-bottom: 0;">
+                                <thead>
+                                <tr class="layout-table-tr">
+                                    <th>维度</th>
+                                    <th>与自评人关系</th>
+                                </tr>
+                                </thead>
+
+                                <tr class="layout-table-tr">
+                                    <td>自己</td>
+                                    <td>自己</td>
+                                </tr>
+                                <tr class="layout-table-tr">
+                                    <td>上级</td>
+                                    <td>上级领导</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </poptip>
+                </div>
+
+                <a slot="extra" @click.prevent="cardModel.userCardModel.showContent = !cardModel.userCardModel.showContent;">
+                    <span v-if="cardModel.userCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+                    <span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+                </a>
+
+                <a v-if="hasAuth('edit') && doshowAddUserModel" slot="extra" @click.prevent="doShowUserSelectModal()">
+                    <span><Icon type="plus"></Icon>添加</span>
+                </a>
+
+                <vue-bootstrap-table
+                        :url="userTableModel.url"
+                        :columns="userTableModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        @on-del-row="doRemoveUsers"
+                        v-ref:user-table
+                        style="width: 100%;"
+                >
+                </vue-bootstrap-table>
+
+            </simple-card>
+        </div>
+    </div>
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card class="fip-content-item" :show-content.sync="cardModel.asmtTaskCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>自评任务</span></p>
+                <a slot="extra" @click.prevent="cardModel.asmtTaskCardModel.showContent = !cardModel.asmtTaskCardModel.showContent;">
+                    <span v-if="cardModel.asmtTaskCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+                    <span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+                </a>
+
+                <task-list :disable="mainModel.vo.disable" :id="mainModel.vo.id"></task-list>
+
+            </simple-card>
+
+        </div>
+    </div>
+    </div>
+</div>
+
+<member-select-modal
+        :visible.sync="userSelectModel.visible"
+        :is-single-select="false"
+        @do-save="doSaveUsers"
+></member-select-modal>
+
+
+<asmt-table-select-modal
+        single-select
+        :visible.sync="asmtTableSelectModel.visible"
+        @do-save="doSaveAsmtTable">
+
+</asmt-table-select-modal>
+

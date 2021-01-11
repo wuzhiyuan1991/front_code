@@ -1,0 +1,82 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button type="ghost" @click.stop="doShowLookupFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="编码" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="字典名称名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="类型" prop="type" class="small-info-box" >
+						<iv-input :value.sync="type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="备注" prop="remarks" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+						<div class="rip-item">
+							<simple-card :show-content.sync="cardModel.lookupItemCardModel.showContent">
+								<p slot="title"><i class="basicPng"></i><span>数据字典辅表</span></p>
+								<a slot="extra" @click.prevent="cardModel.lookupItemCardModel.showContent = !cardModel.lookupItemCardModel.showContent;" >
+									<span v-if="cardModel.lookupItemCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+									<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+									</a>
+								<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowLookupItemFormModal4Create" >
+									<span><Icon type="plus"></Icon>添加</span>
+								</a>
+								<vue-bootstrap-table
+									:url="tableModel.lookupItemTableModel.url"
+									:columns="tableModel.lookupItemTableModel.columns"
+									:show-empty-row="false"
+									:use-default-global-filter="false"
+									:lazy-load="true"
+									@on-del-row="doRemoveLookupItems"
+									@on-edit-row="doShowLookupItemFormModal4Update"
+									v-ref:lookupitem-table
+									>
+								</vue-bootstrap-table>
+							</simple-card>
+						</div>
+
+
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+	</div>
+		
+</div>
+
+
+<lookupitem-form-modal
+		:visible.sync="formModel.lookupItemFormModel.show"
+		@do-save="doSaveLookupItem"
+		@do-update="doUpdateLookupItem"
+		:query-url="formModel.lookupItemFormModel.queryUrl"
+		v-ref:lookupitem-form-modal>
+</lookupitem-form-modal>
+<lookup-form-modal
+		:visible.sync="formModel.lookupFormModel.show"
+		@do-update="doUpdateLookup"
+		:query-url="formModel.lookupFormModel.queryUrl"
+		v-ref:lookup-form-modal>
+</lookup-form-modal>
+

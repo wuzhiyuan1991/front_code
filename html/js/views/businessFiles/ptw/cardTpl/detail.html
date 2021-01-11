@@ -1,0 +1,48 @@
+<div class="detail-large-container">
+	<div class="base-info-panel h-p100 flex-layout-vertical" >
+		<div class="bip-header" style="min-height: 40px;">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+				<div class="title-disable">
+					<disable-select  :value.sync="mainModel.vo.disable" read-only=true ></disable-select>
+				</div>
+
+			</div>
+			<div class="bip-header-btn-group">
+<!--				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>-->
+				<iv-button type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doShowCopy">复制</iv-button>
+				<vi-button type="ghost" v-if="mainModel.opType != 'create' && mainModel.isReadOnly"  @click="doEnableDisableSave">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="flex-grow1 over-auto h-p100-child">
+				<pwt-info v-ref:pwt-info :model="mainModel.vo"></pwt-info>
+		</div>
+	</div>
+</div>
+<ptwcatalog-select-modal :visible.sync="selectModel.workCatalogSelectModel.visible" :filter-data="selectModel.workCatalogSelectModel.filterData" single-select @do-save="doSaveWorkCatalog"></ptwcatalog-select-modal>
+
+<ptwcardstuff-form-modal
+		:visible.sync="formModel.ptwCardStuffFormModel.show"
+		@do-save="doSavePtwCardStuff"
+		@do-update="doUpdatePtwCardStuff"
+		:query-url="formModel.ptwCardStuffFormModel.queryUrl"
+		:hidden-fields="formModel.ptwCardStuffFormModel.hiddenFields"
+		v-ref:ptwcardstuff-form-modal>
+</ptwcardstuff-form-modal>
+
+<style>
+	.title-disable{
+		margin-left:20px;
+		float:right;
+		margin-top:3px;
+	}
+	.title-disable span{
+		font-size:14px !important;
+		padding:5px 10px;
+	}
+</style>
+

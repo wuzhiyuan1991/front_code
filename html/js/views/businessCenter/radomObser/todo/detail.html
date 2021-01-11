@@ -1,0 +1,155 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<!--epc-content-row-space 控制每一行的间距-->
+			<simple-card class="fip-content-item epc-content-row-space">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+			<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+				<el-form-item :label="$t('gb.common.checkUser')" prop="user.name">
+					<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>
+				</el-form-item>
+
+				<el-form-item :label="$t('gb.common.checkTime')" prop="checkDate">
+					<date-picker  :selected-date.sync="mainModel.vo.checkDate"  :end="mainModel.endTime" v-if="!mainModel.isReadOnly"></date-picker>
+					<iv-input :value.sync="mainModel.vo.checkDate" textonly v-else></iv-input>
+				</el-form-item>
+
+				<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+					<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+					<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+				</el-form-item>
+				<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+					<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" clearable :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+					<iv-input v-show="mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+				</el-form-item>
+
+				<el-form-item label="属地" v-if="findByNameResult('enableArea')" prop="dominationAreaId">
+					<cascade-input-select
+							:value="mainModel.vo.dominationArea"
+							:cascade-id="mainModel.vo.orgId"
+							:textonly="mainModel.isReadOnly"
+							cleanable
+							@click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())"
+					></cascade-input-select>
+				</el-form-item>
+
+				<el-form-item label="检查对象" v-if="findByNameResult('enableCheckObj')" prop="checkObj.id">
+
+					<cascade-input-select
+							type="checkObject"
+							:value="mainModel.vo.checkObj"
+							:cascade-id="mainModel.vo.dominationArea.id"
+							:textonly="mainModel.isReadOnly"
+							cleanable
+							no-disabled
+							@click="(!mainModel.isReadOnly) && (doShowCheckObjSelectModal())"
+					></cascade-input-select>
+				</el-form-item>
+
+				<el-form-item  v-if="findByNameResult('enableCheckLevel')" label="检查级别" prop="checkLevel">
+					<i-select :model.sync="mainModel.vo.checkLevel" :list="getDataDicList('checkLevel')" v-if="!mainModel.isReadOnly">
+						<i-option v-for="item in getDataDicList('checkLevel')" :value="item.id">
+							{{item.value}}
+						</i-option>
+					</i-select>
+					<span v-else>{{getDataDic('checkLevel', mainModel.vo.checkLevel)}}</span>
+				</el-form-item>
+
+				<el-form-item label="现场情况描述" prop="content">
+					<iv-input  :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly" v-if="mainModel.isReadOnly"></iv-input>
+					<input-search  v-else :input-val.sync="mainModel.vo.content"  is-text="true" url="/pool/problems"></input-search>
+				</el-form-item>
+				
+				<!-- <el-form-item label="检查依据" prop="legalRegulationId" >
+					<iv-input :value.sync="mainModel.vo.legalRegulation.name" type="textarea" readonly :textonly="mainModel.isReadOnly"  @click="doShowLegalRegulationSelectModal" style="cursor: pointer;"></iv-input>
+					<Icon type="plus" v-show="!mainModel.isReadOnly" @click="doShowLegalRegulationSelectModal" title="选择检查依据" style="cursor: pointer;top: 7px; width: 32px; height: 32px; line-height: 32px; font-size: 16px; text-align: center; color: #9ea7b4; position: absolute; right: 0; z-index: 1"></Icon>
+				</el-form-item> -->
+
+				<el-form-item  label="问题类型" v-if="findByNameResult('enableCheckItemType')" prop="checkItemType">
+					<i-select :model.sync="mainModel.vo.checkItemType" :list="getDataDicList('pool_type')" v-if="!mainModel.isReadOnly">
+						<i-option v-for="item in getDataDicList('pool_type')" :value="item.id">
+							{{item.value}}
+						</i-option>
+					</i-select>
+					<span v-else>{{getDataDic('pool_type', mainModel.vo.checkItemType)}}</span>
+				</el-form-item>
+
+				<el-form-item  label="操作类型" prop="operationType" v-if="findByNameResult('enableOperationType')">
+					<i-select :model.sync="mainModel.vo.operationType" :list="getDataDicList('random_observe_operation_type')" v-if="!mainModel.isReadOnly">
+						<i-option v-for="item in getDataDicList('random_observe_operation_type')" :value="item.id" v-if="item.id != 1">
+							{{item.value}}
+						</i-option>
+					</i-select>
+					<span v-else>{{getDataDic('random_observe_operation_type', mainModel.vo.operationType)}}</span>
+				</el-form-item>
+				<el-form-item  v-if="findByNameResult('enableHSEType')"  label="HSE类型" prop="hseType">
+					<i-select :model.sync="mainModel.vo.hseType" :list="getDataDicList('random_observe_hse_type')" v-if="!mainModel.isReadOnly">
+						<i-option v-for="item in getDataDicList('random_observe_hse_type')" :value="item.id">
+							{{item.value}}
+						</i-option>
+					</i-select>
+					<span v-else>{{getDataDic('random_observe_hse_type', mainModel.vo.hseType)}}</span>
+				</el-form-item>
+				<el-form-item  label="状态">
+					<span>{{getDataDic('randomObservation_status', mainModel.vo.status)}}</span>
+				</el-form-item>
+				</el-form>
+			</simple-card>
+			<simple-card class="fip-content-item" :show-content.sync="isShowCardContent" v-if="mainModel.opType != 'create'">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('bc.hal.enclosure')}}</span></p>
+
+				<image-list-simple-card v-if="fileModel.video.data.length < 1" :remark="$t('gb.common.picture')" class="fip-content-sub-item" :data="fileModel.pic.data" :config="fileModel.pic.cfg" :readonly="mainModel.vo.status == 0 && mainModel.opType != 'create' && !hasAuth('edit')"> </image-list-simple-card>
+
+				<video-list-simple-card v-if="fileModel.pic.data.length < 1" :remark="$t('gb.common.video')" class="fip-content-sub-item" :data="fileModel.video.data" :config="fileModel.video.cfg" :readonly="mainModel.vo.status == 0 && mainModel.opType != 'create' && !hasAuth('edit')"> </video-list-simple-card>
+
+			</simple-card>
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && (mainModel.vo.status == 0 || mainModel.vo.status == 1)" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('submit') && mainModel.vo.status == 0" type="ghost" @click="doSubmit" icon="android-document">{{$t('gb.common.submit')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('audit') && mainModel.vo.status == 1" type="ghost" @click="doAudit" icon="android-document">{{$t('gb.common.examine')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>
+
+<user-select-modal single-select :visible.sync="mainModel.showUserSelectModal"  @do-save="doSaveUser"></user-select-modal>
+
+<!--属地选择器-->
+<dominationarea-select-modal
+		single-select
+		:visible.sync="selectModel.dominationAreaSelectModel.visible"
+		:filter-data="selectModel.dominationAreaSelectModel.filterData"
+		@do-save="doSaveDominationArea"
+></dominationarea-select-modal>
+
+<!--检查对象选择器-->
+<check-object-select-modal
+		:visible.sync="checkObjectSelectModel.visible"
+		:comp-id="mainModel.vo.compId"
+		:org-id="mainModel.vo.orgId"
+		:domination-area="mainModel.vo.dominationArea"
+		:is-comp-disable="false"
+		:show-type-btn="false"
+		@do-save="doSaveCheckObject"
+></check-object-select-modal>
+
+<!-- <check-basis-select-modal
+		single-select
+		:visible.sync="checkBasis.visible"
+		:filter-data="checkBasis.filterData"
+		@do-save="doSaveLegalRegulations"
+></check-basis-select-modal> -->

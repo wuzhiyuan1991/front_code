@@ -1,0 +1,56 @@
+<Modal :visible.sync="visible" :title="'选择属地'" width="400" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container dependency-tree-container">
+        <div class="epc-content sw-co-condition" style="position: relative;width: 400px;height: 400px;" id="dependency-tree">
+            <!--<iv-tree-select :popper-fixed="popperFixed" :model.sync="id" :list="data" id-attr="id" placeholder="请选择属地"-->
+                <!--display-attr="name" :disabled="disabled" @on-single-change="treeSelectChange"-->
+                <!--@on-clear-single-select="doClearSingleSelect" @beforeClickHandle="beforeClickHandle"-->
+                <!--:clearable="clearable" v-ref:tree-model>-->
+                <!--<iv-tree :model="treeData" :selected-datas.sync="selectedDatas4Tree" id-attr="id"-->
+                    <!--:default-open-layer="defaultOpenLayer" pid-attr="parentId" :serch-filterable="true"-->
+                    <!--display-attr="name" :single-select="singleSelect" :allow-parent-checked="true"-->
+                    <!--class="treeDepartment"></iv-tree>-->
+                <!--</iv-tree>-->
+            <!--</iv-tree-select>-->
+            <iv-tree :model="treeData" :selected-datas.sync="selectedDatas4Tree" id-attr="id"
+                     :default-open-layer="defaultOpenLayer" pid-attr="parentId" :serch-filterable="true"
+                     display-attr="name" :single-select="singleSelect" :allow-parent-checked="true"
+                     class="treeDepartment"></iv-tree>
+                     <div v-if="treeData.length==0" style="position: relative;top: 150px;left: -30px;height: 20px;">暂无属地</div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doConfrim" class="pull-right">确定</vi-button>
+            <vi-button type="primary" @click="doCancel" class="pull-right">取消</vi-button>
+        </div>
+    </div>
+</Modal>
+<!-- <iv-tree-select :popper-fixed="popperFixed" :model.sync="id" :list="data" id-attr="id" placeholder="请选择属地"
+    display-attr="name" :disabled="disabled" @on-single-change="treeSelectChange"
+    @on-clear-single-select="doClearSingleSelect" :clearable="clearable" v-ref:tree-model>
+    <iv-tree :model="treeData" :selected-datas.sync="selectedDatas4Tree" id-attr="id"
+        :default-open-layer="defaultOpenLayer" pid-attr="parentId" :serch-filterable="true" display-attr="name"
+        :single-select="singleSelect" :allow-parent-checked="true" class="treeDepartment">
+    </iv-tree>
+    </iv-tree>
+</iv-tree-select> -->
+<style>
+    .dependency-tree-container .ivu-select-dropdown {
+        width: 360px;
+        display: block !important;
+    }
+
+    .dependency-tree-container .ivu-select-dropdown-list {
+        height: 348px;
+        max-height: none;
+        display: block !important;
+    }
+    #dependency-tree .custom-vi-tree-item{
+        margin: 2px 0;
+    }
+    .dependency-tree-container .sw-co-condition {
+        align-items: normal;
+    }
+
+    .dependency-tree-container .ivu-select-selection {
+        display: none !important;
+    }
+</style>

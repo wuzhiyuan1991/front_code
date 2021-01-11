@@ -1,0 +1,38 @@
+<simple-card class="fip-content-sub-item" v-for="(index,group) in groups" track-by="$index">
+	<span slot="title">{{group.name}}<Icon @click="" type="compose" style="margin: 0 15px;"></Icon><Icon @click.prevent="doDel(index,group)" type="ios-trash-outline"></Icon></span>
+	
+     <a slot="extra" @click.prevent="doAddPerson(index,group)">
+         <span><Icon type="plus"></Icon>添加人员</span>
+     </a>
+     <a slot="extra" @click.prevent="doAddRole(index,group)">
+         <span><Icon type="plus"></Icon>添加角色</span>
+     </a>
+     
+	<vue-bootstrap-table
+            :columns=tableModel.itemColumns
+            :show-filter=tableModel.showFilter
+            :show-column-picker=tableModel.showColumnPicker
+            :show-pager=tableModel.showPager
+            :values="group.filterLookups"
+            @on-del-row="delItemRelRowHandler"
+            @on-click-cell="doTableCellClick"
+            :reset-trigger-flag=tableModel.resetTriggerFlag
+            :page-size-opts=tableModel.pageSizeOpts
+    >
+    </vue-bootstrap-table>
+</simple-card>
+					
+
+<Modal :visible.sync="roleModel.show" :title="roleModel.title" :width="700" footer-hide>
+    <role-component :role.sync="roleModel.role" :org-id.sync="roleModel.orgId"></role-component>
+</Modal>
+
+
+<!-- 弹框选人 -->
+<user-select-modal :visible.sync="showModal"  @do-save="doSaveSelect"  single-select ></user-select-modal>
+<!-- 弹框 -->
+<Modal :visible.sync="conditionModel.show" :title="conditionModel.title" width="580" height="500px" :footer-hide="true">
+    <condition-component :model.sync="conditionModel.model" :express.sync="conditionModel.express"></condition-component>
+</Modal>
+
+

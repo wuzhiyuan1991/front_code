@@ -1,0 +1,56 @@
+<div style='width:100%;overflow: hidden;white-space: nowrap;'>
+    <div class="btnGroupImgTest">
+        <button :class="itemIndex==0?'ivu-btn changeStyleColor':'ivu-btn'"  @click="changeStyle(0)" type="button">静态风险</button>
+        <button :class="itemIndex==1?'ivu-btn changeStyleColor':'ivu-btn'" @click="changeStyle(1)"  type="button">动态风险</button>
+    </div>
+    <div class="zhongdashuoming">
+        <div style="width:16px;height: 16px;background: #E74119;margin-left:10px;margin-right: 5px;border-radius: 4px;"></div>
+        重大风险
+        <div style="width:16px;height: 16px;background: #ED7D31;margin-left:10px;margin-right: 5px;border-radius: 4px;"></div>
+        较大风险
+        <div style="width:16px;height: 16px;background: #F2F018;margin-left:10px;margin-right: 5px;border-radius: 4px;"></div>
+        一般风险
+        <div style="width:16px;height: 16px;background: #0E5AB2;margin-left:10px;margin-right: 5px;border-radius: 4px;"></div>
+        低风险
+    </div>
+    <div class="wrapImgYumen">
+        <img src='css/images/test/jingtai.png' v-if="itemIndex==0" style='width:100%;'/>
+        <img src='css/images/test/dongtai.png' v-if="itemIndex==1" style='width:100%;'/>
+    </div>
+</div>
+
+
+<style>
+    .wrapImgYumen{
+        width:1300px;
+        position: relative;
+    }
+    .wrapImgYumen img{
+        width:100%;
+        /*height: 670px;*/
+    }
+    .btnGroupImgTest{
+        position: absolute;
+        top: 90px;
+        left: 1040px;
+        z-index: 5;
+    }
+    .changeStyleColor{
+        color: #ffffff;
+        background-color: #33adea;
+    }
+    .zhongdashuoming{
+        position: absolute;
+        display: flex;
+        align-items: center;
+        padding:10px;
+        background: rgba(0,0,0,0.2);
+        top:90px;
+        left: 140px;
+        color:#fff;
+        z-index: 5;
+        border-radius: 5px;
+    }
+
+</style>
+

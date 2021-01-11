@@ -1,0 +1,62 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('status') == -1)" label="状态" prop="status">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_status', mainModel.vo.status) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('iem_emer_resource_status')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('location') == -1)" label="存储地点" prop="location">
+						<iv-input :value.sync="mainModel.vo.location" :disabled="(disabledFields.indexOf('location') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('unit') == -1)" label="单位" prop="unit">
+						<iv-input :value.sync="mainModel.vo.unit" :disabled="(disabledFields.indexOf('unit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('quantity') == -1)" label="数量" prop="quantity">
+						<iv-input :value.sync="mainModel.vo.quantity" :disabled="(disabledFields.indexOf('quantity') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="分类" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('iem_emer_resource_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('dominationAreaId') == -1)" label="所属属地" prop="dominationAreaId">
+						<iv-input :value.sync="mainModel.vo.dominationAreaId" :disabled="(disabledFields.indexOf('dominationAreaId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('contactNumber') == -1)" label="联系电话" prop="contactNumber">
+						<iv-input :value.sync="mainModel.vo.contactNumber" :disabled="(disabledFields.indexOf('contactNumber') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('managerId') == -1)" label="管理人员" prop="managerId">
+						<iv-input :value.sync="mainModel.vo.managerId" :disabled="(disabledFields.indexOf('managerId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reqirement') == -1)" label="技术要求或功能要求" prop="reqirement">
+						<iv-input :value.sync="mainModel.vo.reqirement" :disabled="(disabledFields.indexOf('reqirement') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('rescueSupplyCategory') == -1)" label="抢险救援物资种类" prop="rescueSupplyCategory">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_rescue_supply_category', mainModel.vo.rescueSupplyCategory) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.rescueSupplyCategory" :list="getDataDicList('iem_emer_resource_rescue_supply_category')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('rescueVehicleCategory') == -1)" label="抢险救援车辆种类" prop="rescueVehicleCategory">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_resource_rescue_vehicle_category', mainModel.vo.rescueVehicleCategory) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.rescueVehicleCategory" :list="getDataDicList('iem_emer_resource_rescue_vehicle_category')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('specification') == -1)" label="规格型号" prop="specification">
+						<iv-input :value.sync="mainModel.vo.specification" :disabled="(disabledFields.indexOf('specification') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>

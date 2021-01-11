@@ -1,0 +1,53 @@
+<div class="tab-container report">
+	<div class="main-panel">
+		<div class="mp-content" style="overflow: auto;height: 100%">
+            <div class="reportChartMain">
+                <div class="mp-header formTitle" style="margin-left: 10px;">
+                    <div class="basic">风险等级统计</div>
+                </div>
+                <div class="report-qry-head">
+                    <el-form :model="mainModel.vo" is-label-vertical :rules="mainModel.rules" v-ref:ruleform>
+                    <iv-row style="display: flex;align-items: center;">
+                        <iv-col span="5">
+                            <el-form-item prop="dateRange"  style="width:100%;overflow: inherit;">
+                            <vi-date-picker type="daterange" :options="mainModel.datePickModel.options" :value.sync="mainModel.vo.dateRange" placeholder="选择日期范围" style="width:96%"></vi-date-picker>
+                            </el-form-item>
+                        </iv-col>
+                        <iv-col span="3">
+                            <el-form-item prop="typeOfRange" style="width:100%;overflow: inherit;">
+                                <i-select class="select-color" :model.sync="mainModel.vo.typeOfRange" style="width:100%;font-size: 12px" v-ref:select
+                                          :list="mainModel.typeOfRanges" placeholder="请选择对象范围"
+                                          @on-change="changeTypeOfRange">
+                                    <i-option v-for="item in mainModel.typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                                </i-select>
+                            </el-form-item>
+                        </iv-col>
+                        <iv-col span="6">
+                            <el-form-item prop="objRange" style="width:100%;overflow: inherit;">
+                                <obj-select :type="mainModel.vo.typeOfRange" :values.sync="mainModel.vo.objRange"></obj-select>
+                            </el-form-item>
+                        </iv-col>
+                        <iv-col span="4" style="padding: 6px 0 0 16px;">
+                            <iv-button @click="doQry()">统计</iv-button>
+                        </iv-col>
+                    </iv-row>
+                    </el-form>
+                </div>
+                <div class="echarts-box">
+                    <vuecharts class="left-pie-chart" style="width: 50%"  :options="mainModel.charts.pieChartReform.opt" v-ref:pie-chart-reform></vuecharts>
+                    <vuecharts class="left-pie-chart" style="width: 50%"  :options="mainModel.charts.pieChart.opt" v-ref:pie-chart></vuecharts>
+                </div>
+<!--                <vue-bootstrap-table-->
+<!--                style="height: 510px;margin-left:10px;"-->
+<!--                        lazy-load-->
+<!--                        :columns="drillModel.table.columns"-->
+<!--                        :url="drillModel.table.url"-->
+<!--                        :filter-column="drillModel.table.filterColumns"-->
+<!--                        :show-pager="true"-->
+<!--                        resizeable-->
+<!--                        v-ref:table>-->
+<!--                </vue-bootstrap-table>-->
+            </div>
+		</div>
+	</div>
+</div>

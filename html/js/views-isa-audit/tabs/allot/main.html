@@ -1,0 +1,121 @@
+<div class="review-container">
+    <!-- 要素树 -->
+    <div class="review-left">
+        <div class="title">要素标准审核表</div>
+        <div class="tree-box">
+            <div class="member-select-left-tree" v-show="treeModel.data.length > 0">
+                <iv-tree :show-icon="true" :model="treeModel.data" :selected-datas.sync="treeModel.selectedData"
+                         :show-checkbox="false" :single-select="true" :trigger-parent-event="true"
+                         @on-tree-node-click="doTreeNodeClick" display-attr="elementName"></iv-tree>
+            </div>
+        </div>
+    </div>
+    <!-- 审核项 -->
+    <div class="review-right" v-el:right-box>
+        <div class="top-head">
+            <Icon type="ios-photos"></Icon>
+            <span>分配人员</span>
+            <div class="right" style="font-size: 0;">
+                <iv-button v-if="updateMode" type="ghost" @click="chooseMemberClick" style="margin-right: 5px;">选择人员</iv-button>
+                <iv-button v-if="showAKey" type="ghost" @click="allInOne" style="margin-right: 5px;">一键分配</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="top-body" v-el:right-content>
+            <div v-if="updateMode">
+                <iv-checkbox @on-change="doChange(groups)" :checked.sync="groups.checked" :middle="groups.halfChecked">
+                    <slot><span style="font-weight: normal;">全选</span></slot>
+                </iv-checkbox>
+            </div>
+            <div class="table-box">
+                <div v-for="(ix,group) in groups.children" class="review-item" :id="group.id">
+                    <div class="review-item-title group-name">
+                        <iv-checkbox v-if="updateMode" :checked.sync="group.checked"
+                                     @on-change="doChange(group, groups)" :middle="group.halfChecked"></iv-checkbox>
+                        <Icon style="color: #ff9b32;margin-right: 5px;vertical-align: middle;" :size="18"
+                              type="document-text"></Icon>
+                        <span style="margin-right: 10px">{{group.elementName}}</span>
+                    </div>
+                    <div v-for="(index,item) in group.children">
+                        <div class="review-item-title">
+                            <span style="margin-right: 10px">{{item.elementName}}</span>
+                        </div>
+                        <table class="table mytranstablexx" style="table-layout: fixed;">
+                            <colgroup>
+                                <col v-if="updateMode" style="width: 54px;">
+                                <col style="width: 60px;">
+                                <col>
+                                <col>
+                                <col style="width: 100px;">
+                                <col style="width: 80px;">
+                                <col style="width: 80px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th v-if="updateMode">
+                                    <iv-checkbox :checked.sync="item.checked" @on-change="doChange(item, group)"
+                                                 :middle="item.halfChecked"></iv-checkbox>
+                                </th>
+                                <th>编码</th>
+                                <th>审核项内容</th>
+                                <th>评分说明</th>
+                                <th>评分标准</th>
+                                <th class="text-align-r">分值</th>
+                                <th>审核人</th>
+                                <th>所属公司</th>
+                                <th>所属部门</th>
+                            </tr>
+                            </thead>
+                            <tbody v-for="(idx, groupItem) in item.children">
+                            <tr>
+                                <td v-if="updateMode">
+                                    <iv-checkbox :checked.sync="groupItem.checked"
+                                                 @on-change="doChange(groupItem, item)"
+                                                 :middle="groupItem.halfChecked"></iv-checkbox>
+                                </td>
+                                <td>{{idx + 1}}</td>
+                                <td>{{{replaceReturnKey(groupItem.elementName)}}}</td>
+                                <td>{{{replaceReturnKey(groupItem.remark)}}}</td>
+                                <td>{{displayCriterion(groupItem.auditElement.auditCriterion)}}</td>
+                                <td class="text-align-r">{{groupItem.auditElement.auditCriterion==15 ? '/' :groupItem.auditElement.score}}</td>
+                                <td>{{showOwnerName(groupItem)}}</td>
+                                <td :title="showOwnerComp(groupItem)">{{showOwnerComp(groupItem)}}</td>
+                                <td :title="showOwnerOrg(groupItem)">{{showOwnerOrg(groupItem)}}</td>
+                            </tr>
+                            <tr class="sub-item-tr" v-for="itemSet in groupItem.children">
+                                <td v-if="updateMode">
+                                    <!--<iv-checkbox @on-change="doChange(itemSet, groupItem)" :checked.sync="itemSet.checked"></iv-checkbox>-->
+                                </td>
+                                <td></td>
+                                <td>-&nbsp;{{{replaceReturnKey(itemSet.elementName)}}}</td>
+                                <td>{{{replaceReturnKey(itemSet.auditElement.remark)}}}</td>
+                                <td>{{displayCriterion(itemSet.auditElement.auditCriterion)}}</td>
+                                <td class="text-align-r">{{itemSet.auditElement.auditCriterion==15 ? '/' :itemSet.auditElement.score}}</td>
+                                <td>{{showOwnerName(itemSet)}}</td>
+                                <td :title="showOwnerComp(itemSet)">{{showOwnerComp(itemSet)}}</td>
+                                <td :title="showOwnerOrg(itemSet)">{{showOwnerOrg(itemSet)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <member-select-modal :visible.sync="selectModel.visible" @do-save="doSaveMember"></member-select-modal>
+</div>
+
+<style>
+    .mytranstablexx td{
+        white-space: normal !important;
+        word-break: break-all !important;
+        text-overflow: clip !important;
+    }
+    .textarea-comments {
+        width:100%;/*自动适应父布局宽度*/
+        overflow:auto;
+        word-break:break-all;/*在ie中解决断行问题(防止自动变为在一行显示，主要解决ie兼容问题，ie8中当设宽度为100%时，文本域类容超过一行时，当我们双击文本内容就会自动变为一行显示，所以只能用ie的专有断行属性“word-break或word-wrap”控制其断行)*/
+    }
+</style>

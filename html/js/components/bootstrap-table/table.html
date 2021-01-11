@@ -1,0 +1,208 @@
+<!--
+ //todo 暂时的方案，以后需要用绝对定位解决
+<div @click="closeDropdown" @keyup.esc="closeDropdown" class="talbe-panel">
+ -->
+<div @click="closeDropdown" @keyup.esc="closeDropdown" class="talbe-panel" :class="tableClasses">
+     <!--<pre>{{columns | json}}</pre>-->
+     <!--<pre>{{$data | json}}</pre>-->
+     <iv-row>
+     	<iv-col span="12">
+	         <div v-if="showFilter" style="padding-top: 10px;padding-bottom: 10px;">
+                 <iv-input :maxlength="50" icon="ios-search" placeholder="请输入查询内容" :value.sync="filterKey" @on-enter="doFilter" @on-click="doFilter"></iv-input>
+	         </div>
+     	</iv-col>
+     </iv-row>
+
+
+     <iv-row class="table-display-header-row">
+		<iv-col span="24" class="table-display-header" v-ref:table-header>
+<!--       <div class="col-sm-12 table-display-header"> -->
+		 <div class="btn-group table-setting-icon" v-if="showColumnPicker" :class="{'open' : columnMenuOpen}">
+
+			 <!--
+			 //todo 暂时的方案，以后需要用绝对定位解决
+			 <Poptip class="ivu-custom-select-dropdown" placement="bottom-end"  style="margin-left: 20px">
+			 -->
+			<Poptip class="ivu-custom-select-dropdown" placement="bottom-end"  :style="{ 'margin-top': scrolled + 'px' }">
+				<Icon type="gear-b"></Icon>
+				<div slot="content">
+					<ul class="ivu-dropdown-menu">
+					    <li v-for="column in displayCols"
+							v-dragging="{ item : column, list : displayCols, group : code, key : column.title}"
+							v-if="column.fieldType != 'cb' && column.fieldType != 'radio' && column.fieldName != 'code'"
+							@dragend="doDragEndColumnSettingItem"
+					    	@click.stop.prevent="toggleColumn(column)"
+					    	class="ivu-dropdown-item">
+				            <Icon type="checkmark" :class="{'ivu-icon-custom-hidden' : !column.visible}"></Icon>
+				            {{column.title}}
+					    </li>
+					</ul>
+				</div>
+			</Poptip>
+<!-- 						 :class="{'' : !column.visible}" -->
+
+		</div>
+      	 <table class="table table-hover table-striped vue-table" :style = "{ 'width': tableWidth()}">
+     		<thead>
+                 <tr>
+					 <th v-if="showSeq">
+					 </th>
+                     <th v-for="column in displayCols | filterBy true in 'visible'"
+                     		@click="sortBy($event, column)"
+                         	track-by="$index"
+                        	:class="getClasses(column)"
+                        	:style="tableHeaderStyles(column)"
+                        	>
+<!--                          {{ column.title }} -->
+                         <div v-if="column.fieldType == 'cb'">
+			    			<iv-checkbox :checked.sync="checkAll" :middle="isHalfCheck" :disabled="isSingleCheck"></iv-checkbox>
+						</div>
+<!--                          <div v-if="column.fieldType == 'custom'"> -->
+<!--                          	 {{{column.render()}}} -->
+<!-- 						</div> -->
+						<div v-else>
+
+                         	<div class="talbe-header-title" :title="column.title">{{ column.title }}</div>
+
+                         	<div class="talbe-header-filtericon" v-if="column.filterType">
+
+
+								<!--
+                                //todo 暂时的方案，以后需要用绝对定位解决
+                                <Poptip class="hidePopTipArrow" placement="bottom-end" :hide-trigger="hidePopTipTrigger">
+                                -->
+								<Poptip class="hidePopTipArrow" placement="bottom-end" :hide-trigger="hidePopTipTrigger" :scrolled="scrolled">
+									<span class="tableHeaderIcon">
+										<Icon type="android-arrow-dropdown" class="pull-right"></Icon>
+									</span>
+									<div class="api" slot="content">
+										<div class="order-btn-group">
+											<p class="order-btn" @click="doOrderActionInFilterPoptip($event, column, 0)">
+												<span><Icon type="arrow-graph-up-right"></Icon>{{$t("gb.common.asc")}}</span>
+											</p>
+											<p class="order-btn" @click="doOrderActionInFilterPoptip($event, column, 1)">
+												<span><Icon type="arrow-graph-down-right"></Icon>{{$t("gb.common.desc")}}</span>
+											</p>
+										</div>
+
+										<div v-if="column.filterType == 'text'" >
+											<iv-input :maxlength="50" :value.sync="popTipFilterValue.strValue" style="width:200px" @on-enter="doOkActionInFilterPoptip($event, column)"></iv-input>
+										</div>
+										<div v-if="column.filterType == 'number'" >
+											<iv-input :maxlength="50" :value.sync="popTipFilterValue.strValue" type="number" style="width:200px" @on-enter="doOkActionInFilterPoptip($event, column)"></iv-input>
+										</div>
+										<div v-if="column.filterType == 'enum'">
+											<i-select :model.sync="popTipFilterValue.strValues" size="small"  multiple style="width:200px">
+											  	<i-option v-for="item in column.popFilterEnum" :value="item.id">{{item.value}}</i-option>
+											</i-select>
+										</div>
+										<div v-if="column.filterType == 'date'">
+											<vi-date-picker type="daterange" placement="bottom-end" placeholder="选择日期" :value.sync="popTipFilterValue.dateValues" style="width: 200px" ></vi-date-picker>
+										</div>
+
+										<div class="pull-right" style="margin-top: 15px;">
+											<vi-Button type="primary" @click="doOkActionInFilterPoptip($event, column)">{{$t("gb.common.ok")}}</vi-Button>
+											<vi-Button type="primary" @click="doCancelActionInFilterPopTip">{{$t("gb.common.cancel")}}</vi-Button>
+										</div>
+										<div style="clear: both;"></div>
+									</div>
+								</Poptip>
+							</div>
+
+						</div>
+
+                     </th>
+                 </tr>
+             </thead>
+         </table>
+     	</iv-col>
+     </iv-row>
+
+
+     <iv-row style="height: calc(100% - 85px);">
+     	<iv-col span="24" class="vue-table-container" @scroll="scrollHeader" :style="tableContainerStyles">
+<!--      <div class="col-sm-12 vue-table-container" :style="tableContainerStyles"> -->
+
+         <table class="table table-hover table-striped vue-table" :style="{ 'width': tableWidth()}" >
+
+             <thead class="zero-height">
+                 <tr>
+					 <th v-if="showSeq">
+					 </th>
+
+                     <th v-for="column in displayCols | filterBy true in 'visible'"
+                     		@click="sortBy(column.title)"
+                         	track-by="$index"
+                        	:class="getClasses(column)"
+                        	:style="tableHeaderStyles(column)"
+                        	>
+
+                     </th>
+                 </tr>
+             </thead>
+
+
+             <tbody>
+                 <tr v-for="(rowIndex,entry) in filteredValues | orderBy sortKey sortOrders[sortKey]" track-by="$index" :class="[{'selected-row' : entry.data.id == lastClickedLinkRowId}]">
+
+					 <td v-if="showSeq">
+						 {{rowIndex + 1 + (pageModel.curPage - 1) * pageModel.pageSize}}
+					 </td>
+
+                     <td v-for="(colIndex,column) in displayCols | filterBy true in 'visible'" track-by="$index"
+                         v-show="column.visible"
+                       	:class="getClasses(column)"
+                       	@click="doCellClicked($event, entry, rowIndex, colIndex, column)"
+                       	@dblclick="doCellDbClicked($event, entry, rowIndex, colIndex, column)">
+
+
+                         <div v-if="!column.fieldType" :title="column.showTip ? calDisplayLabel(entry, column) : null">
+                         	{{ calDisplayLabel(entry, column) }}
+						</div>
+
+						<div v-if="column.fieldType == 'custom' && column.renderDisplayValue" :class="'vue-table vue-cell-' + (column.renderClass ? column.renderClass : 'normal')" :title="column.showTip ? (column.tipRender && column.tipRender(entry.data)) || column.renderDisplayValue(entry.data) : null">
+                         	{{{column.renderDisplayValue(entry.data)}}}
+						</div>
+
+
+                         <div v-if="column.fieldType == 'link'">
+                         	<span class="text-link">{{calDisplayLabel(entry, column) }}</span>
+						</div>
+
+                         <div v-if="column.fieldType == 'cb'">
+                         	<iv-checkbox :checked.sync="entry['rowCheck']"  @change="doCheckBoxChanged($event, entry, rowIndex, colIndex, column.fieldName)"></iv-checkbox>
+						</div>
+
+                         <div v-if="column.fieldType == 'radio'">
+                     		<iv-radio :checked.sync="entry['rowCheck']" @change="doRadioBtnChanged($event, entry, rowIndex, colIndex, column.fieldName)"></iv-radio>
+						</div>
+
+                         <div v-if="column.fieldType == 'tool'" class="table-column-tools">
+                         	<Icon  v-if="enableViewIcon(column.toolType)" type="eye" @click="doViewIconClicked($event, entry, rowIndex, colIndex, column.fieldName)"></Icon>
+                         	<Icon  v-if="enableEditIcon(column.toolType)" type="edit" @click="doEditIconClicked($event, entry, rowIndex, colIndex, column.fieldName)"></Icon>
+                         	<Icon  v-if="enableDelIcon(column.toolType)" type="trash-a" @click="doDelIconClicked($event, entry, rowIndex, colIndex, column.fieldName)"></Icon>
+						</div>
+
+                     </td>
+                 </tr>
+
+
+                 <tr v-for="(rowIndex,entry) in emptyRows">
+	                 <td v-for="(colIndex,column) in displayCols | filterBy true in 'visible'" track-by="$index"
+	                         v-show="column.visible">
+                 </tr>
+             </tbody>
+         </table>
+<!--      </div> -->
+
+     	</iv-col>
+     </iv-row>
+
+     <div v-if="showPager" style="height: 48px; padding-right: 20px;">
+		<div v-if="showPager" style="padding-top: 10px;padding-bottom: 10px;float:right;">
+			<Page :current.sync="pageModel.curPage" :total.sync="pageModel.totalSize" :page-size.sync="pageModel.pageSize"
+			 	:page-size-opts="pageSizeOpts"
+				@on-change="doPageChanged" show-sizer show-total></Page>
+		</div>
+     <div>
+ </div>

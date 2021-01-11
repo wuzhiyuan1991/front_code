@@ -1,0 +1,19 @@
+<Modal :visible.sync="visible" title="选择危化品" width="900" :footer-hide="true" class="userSelectModal">
+  <div class="edit-pop-container" style="width: 900px">
+
+    <div class="epc-content epc-content-scroll" style="max-height: 600px;">
+
+          <vue-bootstrap-table :columns="tableModel.columns" :show-pager="true"  show-filter
+            :selected-datas.sync="mainModel.selectedDatas" :url="tableModel.url || ''" :values="tableModel.values || []"
+            :default-filter-value="tableModel.defaultFilterValue"  :is-single-check="true" :filter-column="tableModel.filterColumn"  @on-dbclick-cell="onDbClickCell"  resizeable
+            v-ref:table>
+          </vue-bootstrap-table>
+     
+
+    </div>
+    <div class="epc-footer">
+      <vi-button type="primary" @click="visible=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+      <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+  </div>
+</Modal>

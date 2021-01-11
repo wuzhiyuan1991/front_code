@@ -1,0 +1,82 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<!-- <iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<!--<iv-button v-if="mainModel.opType != 'create' && hasPermission('4020004003')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>-->
+				<!-- <vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button> -->
+				<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="编码" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="知识点名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属公司" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.courseCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>相关课程</span></p>
+				<a slot="extra" @click.prevent="cardModel.courseCardModel.showContent = !cardModel.courseCardModel.showContent;" >
+					<span v-if="cardModel.courseCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCourseSelectModal()" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.courseTableModel"
+					@on-del-row="doRemoveCourses"
+					v-ref:course-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.questionCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>相关试题</span></p>
+				<a slot="extra" @click.prevent="cardModel.questionCardModel.showContent = !cardModel.questionCardModel.showContent;" >
+					<span v-if="cardModel.questionCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create' && hasPermission('4020004010')" @click.prevent="doShowQuestionSelectModal()" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:url="tableModel.questionTableModel.url"
+					:columns="tableModel.questionTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					:lazy-load="true"
+					@on-del-row="doRemoveQuestions"
+					v-ref:question-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+	</div>
+	
+</div>
+<course-select-modal :visible.sync="selectModel.courseSelectModel.visible" :filter-data="selectModel.courseSelectModel.filterData"  @do-save="doSaveCourses"></course-select-modal>
+<question-select-modal :visible.sync="selectModel.questionSelectModel.visible" :filter-data="selectModel.questionSelectModel.filterData"  @do-save="doSaveQuestions"></question-select-modal>
+
+
+

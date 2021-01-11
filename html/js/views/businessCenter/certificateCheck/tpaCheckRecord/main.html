@@ -1,0 +1,53 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <!--<vi-button v-if="hasPermission('2020003001')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>-->
+                        <!--<iv-dropdown trigger="none" placement="bottom-end">-->
+                            <!--<vi-button type="ghost" icon="chevron-down"></vi-button>-->
+                            <!--<iv-dropdown-menu slot="list">-->
+                                <!--&lt;!&ndash;<iv-dropdown-item>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<vue-file-upload file-ext="xls,xlsx" custom-style>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<div v-if="hasPermission('2020002202')" class="uploadAport"><a>{{$t("gb.common.import")}}</a></div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</vue-file-upload>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</iv-dropdown-item>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<iv-dropdown-item>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<div class="uploadAport" @click="doExport"><a>{{$t("gb.common.export")}}</a></div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</iv-dropdown-item>&ndash;&gt;-->
+                            <!--</iv-dropdown-menu>-->
+                        <!--</iv-dropdown>-->
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" v-if="hasPermission('2060003005')" class="mp-header-item-btn" @click="doExportPdf">{{$t("gb.common.export")}}</vi-button>
+                    <!--<a style="width: 90px; margin: 2px;" @click="doExport" href="/checkrecord/{{id}}/exportExcel">导出</a>-->
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doUpdate">修改</vi-button>-->
+                </iv-col>
+            </iv-row>
+        </div>
+
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<aside :show.sync="detailModel.show" class="large-info-aside" placement="right">
+    <detailComponent></detailComponent>
+</aside>
+<aside :show.sync="editModel.show" class="large-info-aside" placement="right">
+    <editComponent></editComponent>
+</aside>

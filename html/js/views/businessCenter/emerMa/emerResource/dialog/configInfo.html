@@ -1,0 +1,36 @@
+<Modal :visible.sync='visible' :title='"配备要求"' :footer-hide="true">
+    <div class="edit-pop-container">
+        <p style="background: #EAF0F5;text-align: center;font-size: 14px;padding-top: 10px;">危化品企业与一般企业配备要求不同，请按照企业实际情况填写。</p>
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item label="危化品企业"   prop="isHazardousChemicalEnterprise">
+                    <i-select v-else :model.sync="mainModel.vo.isHazardousChemicalEnterprise" :list="isHazardousChemicalEnterprise" ></i-select>
+                </el-form-item>
+                <el-form-item label="企业规模"  prop="enterpriseScale" >
+                    <i-select v-else :model.sync="mainModel.vo.enterpriseScale" :list="enterpriseScale" ></i-select>
+                </el-form-item>
+                <el-form-item label="危险源级别" prop="hazardLevel">
+                    <i-select v-else :model.sync="mainModel.vo.hazardLevel" :list="hazardLevel" ></i-select>
+                </el-form-item>
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveInfo" class="pull-right">保存</vi-button>
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+<!-----   文件相关  ----->
+<vue-file-upload
+        v-ref:uploader
+        style="display: none;"
+        :multi-selection="true"
+        :params="uploadModel.params"
+        @on-before-upload="doUploadBefore"
+        @on-success-upload="doUploadSuccess"
+        @on-upload-complete="onUploadComplete"
+        :filters="uploadModel.filters">
+</vue-file-upload>
+
+

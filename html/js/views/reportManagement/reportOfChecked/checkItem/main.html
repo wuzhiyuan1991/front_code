@@ -1,0 +1,75 @@
+
+<div class="tab-container report">
+	<div class="main-panel">
+		<div class="mp-content">
+			<iv-row style="height:100%;">
+				<iv-col span="4" style="height:100%;">
+					<tree-star :model="qryModel.list"
+						:single-select="true"
+						id-attr="id"
+						pid-attr="parentId"
+						display-attr="name"
+						:show-checkbox="false"
+						@on-title-click="pageReset"
+						@on-star="doTreeStar"
+						@on-del-node="doTreeDel"
+						@on-tree-node-click="loadQryParam">
+					</tree-star>
+				</iv-col>
+				<iv-col span="20" style="height:100%;">
+					<div class="mp-header formTitle" style="margin-left: 10px;">
+						<div class="basic">{{title}}</div>
+						<form id="gridSearchHead">
+						</form>
+						<!-- 弹窗按钮   -->
+						<div class="grid_tool">
+						</div>
+						<div id="dialog-form" style="display: none;"></div>
+					</div>
+					<div class="report-qry-head">
+						<el-form :model="qryParam" is-label-vertical v-ref:ruleform>
+							<iv-row>
+								<iv-col span="5">
+									<el-form-item prop="dateRange" :rules="ruleModel.dateRange"  style="width:100%;overflow: inherit;">
+										<vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="3">
+									<el-form-item prop="item" :rules="ruleModel.item" style="width:100%;overflow: inherit;">
+										<i-select class="select-color" :model.sync="qryParam.item[1]" clearable  style="width:100%;"
+													:list="typeOfRanges" placeholder="请选择统计项目"
+													@on-change="changeItem">
+									        <i-option v-for="indicator in indicators" :value="indicator.value">{{ indicator.label }}</i-option>
+									    </i-select>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="3">
+									<el-form-item prop="typeOfRange" :rules="ruleModel.typeOfRange" style="width:100%;overflow: inherit;">
+										<i-select class="select-color" :model.sync="qryParam.typeOfRange" clearable  style="width:100%;"
+													:list="typeOfRanges" placeholder="请选择对象范围"
+													@on-change="changeTypeOfRange">
+									        <i-option v-for="item in typeOfRanges" :value="item.value">{{ item.label }}</i-option>
+									    </i-select>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="7">
+									<el-form-item prop="objRange" :rules="ruleModel.objRange" style="width:100%;overflow: inherit;">
+										<obj-select class="select-color" :type="qryParam.typeOfRange" :values.sync="qryParam.objRange" :disabled="qryParam.typeOfRange == null || qryParam.typeOfRange == ''"></obj-select>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="4" style="padding-top: 6px;">
+									<iv-button @click="doQry('abs')">查询</iv-button>
+									<iv-button @click="saveQry" icon="chevron-down"></iv-button>
+								</iv-col>
+							</iv-row>
+						</el-form>
+					</div>
+					<div class="reportChart">
+						<echart-component @change-method="changeMethod" v-ref:echart></echart-component>
+					</div>
+				</iv-col>
+			</iv-row>
+		</div>
+	</div>
+</div>
+<qry-info-edit :show.sync="qryModel.show" :qry-info-id="qryInfoId" :details="qryInfoDetails" @save-successed="saveQrySuccessed"></qry-info-edit>

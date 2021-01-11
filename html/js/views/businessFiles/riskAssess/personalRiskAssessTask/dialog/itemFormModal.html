@@ -1,0 +1,68 @@
+<Modal :visible.sync="visible" :title="mainModel.title" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content" style="padding-right: 30px;">
+            <!--结果表单-->
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="width: 100%;">
+
+                <el-form-item label="量化考核结果">
+                    <iv-input type="textarea" :value="mainModel.vo.content" readonly :rows="4"></iv-input>
+                </el-form-item>
+                <el-form-item label="考核标准">
+                    <iv-input type="textarea" :value="mainModel.vo.standard" readonly :rows="4"></iv-input>
+                </el-form-item>
+                <el-form-item label="考核落实结果">
+                    <iv-input type="textarea" :value="mainModel.vo.result" readonly :rows="4"></iv-input>
+                </el-form-item>
+                <el-form-item label="检查情况" prop="checkResult">
+                    <iv-radio-group :model.sync="mainModel.vo.checkResult">
+                        <iv-radio value="1">符合</iv-radio>
+                        <iv-radio value="0">不符合</iv-radio>
+                        <iv-radio value="2">不涉及</iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <div v-if="mainModel.vo.checkResult === '0'">
+                <el-form-item label="问题描述" prop="problem">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.problem" :rows="4"></iv-input>
+                </el-form-item>
+                <el-form-item label="可能存在的危害" prop="latentDefect">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.latentDefect" :rows="4"></iv-input>
+                </el-form-item>
+                <el-form-item label="建议措施" prop="suggestStep">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.suggestStep" :rows="4"></iv-input>
+                </el-form-item>
+                </div>
+                <!--<el-form-item label="考评简述" prop="evaluate">-->
+                    <!--<iv-input type="textarea" :value.sync="mainModel.vo.evaluate" :rows="4"></iv-input>-->
+                <!--</el-form-item>-->
+
+
+                <el-form-item label="附件上传" prop="cloudFiles">
+                    <ul>
+                        <li v-for="(index, file) in mainModel.vo.cloudFiles" class="cert-file-item" @click="doViewImages(index)">
+                            <div class="cert-file-name">{{file.orginalName}}</div>
+                            <Icon type="close-circled" @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <a @click="uploadClicked" href="javascript:void(0);" v-show="mainModel.vo.cloudFiles.length < 9" class="form-upload-href">上传文件</a>
+                </el-form-item>
+            </el-form>
+
+            <vue-file-upload
+                    v-ref:uploader
+                    style="display: none;"
+                    :multi-selection="false"
+                    :params="uploadModel.params"
+                    @on-before-upload="doUploadBefore"
+                    @on-success-upload="doUploadSuccess"
+                    @on-upload-complete="onUploadComplete"
+                    :filters="uploadModel.filters">
+            </vue-file-upload>
+
+            <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave()" class="pull-right">保存</vi-button>
+        </div>
+    </div>
+</Modal>

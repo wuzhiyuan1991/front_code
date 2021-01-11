@@ -1,0 +1,147 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故类型" prop="accidentType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.accidentType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="控制措施" prop="controlMeasures" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.controlMeasures" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险点位置(属地id)" prop="dominationAreaId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.dominationAreaId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="应急处置措施" prop="emergencyMeasures" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.emergencyMeasures" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="急救电话" prop="emergencyTelephone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.emergencyTelephone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="火警电话" prop="fireTelephone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fireTelephone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="责任部门" prop="principalOrgId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.principalOrgId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险评价等级" prop="riskLevel" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_card_risk_level', mainModel.vo.riskLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.riskLevel" :list="getDataDicList('ira_risk_card_risk_level')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="风险等级模型" prop="riskModel" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskModel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="评估模型" prop="riskModelId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskModelId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险点" prop="riskPoint" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskPoint" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="危害因素(风险场景)" prop="scene" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.scene" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="状态" prop="state" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_card_state', mainModel.vo.state) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.state" :list="getDataDicList('ira_risk_card_state')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="联系电话" prop="telephone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.telephone" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.riskAssessmentCardModel.showContent" filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>危害辨识</span></p>
+				<a slot="extra" @click.prevent="cardModel.riskAssessmentCardModel.showContent = !cardModel.riskAssessmentCardModel.showContent;" >
+					<span v-if="cardModel.riskAssessmentCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowRiskAssessmentSelectModal()" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.riskAssessmentTableModel"
+					@on-del-row="doRemoveRiskAssessment"
+					v-ref:riskassessment-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		</div>
+		-->
+		<!-- tab页签式 - 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>附件参考</span></p>
+				<div class="rel-info-panel-content-tabs">
+					<el-tabs active-key="relTab">
+						<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+							<file-list-simple-card  :data="fileModel.file.data" :config="fileModel.file.cfg"></file-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+							<image-list-simple-card  :data="fileModel.pic.data" :config="fileModel.pic.cfg"></image-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+							<video-list-simple-card  :data="fileModel.video.data" :config="fileModel.video.cfg"></video-list-simple-card>
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</simple-card>
+		</div>
+		-->
+	</div>
+
+
+</div>
+
+<riskassessment-select-modal :visible.sync="selectModel.riskAssessmentSelectModel.visible" :filter-data="selectModel.riskAssessmentSelectModel.filterData"  @do-save="doSaveRiskAssessments"></riskassessment-select-modal>
+
+
+

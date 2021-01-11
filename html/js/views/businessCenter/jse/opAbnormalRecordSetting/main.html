@@ -1,0 +1,240 @@
+
+<style>
+    .parameter .ivu-modal-content{
+        border-radius: 20px;
+    }
+    .parameter .ivu-modal-body{
+        border-radius: 20px;
+    }
+    .ivu-select-dropdown{
+        overflow-x: hidden;
+    }
+    .el-tabs__header{
+        border-bottom: none;
+        padding: 0;
+        position: relative;
+        margin: 0;
+        font-size: 16px;
+    }
+    .el-tabs__item:first-child{
+        padding-left: 0;
+    }
+    .el-form-item__label{
+        width: 120px !important;
+    }
+    .el-form-item__content{
+        margin-left: 120px !important;
+    }
+    .basicBody{
+        min-height:400px;
+    }
+    .mp-header-item .mp-header-item-btn{
+        border-right: none;
+    }
+    .mp-header-item .mp-header-item-btn span{
+        font-size: 16px;
+    }
+    .setup .fade-transition.ivu-poptip-popper{
+        left:0 !important;
+    }
+    .setup .basicBody:first-child .el-form-item:nth-child(2) label{
+        position: absolute;
+        left: 20px;
+    }
+    .parameterColor{
+        position: relative;
+        height:160px;
+        width: 18%;
+        margin:0 20px 20px 0;
+        float: left;
+        border-radius: 3px;
+    }
+    .parameter .el-form-item{
+        width: 100%;
+    }
+    .parameter button.btn{
+        margin-right: 20px;
+        background: #00467c;
+        color: #fff;
+    }
+    .spanPara{
+        color:#999999;
+    }
+    .divPara{
+        margin-top: 10px;
+        overflow: hidden;
+        line-height: 30px;
+    }
+    .parameterColor .check{
+        height: 70px;
+        width: 75px;
+        position: relative;
+        float: right;
+        margin: 5px;
+        background: url(./images/all.png) no-repeat 0 -245px transparent;
+    }
+    .parameterColor i{
+        position: absolute;
+        right: 8px;
+        font-size: 40px;
+        top: 4px;
+        color:#00467d;
+    }
+    .uploadFile{
+        position: relative;
+        width: 60px;
+        float: left;
+    }
+    .paramPng{
+        height:500px;
+        width: 1000px;
+    }
+    .paramPng img{
+        height:100%;
+        width: 100%;
+    }
+    .application{
+        text-align: center;
+        margin-top: 30px;
+    }
+    .application button{
+        background: #43a047;
+        border: 1px solid #43a047;
+        color:#fff;
+    }
+    .application button:hover{
+        background: #43a047;
+        color:#fff;
+    }
+    .parameterColor.skin .parameterCheck{
+        display: none;
+    }
+    .skin_blue .parameterColor.skin_blue .parameterCheck,
+    .skin_greenGrass .skin_greenGrass .parameterCheck,
+    .skin_green .skin_green .parameterCheck,
+    .skin_red .skin_red .parameterCheck,
+    .skin_purple .skin_purple .parameterCheck,
+    .skin_black .skin_black .parameterCheck{
+        display: block;
+    }
+    .businessCon button.pull-left{
+        margin:20px 0 20px 9px;
+    }
+    .businessCon table{
+        width:800px;
+        border:1px solid  #c8c8c8;
+    }
+    .businessCon table tr td{
+        padding:9px 0 9px 9px;
+    }
+    .businessCon .required-td > div {
+        display: inline-block;
+        font-size: 14px;
+        width: 170px;
+    }
+    .businessCon .required-td .ivu-checkbox-wrapper{
+        margin-right: 10px;
+    }
+    /*重置关闭按钮*/
+    .paramClose .ivu-modal-close{
+        top:-15px;
+        right: -15px;
+    }
+    .parameter .parameter-el-form .simple-card-head{
+        padding: 0;
+        height: 60px;
+        line-height: 60px;
+        margin-bottom: 0px;
+        position: relative;
+    }
+    .parameter .parameter-el-form .simple-card{
+        margin-left: -20px;
+        margin-right: -20px;
+    }
+    .parameter .simple-card-head .checkRe{
+        height: 60px;
+        line-height: 60px;
+        width: 100%;
+        padding-left: 20px;
+        cursor: pointer;
+        border-bottom: 1px solid #f2f2f2;
+    }
+    .parameter .parameter-el-form .simple-card-head:hover{
+        background: #f2f2f2;
+    }
+    .parameter .parameter-el-form .simple-card-extra{
+        position: absolute;
+        right: 10px;
+        top: 0;
+    }
+    .parameter .parameter-el-form .simple-card-body{
+        border-bottom: 1px solid #f2f2f2;
+        min-height: 0;
+    }
+    .parameter-image {
+        margin-bottom: 12px;
+        position: relative;
+        display: inline-block;
+    }
+    .parameter-image-a {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        line-height: 1;
+        font-size: 20px;
+        color: #666;
+        display: none;
+    }
+    .parameter-image:hover .parameter-image-a {
+        display: inline-block;
+    }
+    .parameter-el-form .checkRe-open .checkRe {
+        background-color: #f2f2f2;
+    }
+    .open-transition {
+        transition: all 0.1s ease-out;
+        max-height: 1000px;
+        padding: 20px 20px 0;
+        opacity: 1;
+    }
+    .open-enter,
+    .open-leave{
+        max-height: 0;
+        opacity: 0;
+        padding: 0 20px;
+    }
+</style>
+<div class="tab-container parameter">
+    <div class="mp-header formTitle">
+        <iv-row type="flex" align="middle" class="mp-header-item">
+            <iv-col span="24" >
+                <vi-button type="text" class="mp-header-item-btn" @click="changeTabIndex(1)" :class="{active:tabIndex === 1}">异常操作记录判断标准</vi-button>
+            </iv-col>
+        </iv-row>
+    </div>
+    <el-form :model="mainModel" :rules="rules" label-width="80px" v-ref:ruleform style="min-height: 465px;overflow: auto;width:100%;background: #fff;padding:20px;height: calc(100% - 80px);">
+        <!--业务参数-->
+        <div v-if="tabIndex === 1" class="parameter-el-form" style="margin-top: -20px">
+<!--            <simple-card  :show-content.sync="opAbnormalRecordModel.show" :class="{'checkRe-open': opAbnormalRecordModel.show}" transition-name="open">-->
+<!--                <p slot="title" @click.prevent="toggleSetItem('opAbnormalRecord')" class="checkRe">异常操作记录判断标准</p>-->
+<!--                <a slot="extra" @click.prevent="toggleSetItem('opAbnormalRecord')">-->
+<!--                    <span v-if="opAbnormalRecordModel.show"><Icon type="chevron-up"></Icon></span>-->
+<!--                    <span v-else><Icon type="chevron-down"></Icon></span>-->
+<!--                </a>-->
+                <div class="businessCon">
+                    <div v-for="item in opAbnormalRecordModel.vo.children">
+                        <div style="display: flex;align-items: center;margin-top: 10px;">
+                            <span>平均检查时长正负偏差： </span>
+                            <iv-input :value.sync="item.result" type="number" style="width: 150px;">
+                                <span slot="append">分钟之外的记录</span>
+                            </iv-input>
+                        </div>
+                    </div>
+                    <div style="border-bottom:1px solid #f5f5f5;overflow: hidden;">
+                        <vi-button class="pull-left ivu-btn btn" @click="saveBusiness('opAbnormalRecord')"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+                    </div>
+                </div>
+<!--            </simple-card>-->
+        </div>
+    </el-form>
+</div>

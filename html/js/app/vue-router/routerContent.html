@@ -1,0 +1,12 @@
+<div class="main-sidebar" @click="doSideBarClick()">
+	<div class="sidebar" style="height: auto" id="menu">
+		<menu-side-bar :menu="menu" :values="headerMenuData" :current-router-path="currentRouterPath"></menu-side-bar>
+	</div>
+</div>
+<div class="content-wrapper">
+	<div class="tab-container-wapper">
+		<!--<div class="rigth">-->
+			<router-view keep-alive></router-view>
+		<!--</div>-->
+	</div>
+</div>

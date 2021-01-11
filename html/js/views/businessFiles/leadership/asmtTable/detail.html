@@ -1,0 +1,93 @@
+<style>
+	.fip-content .asmt-table-card .simple-card-body {
+		padding-top: 0;
+	}
+	.fip-content .asmt-table-card .simple-card-head {
+		border-bottom: none;
+	}
+</style>
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item  label="编码" prop="code">-->
+						<!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item  label="自评表名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="总分" prop="score" v-if="mainModel.opType !== 'create'">
+						<span>{{mainModel.vo.score}}</span>
+					</el-form-item>
+					<!--<el-form-item  label="所属部门" prop="orgId">-->
+						<!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>-->
+						<!--<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+					<!--</el-form-item>-->
+				</el-form>
+			</simple-card>
+			
+			<simple-card class="fip-content-item asmt-table-card">
+				<p slot="title"><i class="basicPng"></i><span>自评项</span></p>
+				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doAddGroup">
+					<span><Icon type="plus"></Icon>分组</span>
+				</a>
+				<div v-for="(index, group) in mainModel.vo.asmtItems">
+					<div class="clearfix" style="line-height: 40px;border-top:1px solid #e9e9e9;">
+						<iv-input
+								style="display: inline-block;width: 250px;font-weight: bold;"
+								@on-blur="doSaveGroupName(group.groupName)"
+								:value.sync="group.groupName"
+								:textonly="index !== updateGroupNameIndex"
+						></iv-input>
+						<iv-button v-if="hasAuth('edit')" class="right" style="margin-top: 7px;" type="text" icon="trash-a" @click="doDeleteGroup(index, group.groupName)">删除分组</iv-button>
+						<iv-button v-if="hasAuth('edit')" class="right" style="margin-top: 7px;" type="text" icon="edit" @click="doUpdateGroupName(index, group.groupName, $event)">编辑分组名称</iv-button>
+						<iv-button v-if="hasAuth('edit')" class="right" style="margin-top: 7px;" type="text" icon="plus" @click="doAddItem(index)">新增自评项</iv-button>
+					</div>
+
+					<lite-table
+							:columns="tableModel.asmtItemTableModel.columns"
+							:values="group.asmtItemList"
+							:tools="['move', 'update', 'del']"
+							show-sequence
+							show-page
+							@on-move="doMoveItems"
+							@on-delete="doRemoveItem"
+							@on-update="doEditItem"
+					></lite-table>
+				</div>
+			</simple-card>
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.opType !== 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && mainModel.opType !== 'create'" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+<group-modal
+	:visible.sync="formModel.group.show"
+></group-modal>
+<item-modal
+	:visible.sync="formModel.item.show"
+	@do-save="doCreateItem"
+	@do-update="doUpdateItem"
+	v-ref:item-form-modal
+></item-modal>

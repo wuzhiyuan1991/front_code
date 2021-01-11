@@ -1,0 +1,104 @@
+<simple-card style="width:750px;">
+    <!--<p slot="title">许可签发{{licenseList.length}}</p>-->
+    <p slot="title" class="ptw-title">许可签发</p>
+    <div >
+        <div class="ml10 my-ivu-timeline-item-content">
+            <div style="padding:20px 0 0 14px;">
+                <timeline>
+                    <timeline-item v-for="(index,item) of signRoles">
+                        <span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{item.signStep}}</span>
+                        <!--<span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{(index + 1)}}</span>-->
+
+                        <div  @click="changeStatus(item)" style="cursor: pointer;" class="flex-layout-between ptwfill-license-rolebox">
+                            <div>
+                                <div class="flex-noshrink">{{item.signCatalog.name}}</div>
+                                <div style="width:250px;"><span v-if="item.signFile && item.signFile.length>0">{{item.signFile[0].createDate}}</span></div>
+                            </div>
+                            <div>
+                                <Icon style="cursor: pointer;width:auto;margin-right:10px;line-height: 22px;float:right;" :type="item.isShow ? 'chevron-up' : 'chevron-down'" ></Icon>
+                                <div style="width:auto;margin-right:15px;float:right;">
+
+                                    <span    style="margin-right:10px">{{item.attr1 }}</span>
+                                    
+                                    <span v-html="getStatus(item.signResult)"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="flex-h-end" v-show="item.isShow">
+                            <div class="detail-timeline-item">
+                                <div class="flex-layout  mb15 ul-style-none">
+                                    <!--<div class="form-item-label color-item-999" style="align-items: baseline;">{{item.signCatalog.name}}</div>-->
+                                    <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">人员</div>
+                                    <div  class="el-form-item mr20" style="width:100%;">
+                                        <span v-for="(index,user) of item.users">{{user.name}} <span v-show="index<item.users.length-1">，</span></span>
+                                    </div>
+                                </div>
+                                <div class="flex-layout  mb15 ul-style-none" v-show="item.signCatalog.enableCommitment == '1'">
+                                    <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">承诺</div>
+                                    <div  class="el-form-item mr20"  style="width:100%;">
+                                        <span v-if="item.signCatalog">
+                                            {{item.signCatalog.content}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex-layout  mb15 ul-style-none">
+                                    <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">意见</div>
+                                    <div  class="el-form-item mr20" style="width:100%;">
+                                        {{item.signOpinion}}
+                                    </div>
+                                </div>
+                                <div class="flex-layout  mb5 ul-style-none">
+                                    <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">图片</div>
+                                    <div  class="el-form-item mr20">
+                                        <image-view :images="getFiles(item.cloudFiles,'PTW26')" :show-close="false"></image-view>
+                                    </div>
+                                </div>
+                                <div class="flex-layout  mb5 ul-style-none">
+                                    <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">视频</div>
+
+                                    <div  class="el-form-item mr20" >
+                                        <lite-box  v-for="video in getFiles(item.cloudFiles, 'PTW28')" :show-close="false" @click="doPlay(video)">
+                                            <img :src="convertPath(video.id)">
+                                        </lite-box>
+                                    </div>
+                                </div>
+                                <div class="flex-layout  mb5 ul-style-none">
+                                    <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">签名</div>
+                                    <div  class="el-form-item mr20 lite-box-21" style="width:100%;height: 30px;">
+                                        <image-view image-style="width:auto;height:20px;" :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false"></image-view>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </timeline-item>
+                </timeline>
+            </div>
+        </div>
+    </div>
+</simple-card>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<style>
+    .detail-timeline-item{
+        margin-bottom: 10px;
+        min-height: 100px;
+        background-color: #fff;
+        padding: 10px 20px 0px 10px;
+        background-size: 80px 60px;
+        background-repeat: no-repeat;
+        background-position: 95% 5px;
+        border: 1px solid #eee;
+        border-radius: 3px;
+
+        width:80%;margin-right:5px;
+    }
+    .my-ivu-timeline-item-content .ivu-timeline-item-content{
+        padding: 1px 1px 0px 24px;
+        font-size: 14px;
+        position: relative;
+         top: 0px;
+    }
+</style>
+

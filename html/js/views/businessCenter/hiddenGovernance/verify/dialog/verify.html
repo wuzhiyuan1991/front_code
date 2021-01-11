@@ -1,0 +1,53 @@
+
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="rules" label-width="110px" v-ref:ruleform >
+        	<!--<el-form-item label="验证结果" prop="status">
+				<i-select :list="getDataDicList('pool_verify_status')" :model.sync="mainModel.vo.status" >
+					<i-option  v-for = "status in getDataDicList('pool_verify_status')"  :value="status.id">{{status.value}}</i-option>
+				</i-select>
+			</el-form-item>-->
+            <el-form-item label="验证结果" prop="status">
+                <i-select :model.sync="mainModel.vo.status" :list.sync="mainModel.selectModel.status">
+                    <i-option v-for="s in mainModel.selectModel.status" :value="s.id">{{s.value}}</i-option>
+                </i-select>
+            </el-form-item>
+            <el-form-item label="详情描述" prop="remark">
+                <iv-input type="textarea" :value.sync="mainModel.vo.remark"></iv-input>
+                <!--<textarea class="form-control h80" rows="3" v-model="mainModel.vo.remark"></textarea>-->
+            </el-form-item>
+
+            <el-form-item label="图片" prop="mainModel.pictures">
+                <lite-box v-for="(index,pic) in mainModel.pictures" @on-close="doDeleteImg(pic.fileId,index,mainModel.pictures)" @click="doPic(pic,pic.fileExt)">
+                    <img  :src="convertPicPath(pic)">
+                </lite-box>
+                <vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload"
+                                 :filters="pictures.filters" class="file_upload" v-if="mainModel.pictures.length < 9"></vue-file-upload>
+            </el-form-item>
+            <el-form-item label="视频" prop="mainModel.videos">
+                <lite-box v-for="(index,video) in mainModel.videos" @on-close="doDeleteImg(video.fileId,index,mainModel.videos)" @click="doPlay(video,video.fileExt)">
+                    <img :src="convertPath()">
+                </lite-box>
+                <vue-file-upload :params="videos.params" v-if="mainModel.videos.length < 1" @on-success-upload="doVideosSuccessUpload" :filters="videos.filters" class="file_upload"></vue-file-upload>
+            </el-form-item>
+
+            <el-form-item :label="$t('bc.hal.enclosure')" prop="mainModel.files" class="file_upload_text">
+                <lite-box v-for="(index,file) in mainModel.files" @on-close="doDeleteImg(file.fileId,index,mainModel.files)">
+                    <i class="ivu-icon  ivu-icon-document-text file_upload_text_ico"></i><a v-text="file.orginalName" target="_blank" style="width: 90px; margin: 2px;" :href="convertFilePath(file)"></a>
+                </lite-box>
+                <vue-file-upload :custom-style="true" :events="files.events" :params="files.params" @on-success-upload="doFileSuccessUpload" :filters="files.filters" class="file_upload_buttom">
+                    <slot><span class="file_tps"><i class="ivu-icon ivu-icon-link"></i>添加附件</span></slot>
+                </vue-file-upload>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.file,'watermark')">
+</Modal>

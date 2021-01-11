@@ -1,0 +1,47 @@
+<div>
+    <!--图标区域-->
+    <div></div>
+    <!--角色显示区域-->
+    <div style="padding:20px 0 0 14px;" class="my-ivu-timeline-item-content">
+        <timeline>
+            <timeline-item v-for="(index,item) of signRoles">
+                <span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{item.signStep}}</span>
+                <div class="flex-v-center ptwfill-license-rolebox ">
+                    <div style="min-width:140px" class="flex-noshrink">{{item.signCatalog.name}}</div>
+                    <Icon v-if="item.attr3 == '1'" style="font-size:14px;" type="android-checkbox-outline">需要会签</Icon>
+                    <Icon v-else style="font-size:14px;" type="android-checkbox-outline-blank">需要会签</Icon>
+                    <div class="flex-grow1  ml20">
+                        <div class="ptw-combine-box" v-for="(userIndex,user) of item.users">
+                            <div class="ptw-combine-enable">{{user.name}}</div>
+                            <div class="ptw-combine-close" v-if="!isApplyPerson(item)" @click="doRemoveUser(userIndex,item)">X</div>
+                        </div>
+                    </div>
+                    <div v-if="!isApplyPerson(item)" class="link-ele flex-noshrink" @click="doShowSelectUserModal(item)">添加人员</div>
+                </div>
+            </timeline-item>
+        </timeline>
+    </div>
+</div>
+<user-select-modal :single-select="false" :visible.sync="userSelectModel.show" @do-save="doSaveUser"></user-select-modal>
+
+<style>
+    .detail-timeline-item{
+        margin-bottom: 10px;
+        min-height: 100px;
+        background-color: #f9f9f9;
+        padding: 10px 20px 0px 10px;
+        background-size: 80px 60px;
+        background-repeat: no-repeat;
+        background-position: 95% 5px;
+        border: 1px solid #eee;
+        border-radius: 3px;
+
+        width:80%;margin-right:5px;
+    }
+    .my-ivu-timeline-item-content .ivu-timeline-item-content{
+        padding: 1px 1px 0px 24px;
+        font-size: 14px;
+        position: relative;
+        top: 0px;
+    }
+</style>

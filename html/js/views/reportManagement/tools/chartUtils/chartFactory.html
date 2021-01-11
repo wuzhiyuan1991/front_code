@@ -1,0 +1,13 @@
+<!--{{echartsCptName}}-->
+<component
+        v-if="show"
+        :is="echartsCptName"
+        :echart-style="echartStyle"
+        :qry-param="qryParam"
+        :method="method"
+        :data-limit="dataLimit"
+        :show-header="showHeader"
+        @change-method="changeMethod"
+        :is-self="isSelf"
+        @build-chart-opt="buildChartOpt">
+</component>

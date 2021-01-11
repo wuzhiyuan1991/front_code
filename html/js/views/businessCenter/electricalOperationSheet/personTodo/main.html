@@ -1,0 +1,170 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="12">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="12">
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        <!-- <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item>
+			                    
+                                $main-header-dropdown-item-tag-common-display
+                                <iv-dropdown-item v-if="hasAuth('batchShare')">
+                                    <div class="uploadAport" @click="showShareModal"><a>批量共享</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item v-if="hasAuth('process')">
+                                    <div class="uploadAport" @click="doSetApproval"><a>审批流设置</a></div>
+                                </iv-dropdown-item>
+							</iv-dropdown-menu>
+						</iv-dropdown> -->
+                    </div>
+                    $main-header-refresh-button
+                    <!--<div class="main-special-box-1" style="top: 0;">-->
+                        <!--<i-select  style="width: 100px;"  :model.sync="type" >-->
+                            <!--<i-option value="10">全部</i-option>-->
+                            <!--<i-option value="1">第一类</i-option>-->
+                            <!--<i-option value="2">第二类</i-option>-->
+                            <!--<i-option value="3">第三类</i-option>-->
+                        <!--</i-select>-->
+                    <!--</div>-->
+                    <div class="main-special-box-1">
+                        <a @click="type='10'" :class="{'checked': type === '10'}" class="main-special-item"  href="javascript:void(0);">全部</a>
+                        <a @click="type='1'" :class="{'checked': type === '1'}" class="main-special-item"  href="javascript:void(0);">一类 </a>
+                        <a @click="type='2'" :class="{'checked': type === '2'}" class="main-special-item"  href="javascript:void(0);">二类 </a>
+                        <a @click="type='3'" :class="{'checked': type === '3'}" class="main-special-item"  href="javascript:void(0);">三类 </a>
+                    </div>
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('edit')" @click="doUpdate">
+                        {{$t("gb.common.edition")}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('detail')" @click="doPreview(tableModel.selectedDatas[0])">预览</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('export')" @click="doUpdate">-->
+                        <!--{{$t("gb.common.export")}}</vi-button>-->
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('delete')" @click="doDelete">
+                        {{$t("gb.common.del")}}</vi-button>
+
+                    <iv-button v-if="Int(tableModel.selectedDatas[0].status)<1  && hasAuth('submit') && (tableModel.selectedDatas[0].type=='1' || tableModel.selectedDatas[0].type=='2')" type="text" class="mp-header-item-btn"
+                               @click.stop="doSubmit1">提交签发人
+                    </iv-button>
+                    <vi-button v-if="tableModel.selectedDatas[0].status==1 && (tableModel.selectedDatas[0].type=='1' || tableModel.selectedDatas[0].type=='2')" type="text" class="mp-header-item-btn" @click="showApproval">
+                        审批签发</vi-button>
+                    <vi-button v-if="tableModel.selectedDatas[0].status==2 && tableModel.selectedDatas[0].type=='1'" type="text" class="mp-header-item-btn" @click="transform.show=true">
+                        通知移交</vi-button>
+
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :filter-data="filterData">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- <electric-preview-modal :visible.sync="electricPreviewModel.visible" :id="electricPreviewModel.id"></electric-preview-modal> -->
+<preview-modal :visible.sync="previewModel.visible" :id="previewModel.id"></preview-modal>
+
+<!-- <aside :show.sync="approvalModel.show" class="middle-info-aside">
+    <approval-panel type="OpStdCard" :has-auth="hasAuth('processEdit')"></approval-panel>
+</aside> -->
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel @do-preview="doPreview" :card-type.sync="cardType" @do-user-model="userModel"></detail-panel>
+</aside>
+<Modal :visible.sync="selectCard.show" title="新增操作票作业" width="400" :footer-hide="true">
+    <div class="epc-content" style="background-color: white;">
+        <el-form>
+            <el-form-item label="创建操作票">
+                <iv-radio-group :model.sync="createCard">
+                    <iv-radio value="0">新增填写</iv-radio>
+                    <iv-radio value="1">引用模板</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+            <el-form-item label="操作票类型">
+                <iv-radio-group :model.sync="cardType">
+                    <iv-radio value="1">第1类</iv-radio>
+                    <iv-radio value="2">第2类</iv-radio>
+                    <iv-radio value="3">第3类</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doCloseCard" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSelectCard" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</Modal>
+
+<Modal :visible.sync="selectType.show" v-if='selectType.show' footer-hide title="选择操作票模板" width="1200">
+        <div id="eltabs" class="epc-content" style="background-color: white;max-height: 600px;">
+            <el-tabs @tab-click="dotabclick">
+                <el-tab-pane label="第1类" v-if="cardType=='1'">
+                    <vue-bootstrap-table  :setting="firstTypeTableModel" :selected-datas.sync="firstTypeTableModel.selectedDatas" >
+                    </vue-bootstrap-table>
+                </el-tab-pane>
+                <el-tab-pane label="第2类" v-if="cardType=='2'">
+                    <vue-bootstrap-table  :setting="secondeTypeTableModel" :selected-datas.sync="secondeTypeTableModel.selectedDatas" >
+                    </vue-bootstrap-table>
+                </el-tab-pane>
+                <el-tab-pane label="第3类" v-if="cardType=='3'">
+                    <vue-bootstrap-table :setting="thirdTypeTableModel" :selected-datas.sync="thirdTypeTableModel.selectedDatas" >
+                    </vue-bootstrap-table>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="selectType.show=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+            <vi-button type="primary" @click="doCheckCard" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+</Modal>
+
+<Modal :visible.sync="transform.show" footer-hide title="移交通知" width="400">
+    <div class="epc-content" style="background-color: white;max-height: 600px;">
+        <el-form  :model="userDeptModel.users" :rules="userDeptModel.rules" v-ref:deptruleform>
+            <el-form-item label="通知站场人员" prop="id">
+                <!--<input-select :values="userDeptModel.users" @click="doShowDeptUserModal(item)"></input-select>-->
+                <input-select :value="userDeptModel.users" id-field="id" display-field="name" clearable @click="doShowDeptUserModal()" ></input-select>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="transform.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+        </vi-button>
+        <vi-button type="primary" @click="handoverEwworkcard" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</Modal>
+<approval-step :visible.sync="approval.show" @do-save='signEwworkcard' :vo.sync='tableModel.selectedDatas[0] || {}'></approval-step>
+
+<user-select-modal :visible.sync="userDeptModel.show" single-select @do-save="doSaveDeptUser"></user-select-modal>
+
+
+<!-- <Modal :visible.sync="shareModal.visible" :title="shareModal.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <Transfer
+                    :titles="['未分享', '已分享']"
+                    :data="shareModal.leftArray"
+                    :target-keys="shareModal.rightArray"
+                    @on-change="handleTransferChange"
+            ></Transfer>
+        </div>
+        <div class="modal-footer-b">
+            <vi-button type="primary" @click="batchShare" style="margin-right: 15px;">保存</vi-button>
+            <vi-button @click="closeShareModal">取消</vi-button>
+        </div>
+    </div>
+</Modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :helper-url="importHelperUrl" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress> -->

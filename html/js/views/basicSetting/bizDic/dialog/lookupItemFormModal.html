@@ -1,0 +1,21 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item v-if="(hiddenFields.indexOf('value') == -1)" label="名称" prop="value">
+					<iv-input :value.sync="mainModel.vo.value" :disabled="(disabledFields.indexOf('value') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="状态" prop="disable">
+					<i-select :list="getDataDicList('disable')" :model.sync="mainModel.vo.disable">
+						<i-option v-for="s in getDataDicList('disable') " :value="s.id">{{ s.value }}</i-option>
+					</i-select>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<!--<lookup-select-modal single-select :visible.sync="mainModel.showLookupSelectModal"  @do-save="doSaveLookup"></lookup-select-modal>-->

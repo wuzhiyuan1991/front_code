@@ -1,0 +1,97 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="padding-top: 0;height: 400px;">
+            <el-tabs style="width:100%;" :active-name="mainModel.tabName" @tab-click="changeTab">
+
+                <el-tab-pane label="详情">
+                    <ul class="layout-l-t-box">
+                        <li class="layout-l-t-item">
+                            <div class="label-m">自评项：</div>
+                            <div class="txt">{{vo.asmtItem.name}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">自评结果：</div>
+                            <div class="txt" v-if="vo.result == '1'">做到</div>
+                            <div class="txt" v-if="vo.result == '5'">没做到</div>
+                            <div class="txt" v-if="vo.result && vo.result != '1' && vo.result != '5'">{{vo.score}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">自评-简述：</div>
+                            <div class="txt">{{vo.remark}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m" style="line-height: 18px;">自评-附录<br>图&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;片：</div>
+                            <div class="txt">
+                                <image-view :images="picList" :show-close="false"></image-view>
+                            </div>
+                        </li>
+                        <li style="border-bottom: 1px solid #ddd;margin: 30px 0 10px;"></li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">领导复评：</div>
+                            <div class="txt" v-show="!vo.attr2 && vo.asmtTask.status == 4 && vo.isAccept == '0'">不认可{{ ? '' : '认可'}}</div>
+                            <div class="txt" v-show="!vo.attr2 && vo.asmtTask.status == 4 && vo.isAccept == '1'">认可</div>
+                            <div class="txt" v-show="vo.attr2 && vo.asmtTask.status == 4">{{vo.attr2}}</div>
+                            <!--<div class="txt" v-if="vo.isAccept == '1'">认可</div>-->
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">复评-分享：</div>
+                            <div class="txt" v-show="vo.asmtTask.status == 4 && vo.isShared == '0'">未分享</div>
+                            <div class="txt" v-show="vo.asmtTask.status == 4 && vo.isShared == '1'">已分享</div>
+                            <!--<div class="txt" v-if="vo.isShared == '1'">已分享</div>-->
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">最终得分：</div>
+                            <div class="txt" style="font-weight: bold;" v-show="vo.attr3">{{vo.attr3}}分</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m" style="line-height: 18px;">领导复评<br>简&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</div>
+                            <div class="txt">{{vo.feedback}}</div>
+                        </li>
+                    </ul>
+
+                </el-tab-pane>
+
+                <el-tab-pane label="自评依据">
+                    <ul class="layout-l-t-box">
+                        <li class="layout-l-t-item">
+                            <div class="label-m">自评依据：</div>
+                            <div class="txt">{{{asmtBasisText}}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">图&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;片：</div>
+                            <div class="txt">
+                                <image-view :images="picBasisList" :show-close="false"></image-view>
+                            </div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">视&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;频：</div>
+                            <div class="txt">
+                                <lite-box v-for="video in videoList" :show-close="false" @click="doPlay(video)">
+                                    <img :src="convertPath()">
+                                </lite-box>
+                            </div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">参考资料：</div>
+                            <div class="con">
+                                <div v-for="(index,pic) in referenceMaterials">
+                                    <span>{{pic.orginalName}}</span>
+                                    <a :href="convertFilePath(pic)" target="_blank">
+                                        <Icon type="android-download" size="18"></Icon>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </el-tab-pane>
+
+            </el-tabs>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+    <Modal :visible.sync="playModel.show" width="450" class="type-video" :footer-hide="true">
+        <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+    </Modal>
+</Modal>

@@ -1,0 +1,19 @@
+<Modal v-if="load" :visible.sync="visible"  :title="title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <div>请从已选择的“申请人”、”检维修人员“、”作业人员“中来选择，或者 <label class="link-ele" @click="doSelOther">选择其他人员</label>  </div>
+            <iv-checkbox-group class="group-vertical"
+                               :model.sync="selectWorkerIndex"
+            >
+                <iv-checkbox v-for="(index,item) of values"  :value="index" >
+                    {{getName(item)}}
+                </iv-checkbox>
+            </iv-checkbox-group>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+<user-select-modal v-ref:other-user-model :single-select="false" :visible.sync="otherUserModel.show" @do-save="doSaveOtherUser"></user-select-modal>
+

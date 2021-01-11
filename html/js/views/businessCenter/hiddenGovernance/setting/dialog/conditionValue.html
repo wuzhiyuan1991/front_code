@@ -1,0 +1,20 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+	    <vue-bootstrap-table :columns="tableModel.columns"
+							 :filter-column="tableModel.filterColumn"
+							 :show-filter="true"
+							 :show-column-picker="false"
+							 :show-pager="true"
+	                         :url="tableModel.url"
+	                         :selected-datas.sync="tableModel.selectedDatas"
+							 :show-empty-row="false"
+	                         v-ref:main-table
+	                         :reset-trigger-flag="tableModel.resetTriggerFlag"
+							 @on-dbclick-cell="onDbClickCell"
+	    >
+	    </vue-bootstrap-table>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>

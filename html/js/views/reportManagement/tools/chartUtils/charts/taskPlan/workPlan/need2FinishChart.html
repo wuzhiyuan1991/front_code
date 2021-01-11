@@ -1,0 +1,45 @@
+<div :style="echartStyle">
+	<iv-row type="flex" justify="end" v-if="showHeader">
+		<iv-col>
+			<iv-button type="text" @click="changeMethod('org');" :class="{active:method == 'org'}">公司</iv-button>
+			<span>|</span>
+			<iv-button type="text" v-if="!disableAvg" @click="changeMethod('specialty');" :class="{active:method == 'specialty'}">专业</iv-button>
+		</iv-col>
+	</iv-row>
+	<vuecharts :style="echartStyle" :options="charts.opt" v-ref:echarts></vuecharts>
+
+	<!-- 更多 -->
+	<Modal v-if="moreModel.show" :visible.sync="moreModel.show" title="更多" width="900" :footer-hide="true" class="userSelectModal" mask-closable>
+		<div class="edit-pop-container report" style="width: 900px;">
+			<div class="epc-content" style="overflow-x: auto;">
+				<vue-bootstrap-table :columns="moreModel.columns" :show-scroll="moreModel.scroll"
+									 :show-column-picker="false"
+									 :values="moreModel.data" v-if="moreModel.show">
+				</vue-bootstrap-table>
+			</div>
+		</div>
+	</Modal>
+
+	<!-- 撰取 -->
+	<Modal v-if="drillModel.show" :visible.sync="drillModel.show" mask-closable :title="drillModel.title" width="900" :footer-hide="true" class="userSelectModal">
+		<div class="edit-pop-container" style="width: 900px">
+			<div class="epc-header"></div>
+			<div class="epc-content">
+				<div style="padding:4px 0 0 4px;width: 225px;position: absolute; right: 0;top: 88px;z-index: 100;" v-if="drillModel.groups && drillModel.groups.length > 1">
+					<i-select @on-change="onChangeGroup"
+								:list="drillModel.groups" placeholder="请选择对象个体" style="width:200px;">
+						<i-option v-for="g in drillModel.groups" :value="g.id">{{ g.name }}</i-option>
+					</i-select>
+				</div>
+				<vue-bootstrap-table :columns="drillModel.table.columns"
+									 :url="drillModel.table.url"
+									 :default-filter-value="drillModel.table.qryParam"
+									 :show-filter="true"
+									 :filter-column="drillModel.table.filterColumns"
+									 :show-column-picker="false"
+									 :show-pager="true" v-ref:rpt-details-table>
+				</vue-bootstrap-table>
+			</div>
+		</div>
+	</Modal>
+</div>

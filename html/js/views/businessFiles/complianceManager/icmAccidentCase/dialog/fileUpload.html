@@ -1,0 +1,20 @@
+<simple-card :class="{ 'icmAccidentCase-upload': true, 'file-upload-container' }">
+  <span slot="title" style="overflow: hidden;display: block;">
+    <span class="titlePrompt left" style="font-size: 16px;">（文件支持{{fileType}}格式; 限制文件大小为{{fileMaxSize}};）</span>
+    <vi-Button type="ghost" icon="ios-cloud-upload-outline" @click="updateLoad" class="right"
+      style="margin-top: 35px;display: block;">添加</vi-Button>
+  </span>
+  <div>
+    <vue-file-upload v-ref:uploader v-if="readonly && data.length < 9" @on-success-upload="referMater" :params="params"
+      :filters="filters" class="icmAccidentCase-upload-audio">
+    </vue-file-upload>
+    <ul style="flex-wrap: wrap;padding:12px;border:none;display: block;" class="ul-lite-box">
+      <lite-box shape="rect" v-for="(index,pic) in data" @on-close="doDeleteFile(pic.fileId||pic.id,index)">
+        <a target="_blank" :href="convertFileUrl(pic)">
+          <span class="attachment-icon" :class="renderIcon(pic.fileExt)"></span>
+          {{pic.orginalName}}
+        </a>
+      </lite-box>
+    </ul>
+  </div>
+</simple-card>

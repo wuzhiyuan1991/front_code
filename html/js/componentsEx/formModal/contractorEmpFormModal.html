@@ -1,0 +1,66 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="姓名" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('sex') == -1)" label="性别" prop="userDetail.sex">
+						<!--<iv-input :value.sync="mainModel.vo.sex" :disabled="(disabledFields.indexOf('sex') != -1)"  :textonly="mainModel.isReadOnly"></iv-input>-->
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('sex', mainModel.vo.userDetail.sex) }}</span>
+						<i-select :model.sync="mainModel.vo.userDetail.sex" :list="getDataDicList('sex')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('age') == -1)" label="年龄" prop="userDetail.age">
+						<iv-input :value.sync="mainModel.vo.userDetail.age" :disabled="(disabledFields.indexOf('age') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('idNumber') == -1)" label="身份证号" prop="userDetail.idcard">
+						<iv-input :value.sync="mainModel.vo.userDetail.idcard" :disabled="(disabledFields.indexOf('idNumber') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+<!--					<el-form-item v-if="(hiddenFields.indexOf('workType') == -1)" label="工种" prop="workType">-->
+<!--						<iv-input :value.sync="mainModel.vo.workType" :disabled="(disabledFields.indexOf('workType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--					</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('workType') == -1)" label="工种" prop="workTypes">
+						<div v-if="mainModel.isReadOnly" class="exam-paper-point">
+							<div class="ivu-tag" v-for="item in mainModel.vo.workTypes">
+								<span class="ivu-tag-text">{{ getDataDic('iptw_work_type', item) }}</span>
+							</div>
+						</div>
+						<i-select v-else multiple clearable :model.sync="mainModel.vo.workTypes" :list="getDataDicList('iptw_work_type')" ></i-select>
+					</el-form-item>
+
+
+					<el-form-item v-if="(hiddenFields.indexOf('telephone') == -1)" label="联系电话" prop="telephone">
+						<iv-input :value.sync="mainModel.vo.telephone" :disabled="(disabledFields.indexOf('telephone') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="系统登录名" prop="loginName">
+						<iv-input :value.sync="mainModel.vo.loginName" data-options="required:true" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('certificate') == -1)" label="资质/技能证书" prop="certificate">-->
+						<!--<div v-if="mainModel.isReadOnly" class="exam-paper-point">-->
+							<!--<div class="ivu-tag" v-for="item in mainModel.vo.certificates">-->
+								<!--<span class="ivu-tag-text">{{ getDataDic('iptw_cert', item) }}</span>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<i-select v-else multiple clearable :model.sync="mainModel.vo.certificates" :list="getDataDicList('iptw_cert')" ></i-select>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item v-if="(hiddenFields.indexOf('certificateNo') == -1)" label="证书编号" prop="certificateNo">-->
+						<!--<iv-input :value.sync="mainModel.vo.certificateNo" :disabled="(disabledFields.indexOf('certificateNo') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item v-if="(hiddenFields.indexOf('contractorId') == -1)" label="承包商" prop="contractor.id">-->
+						<!--<input-select :value="mainModel.vo.contractor" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('contractor') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowContractorSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSaveEmp" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<contractor-select-modal :visible.sync="selectModel.contractorSelectModel.visible" :filter-data="selectModel.contractorSelectModel.filterData" single-select @do-save="doSaveContractor"></contractor-select-modal>

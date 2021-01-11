@@ -1,0 +1,30 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container" style="width: 900px">
+        <i-select v-if="showCollect" style="width:120px;position: absolute;right: 20px;top: 90px;z-index:2;" @on-change="doChangeCollect" :model.sync="selectModel.collect" :list="mainModel.collections" >
+            <i-option  v-for = "type in mainModel.collections" :value="type.id">{{type.name}}</i-option>
+        </i-select>
+        <div class="epc-content epc-content-scroll">
+            <div  style="padding-top: 10px;padding-bottom: 10px;width:300px;">
+                <iv-input :maxlength="50" icon="ios-search" cleanable @on-remove="doRemoveFilter"  placeholder="请输入查询内容" :value.sync="filterKey" @on-enter="doCleanFilter" @on-click="doCleanFilter"></iv-input>
+            </div>
+            <vue-bootstrap-table
+                    :columns="tableModel.columns"
+                    :filter-column="tableModel.filterColumn"
+                    :show-pager="true"
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :url="tableModel.url"
+                    :reset-trigger-flag="tableModel.resetTriggerFlag"
+                    :default-filter-value="tableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    :is-cache-selected-data="isCacheSelectedData"
+                    lazy-load
+                    :resizeable="tableModel.resizeable"
+                    v-ref:table
+            >
+            </vue-bootstrap-table>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

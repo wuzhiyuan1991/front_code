@@ -1,0 +1,5 @@
+<Modal :maskClosable="true"
+               v-if="modual.show" width="1000" height="800" :visible.sync="modual.show"
+               :title="modual.title" :footer-hide="true" @on-cancel="colse" style="background-color: #fff">
+    <div id='chart-box' v-el:chartbox style='background-color: #fff'></div>
+</Modal>

@@ -1,0 +1,65 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasPermission('2070006001')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <!--<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="exportModel.url" v-if="hasPermission('2020001004')"></import-progress>-->
+                                <!--<iv-dropdown-item v-if="hasPermission('2020002004')">-->
+                                <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <!--<iv-dropdown-item v-if="hasPermission('2020002005')">-->
+                                <!--$main-header-div-tag-download-excel-->
+                                <!--</iv-dropdown-item>-->
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button type="text" v-if="hasPermission('2070006002') && tableModel.selectedDatas && tableModel.selectedDatas[0] && tableModel.selectedDatas[0].status == 1" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn"-->
+                    <!--@click="doDelete">{{$t("gb.common.del")}}-->
+                    <!--</vi-button>-->
+                    <vi-button v-if="hasPermission('2070006202')" type="text" class="mp-header-item-btn" @click="doConvert">{{$t("gb.common.examine")}}</vi-button>
+                    <vi-button v-if="hasPermission('2070006204')" type="text" class="mp-header-item-btn" @click="doConfirmCallback('doVedo', '关闭选中数据?')">{{$t("hai.rano.close")}}</vi-button>
+                    <iv-button type="text" v-if="hasPermission('2070006003')" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :show-scroll="true"></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- Legacy模式 -->
+<!--
+<radomobser-form-modal
+		:visible.sync="formModel.radomObserFormModel.show"
+		@do-save="doSaveRadomObser"
+		v-ref:radomobser-form-modal>
+</radomobser-form-modal>
+-->
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+<Modal :visible.sync="convertModel.show" :title="convertModel.title" :footer-hide="true">
+    <convert-component @do-convert-finshed="doConvertFinshed"></convert-component>
+</Modal>

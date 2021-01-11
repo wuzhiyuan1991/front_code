@@ -1,0 +1,168 @@
+<div class="detail-container">
+  <div class="few-info-panel pull-left">
+    <div class="fip-header">
+      <div class="bip-header-title">
+        <Icon type="ios-photos"></Icon>
+        <span>详情</span>
+        <template  v-if="mainModel.opType!='create'">
+          <span  id="able-ok" v-if="mainModel.vo.disable=='0'" >启用</span>
+          <span  id="able-no" v-else >停用</span>
+         
+        </template>
+      </div>
+    </div>
+    <!-- 新增模块 -->
+    <div
+      v-if="mainModel.opType=='create'"
+      class="fip-content"
+      style="position: relative;"
+    >
+    
+      <el-form
+        class="bip-content-form"
+        :model="mainModel.vo"
+        :rules="baseRules"
+        v-ref:ruleform
+      >
+        <el-form-item label="编码" prop="code">
+          <iv-input
+          v-if="mainModel.opType=='create'"
+            :value.sync="mainModel.vo.code"
+            placeholder="默认系统后台自动赋值"
+            id="codebgc"
+          ></iv-input>
+        
+        </el-form-item>
+       
+        <el-form-item label="关键字" prop="keyword">
+            <iv-input
+            :value.sync="mainModel.vo.keyword"
+          ></iv-input>
+          <!-- </div> -->
+        </el-form-item>
+      </el-form>
+    
+    </div>
+    <div
+      v-else
+      class="fip-content"
+      id="forum"
+    >
+    <el-form
+    class="bip-content-form"
+    :model="mainModel.vo"
+    :rules="baseRules"
+    v-ref:ruleform
+  >
+    <el-form-item label="编码" prop="code">
+      <iv-input
+        :value.sync="mainModel.vo.code"
+        :textonly="mainModel.isReadOnly"
+      ></iv-input>
+    </el-form-item>
+    <el-form-item label="关键字" prop="keyword">
+        <iv-input
+        :value.sync="mainModel.vo.keyword"
+        :textonly="mainModel.isReadOnly"
+       
+      ></iv-input>
+      <!-- </div> -->
+    </el-form-item>
+  </el-form>
+
+    </div>
+  </div>
+  <div class="few-info-sider pull-right">
+    <iv-button
+      v-if="mainModel.opType=='create'||mainModel.opType=='update'"
+      type="ghost"
+      @click="doSave"
+      icon="filing">{{$t('gb.comnon.save')}}</iv-button>
+    <vi-button
+      v-if="mainModel.opType=='view'&&hasAuth('edit')"
+      type="ghost"
+      @click="doEdit"
+      icon="ios-compose ">编辑</vi-button>
+    <vi-button
+    v-if="mainModel.opType=='update' "
+      type="ghost"
+      @click="doCancel"
+      icon="android-remove-circle">取消</vi-button>
+    <vi-button
+      v-if="mainModel.opType!='create'&&mainModel.opType!='update'&&hasAuth('delete')"
+      type="ghost"
+      @click="doDelete"
+      icon="trash-a">{{$t("gb.common.del")}}</vi-button>
+    <iv-button
+      v-if="mainModel.opType=='view'"
+      type="ghost"
+      @click="doEnableDisable"
+      icon="upload">启用/停用</iv-button>
+    <iv-button 
+    type="ghost" 
+    icon="android-cancel" 
+    @click="doClose">
+    {{$t("gb.common.close")}}
+  </iv-button>
+   
+  </div>
+</div>
+<style>
+  #codebgc input{
+    background-color: #f2f2f2 !important;
+  }
+  #able-no{
+    margin-left: 30px;
+    color: #fff;
+    background-color: red;
+    font-size: 12px;
+    padding: 3px 15px;
+    font-weight: normal;
+    border-radius: 12px;
+  }
+  #able-ok{
+    margin-left: 30px;
+    color: #fff;
+    background-color: #aacd03;
+    font-size: 12px;
+    padding: 3px 15px;
+    font-weight: normal;
+    border-radius: 12px;
+  }
+  .ke-container {
+    width: 550px !important;
+  }
+
+  .keyword {
+    padding: 0 20px;
+    margin: 0 5px 5px 5px;
+    line-height: 30px;
+    border-radius: 30px;
+    background-color: #e5f2ff;
+    color: #2eabff;
+    text-align: center;
+    cursor: pointer;
+  }
+  .keywords {
+    width: 400px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .keywordSelectModal .ivu-textarea-wrapper {
+    width: 100% !important;
+  }
+
+  #forum .ivu-textarea-wrapper {
+    width: 100% !important;
+    margin: 10px 0;
+  }
+
+  .keywordSelectModal p {
+    margin: 10px 0;
+  }
+
+  .ke-edit {
+    max-height: 600px;
+  }
+</style>

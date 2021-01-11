@@ -1,0 +1,70 @@
+<Modal :visible.sync="visible" :title="mainModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform >
+
+                <el-form-item label="选择方式">
+                    <i-select :model.sync="mainModel.vo.way" :list="ways" @on-change="onWayChanged"></i-select>
+                </el-form-item>
+
+                <div v-if="mainModel.vo.way === '1'">
+                <el-form-item label="选择任务">
+                    <multiple-input-select
+                            :selected-multiple.sync="mainModel.vo.tasks"
+                            @on-click="doSelectTasks"
+                    ></multiple-input-select>
+                </el-form-item>
+
+                <el-form-item label="">
+                    <div style="background-color: #fff;padding: 5px;text-align: center;border-radius: 5px;border: 1px solid #ddd;line-height: 24px;">
+                        <p>当前选择的任务数</p>
+                        <p style="font-weight: bold;font-size: 16px;">{{taskNum}}</p>
+                    </div>
+                </el-form-item>
+                </div>
+
+                <div v-if="mainModel.vo.way === '2'">
+                    <el-form-item  :label="$t('gb.common.startTime')" prop="startDate">
+                        <date-picker  format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.startDate" :end.sync="mainModel.vo.endDate"></date-picker>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('gb.common.endTime')" prop="endDate">
+                        <date-picker :default-date="false" format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.endDate" :begin.sync="mainModel.vo.startDate"></date-picker>
+                    </el-form-item>
+
+                    <el-form-item label="">
+                        <div style="background-color: #fff;padding: 5px;text-align: center;border-radius: 5px;border: 1px solid #ddd;line-height: 24px;">
+                            <p>当前选择时间段包含的任务数</p>
+                            <p style="font-weight: bold;font-size: 16px;">{{taskNum}}</p>
+                        </div>
+                    </el-form-item>
+                </div>
+
+                <el-form-item :label="assigneeLabel" prop="assignee.id">
+                    <input-select :value="mainModel.vo.assignee" id-field="id" display-field="name" @click="doSelectUsers"></input-select>
+                </el-form-item>
+
+                <el-form-item :label="reasonLabel" prop="reason">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.reason"></iv-input>
+                </el-form-item>
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<user-select-modal
+        :visible.sync="userSelected.visible"
+        :filter-data="userSelected.filterData"
+        single-select
+        @do-save="doSaveUser"
+></user-select-modal>
+
+<task-select-modal
+        :visible.sync="taskSelected.visible"
+        :filter-data="taskSelected.filterData"
+        @do-save="doSaveTasks"
+></task-select-modal>

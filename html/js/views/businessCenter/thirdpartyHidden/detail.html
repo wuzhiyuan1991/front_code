@@ -1,0 +1,33 @@
+
+<div class="detail-container">
+    <div class="few-info-panel pull-left">
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{$t("gb.common.detail")}}</span>
+        </div>
+        <div class="fip-content">
+            <el-tabs v-if="mainModel.showTabs" @tab-click="doTabs">
+                <el-tab-pane :label="$t('gb.common.detail')">
+                    <base-component :base-data="mainModel.vo"></base-component>
+                </el-tab-pane>
+                <!--<el-tab-pane v-for="(index,reform) in mainModel.vo.reforms" :label="'整改'+(index+1)">-->
+                    <!--<reforminfo-component :reform-id="reform.id"></reforminfo-component>-->
+                <!--</el-tab-pane>-->
+                <el-tab-pane :label="$t('hat.hazt.detail')" v-if="reformModel.show">
+                    <reforminfo-component :reforms="mainModel.vo.reforms" :reform-type="mainModel.vo.reformType"></reforminfo-component>
+                </el-tab-pane>
+                <el-tab-pane :label="$t('bc.hal.auditHist')" v-if="'1' == mainModel.vo.reformType">
+                    <history-component :pool-id="mainModel.vo.id"></history-component>
+                </el-tab-pane>
+                <el-tab-pane :label="$t('bc.hal.flowChart')" v-if="'1' == mainModel.vo.reformType">
+                    <pic-component :pool-id="mainModel.vo.id"></pic-component>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" @click="doClose" icon="close-round"  v-if="buttonShow.closeButton">{{$t("gb.common.close")}}</iv-button>
+        <iv-button type="ghost" @click="doSubmitData" icon="android-document" v-if="buttonShow.submitButton">{{$t("gb.common.submit")}}</iv-button>
+        <iv-button type="ghost" @click="doDelete" icon="trash-a" v-if="buttonShow.cancelButton">{{$t("gb.common.del")}}</iv-button>
+    </div>
+</div>

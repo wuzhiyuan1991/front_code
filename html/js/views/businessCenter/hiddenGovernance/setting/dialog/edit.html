@@ -1,0 +1,15 @@
+ <div class="edit-pop-container" >
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform>
+		    <el-form-item label="阶段名称" prop="name">
+		        <input type="text" v-model="mainModel.vo.name" maxlength="50" >
+			</el-form-item>
+		    <el-form-item label="次序" prop="order">
+				<input type="number" v-model="mainModel.vo.order" oninput="if(value.length>1)value=value.slice(0,1)">
+		    </el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>

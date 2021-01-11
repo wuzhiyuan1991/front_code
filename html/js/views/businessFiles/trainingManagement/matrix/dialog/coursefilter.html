@@ -1,0 +1,34 @@
+<!-- <div class="form-dialog" id="dialog-form" style="height: 600px;width: 370px;"> -->
+<div class="edit-pop-container">
+    <div class="epc-content">
+        <iv-row>
+            <iv-col span="24" >
+                <div class="menuFor8 mr16">
+                    <div class="not">选择课程</div>
+                    <div class="menu-and-func" style="padding: 10px">
+                        <div v-for="first in mainModel.vo.courses">
+                            <div>
+                                {{first.subjectName}}
+                            </div>
+                            <div v-for="second in first.subjectList" style="margin-left: 40px">
+                                <i class="glyphicon" style="cursor: pointer;margin-right: 5px;" :class = "['', second.add ? 'glyphicon-minus' : 'glyphicon-plus']" @click = "doChangeModule(second)"></i>
+                                  {{second.subjectName}}
+                                <div  style="margin-left: 20px;display: flex" v-for="(index,third) in second.courses" v-if="second.add">
+                                    <div>
+                                        <iv-checkbox v-if="index == 0" :checked.sync="second.allChecked" @click="toggle(second,0)" style="padding-left:0px;width:100%;">全选</iv-checkbox>
+                                        <iv-checkbox  :checked.sync="third.isChecked" @click="toggle(third,1,second)" style="margin-left: 0px;">{{third.name}}</iv-checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </iv-col>
+        </iv-row>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+        <vi-button type="primary" @click="doEmptied" class="pull-right">清空</vi-button>
+        <!-- 		<vi-button type="primary" @click="doCancel" class="pull-right">取消</vi-button> -->
+    </div>
+</div>

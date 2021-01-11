@@ -1,0 +1,101 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle  aaa">
+            <iv-row $main-header-row-attr-default-display>
+                  
+                <iv-col span="18">
+                    <all-classification $main-header-classification-attr-default :showdept="true"></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+
+                </iv-col>
+                <iv-col span="6">
+                    <div class="prelative addButton pull-right">
+                        <span v-if="mainModel.showOperateBtn" @click="doShow" style="cursor: pointer;position:relative;top:5px;padding: 0 10px; ">{{mainModel.operate}}</span>
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('exportRiskPoint')" class="uploadAport" @click="doExportRiskPoint"><a>导出风险点清单</a></div>
+                                </iv-dropdown-item>
+                                <!--<iv-dropdown-item>-->
+                                <!--&lt;!&ndash;$main-header-fileupload-tag-excel&ndash;&gt;-->
+                                <!--$main-header-div-tag-download-excel-->
+                                <!--</iv-dropdown-item>-->
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
+                    <vi-button v-if="hasAuth('audit')" type="text" class="mp-header-item-btn" @click="doAudit">{{$t("gb.common.examine")}}</vi-button>
+                    <vi-button v-if="hasAuth('notAudit')" type="text" class="mp-header-item-btn" @click="doNotAudit">{{$t("bc.ria.abandoned")}}</vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-header" style="padding: 5px 0;height: 172px;" @click="doCloseDetail" v-if="mainModel.showFilter">
+            <div class="filterConAll" style="height: 162px;overflow: auto">
+                <div v-for="filterItem in filterList">
+                    <div class="filterCon" v-if="filterItem.show">
+                        <span class="filterTitle">{{filterItem.name}}</span>
+                        <div class="filterConPart">
+                            <span class="allFilter" :class="['noSelectFilter', -1==filterItem.filter ? 'selectFilter' : '']" @click="doClickAll(filterItem.interName,-1)">全部</span>
+                            <span v-if="filterItem.interName != 'riskLevel'" :class="['noSelectFilter', item.id==filterItem.filter ? 'selectFilter' : '']" @click="doClickAll(filterItem.interName,item.id)" class="allFilter" v-for="item in filterItem.list">
+                            {{item.value}}
+                        </span>
+                            <span v-if="filterItem.interName == 'riskLevel'" :class="['noSelectFilter', item.id==filterItem.filter ? 'selectFilter' : '']" @click="doClickAll(filterItem.interName,item.id,item.level)" class="allFilter" v-for="item in filterItem.list">
+                            {{item.level}}
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="mp-content riskAssess" :class="['mp-content-a', mainModel.showFilter ? 'mp-content-b' : '']">-->
+        <div class="mp-content " :style="{ maxHeight: height }">
+
+            <vue-bootstrap-table $main-center-table-attr-default :show-scroll="true"></vue-bootstrap-table>
+
+        </div>
+    </div>
+</div>
+
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass" placement="right">
+    <detail-panel @do-show-edit-modal="doShowEditModal"></detail-panel>
+</aside>
+
+<!-- 弹框 -->
+<Modal :visible.sync="editModel.show" :title="editModel.title" :footer-hide="true">
+    <edit-component @do-save="doSaveRiskAssessment"></edit-component>
+</Modal>
+
+<Modal :visible.sync="auditModal.show" width="360">
+    <p slot="header">
+        <span>{{$t("gb.common.examine")}}</span>
+    </p>
+    <div style="text-align:center;height:100px;padding-top: 40px;font-size:18px;background: #eaf0f5;">
+        <p>{{$t("bc.ria.auditThroughTheRecord")}}?</p>
+    </div>
+    <div slot="footer">
+        <div style="text-align: center;padding-left:20px;">
+            <vi-button type="error" size="large" :loading="modal_loading" @click="doPass">{{$t("bc.ria.adopt")}}</vi-button>
+            <vi-button type="error" size="large" :loading="modal_loading" @click="doNotPass">{{$t("bc.ria.notPass")}}</vi-button>
+            <vi-button type="error" size="large" :loading="modal_loading" @click="doCloseAudit">{{$t("gb.common.cancel")}}</vi-button>
+        </div>
+
+    </div>
+</Modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>

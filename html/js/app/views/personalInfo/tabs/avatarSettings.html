@@ -1,0 +1,12 @@
+<simple-card class="fip-content-item" :show-content.sync="isShowUpload">
+	<p slot="title"><img src="images/details/basic.png"><span>{{$t("gb.common.basicInfo")}}</span></p>
+	<p style="font-size: 13px;margin-bottom: 20px;">{{$t("gb.common.imgRemarks")}}</p>
+	<div class="clearfix">
+		<lite-box @on-close="doDeleteFile(faceFile.faceid)"  v-if="!isUploadPic">
+			<img :src="faceUrl">
+		</lite-box>
+	</div>
+	<vue-file-upload  custom-style  :params="pictures.params" :filters="pictures.filters" @on-success-upload="doPictures">
+		<vi-button class="ivu-btn"><span>{{$t('gb.comnon.upload')}}</span></vi-button>
+	</vue-file-upload>
+</simple-card>

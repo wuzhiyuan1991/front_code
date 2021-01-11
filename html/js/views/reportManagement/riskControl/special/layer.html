@@ -1,0 +1,19 @@
+<div class="report-layer">
+    <div class="report-layer-header">
+        <div>检查次数： {{times}}次</div>
+        <div>合格率： {{percent}}%</div>
+    </div>
+    <div class="report-layer-body">
+        <!--<ul>-->
+            <!--<li v-for="n in 10">检查表名1[A公司]</li>-->
+        <!--</ul>-->
+        <!--<ul>-->
+            <!--<li v-for="n in 10">检查表名1[A公司]</li>-->
+        <!--</ul>-->
+        <ul v-for="child in items">
+            <li v-for="item in child.children">
+                {{item.xName}}[{{displayCompName(item.compId)}}]
+            </li>
+        </ul>
+    </div>
+</div>

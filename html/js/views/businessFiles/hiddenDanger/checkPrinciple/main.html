@@ -1,0 +1,168 @@
+<div class="tab-container" >
+
+
+    <iv-col>
+        <div class="testTableShowInfoTitle skin_blue mp-header">
+            检查原则
+            <ul style="display: inline-flex; margin-left: 50px;">
+                <div><li @click="type='inUse'"  :class="{'checked': type === 'inUse'}" class="s-result-item"  style="font-size: 14px;" >在用设备</li></div>
+                <div><li @click="type='unUse'"  :class="{'checked': type === 'unUse'}" class="s-result-item"  style="font-size: 14px;">停用设备</li></div>
+            </ul>
+        </div>
+
+    </iv-col>
+    <div class="testTableShowInfo">
+        <div style="width: 100%;border-top: 1px solid #ddd;border-bottom: 1px solid #ddd;border-right: 1px solid #ddd;">
+            <div style="width:calc(100% - 17px)">
+                <table class="table" style="table-layout: fixed;margin-bottom: 0;">
+                    <colgroup>
+                        <col style="width:20%;">
+                        <col style="width:20%;">
+                        <col style="width:20%;">
+                        <col style="width:40%;">
+                        <!--                        <col style="width:20%;">-->
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th style="min-width:250px;">事故发生可能性</th>
+                        <th style="min-width:250px;">严重程度</th>
+                        <th style="min-width:250px;">风险等级</th>
+                        <th style="min-width:250px;">巡检频率-类型</th>
+                        <!--                        <th style="min-width:250px;padding-right:16px;">巡检类型</th>-->
+                    </tr>
+                    </thead>
+
+                </table>
+            </div>
+        </div>
+        <div style="height:80% ;overflow-x:hidden;overflow-y:scroll;width:100%;border-left:1px solid #ddd;border-bottom:1px solid #ddd;">
+            <div style="width:calc(100% + 0px);padding-bottom: 110px;">
+                <table class="table" style="table-layout: fixed;margin-bottom: 0px;">
+                    <colgroup>
+                        <col style="width: 150px;min-width:200px;">
+                        <col style="width: 150px;min-width:200px;">
+                        <col style="width: 150px;max-width:200px;">
+                        <col style="width: 300px;max-width:400px;">
+                        <!--                        <col style="width: 150px;max-width:200px;">-->
+                    </colgroup>
+                    <thead style="display: none;">
+                    <tr>
+                        <th>事故发生可能性</th>
+                        <th>严重程度</th>
+                        <th>风险等级</th>
+                        <th>巡检频率-类型</th>
+                        <!--                        <th>巡检类型</th>-->
+                    </tr>
+                    </thead>
+                    <tbody >
+                    <tr v-for="(idx, item) in mainList">
+                        <td :style="idx==0?'border-top:0':''">{{item.possibility}}</td>
+                        <td :style="idx==0?'border-top:0':''">{{{item.severity}}}</td>
+                        <td :style="idx==0?'border-top:0':''"><div class="centerDiv"><span :style='getStyleColor(item.riskLevel)' class="blockLabel"></span>{{item.riskLevel}}</div></td>
+                        <td :style="idx==0?'border-top:0':''">
+                            <i-select v-if="type === 'inUse'":model.sync="item.frequencyTypes" multiple :list='getDataDicList("ira_check_principle_frequency_type")'>
+                                <i-option v-for="i in getDataDicList('ira_check_principle_frequency_type')" :value="i.id">{{i.value}}</i-option>
+                            </i-select>
+                            <i-select v-if="type === 'unUse'":model.sync="item.unUseFrequencyTypes" multiple :list='getDataDicList("ira_check_principle_frequency_type")'>
+                                <i-option v-for="i in getDataDicList('ira_check_principle_frequency_type')" :value="i.id">{{i.value}}</i-option>
+                            </i-select>
+                        </td>
+                        <!--                        <td :style="idx==0?'border-top:0':''">-->
+                        <!--                            <i-select :model.sync="item.type" :list='getDataDicList("ira_check_principle_type")'></i-select>-->
+                        <!--                        </td>-->
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="parameter" style="height:30px;bottom:0;width:100%;margin-top: 10px;">
+            <iv-button class='testTableShowInfoBtn' @click="doSaveAll" style="float:right;margin-right:34px;"><span>保存</span></iv-button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Legacy模式 -->
+<!--
+<checkprinciple-form-modal
+		:visible.sync="formModel.checkPrincipleFormModel.show"
+		@do-save="doSaveCheckPrinciple"
+		v-ref:checkprinciple-form-modal>
+</checkprinciple-form-modal>
+-->
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+
+<style>
+    .testTableShowInfo .table tbody tr td,  .testTableShowInfo .table tbody tr td span, .testTableShowInfo .table tbody tr td div{
+        overflow: visible !important;
+    }
+    .testTableShowInfo  thead tr th, .testTableShowInfo .table td{
+        text-align: center;
+    }
+    .testTableShowInfo  thead tr{
+        background: none;
+        /*border-right:1px solid #ddd;*/
+        /*border-top:1px solid #ddd;*/
+        /*border-bottom: 1px solid #ddd;*/
+    }
+    .testTableShowInfo  th{
+        border:none;
+        border-left:1px solid #ddd;
+        max-width:200px;
+        font-size:14px;
+    }
+    .testTableShowInfo tbody tr td{
+        border-color: #ddd !important;
+        max-width:200px;
+        overflow: auto;
+        border-left:none;
+    }
+    .testTableShowInfo{
+        position: relative;
+        overflow: auto;
+        height: calc(100% - 50px);
+        overflow:hidden;
+        width:90%;
+    }
+    .testTableShowInfo .table > thead > tr > th{
+        border-bottom: 0px;
+    }
+    .testTableShowInfo .blockLabel{
+        display: inline-block;
+        width:12px;
+        height: 12px;
+        border-radius: 3px;
+        margin-right:5px;
+        margin-top:4px;
+    }
+    .testTableShowInfo .centerDiv{
+        display: inline-block;
+        width:80px;
+        text-align: left;
+        margin-left:15px;
+    }
+    .testTableShowInfoBtn{
+        background: #00467c;
+        color: #fff;
+    }
+    .testTableShowInfoBtn:hover{
+        transform: scale(1.01);
+        cursor: pointer;
+        border-color:#00467c;
+        background: #00467c;
+        color: #fff;
+    }
+    .testTableShowInfoTitle{
+        font-size: 16px;
+        padding-top: 15px;
+        color:#666;
+    }
+</style>
+
+

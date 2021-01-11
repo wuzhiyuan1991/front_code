@@ -1,0 +1,48 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <!--<iv-col $main-header-condition-div-attr-default >-->
+                <!--<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>-->
+                <!--</iv-col>-->
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-mixBusiness>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right export-btn">
+                        <vi-button @click="doExportExcel" v-if="hasPermission('2070003005')">{{$t("gb.common.export")}}</vi-button>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doExportExcel">{{$t("gb.common.export")}}</vi-button>-->
+                    <vi-button v-if="hasPermission('2070003010')" type="text" class="mp-header-item-btn" @click="doReform" >{{$t("hag.hazc.rectification")}}</vi-button>
+                    <vi-button v-if="hasPermission('2070003011')" type="text" class="mp-header-item-btn" @click="doReformFail" >{{$t("hag.hazc.recblocked")}}</vi-button>
+                    <vi-button v-if="hasPermission('2070003003')" type="text" class="mp-header-item-btn" @click="doDelete" >{{$t("gb.common.del")}}</vi-button>
+                </iv-col>
+            </iv-row>
+
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+
+</div>
+
+<aside :show.sync="detailModel.show" placement="right">
+    <detail-component></detail-component>
+</aside>
+<Modal :visible.sync="reformSuccess.show" :title="reformSuccess.title" @on-cancel="doClose" footer-hide>
+    <reform-success></reform-success>
+</Modal>
+
+<Modal :visible.sync="reformFail.show" :title="reformFail.title" footer-hide>
+    <reform-failure :pool-id="reformFail.id" @on-success="doReformFailed"></reform-failure>
+</Modal>

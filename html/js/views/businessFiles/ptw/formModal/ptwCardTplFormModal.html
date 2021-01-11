@@ -1,0 +1,43 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('workCatalogId') == -1)" label="作业类型" prop="workCatalog.id">
+						<input-select :value="mainModel.vo.workCatalog" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('workCatalog') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowWorkCatalogSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('columnSetting') == -1)" label="字段启用禁用设置(json)" prop="columnSetting">
+						<iv-input :value.sync="mainModel.vo.columnSetting" :disabled="(disabledFields.indexOf('columnSetting') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('gasDetection') == -1)" label="是否启用气体检测" prop="gasDetection">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_tpl_gas_detection', mainModel.vo.gasDetection) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.gasDetection" :list="getDataDicList('iptw_card_tpl_gas_detection')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isolationSetting') == -1)" label="能量隔离启用禁用设置(json)" prop="isolationSetting">
+						<iv-input :value.sync="mainModel.vo.isolationSetting" :disabled="(disabledFields.indexOf('isolationSetting') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('ppeCatalogSetting') == -1)" label="个人防护启用禁用设置(json)" prop="ppeCatalogSetting">
+						<iv-input :value.sync="mainModel.vo.ppeCatalogSetting" :disabled="(disabledFields.indexOf('ppeCatalogSetting') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('workLevelId') == -1)" label="作业分级" prop="workLevelId">
+						<iv-input :value.sync="mainModel.vo.workLevelId" :disabled="(disabledFields.indexOf('workLevelId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<ptwcatalog-select-modal :visible.sync="selectModel.workCatalogSelectModel.visible" :filter-data="selectModel.workCatalogSelectModel.filterData" single-select @do-save="doSaveWorkCatalog"></ptwcatalog-select-modal>

@@ -1,0 +1,28 @@
+<Modal :visible.sync="visible"  title="模式选择" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item  label="自评参与模式" prop="selfEvaluationMode" >
+                    <iv-radio-group :model.sync="mainModel.vo.selfEvaluationMode">
+                        <iv-radio value="1">
+                            <span>部分人员参与自评</span>
+                        </iv-radio>
+                        <iv-radio value="2">
+                            <span>全部人员参与自评</span>
+                        </iv-radio>
+                        <iv-radio value="3">
+                            <span>随机选择人员自评</span>
+                        </iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item v-if="mainModel.vo.selfEvaluationMode == '3'" label="人数" prop="selfEvaluatorNum">
+                    <iv-input-number is-auto-corr=false :max="mainModel.maxValues" :value.sync="mainModel.vo.selfEvaluatorNum" :disabled="(disabledFields.indexOf('remark') != -1)" :textonly="mainModel.isReadOnly"></iv-input-number>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveInfo" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+

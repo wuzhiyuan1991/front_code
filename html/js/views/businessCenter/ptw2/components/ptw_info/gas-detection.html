@@ -1,0 +1,109 @@
+<div>
+    <!--    <div  class="flex-v-center title-simplecard mb5 base-border-bottom">气体检测</div>-->
+    <div class="flex-layout pdt10" v-if="model.enableGasDetection=='1'">
+        <div class="mr10 flex-v-start flex-noshrink" style="width: 7em">
+            <iv-checkbox  checked="true"  style="visibility:hidden;">
+            </iv-checkbox>
+
+            <div  style="margin-right: 10px;"  >气体检测</div>    
+        </div>
+        <div class="disabled-container flex-grow1 fz12"  style="margin-top:20px;">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableGasDetection==1"></div>
+            <div class="disabled-content el-form-item__content ">
+                <div class="pad-form-item">
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label">授权气体检测员</span>
+                        <span class="flex-grow1">
+                            <input-select :value="permitModel.gasInspector" id-field="id" display-field="name"
+                                          @click="doShowSelUser"></input-select>
+                        </span>
+                    </div>
+                    <div class="flex-v-start mb10">
+                        <!--<div style="padding:0;border:1px solid red;">1</div>-->
+                        <span class="form-item-label">气体检测方式</span>
+                        <span class="flex-grow1" >
+                                <iv-radio-group class="group-vertical" :model.sync="permitModel.gasCheckMethod" @on-change="doChangeCheckMethod">
+                                    <iv-radio value="1" class="minH30" style="width:100px;" ><span style="padding-left:5px;cursor:pointer;"> 不按照部位检查</span></iv-radio>
+                                    <iv-radio value="2" class="minH30" style="width:92px;">
+                                        <span style="padding-left:5px;cursor:pointer;">按照部位检查</span>
+                                        <iv-checkbox-group :model.sync="permitModel.gasCheckPosition" v-show="permitModel.gasCheckMethod==2">
+                                            <iv-checkbox v-for="(key,val) of enum.gasCheckPosition"
+                                                         :value="key">{{val}}</iv-checkbox>
+                                        </iv-checkbox-group>
+                                    </iv-radio>
+                                </iv-radio-group>
+                        </span>
+                    </div>
+                    <div class="flex-v-start mb10">
+                        <span class="form-item-label">作业中检查模式</span>
+                        <span class="flex-grow1">
+                                <iv-radio-group class="group-vertical " :model.sync="permitModel.gasCheckType" @on-change="doChangeGasCheckType">
+                                    <iv-radio value="1" class="flex-warp minH30" style="width:auto;">
+                                          <lable style="width:auto;padding-left:5px;cursor:pointer;">定期检查</lable>
+                                          <div class="ml-radio w-p100" >
+                                            <div class="flex-v-center" style="height: 30px;">
+                                                <iv-checkbox :disabled="permitModel.gasCheckType!=1" @on-change="changeCycle" :checked.sync="checkGasCheckCycle">检测频率设定</iv-checkbox>
+                                                <div  v-if="checkGasCheckCycle" class="flex-v-center ivu-input-group-prepend-padding0 ivu-input-height24 ivu-select-selection-height24">
+                                                    <iv-input :value.sync="permitModel.gasCheckCycle" class="ml5 mr5">
+                                                        <div slot="prepend" style="width:40px;"><span>每</span></div>
+                                                           <div slot="append" style="width:60px;">
+                                                             <i-select class="color-input-extend" :popper-fixed="false" :model.sync="permitModel.gasCheckCycleUnit">
+                                                                <i-option value="1">小时</i-option>
+                                                                <i-option value="2">分钟</i-option>
+                                                            </i-select>
+                                                          </div>
+                                                        </iv-input>
+                                                      <span style="width: 6em;" class="flex-noshrink">执行一次</span>
+                                                </div>
+                                            </div>
+                                           <div class="flex-v-center mt5 "  style="height: 30px;">
+                                                <iv-checkbox :disabled="!checkGasCheckCycle" :checked.sync="checkGasCheckNoticeTime">到期提醒设定</iv-checkbox>
+                                                <div v-if="checkGasCheckNoticeTime" class=" flex-v-center ivu-input-group-prepend-padding0 ivu-input-height24">
+                                                    <iv-input :value.sync="permitModel.gasCheckNoticeTime" class="ml5 mr5">
+                                                        <div slot="prepend" style="width:40px"><span>提前</span></div>
+                                                        <div slot="append" style="width:60px">
+                                                            <span>分钟&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                        </div>
+                                                    </iv-input>
+                                                    <span style="width: 6em;" class="flex-noshrink">提醒</span>
+                                               </div>
+                                            </div>
+                                        </div>
+                                    </iv-radio>
+
+                                     <iv-radio value="2" class="minH30" style="width:72px;">
+                                        <lable style="width:90px;padding-left:5px;cursor:pointer;">持续检查</lable>
+                                    </iv-radio>
+                                </iv-radio-group>
+                        </span>
+                    </div>
+                    <div>
+                        <p class="base-border-bottom mb5">需要检测的气体</p>
+                        <div class="flex-layout mb20" v-for="gas of gasTypeList" v-if="gas.items.length>0"
+                             :key="gas.type">
+                            <div class="form-item-label flex-v-start">
+                                {{gas.name}}
+                            </div>
+                            <div style="width:300px;min-width: 300px;">
+                                <div class=" ivu-checkbox-group group-vertical border-form">
+                                    <iv-checkbox style="display: flex;align-items: center"
+                                                 v-for="item of gas.items"
+                                                 :checked.sync="item.attr1"
+                                                 true-value="1" false-value="0"
+                                                 @on-change.prevent="doChangeItem($arguments,item)">
+                                        <p>{{item.name}}</p>
+                                        <p v-if="item.isExtra==1">
+                                            <iv-input class="ml5" :value.sync="item.content"></iv-input>
+                                        </p>
+                                    </iv-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<user-select-modal single-select :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>
+

@@ -1,0 +1,36 @@
+<Modal :visible.sync="visible" title="关联操作票" :width="vo.type=='3'?1200:1000" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;;background-color: white;padding-top: 15px;">
+        <simple-card>
+            <!--<a style="position: absolute;right: 10px;top: 5px;"  @click.prevent="select.show=true">-->
+                <!--<span>-->
+                    <!--<Icon type="plus"></Icon>添加-->
+                <!--</span>-->
+            <!--</a>-->
+        <vue-bootstrap-table @on-click-cell="onClickCell" :setting="TableModel" v-show="vo.type=='3'" :values.sync='list || []'  @on-del-row="doRemove" lazy-load ></vue-bootstrap-table>
+        <vue-bootstrap-table
+                @on-click-cell="onClickCell"
+
+                :setting="thirdTableModel" v-show="vo.type=='1'" :values.sync='list || []'  @on-del-row="doRemove" lazy-load ></vue-bootstrap-table>
+
+        </simple-card>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="visible=false" class="pull-right">关闭</vi-button>
+    </div>
+
+</Modal>
+<!--<Modal :visible.sync="select.show" title="选择操作票" width="800" :footer-hide="true">-->
+
+    <!--<div class="epc-content" style="position: relative;;background-color: white;padding-top: 15px;">-->
+        <!--<simple-card>-->
+        <!--<vue-bootstrap-table  :setting="addTableModel" :selected-datas.sync="addTableModel.selectedDatas"  :show-seq='true'>-->
+        <!--</vue-bootstrap-table>-->
+        <!--</simple-card>-->
+    <!--</div>-->
+    <!--<div class="epc-footer">-->
+        <!--<vi-button type="primary" @click="select.show=false" class="pull-right">取消</vi-button>-->
+        <!--<vi-button type="primary" @click="select.show=false" class="pull-right">确定</vi-button>-->
+    <!--</div>-->
+
+<!--</Modal>-->

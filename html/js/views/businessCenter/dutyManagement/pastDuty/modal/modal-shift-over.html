@@ -1,0 +1,87 @@
+<Modal :visible.sync="visible" width='600' :title="modalTitle" @on-cancel="doClose" :footer-hide="true">
+    <div class="modal-box-default" style="background: #fff;">
+        <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+            <div class="form-item-label required-before label100">{{title}}</div>
+            <div>
+                <!-- <iv-radio-group class="group-vertical" :model.sync="selectedWorkCatalogId"> -->
+                    <iv-radio  class="mb10 flex-h-start" :value="item.id" v-for="item of workCatalogList" style="word-break: break-all;white-space: normal;width:500px;">
+                        <div class="flex-layout">
+                            <span style="cursor: pointer;min-width: 75px;margin-right:5px;flex-grow:1;flex-shrink:0">
+                                {{item.name}}
+                            </span>
+                            <span v-if="item.levelList&&item.levelList.length>0&&selectedWorkCatalogId==item.id">
+                                <iv-radio-group  :model.sync="selectedWorLevelId">
+                                    (  <iv-radio :value="level.id" v-for="(index,level) of item.levelList">
+                                    <span style="cursor: pointer;">{{level.name}}</span>
+                                    <span v-if="index==item.levelList.length-1">）</span>
+                                </iv-radio>
+                                </iv-radio-group>
+                            </span>
+                        </div>
+                    </iv-radio>
+                <!-- </iv-radio-group> -->
+              <div style="width:100px;" class="label-mar">
+				  <span>
+				  	<iv-radio-group :model.sync="selectModelType">
+				  		<iv-radio value="0" @change="shiftOverSelect(0, 'key')">归档当前班次，同时创建新的班次的值班记录</iv-radio>
+						<div style="margin: 5px 0 10px 25px; font-size: 13px; color: #ccc;">当前值班班次已经到交班时间，且值班记录已经填写完整，可以移交到下一个班次
+							<span style="margin-left: 5px; color: #888;">{{ nextDateTime }}</span>
+						</div>
+				  		<iv-radio value="1" @change="shiftOverSelect(1, 'key')">当前班次内进行值班任务移交（不会产生新的值班记录）</iv-radio>
+				  	</iv-radio-group>
+				  </span>
+			  </div>
+          </div>
+        </div>
+		
+		<el-form style="width: 80%;" :model="mainModel" :rules="mainModel.rules" v-ref:ruleform>
+			<el-form-item label="主接班人" prop="succession">
+				<input-select :value.sync="mainModel.succession" @do-clear-input="doClearInput" :clearable="false" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="showSuccessionSelectModal(true)"></input-select>
+			</el-form-item>
+			<el-form-item label="其他人" prop="successionOther" @click="showSuccessionSelectModal(false)">
+				<multiple-input-select
+					:selected-multiple.sync="mainModel.successionOther"
+					:textonly="mainModel.isReadOnly"
+					id-field="id"
+					display-field="name"
+				></multiple-input-select>
+			</el-form-item>
+		</el-form>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<user-select-modal
+	:visible.sync="selectModel.userSelectModel.visible"
+    :filter-data="selectModel.userSelectModel.filterData" 
+	:show-only-type.sync="selectModel.userSelectModel.onlyType"
+	:single-select = "selectModel.userSelectModel.single" 
+    @do-save="doSaveUsers">
+</user-select-modal>
+	
+<style>
+    .ivu-radio-cursor .ivu-radio {
+        cursor: pointer;
+    }
+	
+    .ivu-select-dropdown-width280 .ivu-select-dropdown {
+        width:280px;
+    }
+	
+	.label100 {
+		width: 100px;
+	}
+	
+	.label-mar .ivu-radio-inner {
+		margin-right: 10px;
+	}
+</style>

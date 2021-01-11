@@ -1,0 +1,113 @@
+<style>
+    .software .col-sm-3{
+        text-align: right;
+    }
+</style>
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <div class="basic">{{$t('bs.bac.softwareLicense')}}</div>
+            <form id="gridSearchHead">
+            </form>
+            <!-- 弹窗按钮   -->
+            <div class="grid_tool">
+            </div>
+            <div id="dialog-form" style="display: none;"></div>
+        </div>
+        <div class="formBody" style=" height: 100%; background: #fff;overflow: hidden;">
+            <form id="ff" style="overflow: hidden;margin-bottom: 10px;">
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.authUnit')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.unit}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.productName')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.projectName}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-11 control-label no-padding-right tit1"> {{$t('bs.bac.licenseFile')}} </label>
+                        <div class="col-sm-1" style="padding-right: 15px; text-align: right;position: relative;bottom: 3px;">
+                            <vue-file-upload  @on-success-upload="doSuccessUpload" :url="uploadModel.url" custom-style :events="uploadModel.events" :params="uploadModel.params" :filters="uploadModel.filters">
+                                <button v-show="hasPermission('1010002601')" class="btn btn-default pop_up_button">{{$t('gb.comnon.upload')}}</button>
+                            </vue-file-upload>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1">  {{$t('bs.bac.authPeriod')}} </label>
+                        <div class="col-sm-3">
+                            <span>2020-1-1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1">  {{$t('bs.bac.maximumUser')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.peopleAccount}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.instituts')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.organizationAccount}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.institutsInline')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.onlineAccount}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.terminals')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.terminalAccount}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.techSupport')}} </label>
+                        <div class="col-sm-3">
+                            <span>{{mainModel.support}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.ent')}}ID </label>
+                        <div class="col-sm-3">
+                            <span>2312234234</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="col-sm-11 software">
+                        <label class="col-sm-9 control-label no-padding-right tit1"> {{$t('bs.bac.software')}}ID </label>
+                        <div class="col-sm-3">
+                            <span>2312234234</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

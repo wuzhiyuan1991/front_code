@@ -1,0 +1,40 @@
+<div class="full-calendar-body">
+    <div class="weeks">
+        <strong class="week" v-for="week in weekNames">{{week}}</strong>
+    </div>
+    <div class="dates" ref="dates">
+
+        <div calss="dates-bg">
+            <div class="week-row" v-for="(x,week) in displayDates">
+                <div class="day-cell"
+                     v-for="(y, day) in week"
+                     @click.stop="dayClick(day.date, x, y, $event)"
+                     :class="{'today' : day.isToday,'not-cur-month' : !day.isCurMonth, 'select-date': day.index === lastSelectIndex}"
+                >
+                    <div class="day-number" :class="{'event-tip': day.hasEvent}">{{day.monthDay}}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- full events when click show more -->
+        <div class="more-events" v-show="showMore"
+             :style="{left: morePos.left + 'px', top: morePos.top + 'px'}">
+            <div class="more-header">
+                <span class="title">{{moreTitle(selectDay.date)}}</span>
+                <span class="close" @click.stop="showMore = false">x</span>
+            </div>
+            <div class="more-body">
+                <ul class="body-list">
+                    <li v-for="event in selectDay.events"
+                        v-show="event.isShow" class="body-item"
+                        @click="eventClick(event,$event)">
+                        {{event.title}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <slot name="body-card"></slot>
+
+    </div>
+</div>

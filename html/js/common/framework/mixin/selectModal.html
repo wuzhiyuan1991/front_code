@@ -1,0 +1,21 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+  <div class="edit-pop-container" style="width: 900px">
+    <i-select v-if="showCollect" style="width:120px;position: absolute;right: 20px;top: 90px;z-index:2;"
+      @on-change="doChangeCollect" :model.sync="selectModel.collect" :list="mainModel.collections">
+      <i-option v-for="type in mainModel.collections" :value="type.id">{{type.name}}</i-option>
+    </i-select>
+    <div class="epc-content epc-content-scroll">
+      <vue-bootstrap-table :columns="tableModel.columns" :filter-column="tableModel.filterColumn" :show-pager="true"
+        :selected-datas.sync="mainModel.selectedDatas" :url="tableModel.url || ''" :values="tableModel.values || []"
+        :reset-trigger-flag="tableModel.resetTriggerFlag" :default-filter-value="tableModel.defaultFilterValue"
+        @on-dbclick-cell="onDbClickCell" :is-cache-selected-data="isCacheSelectedData" lazy-load
+        show-filter :resizeable="tableModel.resizeable"
+        :is-single-check="singleSelect"
+        :is-native-data="this.isNativeData !== null ? this.isNativeData : tableModel.isNativeData || false" @do-filter="nativeSearchFilter" v-ref:table>
+      </vue-bootstrap-table>
+    </div>
+    <div class="epc-footer">
+      <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+  </div>
+</Modal>

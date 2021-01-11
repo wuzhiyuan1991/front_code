@@ -1,0 +1,98 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span='12'>
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="12">
+                    <div class="prelative addButton pull-right" style="display: flex;align-items: center;">
+                        <div  style="background: #E6EEFF;color:#4E9FFF;font-size: 14px;padding:5px;border-radius: 5px;display: inline-block;" v-show="levelGrade=='1'">第一类危险化学品单位
+                            <Icon  @click="doShowDep" style="font-weight:600;font-size: 16px;margin-left: 5px;cursor: pointer;width: 25px;height: 18px;text-align: center" type="ios-information-outline"></Icon>
+                        </div>
+                        <div style="background: #E6EEFF;color:#003ABF;font-size: 14px;padding:5px;display: inline-block;border-radius: 5px;" v-show="levelGrade=='2'">第二类危险化学品单位
+                            <Icon @click="doShowDep"  style="font-weight:600;font-size: 16px;margin-left: 5px;cursor: pointer;width: 25px;height: 18px;" type="ios-information-outline"></Icon>
+                        </div>
+                        <div style="background: #E6EEFF;color:#4E9FFF;font-size: 14px;padding:5px;border-radius: 5px;display: inline-block;"  v-show="levelGrade=='3'">第三类危险化学品单位
+                            <Icon @click="doShowDep" style="font-weight:600;font-size: 16px;margin-left: 5px;cursor: pointer;width: 25px;height: 18px;" type="ios-information-outline"></Icon>
+                        </div>
+                        &nbsp;
+                        &nbsp;
+                        <vi-button  v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        &nbsp;&nbsp;
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+                                <iv-dropdown-item>
+                                    <div class="uploadAport" v-if="hasAuth('grade')" @click="doShowLevel"><a>层级评定</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item>
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit') && !isCheckKind" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('copy') && !isCheckKind" type="text" class="mp-header-item-btn"
+                               @click="doAdd4Copy">复制
+                    </vi-button>
+                    <!--<vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"-->
+                               <!--@click="doEnableDisable">{{$t("gb.common.EnableDisable")}}-->
+                    <!--</vi-button>-->
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDeleteAll">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <div class="lr-layout" style="padding: 0;position: relative;">
+                <div class="lr-layout-l legal-regulation-type-box" style="width: 200px;overflow-y: auto;margin-top: 5px;margin-right:15px;">
+                    <ul>
+                        <li
+                            v-for="(index, group) in emerGroups"
+                            class="lr-layout-li"
+                            style="border-bottom: 1px solid #ddd;"
+                            :class="{'checked': index === checkedGroupIndex-1}"
+                            @click="doFilterBySpecial(index+1)"
+                            :title="group.name"
+                        >
+                            <span style="margin-left: 17px;">{{group.name}}</span>
+                            <!--<i class="ivu-icon ivu-icon-information-circled" :title="group.remarks" style="margin-right: 17px; margin-top: 4px;float: right;"></i>-->
+                        </li>
+                    </ul>
+                </div>
+                <div class="lr-layout-r" style="padding: 0;position: relative">
+                    <div style="position: absolute;bottom: 11px;left: 20px;">
+                        <iv-checkbox  :checked.sync="isCheckKind" :middle="isHalfCheck" :disabled=""  @change.stop="checkSelect"> 多选 </iv-checkbox>
+                    </div>
+                    <vue-bootstrap-table $main-center-table-attr-default :row-class="rowClass"></vue-bootstrap-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+
+<config-detail :visible.sync="dialogModel.configDetail.visible" ></config-detail>
+<config-info :visible.sync="dialogModel.configInfo.visible"  @change="getLevel" :org-id="orgId" ></config-info>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel :index="checkedGroupIndex-1" :comid="orgId" :checked-group-index="checkedGroupIndex" ></detail-panel>
+</aside>
+

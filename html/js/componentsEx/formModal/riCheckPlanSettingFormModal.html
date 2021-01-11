@@ -1,0 +1,42 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" :label="$t('gb.common.state')" prop="disable">
+						<span v-if="mainModel.isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+						<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('endTime') == -1)" label="结束时间" prop="endTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endTime" :disabled="(disabledFields.indexOf('endTime') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endTime" :disabled="(disabledFields.indexOf('endTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('frequencyType') == -1)" label="频率类型" prop="frequencyType">
+						<iv-input :value.sync="mainModel.vo.frequencyType" :disabled="(disabledFields.indexOf('frequencyType') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isRepeatable') == -1)" label="是否重复" prop="isRepeatable">
+						<iv-input :value.sync="mainModel.vo.isRepeatable" :disabled="(disabledFields.indexOf('isRepeatable') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isWeekendInculed') == -1)" label="是否包含周末" prop="isWeekendInculed">
+						<iv-input :value.sync="mainModel.vo.isWeekendInculed" :disabled="(disabledFields.indexOf('isWeekendInculed') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('period') == -1)" label="时间间隔" prop="period">
+						<iv-input :value.sync="mainModel.vo.period" :disabled="(disabledFields.indexOf('period') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('startTime') == -1)" label="开始时间" prop="startTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startTime" :disabled="(disabledFields.indexOf('startTime') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startTime" :disabled="(disabledFields.indexOf('startTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('unit') == -1)" label="间隔单位" prop="unit">
+						<iv-input :value.sync="mainModel.vo.unit" :disabled="(disabledFields.indexOf('unit') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

@@ -1,0 +1,55 @@
+<simple-card v-if="!!title" :class="class">
+    <p slot="title"><i class="basicPng"></i><span>{{title}}</span></p>
+    <span slot="extra"><slot name="extra"></slot></span>
+    <simple-card>
+        <span slot="title" v-if="!readonly">{{remark}}
+            <span class="titlePrompt">（文件支持{{fileType}}格式; 单个文件大小最大支持{{fileMaxSize}}; {{limitFileNum ? '最多上传'+(maxFileNum||'9')+'个文件' : ''}}）</span>
+        </span>
+
+        <lite-box
+                shape="rect"
+                v-for="(index,pic) in data"
+                :show-close="!readonly"
+                @on-close="doDeleteFile(pic.fileId||pic.id,index)"
+        >
+            <a target="_blank" :href="convertFileUrl(pic)">
+                <span class="attachment-icon" :class="renderIcon(pic.fileExt)"></span>
+                {{pic.orginalName}}
+            </a>
+        </lite-box>
+
+        <vue-file-upload
+                v-if="showAddFile"
+                @on-success-upload="referMater"
+                :params="params"
+                :filters="filters"
+                class="file_upload"
+        ></vue-file-upload>
+    </simple-card>
+
+</simple-card>
+<simple-card v-else :class="class">
+    <span slot="title">{{remark}}
+        <span class="titlePrompt" v-if="!readonly">（文件支持{{fileType}}格式; 单个文件大小最大支持{{fileMaxSize}}; {{limitFileNum ? '最多上传9个文件' : ''}}）</span>
+    </span>
+
+    <lite-box
+            shape="rect"
+            v-for="(index,pic) in data"
+            :show-close="!readonly"
+            @on-close="doDeleteFile(pic.fileId||pic.id,index)"
+    >
+        <a target="_blank" :href="convertFileUrl(pic)">
+            <span class="attachment-icon" :class="renderIcon(pic.fileExt)"></span>
+            {{pic.orginalName}}
+        </a>
+    </lite-box>
+
+    <vue-file-upload
+            v-if="showAddFile"
+            @on-success-upload="referMater"
+            :params="params"
+            :filters="filters"
+            class="file_upload"
+    ></vue-file-upload>
+</simple-card>

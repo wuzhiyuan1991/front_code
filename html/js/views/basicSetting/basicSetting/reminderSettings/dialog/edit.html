@@ -1,0 +1,17 @@
+
+<div class="edit-pop-container">
+    <div class="epc-content">
+            <vue-bootstrap-table :columns="tableModel.columns"
+                                 :url="tableModel.url"
+                                 :selected-datas.sync="tableModel.selectedDatas"
+                                 v-ref:main-table
+                    >
+            </vue-bootstrap-table>
+    </div>
+    <div class="epc-footer">
+        <!--<iv-button @click="doSave">保存</iv-button>-->
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t('gb.comnon.save')}}</vi-button>
+    </div>
+
+</div>
+

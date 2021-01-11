@@ -1,0 +1,81 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  :label="$t('gb.common.postCode')" prop="code">
+						<!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+					</el-form-item>
+					<el-form-item  :label="$t('ori.perm.positName')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.responsibilities')" prop="remarks">
+						<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+
+
+			<div :class="{'rel-info-panel-mask': mainModel.action === 'copy'}">
+			
+			<simple-card class="fip-content-item fixed-table-card">
+				<p slot="title"><i class="basicPng"></i><span>相关告知卡</span></p>
+				<vue-bootstrap-table
+					:url="tableModel.riskCardTableModel.url"
+					:columns="tableModel.riskCardTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					lazy-load
+					v-ref:risk-card-table
+				
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+			</div>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" @click="doClose" icon="close-round">{{$t("gb.common.close")}}</iv-button>
+<!--		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>-->
+<!--		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+<!--		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy2" icon="android-document">复制</iv-button>-->
+<!--		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>-->
+<!--		<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>-->
+<!--		<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost" icon="ios-minus-outline"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+	</div>
+	</div>
+</div>
+<Modal :visible.sync="copyModel.visible" :title="copyModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<iv-checkbox :checked.sync="copyModel.isNeedCopyUser">复制【人员】</iv-checkbox>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSaveCopy" class="pull-right">确定</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible"  @do-save="doSaveUsers"></user-select-modal>

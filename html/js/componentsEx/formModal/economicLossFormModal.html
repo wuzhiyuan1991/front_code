@@ -1,0 +1,24 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item v-if="(hiddenFields.indexOf('lostArticle') == -1)" label="损失物品" prop="lostArticle">
+					<iv-input :value.sync="mainModel.vo.lostArticle" :disabled="(disabledFields.indexOf('lostArticle') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('articleNumber') == -1)" label="数量" prop="articleNumber">
+					<iv-input :value.sync="mainModel.vo.articleNumber" :disabled="(disabledFields.indexOf('articleNumber') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('articleUnit') == -1)" label="单位" prop="articleUnit">
+					<iv-input :value.sync="mainModel.vo.articleUnit" :disabled="(disabledFields.indexOf('articleUnit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('totalValue') == -1)" label="价值金额" prop="totalValue">
+					<iv-input :value.sync="mainModel.vo.totalValue" :disabled="(disabledFields.indexOf('totalValue') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

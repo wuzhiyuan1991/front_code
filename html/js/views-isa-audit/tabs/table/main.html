@@ -1,0 +1,241 @@
+<div class="review-container">
+    <!-- 要素树 -->
+    <div class="review-left">
+        <div class="title text-ellipsis" :title="auditTableName">{{auditTableName}}</div>
+        <div class="tree-box">
+            <iv-button type="ghost" :long="true" icon="plus" @click="addFactor">添加要素</iv-button>
+            <ul class="member-select-left-tree" style="margin-top: 5px;height: calc(100% - 40px);" v-show="treeModel.data.length > 0">
+                <iv-tree show-icon :model="treeModel.data" :selected-datas.sync="treeModel.selectedData" :show-checkbox="false" :single-select="true" :trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick"></iv-tree>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 要素 -->
+    <div v-if="showRight === 'factor'" class="review-right" v-show="treeModel.data.length > 0">
+        <div class="top-head">
+            <Icon type="ios-photos"></Icon>
+            <span>{{$t("gb.common.detail")}}</span>
+            <div class="right">
+                <iv-button type="ghost" @click="doAddFactorGroup">添加要素组</iv-button>
+                <iv-button type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+                <iv-button type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+                <!-- <iv-button type="ghost" v-show="!mainModel.isReadOnly" @click.stop="doSaveFactorGroup" icon="android-document">{{$t("gb.comnon.save")}}</iv-button> -->
+                <!-- <iv-button type="ghost" v-show="!mainModel.isReadOnly" @click="doCancel" icon="ios-information-outline">{{$t("gb.common.cancel")}}</iv-button> -->
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="top-body">
+            <!--<p slot="title"><i class="basicPng"></i><span>{{$t("gb.common.basicInfo")}}</span></p>-->
+            <el-form class="clearfix" :model="factorModel.vo">
+                <!--<el-form-item prop="code" v-show="factorVo.code" class="small-info-box" :label="$t('gb.common.code')">-->
+                <!--<span>{{factorVo.code}}</span>-->
+                <!--</el-form-item>-->
+                <el-form-item prop="name" class="small-info-box" label="要素名称">
+                    <span>{{factorVo.name}}</span>
+                </el-form-item>
+                <!--<el-form-item prop="weight" class="small-info-box" label="权重">
+                    <span>{{displayWeight}}</span>
+                </el-form-item>-->
+                <!--<el-form-item prop="weight" class="small-info-box" label="剩余权重">
+                    <span>{{displayUnusedWeight}}</span>
+                </el-form-item>-->
+            </el-form>
+        </div>
+    </div>
+    <div v-if="showRight === 'factor'" class="review-right" v-show="treeModel.data.length === 0">
+        <p class="empty-tip">请点击左侧"添加要素"按钮添加要素</p>
+    </div>
+    <!-- 审核项 -->
+    <div v-if="showRight === 'checkItem'" class="review-right">
+        <div class="top-head">
+            <Icon type="ios-photos"></Icon>
+            <span>{{$t("gb.common.detail")}}</span>
+            <div class="right">
+                <!-- <iv-button icon="android-document" @click.stop="doSaveFactor" type="ghost">{{$t("gb.comnon.save")}}</iv-button> -->
+                <!-- <iv-button type="ghost" @click="doCancel" icon="ios-information-outline">{{$t("gb.common.cancel")}}</iv-button> -->
+                <iv-button type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+                <iv-button type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="top-body"  v-el:right-content >
+            <!--<p slot="title"><i class="basicPng"></i><span>{{$t("gb.common.basicInfo")}}</span></p>-->
+            <el-form class="clearfix" :model="factorGroupModel.vo">
+                <!--<el-form-item prop="code" v-show="factorGroupVo.code" class="small-info-box" :label="$t('gb.common.code')">-->
+                <!--<span>{{factorGroupVo.code}}</span>-->
+                <!--</el-form-item>-->
+                <el-form-item prop="name" class="small-info-box" label="要素组名称">
+                    <span>{{factorGroupVo.name}}</span>
+                </el-form-item>
+                <el-form-item prop="auditElement.name" class="small-info-box" label="上级分类">
+                    <span>{{factorGroupVo.auditElement.name}}</span>
+                </el-form-item>
+            </el-form>
+            <div class="top-head" style="line-height: 26px;padding: 10px 0;">
+                <i class="basicPng"></i>
+                <span>审核项</span>
+                <div class="right">
+                    <a @click="addItemGroup" style="margin-right: 10px;">
+                        <Icon type="plus" style="margin-right: 4px;"></Icon>添加分组</a>
+                    <a @click="showItemInfo = !showItemInfo">
+                        <Icon style="margin-right: 4px;" :type="showItemInfo ? 'arrow-up-b' : 'arrow-down-b'"></Icon>{{showItemInfo ? '收起' : '展开'}}</a>
+                </div>
+
+            </div>
+            <div class="table-box">
+                <div v-for="(index,item) in groups" class="review-item" v-show="showItemInfo">
+                    <div class="review-item-title">
+                        <span style="margin-right: 10px">{{item.name}}</span>
+                        <iv-button @click="doSort('up',groups,item,index)" type="text" icon="arrow-up-a"></iv-button>
+                        <iv-button @click="doSort('down',groups,item,index)" type="text" icon="arrow-down-a" style="margin-top:1px;"></iv-button>
+                        <iv-button @click="doEditItemGroup(item)" type="text" icon="edit"></iv-button>
+                        <iv-button @click="doDelete(item,index)" class="right" type="text" icon="trash-a">删除</iv-button>
+                        <iv-button @click="addItem(item, index)" class="right" type="text" icon="plus" style="margin-right: 5px;">增加</iv-button>
+                    </div>
+                    <table class="table mytranstablexx" style="table-layout: fixed;">
+                        <colgroup>
+                            <col style="width: 60px;">
+                            <col>
+                            <col>
+                            <col style="width: 100px;">
+                            <col style="width: 80px;">
+                            <col style="width: 120px;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>编码</th>
+                            <th>审核项内容</th>
+                            <th>评分说明</th>
+                            <th>评分标准</th>
+                            <th class="text-align-r">分值</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody v-for="(idx, groupItem) in item.children">
+                        <tr>
+                            <td>{{idx + 1}}</td>
+                            <td>{{{replaceReturnKey(groupItem.name)}}}</td>
+                            <td>{{{replaceReturnKey(groupItem.remark)}}}</td>
+                            <td>{{displayCriterion(groupItem.auditCriterion)}}</td>
+                            <td class="text-align-r">{{groupItem.auditCriterion == 15 ? '/' : groupItem.score}}</td>
+                            <td class="text-align-r" style="white-space: normal !important;">
+                                <iv-button @click="addItem(groupItem, idx, true)" type="text" icon="plus"></iv-button>
+                                <iv-button @click="doSort('up',item,groupItem,idx)" type="text" icon="arrow-up-a"></iv-button>
+                                <iv-button @click="doSort('down',item,groupItem,idx)" type="text" icon="arrow-down-a"></iv-button>
+                                <iv-button @click="doEditItem(item,groupItem,idx)" type="text" icon="edit"></iv-button>
+                                <iv-button @click="doDelete(groupItem,index)" type="text" icon="trash-a"></iv-button>
+                            </td>
+                        </tr>
+                        <tr class="sub-item-tr" v-for="(i, itemSet) in groupItem.children">
+                            <td></td>
+                            <td>-&nbsp;{{{replaceReturnKey(itemSet.name)}}}</td>
+                            <td>{{{replaceReturnKey(itemSet.remark)}}}</td>
+                            <td>{{displayCriterion(itemSet.auditCriterion)}}</td>
+                            <td class="text-align-r">{{itemSet.auditCriterion == 15 ? '/' : itemSet.score}}</td>
+                            <td class="text-align-r" style="white-space: normal !important;">
+                                <iv-button @click="doSort('up',groupItem,itemSet,i)" type="text" icon="arrow-up-a" style="padding-bottom:1px;"></iv-button>
+                                <iv-button @click="doSort('down',groupItem,itemSet,i)" type="text" icon="arrow-down-a" style="padding-top:2px;"></iv-button>
+                                <iv-button @click="doEditItem(groupItem,itemSet,i)" type="text" icon="edit"></iv-button>
+                                <iv-button @click="doDelete(itemSet,index)" type="text" icon="trash-a"></iv-button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <Modal :visible.sync="displayModel.itemGroupModalVisible" title="添加审核项分组" width="500" :footer-hide="true" class="userSelectModal">
+
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form :model="itemGroupModel.vo" :rules="itemGroupModel.rules" v-ref:itemgroupform>
+                    <el-form-item label="分组名称" prop="name">
+                        <iv-input :value.sync="itemGroupModel.vo.name"></iv-input>
+                    </el-form-item>
+                    <div class="form-group h30"></div>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSaveItemGroup" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+
+    <Modal :visible.sync="displayModel.itemModalVisible" title="新增" width="750" :footer-hide="true" class="userSelectModal">
+
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form :model="itemModel.vo" :rules="itemModel.rules" v-ref:itemform style="width:670px;">
+                    <!--<el-form-item label="编码" prop="code">-->
+                    <!--<iv-input :value.sync="itemModel.vo.code"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item label="审核项内容" prop="name">
+                        <iv-input :rows="3" type="textarea" :value.sync="itemModel.vo.name"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="评分说明" prop="remark">
+                        <iv-input :rows="5" type="textarea" :value.sync="itemModel.vo.remark"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="评分标准" prop="auditCriterion">
+                        <i-select :list="itemModel.criterionList" :model.sync="itemModel.vo.auditCriterion" :disabled="itemModel.vo.disabled">
+                            <i-option v-for="item in itemModel.criterionList" :value="item.id">{{ item.name }}</i-option>
+                        </i-select>
+                    </el-form-item>
+                    <el-form-item label="分值" prop="score" v-if="itemModel.vo.auditCriterion != 15">
+                        <iv-input :value.sync="itemModel.vo.score" type="number" style="width:260px;"></iv-input>
+                    </el-form-item>
+                    <div class="form-group h30"></div>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSaveItem" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+
+    <Modal :visible.sync="displayModel.factorModalVisible" @on-cancel="doCancel" title="编辑要素" width="500" :footer-hide="true" class="userSelectModal">
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form :model="factorModel.vo" :rules="factorModel.rules" v-ref:factorform>
+                    <el-form-item label="要素名称" prop="name">
+                        <iv-input :value.sync="factorModel.vo.name"></iv-input>
+                    </el-form-item>
+                    <!--<el-form-item label="权重" prop="weight">
+                        <iv-input type="number" :value.sync="factorModel.vo.weight">
+                            <span slot="append">%</span>
+                        </iv-input>
+                    </el-form-item>-->
+                    <div class="form-group h30"></div>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSaveFactor" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+
+    <Modal :visible.sync="displayModel.factorGroupModalVisible" title="编辑要素分组" width="500" :footer-hide="true" class="userSelectModal">
+
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form :model="factorGroupModel.vo" :rules="factorGroupModel.rules" v-ref:factorgroupform>
+                    <el-form-item label="要素分组名称" prop="name">
+                        <iv-input :value.sync="factorGroupModel.vo.name"></iv-input>
+                    </el-form-item>
+                    <div class="form-group h30"></div>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSaveFactorGroup" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+</div>
+
+<style>
+    .mytranstablexx td{
+        white-space: pre-wrap !important;
+        word-break: break-all !important;
+    }
+</style>

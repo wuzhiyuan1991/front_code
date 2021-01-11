@@ -1,0 +1,87 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="12">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="12">
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                       
+                    </div>
+                    $main-header-refresh-button
+                    <div class="main-special-box-1"  >
+                        <a @click="doFilterBySpecial('all')" :class="{'checked': filterTabId === 'all'}"  class="main-special-item"  href="javascript:void(0);" id="allStyle" style="background-color: #eee;border-color: #aaa;">全部</a>
+                        <a @click="doFilterBySpecial('self')" :class="{'checked': filterTabId === 'self'}" class="main-special-item"  href="javascript:void(0);" >个人发布</a>
+                        <a @click="doFilterBySpecial('reply')" :class="{'checked': filterTabId === 'reply'}" class="main-special-item"  href="javascript:void(0);" >我的回复</a>
+                        
+                        
+                    </div>
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>  
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('edit')&&isCreator&&isState && tableModel.selectedDatas.length==1" @click="doUpdate">编辑</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('publish') && tableModel.selectedDatas[0].state == 0 && isCreator && tableModel.selectedDatas.length==1" @click="doConfirmCallback('doPublish','确定发布?')">{{$t("gb.common.release")}}</vi-button>
+                    <!-- <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('enable')" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+                    <vi-button type="text" class="mp-header-item-btn" v-if="tableModel.selectedDatas.length==1&&tableModel.selectedDatas[0].state == 1&& hasAuth('reply')" @click="doReply">回复</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('delete')&&isCreator" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                   
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <div style="position: absolute;bottom: 11px;left: 20px;" >
+                <iv-checkbox :checked.sync="isCheckKind" :middle="isHalfCheck" :disabled="" v-if="moreSelect" @change.stop="checkSelect"> 多选
+                </iv-checkbox>
+              </div>
+            <!-- <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table> -->
+            <vue-bootstrap-table                 
+                :selected-datas.sync="tableModel.selectedDatas"
+                 :setting="tableModel" 
+                 :page-size-opts="[20,50,100]"
+                  :code="moduleCode" 
+                  :resizeable="true" 
+                  show-loading 
+                  :show-scroll="true" 
+                  @on-click-cell="doTableCellClick" 
+                  :url.sync="tableModel.url"
+                  v-ref:main-table
+            ></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<aside :show.sync="detailModel.show" class="middle-info-aside">
+    <detail-panel></detail-panel>
+</aside>
+<!--导入-->
+<modal
+  :visible.sync="relpyModal.show"
+  title="回复"
+  :footer-hide="true"
+  width="600"
+>
+  <div class="relpyModal" style="background-color: white;padding: 10px 20px;">
+    <textarea
+      name="kindEditor"
+      id="reply"
+      maxlength="2000"
+      :visible.sync="tableModel.reply"
+      v-html="tableModel.reply"
+      placeholder=""
+    ></textarea>
+
+    <div class="sw-co-footer">
+      <iv-button type="primary" @click="doSaveData" style="margin-right: 20px;"
+        >确定</iv-button
+      >
+      <iv-button @click="doClosePage">取消</iv-button>
+    </div>
+  </div>
+</modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>

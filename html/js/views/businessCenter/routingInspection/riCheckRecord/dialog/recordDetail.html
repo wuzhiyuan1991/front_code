@@ -1,0 +1,86 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="height: 350px;">
+            <el-tabs style="width:100%;" :active-name="mainModel.tabName" @tab-click="changeTab">
+
+                <el-tab-pane :label="$t('gb.common.basic')">
+                    <ul class="layout-l-t-box">
+                        <li class="layout-l-t-item">
+                            <div class="label-m">巡检内容</div>
+                            <div class="txt">{{vo.name}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">巡查评判标准</div>
+                            <div class="txt">{{{vo.checkBasis}}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">上次巡检结果</div>
+                            <div class="txt">{{{vo.lastCheckResult}}}</div>
+                            <a v-if="showLastTime" href="javascript:void(0);" @click="openNewTab(1)" style="vertical-align: top;">隐患跟进</a>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">本次巡检结果</div>
+                            <div class="txt">{{{vo.checkResult}}}</div>
+                            <a v-if="showThisTime" href="javascript:void(0);" @click="openNewTab(2)" style="vertical-align: top;">隐患跟进</a>
+                        </li>
+                        <li class="layout-l-t-item" v-show="isParam">
+                            <div class="label-m">参考标准</div>
+                            <ul style="display: flex;justify-content: flex-start;flex: 1;text-align: center;">
+                                <li style="margin-right:30px;" v-if="resultParams.value1 || resultParams.value1=='0'">
+                                    <div style="height: 30px;">{{resultParams.value1}}</div>
+                                    <div>最大</div>
+                                </li>
+                                <li style="margin-right:30px;" v-if="resultParams.value2 || resultParams.value2=='0'">
+                                    <div style="height: 30px;">{{resultParams.value2}}</div>
+                                    <div>较大</div>
+                                </li>
+                                <li style="margin-right:30px;" v-if="resultParams.value3 || resultParams.value3=='0'">
+                                    <div style="height: 30px;">{{resultParams.value3}}</div>
+                                    <div>标准</div>
+                                </li>
+                                <li style="margin-right:30px;" v-if="resultParams.value4 || resultParams.value4=='0'">
+                                    <div style="height: 30px;">{{resultParams.value4}}</div>
+                                    <div>较小</div>
+                                </li>
+                                <li style="margin-right:30px;" v-if="resultParams.value5 || resultParams.value5=='0'">
+                                    <div style="height: 30px;">{{resultParams.value5}}</div>
+                                    <div>最小</div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">专业</div>
+                            <div class="txt">{{specialtyText}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">问题发现人</div>
+                            <div class="txt">{{vo.problemFinder}}</div>
+                        </li>
+                        <li class="layout-l-t-item">
+                            <div class="label-m">现场情况描述</div>
+                            <div class="txt">{{vo.problem}}</div>
+                        </li>
+                    </ul>
+
+                </el-tab-pane>
+
+                <el-tab-pane :label="$t('gb.common.picture')">
+                    <image-view :images="picList" :show-close="false"></image-view>
+                </el-tab-pane>
+
+                <el-tab-pane :label="$t('gb.common.video')">
+                    <lite-box v-for="video in videoList" :show-close="false" @click="doPlay(video)">
+                        <img :src="convertPath()">
+                    </lite-box>
+                </el-tab-pane>
+
+            </el-tabs>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+    <Modal :visible.sync="playModel.show" width="450" class="type-video" :footer-hide="true">
+        <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+    </Modal>
+</Modal>

@@ -1,0 +1,108 @@
+<simple-card style="min-width:870px;" class="ptw-base-info">
+    <div slot="title" >
+        <!--<div class="flex-layout-between">-->
+            <p style="height:21px;">气体检测</p>
+        <!--</div>-->
+    </div>
+    <div class="flex-layout pd10">
+         <span class="flex-flex-1 mr10 link-btn-color">
+            <iv-checkbox :checked.sync="model.enableGasDetection" true-value="1" false-value="0">气体检测</iv-checkbox>
+        </span>
+        <div style="width:760px;">
+            <div style="border:1px solid #ddd;padding:10px;" :class="{'rel-info-panel-mask border-style-dashed':model.enableGasDetection!='1'}">
+                <div class="ele-disabled-mask" v-show="model.enableGasDetection!=1"></div>
+                <div class="pdt10">
+                    <p class="base-border-bottom padding-botton-5">需要检测的气体</p>
+                    <div class="flex-layout mb20 mt20" style="align-items: flex-start;" v-for="item of gasTypeList">
+                        <div class="form-item-label mr10">
+                            {{item.name}}
+                        </div>
+                        <div class="flex-flex-1 border-radius-0 pd10 bgw h80 ele-disabled ivu-checkbox-wrapper-flex">
+                            <iv-checkbox-group class="group-vertical">
+                                <iv-checkbox disabled v-for="item of getGasItems(item)">{{item.name}}</iv-checkbox>
+                            </iv-checkbox-group>
+                        </div>
+                        <div>
+                            <span class="link-ele pdl5" @click="doCustomContent(item.type)">定制内容</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb20 ">
+                    <p class="base-border-bottom padding-botton-5">作业前检查</p>
+                    <div class="flex-layout mb10 mt20">
+                        <span class="form-item-label mr10">检测地点</span>
+                        <span class="flex-grow1 form-disabled">操作人录入</span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">检测时间</span>
+                        <span class="flex-grow1 form-disabled">操作人录入（年月日时分）</span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10"></span>
+                        <span class="flex-grow1 ele-disabled border-radius-0">
+                    <vue-bootstrap-table v-ref:table-task-level
+                                         :show-pager="false"
+                                         :lazy-load="true"
+                                         :columns="tableModel.preCheckRecord.columns"
+                                         :values.sync="tableModel.preCheckRecord.values"
+                                         :selected-datas.sync="tableModel.preCheckRecord.selectedDatas"
+                                         :page-size-opts=[3]
+                    ></vue-bootstrap-table>
+                </span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">检测结论</span>
+                        <span class="flex-grow1 form-disabled">操作人签名</span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">授权气体检测员签名</span>
+                        <span class="flex-grow1 form-disabled">操作人录入（年月日时分）</span>
+                    </div>
+                </div>
+                <!--------作业中检查------------------------>
+                <div class="mb20">
+                    <p class="base-border-bottom padding-botton-5">作业中检查</p>
+                    <div class="flex-layout mb10 mt20">
+                        <span class="form-item-label mr10">检查模式</span>
+                        <span class="flex-grow1 form-disabled">
+                    <iv-radio-group :model.sync="gasCheckType">
+                        <iv-radio disabled value="1">定期检查</iv-radio>
+                        <iv-radio disabled value="2">持续检查</iv-radio>
+                    </iv-radio-group>
+                </span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">检测地点</span>
+                        <span class="flex-grow1 form-disabled">操作人录入</span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">检测时间</span>
+                        <span class="flex-grow1 form-disabled">操作人录入（年月日时分）</span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10"></span>
+                        <span class="flex-grow1 ele-disabled border-radius-0">
+                    <vue-bootstrap-table v-ref:table-checking-record
+                                         :show-pager="false"
+                                         :lazy-load="true"
+                                         :columns="tableModel.checkingRecord.columns"
+                                         :values.sync="tableModel.checkingRecord.values"
+                                         :page-size-opts=[3]
+                    ></vue-bootstrap-table>
+                </span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">检测结论</span>
+                        <span class="flex-grow1 form-disabled">操作人录入</span>
+                    </div>
+                    <div class="flex-layout mb10">
+                        <span class="form-item-label mr10">授权气体检测员签名</span>
+                        <span class="flex-grow1 form-disabled">操作人签名（年月日时分）</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="form-disabled" style="padding:10px;" :class="{'ele-enable':model.enableGasDetection==1}">-->
+</simple-card>

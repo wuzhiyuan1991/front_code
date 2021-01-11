@@ -1,0 +1,63 @@
+
+<div>
+    <div class="flex-layout-vertical">
+        <div class="flex-layout-between list-head">
+            <div class="link-btn-box base-title-h" style="padding-left:15px;" v-show="showTool">
+                <template v-if="selectedIndex>-1 && values && values.length>0">
+                    <span @click="edit"><Icon type="edit"></Icon>编辑</span>
+                    <span @click="movePrev" v-show="selectedIndex>0 && values.length>1"><Icon type="arrow-up-a"></Icon>上移</span>
+                    <span @click="moveNext(-1)" v-show="selectedIndex<values.length-1"><Icon type="arrow-down-a"></Icon>下移</span>
+                    <span @click="delItem"><Icon type="trash-a"></Icon>删除单个</span>
+                </template>
+                <span v-if="values && values.length>0" @click="delAll"><Icon type="trash-a"></Icon> 删除所有</span>
+                <span @click="add"><Icon type="plus"></Icon>添加</span>
+            </div>
+            <div ><slot name="btn"><iv-button v-if="hasSave">保存</iv-button></slot></div>
+        </div>
+        <div class="list-box list-box-border base-height mt5" :style="getStyleHeight()">
+            <p  class="list-item" @click="contentClick($index)"
+                style="padding-left:15px;padding-left: 15px;padding-right: 15px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;line-height: 2;display: block"
+                v-for="item of values"
+                :class="{'selected':$index===selectedIndex}"
+                :title="getContent(item)"
+            >
+                {{getContent(item)}}
+            </p>
+        </div>
+    </div>
+
+    <Modal :visible.sync="modalAdd.show"  :title="modalAdd.title" :footer-hide="true">
+        <div class="edit-pop-container">
+            <div class="epc-content">
+                <el-form :model="modalAdd.form" :rules="modalAdd.rules" v-ref:ruleform>
+                    <el-form-item  label=""  label-width=0>
+                        <p>录入选项值（每行一个）</p>
+                    </el-form-item>
+                    <el-form-item  label="" prop="itemsText" label-width=0 style="width:470px;">
+                        <iv-input type="textarea" :rows="12"  :value.sync="modalAdd.form.itemsText" ></iv-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="modalAddOk" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                <vi-button type="primary" @click="modalAddCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+    <Modal :visible.sync="modalEdit.show"  :title="modalEdit.title" :footer-hide="true">
+        <div class="edit-pop-container">
+            <div class="epc-content">
+                <el-form :model="modalEdit.form" :rules="modalEdit.rules" v-ref:modalEdit>
+                    <el-form-item  label="项内容" prop="name">
+                        <iv-input type='textarea' :rows="6" :value.sync="modalEdit.form.name" ></iv-input>
+<!--                        <iv-input type="textarea" :rows="4" :value.sync="modalEdit.form.name" ></iv-input>-->
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="modalEditCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="modalEditOk" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+</div>
+</div>
+    </Modal>
+</div>

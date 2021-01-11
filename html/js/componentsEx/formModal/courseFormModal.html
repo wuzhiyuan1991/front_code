@@ -1,0 +1,90 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="唯一标识" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="课程名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('category') == -1)" label="类型" prop="category">
+						<iv-input :value.sync="mainModel.vo.category" :disabled="(disabledFields.indexOf('category') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('categoryId') == -1)" label="课程类型id(itm_subject，type=1)" prop="categoryId">
+						<iv-input :value.sync="mainModel.vo.categoryId" :disabled="(disabledFields.indexOf('categoryId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('certificationId') == -1)" label="认证类型id(itm_subject，type=3)" prop="certificationId">
+						<iv-input :value.sync="mainModel.vo.certificationId" :disabled="(disabledFields.indexOf('certificationId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('description') == -1)" label="课程简介" prop="description">
+						<iv-input :value.sync="mainModel.vo.description" :disabled="(disabledFields.indexOf('description') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="禁用标识，" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('effect') == -1)" label="培训效果" prop="effect">
+						<iv-input :value.sync="mainModel.vo.effect" :disabled="(disabledFields.indexOf('effect') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('cloudFile') == -1)" label="封面的文件id" prop="fileId">
+						<input-select :value="mainModel.vo.cloudFile" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('cloudFile') != -1)" @click="(!mainModel.isReadOnly) && (doShowCloudFileSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('frequence') == -1)" label="复培频率" prop="frequence">
+						<iv-input :value.sync="mainModel.vo.frequence" :disabled="(disabledFields.indexOf('frequence') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('language') == -1)" label="语言" prop="language">
+						<iv-input :value.sync="mainModel.vo.language" :disabled="(disabledFields.indexOf('language') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('lastRemindDays') == -1)" label="启用多频率提醒距离培训开始的天数" prop="lastRemindDays">
+						<iv-input :value.sync="mainModel.vo.lastRemindDays" :disabled="(disabledFields.indexOf('lastRemindDays') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('lastRemindFrequence') == -1)" label="多频率提醒的频率" prop="lastRemindFrequence">
+						<iv-input :value.sync="mainModel.vo.lastRemindFrequence" :disabled="(disabledFields.indexOf('lastRemindFrequence') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('level') == -1)" label="三级安全教育" prop="level">
+						<iv-input :value.sync="mainModel.vo.level" :disabled="(disabledFields.indexOf('level') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('precondition') == -1)" label="学习条件" prop="precondition">
+						<iv-input :value.sync="mainModel.vo.precondition" :disabled="(disabledFields.indexOf('precondition') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('purpose') == -1)" label="培训目的" prop="purpose">
+						<iv-input :value.sync="mainModel.vo.purpose" :disabled="(disabledFields.indexOf('purpose') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" label="备注" prop="remark">
+						<iv-input :value.sync="mainModel.vo.remark" :disabled="(disabledFields.indexOf('remark') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remindDays') == -1)" label="提前提醒天数" prop="remindDays">
+						<iv-input :value.sync="mainModel.vo.remindDays" :disabled="(disabledFields.indexOf('remindDays') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remindType') == -1)" label="提醒标识" prop="remindType">
+						<iv-input :value.sync="mainModel.vo.remindType" :disabled="(disabledFields.indexOf('remindType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('standardizationId') == -1)" label="安全生产标准id(itm_subject，type=2)" prop="standardizationId">
+						<iv-input :value.sync="mainModel.vo.standardizationId" :disabled="(disabledFields.indexOf('standardizationId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('subjectLink') == -1)" label="所有关联分类id" prop="subjectLink">
+						<iv-input :value.sync="mainModel.vo.subjectLink" :disabled="(disabledFields.indexOf('subjectLink') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('trainHour') == -1)" label="培训课时" prop="trainHour">
+						<iv-input :value.sync="mainModel.vo.trainHour" :disabled="(disabledFields.indexOf('trainHour') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="授课类型" prop="type">
+						<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<cloudfile-select-modal :visible.sync="selectModel.cloudFileSelectModel.visible"  @do-save="doSaveCloudFile"></cloudfile-select-modal>

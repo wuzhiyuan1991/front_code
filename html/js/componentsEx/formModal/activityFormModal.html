@@ -1,0 +1,23 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="内容" prop="content">
+						<iv-input :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="类型" prop="type">
+						<!--<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<i-select   :list="mainModel.type" :model.sync="mainModel.vo.type">
+							<i-option v-for="item in mainModel.type " :value="item.type">{{ item.name }}</i-option>
+						</i-select>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<leadaccstate-select-modal single-select :visible.sync="mainModel.showLeadAccStateSelectModal"  @do-save="doSaveLeadAccState"></leadaccstate-select-modal>
+<intentionaccstate-select-modal single-select :visible.sync="mainModel.showIntentionAccStateSelectModal"  @do-save="doSaveIntentionAccState"></intentionaccstate-select-modal>

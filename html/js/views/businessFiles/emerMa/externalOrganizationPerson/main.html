@@ -1,0 +1,67 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <!-- <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button> -->
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <!-- <iv-dropdown-item>
+                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item> -->
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <!-- <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"
+                               @click="doAdd4Copy">复制
+                    </vi-button>
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row> -->
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- Legacy模式 -->
+<!--
+<emergroup-form-modal
+		:visible.sync="formModel.emerGroupFormModel.show"
+		@do-save="doSaveEmerGroup"
+		v-ref:emergroup-form-modal>
+</emergroup-form-modal>
+-->
+
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>

@@ -1,0 +1,127 @@
+<div class="tab-container">
+    <div class="main-panel" style="overflow-y: auto;">
+        <!--
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                        <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                                   @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                        </vi-button>
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        -->
+        <div class="mp-content">
+            <!--巡检结果-->
+            <simple-card  :show-content.sync="mainModel.resultRShow">
+                <p slot="title" @click.prevent="toggleSetItem('resultRShow')" class="checkRe">巡检结果正确</p>
+                <a slot="extra" @click.prevent="doAddResult(1)">
+                    <span>添加</span>
+                </a>
+                <a slot="extra" @click.prevent="toggleSetItem('resultRShow')">
+                    <span v-if="mainModel.resultRShow"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+
+                <vue-bootstrap-table
+                        :url="resultTableModel.r_url"
+                        :columns="resultTableModel.columns"
+                        :page-size-opts="[20,50,100]"
+                        :resizeable="true"
+                        show-loading
+                        :show-empty-row="false"
+                        :show-scroll="true"
+                        @on-click-cell="doTableCellClick"
+                        @on-edit-row="doShowRResult"
+                        @on-del-row="doRemoveRResult"
+                        @on-move-row="doMoveRResult"
+                        v-ref:rresult-table
+                ></vue-bootstrap-table>
+
+            </simple-card>
+
+            <!--巡检结果-->
+            <simple-card  :show-content.sync="mainModel.resultEShow">
+                <p slot="title" @click.prevent="toggleSetItem('resultEShow')" class="checkRe">巡检结果错误</p>
+                <a slot="extra" @click.prevent="doAddResult(0)">
+                    <span>添加</span>
+                </a>
+                <a slot="extra" @click.prevent="toggleSetItem('resultEShow')">
+                    <span v-if="mainModel.resultEShow"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+                <vue-bootstrap-table
+                        :url="resultTableModel.e_url"
+                        :columns="resultTableModel.columns"
+                        :page-size-opts="[20,50,100]"
+                        :resizeable="true"
+                        show-loading
+                        :show-empty-row="false"
+                        :show-scroll="true"
+                        @on-click-cell="doTableCellClick"
+                        @on-edit-row="doShowRResult"
+                        @on-del-row="doRemoveRResult"
+                        @on-move-row="doMoveRResult"
+                        v-ref:eresult-table
+                ></vue-bootstrap-table>
+
+            </simple-card>
+
+            <!--巡检类型-->
+            <simple-card  :show-content.sync="mainModel.typeShow">
+                <p slot="title" @click.prevent="toggleSetItem('typeShow')" class="checkRe">巡检类型</p>
+                <a slot="extra" @click.prevent="doAddType">
+                    <span>添加</span>
+                </a>
+                <a slot="extra" @click.prevent="toggleSetItem('typeShow')">
+                    <span v-if="mainModel.typeShow"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+                <vue-bootstrap-table
+                        :url="typeTableModel.url"
+                        :columns="typeTableModel.columns"
+                        :page-size-opts="[20,50,100]"
+                        :resizeable="true"
+                        show-loading
+                        :show-empty-row="false"
+                        :show-scroll="true"
+                        @on-click-cell="doTableCellClick"
+                        @on-edit-row="doShowType"
+                        @on-del-row="doRemoveType"
+                        @on-move-row="doMoveType"
+                        v-ref:type-table
+                ></vue-bootstrap-table>
+
+            </simple-card>
+        </div>
+    </div>
+</div>
+

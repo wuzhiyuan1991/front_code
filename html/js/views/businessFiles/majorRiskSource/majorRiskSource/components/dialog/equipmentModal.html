@@ -1,0 +1,47 @@
+<Modal v-if="load" :title="title" :visible.sync="visible">
+    <div class="edit-pop-container">
+        <div class="epc-content repair-popper">
+            <div style="max-height: 500px;width:100%;" class="flex-grow1 pd10">
+                <el-form :model="model" :rules="rules" v-ref:form>
+                    <el-form-item label="设备名称" prop="name">
+                        <iv-input :value.sync="model.name"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="数量" prop="quantity">
+                        <iv-input type="number" :value.sync="model.quantity"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="规格型号" prop="specification">
+                        <iv-input :value.sync="model.specification"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="储存介质" prop="storageMedium">
+                        <iv-input :value.sync="model.storageMedium"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="生产商家" prop="manufacturer">
+                        <iv-input :value.sync="model.manufacturer"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="出厂日期" prop="productionDate">
+                        <date-picker format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" type="date"
+                            :selected-date.sync="model.productionDate"></date-picker>
+                    </el-form-item>
+                    <el-form-item label="所属部门" prop="orgId" >
+                        <department-tree-select default-comp-id  :id.sync="model.orgId">
+                        </department-tree-select>
+                                </el-form-item>
+                    <el-form-item label="属地" prop="dominationAreaId">
+                        <cascade-input-select :value="model.dominationArea" :cascade-id="model.orgId"
+                                              @click="doShowDominationAreaSelectModal">
+                        </cascade-input-select>
+                    </el-form-item>
+
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <template slot="footer">
+        <vi-Button type="ghost" size="large" @click="doCancel">取消</vi-Button>
+        <vi-Button type="primary" size="large" @click="doSave">保存</vi-Button>
+    </template>
+    <domination-area-select-modal single-select :visible.sync="selectModel.dominationAreaSelectModel.visible"
+                                 :filter-data="selectModel.dominationAreaSelectModel.filterData" @do-save="doSaveDominationArea">
+    </domination-area-select-modal>
+</Modal>
+

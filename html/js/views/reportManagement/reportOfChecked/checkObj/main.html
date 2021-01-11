@@ -1,0 +1,82 @@
+
+<div class="tab-container report">
+	<div class="main-panel">
+		<div class="mp-content">
+			<iv-row style="height:100%;">
+				<iv-col span="4" style="height:100%;">
+					<tree-star :model="qryModel.list"
+						:single-select="true"
+						id-attr="id"
+						pid-attr="parentId"
+						display-attr="name"
+						:show-checkbox="false"
+						@on-title-click="pageReset"
+						@on-star="doTreeStar"
+						@on-del-node="doTreeDel"
+						@on-tree-node-click="loadQryParam">
+					</tree-star>
+				</iv-col>
+				<iv-col span="20" style="height:100%;">
+					<div class="mp-header formTitle" style="margin-left: 10px;">
+						<div class="basic">{{title}}</div>
+						<form id="gridSearchHead">
+						</form>
+						<!-- 弹窗按钮   -->
+						<div class="grid_tool">
+						</div>
+						<div id="dialog-form" style="display: none;"></div>
+					</div>
+					<div class="report-qry-head">
+						<el-form :model="qryParam" is-label-vertical v-ref:ruleform>
+							<iv-row>
+								<iv-col span="5">
+									<el-form-item prop="dateRange" :rules="ruleModel.dateRange"  style="width:100%;overflow: inherit;">
+										<vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="3">
+									<el-form-item prop="typeOfRange" :rules="ruleModel.typeOfRange" style="width:100%;overflow: inherit;">
+										<i-select :model.sync="qryParam.typeOfRange" clearable  style="width:100%;"
+													:list="typeOfRanges" placeholder="请选择对象范围"
+													@on-change="changeTypeOfRange">
+									        <i-option v-for="item in typeOfRanges" :value="item.value">{{ item.label }}</i-option>
+									    </i-select>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="7">
+									<el-form-item prop="objRange" :rules="ruleModel.objRange" style="width:100%;overflow: inherit;">
+										<obj-select :type="qryParam.typeOfRange" :values.sync="qryParam.objRange" :disabled="qryParam.typeOfRange == null || qryParam.typeOfRange == ''"></obj-select>
+									</el-form-item>
+								</iv-col>
+								<iv-col span="4" style="padding-top: 6px;">
+									<iv-button @click="doQry('abs')">查询</iv-button>
+									<iv-button @click="saveQry" icon="chevron-down"></iv-button>
+								</iv-col>
+							</iv-row>
+						</el-form>
+					</div>
+					<div class="reportChart">
+						<iv-row type="flex" justify="end">
+							<iv-col>
+								<iv-button type="text" @click="doQry('abs')" :class="{active:qryParam.method == 'abs'}">绝对值</iv-button>
+								<span>|</span>
+								<iv-button type="text" @click="doQry('avg')" :disabled="disableAvg" :class="{active:qryParam.method == 'avg'}">平均值</iv-button>
+								<span>|</span>
+								<iv-button type="text" @click="doQry('trend')" :class="{active:qryParam.method == 'trend'}">趋势</iv-button>
+								<span>|</span>
+								<iv-button type="text" @click="showMore" style="margin-right: 20px;">更多...</iv-button>
+							</iv-col>
+						</iv-row>
+						<vuecharts v-if="charts.show" :options="charts.opt" @chartclick="chartClick"></vuecharts>
+					</div>
+				</iv-col>
+			</iv-row>
+		</div>
+	</div>
+</div>
+<qry-info-edit :show.sync="qryModel.show" :qry-info-id="qryInfoId" :details="qryInfoDetails" @save-successed="saveQrySuccessed"></qry-info-edit>
+<report-more :show.sync="moreModel.show" :qry-param="qryParam"></report-more>
+<component is="check-record-details" :show.sync="drillModel.show" :groups="drillModel.groups"
+	:title="drillModel.title" :base-qry-param="detailsQryParam" 
+	:custom-qry-param="drillModel.customQryParam">
+</component>

@@ -1,0 +1,75 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<div style="margin: 10px 0 10px 8px;">
+					<a href="javascript:void(0);" @click="chooseTemplate" style="margin-right: 42px;" v-show="mainModel.opType === 'create'">参考模版</a>
+				</div>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item  label="工作流编码" prop="code">-->
+						<!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item :label="$t('gb.common.workflowName')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="类型" prop="type">
+                        <i-select :model.sync="mainModel.vo.type" :list="getDataDicList('workflow_type')" v-if="!mainModel.isReadOnly">
+                            <i-option v-for="item in getDataDicList('workflow_type')" :value="item.id">{{ item.value }}</i-option>
+                        </i-select>
+                        <iv-input v-else :value="getDataDic('workflow_type',mainModel.vo.type)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.describe')" prop="description">
+						<iv-input :value.sync="mainModel.vo.description" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="key" prop="modelerKey">-->
+						<!--<iv-input :value.sync="mainModel.vo.modelerKey" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+						<company-tree-select v-if="!mainModel.isReadOnly"  :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input :value="getDataDic('org',mainModel.vo.compId)['compName']" :textonly="mainModel.isReadOnly" v-else></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<simple-card v-show="mainModel.opType !== 'create' && mainModel.opType !== 'copy'">
+				<p slot="title"><i class="basicPng"></i><span>流程配置</span></p>
+				<ul class="modeler-operation-list">
+					<li v-if="hasAuth('condition')">
+						<a v-link="{path: '/workflowCondition', query: {id: mainModel.vo.id, name: mainModel.vo.name, compId: mainModel.vo.compId}}" target="_blank">流程条件设置</a>
+					</li>
+					<li v-if="hasAuth('node')">
+						<a v-link="{path: '/workflowNode', query: {id: mainModel.vo.id, name: mainModel.vo.name, compId: mainModel.vo.compId}}" target="_blank">流程节点设置</a>
+					</li>
+					<li v-if="hasAuth('setting')">
+						<a href="javascript:void(0);" @click="doSearchBpmn()">配置流程图</a>
+					</li>
+				</ul>
+			</simple-card>
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<vi-button v-if="mainModel.isReadOnly && mainModel.vo.status !== '1' && hasAuth('publish')" type="ghost" @click="doDeploy" icon="paper-airplane">{{$t("gb.common.release")}}</vi-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && mainModel.opType !== 'create'" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>
+
+
+<template-model
+		:visible.sync="templateModel.visible"
+		@do-save="setTemplate"
+></template-model>

@@ -1,0 +1,88 @@
+<div class="tab-container">
+  <div class="main-panel">
+    <div class="mp-header formTitle">
+      <iv-row $main-header-row-attr-default-display>
+
+        <iv-col $main-header-condition-div-attr-default>
+          <all-classification $main-header-classification-attr-default></all-classification>
+          <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+          <ul style="display: inline-flex;" v-if="mainModel.bizType == 1">
+            <li @click="doFilterByHseType('all')" :class="{'checked': filterTabId === 'all'}" class="s-result-item">全部
+            </li>
+            <li @click="doFilterByHseType('Health')" :class="{'checked': filterTabId === 'Health'}"
+              class="s-result-item">健康</li>
+            <li @click="doFilterByHseType('Safety')" :class="{'checked': filterTabId === 'Safety'}"
+              class="s-result-item">安全</li>
+            <li @click="doFilterByHseType('Environment')" :class="{'checked': filterTabId === 'Environment'}"
+              class="s-result-item">环境</li>
+            <li @click="doFilterByHseType('todo')" :class="{'checked': filterTabId === 'todo'}" class="s-result-item">
+              待完善</li>
+            <li @click="doFilterByHseType('toImplement')" :class="{'checked': filterTabId === 'toImplement'}"
+              class="s-result-item">待落实</li>
+          </ul>
+          <ul style="display: inline-flex;" v-else>
+            <li @click="doFilterByHseType('all')" :class="{'checked': filterTabId === 'all'}" class="s-result-item">全部
+            </li>
+            <li @click="doFilterByHseType('todo')" :class="{'checked': filterTabId === 'todo'}" class="s-result-item">
+              待完善</li>
+            <li @click="doFilterByHseType('toImplement')" :class="{'checked': filterTabId === 'toImplement'}"
+              class="s-result-item">待落实</li>
+          </ul>
+        </iv-col>
+        <iv-col $main-header-func-div-attr-default>
+          <div class="prelative addButton pull-right">
+            <vi-button v-if="hasAuth('create') && mainModel.bizType" @click.stop="doAdd">{{$t("gb.common.add")}}
+            </vi-button>
+
+            <iv-dropdown trigger="click" placement="bottom-end">
+              <vi-button type="ghost" icon="chevron-down"></vi-button>
+              <iv-dropdown-menu slot="list">
+                <!--<iv-dropdown-item>-->
+                <!--$main-header-fileupload-tag-excel-->
+                <!--</iv-dropdown-item>-->
+                <iv-dropdown-item v-if="hasAuth('export')">
+                  $main-header-div-tag-download-excel
+                </iv-dropdown-item>
+                <iv-dropdown-item>
+                  <div v-if="hasAuth('import') && mainModel.bizType" class="uploadAport" @click="doImport">
+                    <a>{{$t("gb.common.import")}}</a></div>
+                </iv-dropdown-item>
+                $main-header-dropdown-item-tag-common-display
+              </iv-dropdown-menu>
+            </iv-dropdown>
+          </div>
+          $main-header-refresh-button
+        </iv-col>
+      </iv-row>
+      <iv-row $main-header-row-attr-default-hidden>
+        <iv-col span="24">
+          <vi-button type="text" class="mp-header-item-btn">
+            {{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+          </vi-button>
+          <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doUpdateModel">
+            {{$t("gb.common.edition")}}
+          </vi-button>
+          <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn" @click="doDelete">
+            {{$t("gb.common.del")}}
+          </vi-button>
+        </iv-col>
+      </iv-row>
+    </div>
+    <div class="mp-content">
+      <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+    </div>
+  </div>
+</div>
+
+<!-- Legacy模式 -->
+<riskidentification-form-modal :type="'riskidentification'" :visible.sync="formModel.riskIdentificationFormModel.show"
+  :equipment-type.sync="formModel.riskIdentificationFormModel.equipmentType" @do-save="doSaveRiskIdentification"
+  v-ref:riskidentification-form-modal>
+</riskidentification-form-modal>
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+  <detail-panel v-ref:detail @do-update-vo="doUpdateDetail" v-if="showMainPanel"></detail-panel>
+</aside>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url"
+  :import-model.sync="importProgress.show"></import-progress>

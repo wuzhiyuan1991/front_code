@@ -1,0 +1,76 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="编码" prop="code" class="small-info-box" >
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+					</el-form-item>
+					<el-form-item  label="名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="别名" prop="alias" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.alias" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="国家重点监管" prop="dataType" class="small-info-box" >
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.dataType" :list="mainModel.dataTypes" >
+							<i-option  v-for = "type in mainModel.dataTypes" :value="type.id">{{type.name}}</i-option>
+						</i-select>
+						<span v-else>{{dataTypeLabel}}</span>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="类别" prop="checkObjectCatalogClassify.id" class="small-info-box" >
+						<catalog-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.checkObjectCatalogClassify.id" @on-change="onSelectCatalog"></catalog-select>
+						<span v-else>{{mainModel.vo.checkObjectCatalogClassify.name}}</span>
+					</el-form-item>
+
+					<el-form-item  label="CAS编码" prop="casNumber" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.casNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item  label="UN编号" prop="unNumber" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.unNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item  label="最大储量" prop="maxReserves" class="small-info-box" >
+						<iv-input type="number" :value.sync="mainModel.vo.maxReserves" :textonly="mainModel.isReadOnly"  style="width: 120px;"></iv-input>
+						<!--<iv-input-number v-else :value.sync="mainModel.vo.maxReserves" min="0" style="width: 120px;position: relative;top: -1px;"></iv-input-number>-->
+						<iv-input :maxlength="10" :value.sync="mainModel.vo.unit" :textonly="mainModel.isReadOnly" style="width: 80px;" placeholder="单位"></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="备注" full-width prop="description" class="small-info-box" style="width: 600px;">
+						<iv-input type="textarea" :rows="3" class="display-all-line" :value.sync="mainModel.vo.description" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" v-if="mainModel.opType !== 'create'">
+		<div class="rip-item">
+			<file-list-simple-card title="附件" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+	
+</div>
+
+<checkobjectcatalogclassify-select-modal :visible.sync="selectModel.checkObjectCatalogClassifySelectModel.visible" :filter-data="selectModel.checkObjectCatalogClassifySelectModel.filterData"  @do-save="doSaveCheckObjectCatalogClassify"></checkobjectcatalogclassify-select-modal>
+
+
+

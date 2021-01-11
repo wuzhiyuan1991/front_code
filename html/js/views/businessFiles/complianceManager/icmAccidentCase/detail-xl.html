@@ -1,0 +1,109 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故发生日期" prop="accidentDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.accidentDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.accidentDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="人员伤亡" prop="casualties" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.casualties" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="企业声誉" prop="corporateReputation" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.corporateReputation" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="对责任单位的处理建议" prop="deptSuggestions" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.deptSuggestions" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故直接原因" prop="directCause" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.directCause" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故启示和教训" prop="enlightenment" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.enlightenment" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="环境影响" prop="envirImpact" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.envirImpact" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故间接原因" prop="indirectCause" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.indirectCause" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="整改和防范措施" prop="measures" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.measures" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故性质" prop="nature" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_accident_case_nature', mainModel.vo.nature) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.nature" :list="getDataDicList('icm_accident_case_nature')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="对责任人员的处理建议" prop="personSuggestions" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.personSuggestions" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故地点" prop="place" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.place" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故经过" prop="process" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.process" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="财产损失" prop="propertyLoss" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.propertyLoss" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="标题" prop="title" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.title" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故类别" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+
+
+</div>
+
+
+
+

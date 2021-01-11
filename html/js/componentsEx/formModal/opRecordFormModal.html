@@ -1,0 +1,49 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" :label="$t('gb.common.state')" prop="disable">
+						<span v-if="mainModel.isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+						<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('startTime') == -1)" label="作业开始时间" prop="startTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startTime" :disabled="(disabledFields.indexOf('startTime') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startTime" :disabled="(disabledFields.indexOf('startTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('endTime') == -1)" label="作业结束时间" prop="endTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endTime" :disabled="(disabledFields.indexOf('endTime') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endTime" :disabled="(disabledFields.indexOf('endTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="记录类型" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('jse_op_record_type', mainModel.vo.type) }}</span>
+						<i-select :model.sync="mainModel.vo.type" :list="getDataDicList('jse_op_record_type')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('equipNos') == -1)" label="作业全部设备号" prop="equipNos">
+						<iv-input :value.sync="mainModel.vo.equipNos" :disabled="(disabledFields.indexOf('equipNos') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('cardId') == -1)" label="卡票" prop="cardId">
+						<input-select :value="mainModel.vo.opCard" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('opCard') != -1)" @click="(!mainModel.isReadOnly) && (doShowOpCardSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('site') == -1)" label="操作地点" prop="site">
+						<iv-input :value.sync="mainModel.vo.site" :disabled="(disabledFields.indexOf('site') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<opcard-select-modal :visible.sync="selectModel.opCardSelectModel.visible" :filter-data="selectModel.opCardSelectModel.filterData" single-select @do-save="doSaveOpCard"></opcard-select-modal>

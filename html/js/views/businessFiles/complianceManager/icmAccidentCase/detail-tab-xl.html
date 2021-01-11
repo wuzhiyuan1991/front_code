@@ -1,0 +1,269 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button v-if="hasAuth('edit')" type="ghost" @click.stop="doShowIcmAccidentCaseFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+<!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+<!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故发生日期" prop="accidentDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.accidentDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.accidentDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="人员伤亡" prop="casualties" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.casualties" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="企业声誉" prop="corporateReputation" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.corporateReputation" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="对责任单位的处理建议" prop="deptSuggestions" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.deptSuggestions" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故直接原因" prop="directCause" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.directCause" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故启示和教训" prop="enlightenment" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.enlightenment" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="环境影响" prop="envirImpact" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.envirImpact" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故间接原因" prop="indirectCause" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.indirectCause" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="整改和防范措施" prop="measures" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.measures" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故性质" prop="nature" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_accident_case_nature', mainModel.vo.nature) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.nature" :list="getDataDicList('icm_accident_case_nature')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="对责任人员的处理建议" prop="personSuggestions" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.personSuggestions" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故地点" prop="place" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.place" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故经过" prop="process" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.process" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="财产损失" prop="propertyLoss" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.propertyLoss" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="标题" prop="title" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.title" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故类别" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+
+				</el-tab-pane>
+				<el-tab-pane label="资料" key="basTab">
+					<div class="rip-item">
+						<el-form :model="mainModel.vo" class="rip-item-form">
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">基本信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('编码')">
+											<span>{{mainModel.vo.code}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('状态')">
+											<span>{{mainModel.vo.disable}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('所属公司')">
+											<span>{{mainModel.vo.compId}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('所属部门')">
+											<span>{{mainModel.vo.orgId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">详细信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故发生日期')">
+											<span>{{mainModel.vo.accidentDate}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('人员伤亡')">
+											<span>{{mainModel.vo.casualties}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('企业声誉')">
+											<span>{{mainModel.vo.corporateReputation}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('对责任单位的处理建议')">
+											<span>{{mainModel.vo.deptSuggestions}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故直接原因')">
+											<span>{{mainModel.vo.directCause}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故启示和教训')">
+											<span>{{mainModel.vo.enlightenment}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('环境影响')">
+											<span>{{mainModel.vo.envirImpact}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故间接原因')">
+											<span>{{mainModel.vo.indirectCause}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('整改和防范措施')">
+											<span>{{mainModel.vo.measures}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故性质')">
+											<span>{{mainModel.vo.nature}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('对责任人员的处理建议')">
+											<span>{{mainModel.vo.personSuggestions}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故地点')">
+											<span>{{mainModel.vo.place}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故经过')">
+											<span>{{mainModel.vo.process}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('财产损失')">
+											<span>{{mainModel.vo.propertyLoss}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故启示和教训')">
+											<span>{{mainModel.vo.remark}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('标题')">
+											<span>{{mainModel.vo.title}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('事故类别')">
+											<span>{{mainModel.vo.type}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>			
+						</el-form>
+					</div>	
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<div class="rip-item">
+				<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+			</div>
+        -->
+	</div>
+
+</div>
+
+
+<icmaccidentcase-form-modal
+		:visible.sync="formModel.icmAccidentCaseFormModel.show"
+		@do-update="doUpdateIcmAccidentCase"
+		:query-url="formModel.icmAccidentCaseFormModel.queryUrl"
+		v-ref:icmaccidentcase-form-modal>
+</icmaccidentcase-form-modal>
+

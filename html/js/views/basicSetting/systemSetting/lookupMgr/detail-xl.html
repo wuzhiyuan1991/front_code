@@ -1,0 +1,83 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.dictionaryName')" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.type')" prop="type" class="small-info-box">
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.type" :list="getDataDicList('look_up')">
+							<i-option v-for="item in getDataDicList('look_up')" :value="item.id">
+								{{item.value}}
+							</i-option>
+						</i-select>
+						<span v-else>{{getDataDic('look_up', mainModel.vo.type)}}</span>
+					</el-form-item>
+					<el-form-item  label="字典值" prop="value" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.value" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row type="flex" class="bip-content-item">
+					<el-form-item  class="small-info-box" full-width style="width: 600px;" :label="$t('gb.common.remarks')" prop="remarks" >
+						<iv-input type="textarea" :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.lookupItemCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>{{$t("bc.ria.dataDictionary")}}</span></p>
+				<a slot="extra" @click.prevent="cardModel.lookupItemCardModel.showContent = !cardModel.lookupItemCardModel.showContent;" >
+					<span v-if="cardModel.lookupItemCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowLookupItemFormModal4Create" >
+					<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+				</a>
+				<vue-bootstrap-table
+					:url="tableModel.lookupItemTableModel.url"
+					:columns="tableModel.lookupItemTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					:lazy-load="true"
+					@on-click-cell="doTableCellClick"
+					@on-del-row="doRemoveLookupItems"
+					@on-edit-row="doShowLookupItemFormModal4Update"
+					v-ref:lookupitem-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+	</div>
+	
+</div>
+
+
+<lookupitem-form-modal
+		:visible.sync="formModel.lookupItemFormModel.show"
+		@do-save="doSaveLookupItem"
+		@do-update="doUpdateLookupItem"
+		:query-url="formModel.lookupItemFormModel.queryUrl"
+		v-ref:lookupitem-form-modal>
+</lookupitem-form-modal>
+
+

@@ -1,0 +1,114 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <ul style="display: inline-flex;">
+                        <li @click="changeViewMode('all')" v-if="showAllItems" :class="{'checked': viewMode === 'all'}" class="s-result-item">全部文件</li>
+                        <li @click="changeViewMode('auditing')" v-if="showAuditing" :class="{'checked': viewMode === 'auditing'}" class="s-result-item">待审核</li>
+                        <li @click="changeViewMode('audited')" v-if="showAudited" :class="{'checked': viewMode === 'audited'}" class="s-result-item">已审核</li>
+                        <li @click="changeViewMode('reverted')" v-if="showReverted" :class="{'checked': viewMode === 'reverted'}" class="s-result-item">已驳回</li>
+                        <li @click="changeViewMode('deleted')" v-if="showDeleteItem" :class="{'checked': viewMode === 'deleted'}" class="s-result-item">已删除</li>
+                    </ul>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button v-if="hasAuth('audit') && showAuditButton" type="text" class="mp-header-item-btn" @click="doAudit">审核</vi-button>
+                    <vi-button v-if="showAuditButton" type="text" class="mp-header-item-btn" @click="doView">查看</vi-button>
+                    <vi-button v-if="showAuditButton" type="text" class="mp-header-item-btn">
+                        <a :href="convertFilePath(tableModel.selectedDatas[0])">下载</a>
+                    </vi-button>
+
+                    <vi-button v-if="hasAuth('submit') && showSubmitButton" type="text" class="mp-header-item-btn" @click="doSubmit">提交</vi-button>
+                    <vi-button v-if="hasAuth('delete') && showSubmitButton" type="text" class="mp-header-item-btn" @click="doDeleteFile">删除</vi-button>
+
+                    <vi-button v-if="hasAuth('recover') && showDeleteButton" type="text" class="mp-header-item-btn" @click="doRecover">恢复</vi-button>
+                    <vi-button v-if="hasAuth('delete') && showDeleteButton" type="text" class="mp-header-item-btn" @click="doDelete">彻底删除</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default lazy-load></vue-bootstrap-table>
+        </div>
+    </div>
+    <vue-file-upload
+            v-ref:single-uploader
+            style="display: none;"
+            :multi-selection="false"
+            :params="uploadModel.params"
+            @on-before-upload="doUploadBefore"
+            :params-render="uploadParamsRender"
+            @on-success-upload="doUploadSuccess"
+            @on-upload-complete="onUploadComplete"
+            :filters="uploadModel.filters">
+    </vue-file-upload>
+</div>
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+
+<Modal :visible.sync="auditModel.visible" footer-hide title="审核文件">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <p style="font-size: 14px;margin-bottom: 5px;">审核意见：</p>
+            <div>
+                <iv-input type="textarea" :value.sync="auditModel.remark" :rows="4"></iv-input>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doPass(11)" class="pull-right">驳回</vi-button>
+            <vi-button type="primary" @click="doPass(2)" class="pull-right">通过</vi-button>
+        </div>
+    </div>
+</Modal>
+<Modal :visible.sync="submitModel.visible" footer-hide title="提交审核">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <p style="font-size: 14px;margin-bottom: 5px;">备注：</p>
+            <div>
+                <iv-input type="textarea" :value.sync="submitModel.remark" :rows="4"></iv-input>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doChooseFile" class="pull-right">重新上传</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync="recoverModel.visible" footer-hide title="恢复文件">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <p style="font-size: 14px;margin-bottom: 5px;">备注：</p>
+            <div>
+                <iv-input type="textarea" :value.sync="recoverModel.remark" :rows="4"></iv-input>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSureRecover(10)" class="pull-right">恢复</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync="deleteFormModel.visible" :title="deleteFormModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content document-rename">
+            <p style="font-size: 14px;margin-bottom: 5px;">备注：</p>
+            <div>
+                <iv-input type="textarea" :value.sync="deleteFormModel.remark" :rows="4"></iv-input>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doConfirmDeleteFile" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

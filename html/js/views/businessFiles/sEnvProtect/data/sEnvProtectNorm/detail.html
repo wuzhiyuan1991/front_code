@@ -1,0 +1,90 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+				
+					<el-form-item label="监测对象" prop="target">
+						<span v-if="mainModel.opType!='create'">{{ getDataDic('irf_standard_config_target', mainModel.vo.target) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.target" :list="getDataDicList('irf_standard_config_target')" clearable></i-select>
+					</el-form-item>
+					
+					<el-form-item v-if=" mainModel.vo.compId !='9999999999'" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="mainModel.opType=='create'" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<!-- <el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item> -->
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+					</el-form-item>
+					
+
+				</el-form>
+			</simple-card>
+
+	
+
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+				<simple-card class="fip-content-item" >
+					<p slot="title"><i class="basicPng"></i><span>指标详情</span></p>
+					<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowTestUserSelectModal()" >
+					
+					</a>
+					
+					<vue-bootstrap-table
+							:setting="tableModel.attendeesTableModel"
+							@on-click-cell="doTableCellClick"
+							@on-edit-row="doEditData"
+							@on-move-row="doMoveData"
+							v-ref:attendees-table
+					>
+					</vue-bootstrap-table>
+				</simple-card>
+			</div>
+
+		
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<!-- <iv-button type="ghost" i @click.stop="doteal" >处理</iv-button> -->
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button
+		v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete') && mainModel.vo.compId !='9999999999'"
+		type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+<Modal :visible.sync="edit.visible" title="编辑" width="500" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" >
+        
+        <el-form :model="edit.vo" :rules="edit.rules" v-ref:modalruleform>
+            <el-form-item label="名称" prop="title">
+				<iv-input :value.sync="edit.vo.title" ></iv-input>
+            </el-form-item>
+			<el-form-item label="字段名" prop="fieldName">
+                <iv-input :value.sync="edit.vo.fieldName" textonly></iv-input>
+			</el-form-item>
+			
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doCancelEdit" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSaveEdit" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+

@@ -1,0 +1,4 @@
+<div v-if="load">
+    <ptw-info-view :model="permitModel" :workcard="workcard"></ptw-info-view>
+    <preview :visible.sync="previewModel.visible" v-ref:preview></preview>
+</div>

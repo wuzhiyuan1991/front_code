@@ -1,0 +1,26 @@
+<div class="edit-pop-container">
+    <div class="epc-content" style="height: 350px">
+
+        <div style="background-color: #f5f8fa;padding: 10px;font-size: 13px;white-space: pre-wrap;">{{content}}</div>
+
+        <el-tabs style="width:100%;" :active-name="mainModel.tabName" @tab-click="changeTab">
+            <el-tab-pane :label="$t('gb.common.picture')">
+                <image-view :images="picList" :show-close="false"></image-view>
+            </el-tab-pane>
+            <el-tab-pane :label="$t('gb.common.video')">
+                <lite-box v-for="vedio in videoList" :show-close="false" @click="doPlay(vedio)">
+                    <img :src="convertPath()">
+                </lite-box>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+    </div>
+</div>
+<Modal :visible.sync="playModel.show" width="450" class="type-video" :footer-hide="true">
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal :visible.sync="picModel.show" width="400" :footer-hide="true" class="type-pic">
+    <img v-if="picModel.show" :src="convertPicPath(picModel.file,'original')">
+</Modal>

@@ -1,0 +1,135 @@
+<style>
+    .integral-box {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+        background-color: #fff;
+    }
+    .integral-box .mp-header {
+        height: 60px;
+        line-height: 60px;
+        font-size: 16px;
+    }
+    .integral-box-head {
+        height: 55px;
+        padding-left: 20px;
+    }
+    .integral-box .ranking {
+        margin-bottom: 10px;
+        overflow-y: auto;
+        border:1px solid #c8c8c8;
+    }
+    .integral-box .rank-title {
+        background-color: #f5f5f5;
+        padding: 5px 8px;
+        margin-bottom: 5px;
+        border-bottom:1px solid #c8c8c8;
+    }
+    .integral-box .rank-title a {
+        float: right;
+    }
+    .integral-box table {
+        width: 100%;
+        table-layout: fixed;
+        line-height: 24px;
+    }
+    .integral-box table td {
+        padding: 0 8px;
+    }
+    .integral-table .table-content-box {
+        border: 1px solid #c8c8c8;
+        background-color: #fff;
+    }
+    .integral-box-head .el-form-item__vertical_content {
+        padding: 0;
+    }
+    .integral-box-head .el-form-item_vertical {
+        overflow: inherit;
+    }
+</style>
+<div class="reportChartMain integral-box">
+    <div class="mp-header formTitle">{{qryInfoModel.title}}</div>
+    <div class="integral-box-head">
+        <el-form :model="qryInfoModel.vo" :rules="qryInfoModel.rules" is-label-vertical v-ref:ruleform>
+            <iv-row style="padding-top: 12px;">
+                <iv-col span="2">
+                    <el-form-item prop="beginDate" style="width:100%">
+                        <vi-date-picker type="month" :value.sync="qryInfoModel.vo.beginDate"></vi-date-picker>
+                    </el-form-item>
+                </iv-col>
+                <iv-col style="text-align: center;line-height: 30px;float:left;width:auto">
+                    <span>～</span>
+                </iv-col>
+                <iv-col span="2" style="padding-left:0.625%">
+                    <el-form-item prop="endDate" style="width:100%">
+                        <vi-date-picker type="month" :value.sync="qryInfoModel.vo.endDate"></vi-date-picker>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="2">
+                    <el-form-item prop="typeOfRange" style="width:100%;overflow: inherit;"  class="select-range-color" placement="left">
+                        <i-select class="select-color" :model.sync="qryInfoModel.vo.typeOfRange"  style="width:100%;font-size: 12px" v-ref:select
+                                  :list="qryInfoModel.typeOfRanges" placeholder="请选择对象范围"
+                                  @on-change="changeTypeOfRange">
+                            <i-option v-for="item in qryInfoModel.typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                        </i-select>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="7">
+                    <el-form-item prop="objRange" style="width:100%;overflow: inherit;" class="select-type-color">
+                        <obj-select :type="qryInfoModel.vo.typeOfRange" :values.sync="qryInfoModel.vo.objRange"
+                                    :disabled="qryInfoModel.vo.typeOfRange == null || qryInfoModel.vo.typeOfRange == ''"></obj-select>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="4" style="padding-left: 16px;">
+                    <iv-button @click="doQry()">统计</iv-button>
+                </iv-col>
+            </iv-row>
+        </el-form>
+    </div>
+    <iv-row style="overflow-y: auto;padding-right: 10px;flex-grow: 1;" type="flex">
+        <iv-col span="18">
+            <vuecharts style="height: 100%;" :options="barChartOpt" v-ref:bar-chart></vuecharts>
+        </iv-col>
+        <iv-col span="6" class="ranking" v-if="rptData != null && rptData.length > 0">
+            <div class="rank-title">
+                <span>集团/公司排名（前20名）</span>
+                <a href="javascript:void(0);" @click="showDetails">更多...</a>
+            </div>
+            <table>
+                <colgroup>
+                    <col style="width: 60px;">
+                    <col>
+                    <col style="width: 60px;">
+                </colgroup>
+                <tbody>
+                <tr v-for="(index, data) in rptData | limitBy qryInfoModel.dataLimit">
+                    <td>Top{{index+1}}</td>
+                    <td>{{data.name}}</td>
+                    <td>{{data.score}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </iv-col>
+    </iv-row>
+	<!-- 明细 -->
+	<Modal v-if="detailModel.show" :visible.sync="detailModel.show" mask-closable :title="detailModel.title" width="1000" :footer-hide="true">
+		<div class="edit-pop-container" style="width: 1000px">
+			<div class="epc-header"></div>
+			<div class="epc-content integral-table">
+				<iv-button @click="doExportData" style="position: absolute;right: 20px;top:93px;z-index: 10;">导出</iv-button>
+				<vue-bootstrap-table
+                     :columns="detailModel.table.columns"
+                     :url="detailModel.table.url"
+                     :default-filter-value="detailModel.table.qryParam"
+                     :show-filter="true"
+                     :filter-column="detailModel.table.filterColumns"
+                     :show-column-picker="false"
+                     :show-pager="true"
+                     show-loading
+                     resizeable
+                     v-ref:rpt-details-table>
+				</vue-bootstrap-table>
+			</div>
+		</div>
+	</Modal>
+</div>

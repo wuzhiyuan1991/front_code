@@ -1,0 +1,99 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform >
+			<el-form-item :label="$t('gb.common.code')" prop="code">
+				<iv-input  v-if="mainModel.opType == 'create'" :value.sync="mainModel.vo.code"></iv-input>
+				<iv-input  v-if="mainModel.opType == 'update'" :value.sync="mainModel.vo.code" disabled></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('bd.trm.fullName')" prop="name">
+                <iv-input  :value.sync="mainModel.vo.name"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.username">-->
+			</el-form-item>
+			<el-form-item :label="$t('das.oniu.mobile')" prop="mobile">
+                <iv-input  :value.sync="mainModel.vo.mobile"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.mobile">-->
+			</el-form-item>
+			<el-form-item :label="$t('das.oniu.mail')" prop="email">
+                <iv-input  :value.sync="mainModel.vo.email"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.email">-->
+			</el-form-item>
+<!-- 			<el-form-item :label="$t('gb.common.ownedComp')" prop="orgId"> -->
+			    <!--<i-select :model.sync="mainModel.vo.orgId" :list="mainModel.vo.deptList" >-->
+		            <!--<i-option v-for="item in mainModel.vo.deptList" :value="item.id">{{ item.name }}</i-option>-->
+		        <!--</i-select>-->
+				<!--mainModel.vo.orgId-->
+<!-- 				<company-tree-select  :id.sync="mainModel.vo.orgIdData" v-ref:activate></company-tree-select> -->
+<!-- 			</el-form-item> -->
+<!-- 			<el-form-item :label="$t('gb.common.ownedDept')"   prop="perId"> -->
+<!-- 				<user-tree-select  :model.sync = "mainModel.vo.perId"  :org-id.sync ="mainModel.vo.orgIdData"></user-tree-select> -->
+<!-- 			</el-form-item> -->
+			
+			
+			
+			<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+				<company-tree-select  :id.sync="mainModel.vo.compId" v-ref:activate></company-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+				<department-tree-select v-if="!isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+			</el-form-item>
+
+			<el-form-item :label="$t('ori.perm.leader')">
+			    <iv-tree-select :model.sync="mainModel.vo.leaderId"
+		                        :list="mainModel.vo.userList"
+		                        id-attr="id"
+		                        display-attr="name">
+		
+		            <iv-tree :model="mainModel.vo.userList"
+		                     :selected-datas.sync="mainModel.selectedDatas"
+							 :serch-filterable="true"
+		                     id-attr="id"
+		                     pid-attr="parentId"
+		                     display-attr="name"
+		                     :single-select="true">
+		            </iv-tree>
+		        </iv-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.gender')" prop="userDetail.sex">
+			    <i-select :model.sync="mainModel.vo.userDetail.sex" :list="mainModel.sexList" >
+		            <i-option v-for="item in mainModel.sexList" :value="item.value">{{ item.label }}</i-option>
+		        </i-select>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.maritalStatus')" prop="userDetail.maritalStatushuan">
+			    <i-select :model.sync="mainModel.vo.userDetail.maritalStatushuan" :list="mainModel.maritalList" >
+		            <i-option v-for="item in mainModel.maritalList" :value="item.value">{{ item.label }}</i-option>
+		        </i-select>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.degreeEducat')" prop="userDetail.education">
+			    <i-select :model.sync="mainModel.vo.userDetail.education" :list="mainModel.educationList" >
+		            <i-option v-for="item in mainModel.educationList" :value="item.value">{{ item.label }}</i-option>
+		        </i-select>
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.iDNumber')" prop="userDetail.idcard" :rules="rules.idcard">
+                <iv-input  :value.sync="mainModel.vo.userDetail.idcard"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.userDetail.idcard">-->
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.placeOrigin')" prop="userDetail.nativePlace" :rules="rules.nativePlace">
+                <iv-input  :value.sync="mainModel.vo.userDetail.nativePlace"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.userDetail.nativePlace">-->
+			</el-form-item>
+			<el-form-item :label="$t('ori.perm.presentResidence')" prop="userDetail.address" :rules="rules.address">
+                <iv-input  :value.sync="mainModel.vo.userDetail.address"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.userDetail.address">-->
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.remarks')" prop="remarks">
+                <iv-input  :value.sync="mainModel.vo.remarks"></iv-input>
+			     <!--<input type="text" v-model="mainModel.vo.remarks">-->
+			</el-form-item>
+<!-- 			<div class="pop_up_bottom"> -->
+<!-- 		        <div class="pop_up_botton"> -->
+<!-- 		            <button type="button" class="btn pop_up_button" @click="doSave" style="margin-left:10px;">保存</button> -->
+<!-- 		            <button type="button" class="btn btn-default pop_up_button" @click="doCancel">取消</button> -->
+<!-- 		        </div> -->
+<!-- 		    </div> -->
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+		<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>	
+</div>

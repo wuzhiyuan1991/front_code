@@ -1,0 +1,112 @@
+<div class="edit-pop-container">
+    <div class="epc-content" style="height: 300px">
+
+        <div style="background-color: #f5f8fa;padding: 10px;font-size: 13px;">{{mainModel.vo.name}}</div>
+        <div v-if="mainModel.vo.attr1 == 1" style="background-color: #f5f8fa;padding: 10px;color: #f00;display: flex;align-items: center;">
+            <Icon type="ios-information-outline" style="font-size: 20px;"></Icon>
+            <span style="display: inline-block;font-size: 14px;margin-left: 8px;">该问题已存在且正在整改中，无需再次提交隐患</span>
+        </div>
+
+        <el-tabs style="width:100%;" v-if="mainModel.vo.show" :active-name="mainModel.tabName" @tab-click="changeTab">
+            <el-tab-pane :label="$t('gb.common.basic')">
+                <div v-if="mainModel.vo.type == 0">
+                    <div v-if="mainModel.vo.checkResult == 0 ">
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.problemDesc')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.talkResult" textonly></iv-input>
+                        </div>
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.latentDefect')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.latentDefect" textonly></iv-input>
+                        </div>
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.recMeasure')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.suggestStep" textonly></iv-input>
+                        </div>
+
+                    </div>
+                    <div v-else>
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.describeSup')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.talkResult" textonly></iv-input>
+                        </div>
+                        <!--<div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.recMeasure')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;"  type="textarea" :value.sync="mainModel.vo.suggestStep" textonly></iv-input>
+                        </div>-->
+                    </div>
+
+                </div>
+                <div v-if="mainModel.vo.type == 1 ||  mainModel.vo.type == 2">
+                    <div v-if="mainModel.vo.checkResult == 0 ">
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.problemDesc')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.problem" textonly></iv-input>
+                        </div>
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.latentDefect')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.latentDefect" textonly></iv-input>
+                        </div>
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.recMeasure')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.remark" textonly></iv-input>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div style="display: flex">
+                            <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('gb.common.describeSup')}}：</span>
+                            <iv-input style="flex: 1;line-height: 24px;word-break: break-all;" type="textarea" :value.sync="mainModel.vo.problem" textonly></iv-input>
+                        </div>
+                    </div>
+                    <div v-if="mainModel.vo.attr1 == 1" style="padding: 12px">
+                        <iv-checkbox :disabled="true"></iv-checkbox>
+                        <span style="display: inline-block;font-size: 12px;font-weight: 600;word-break: break-all;">该问题已经存在整改中，无需再次提交隐患</span>
+                    </div>
+                    <!--<div style="display: flex">
+                        <span style="display: inline-block;width:80px;font-size: 14px;font-weight: 900">{{$t('hag.hazc.rectifMeasur')}}：</span>
+                        <iv-input style="flex: 1;line-height: 24px;" type="textarea" :value.sync="mainModel.vo.remark" textonly></iv-input>
+                    </div>-->
+                </div>
+            </el-tab-pane>
+            <el-tab-pane :label="$t('gb.common.picture')">
+                <image-view :images="mainModel.vo.picList" :show-close="false"></image-view>
+
+            </el-tab-pane>
+            <el-tab-pane :label="$t('gb.common.video')">
+                <lite-box v-for="vedio in mainModel.vo.vedioList" :show-close="false" @click="doPlay(vedio)">
+                    <img :src="convertPath()">
+                </lite-box>
+            </el-tab-pane>
+            <el-tab-pane label="音频">
+
+                <ul style="display: flex;flex-wrap: wrap;">
+                    <li v-for="audio in mainModel.vo.audioList" @click="doPlayAudio(audio.ctxPath)" style="height: 80px;width: 80px;text-align: center; background-color: #fff;line-height: 98px;cursor: pointer;border: 1px solid #ddd;margin: 0 10px 10px 0;border-radius: 5px;">
+                        <Icon type="music-note" style="font-size: 32px;"></Icon>
+                    </li>
+                </ul>
+
+            </el-tab-pane>
+            <el-tab-pane label="附件">
+
+                <ul style="display: flex;flex-wrap: wrap;">
+                    <li v-for="attachment in mainModel.vo.attachmentList"  style="height: auto;width: 100%;text-align: left; background-color: #fff;line-height: 30px;cursor: pointer;border: 1px solid #ddd;margin: 0 10px 10px 0;border-radius: 5px;color:blue">
+                        <a target="_blank" href="/file/down/{{attachment.fileId}}" style="padding-left: 10px">
+                            {{attachment.orginalName}}
+                        </a>
+                    </li>
+                </ul>
+
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+    </div>
+</div>
+<Modal :visible.sync="playModel.show" width="450" class="type-video" :footer-hide="true">
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<audio-player
+        :visible.sync="audioModel.visible"
+        :path="audioModel.path"
+></audio-player>

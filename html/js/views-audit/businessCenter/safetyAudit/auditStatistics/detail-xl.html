@@ -1,0 +1,169 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <a v-if="hasAuth('view')" v-link="{path: '/confirmAudit',query: {id:  mainModel.vo.id, from: 'statistics'}}" target="_blank">
+                    <iv-button type="ghost">明细</iv-button>
+                </a>
+                <iv-button type="ghost" @click.stop="doClose">{{$t('gb.common.close')}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" style="height:200px;" :model="mainModel.vo" is-label-vertical>
+                <iv-row class="bip-content-item">
+                    <!--<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box">-->
+                        <!--<span>{{mainModel.vo.code}}</span>-->
+                    <!--</el-form-item>-->
+                    <el-form-item :label="$t('bc.hal.planName')" prop="name" class="small-info-box">
+                        <div class="text-ellipsis" :title="mainModel.vo.name">{{mainModel.vo.name}}</div>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.reviewTable')" prop="auditTableId" class="small-info-box">
+                        <div class="text-ellipsis" :title="mainModel.vo.auditTable.name">{{mainModel.vo.auditTable.name}}</div>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.personInCharge')" prop="ownerId" class="small-info-box">
+                        {{mainModel.vo.user.name}}
+                    </el-form-item>
+                    <!--<el-form-item :label="$t('bc.ria.scorePeople')" class="small-info-box">-->
+                        <!--<iv-input textonly :value.sync="mainModel.vo.scorePeople.name"></iv-input>-->
+                    <!--</el-form-item>-->
+
+                    <el-form-item class="small-info-box" :label="$t('bc.ria.scorePeople')" prop="compChargePersonList">
+                        <div v-if="mainModel.isReadOnly" class="exam-paper-point">
+                            <div class="ivu-tag" v-for="tag in mainModel.vo.compChargePersonList">
+                                <span class="ivu-tag-text">{{tag.name}}</span>
+                            </div>
+                        </div>
+                    </el-form-item>
+
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="总分" prop="score" class="small-info-box">
+                        {{mainModel.vo.auditTable.score}}
+                    </el-form-item>
+                    <el-form-item label="得分" prop="actScore" class="small-info-box">
+                        {{mainModel.vo.actScore}}
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.startTime')" prop="startDate" class="small-info-box">
+                        {{mainModel.vo.startDate}}
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.endTime')" prop="endDate" class="small-info-box">
+                        {{mainModel.vo.endDate}}
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <div style="padding-bottom:5px;overflow: hidden;margin-bottom:10px;">
+                <div class="left"><i class="basicPng"></i><strong style="line-height: 24px;">评价等级</strong></div>
+                <div class="right">
+                    <a @click.prevent="levelModel.showTable = !levelModel.showTable;"  style="margin-right: 10px;">
+                        <span v-if="levelModel.showTable"><Icon type="arrow-up-b" style="margin-right:5px;"></Icon>{{$t("bc.ria.packUp")}}</span>
+                        <span v-else><Icon type="arrow-down-b" style="margin-right:5px;"></Icon>{{$t("bd.ria.open")}}</span>
+                    </a>
+                    <a @click="doAddLevel">
+                        <span><Icon type="ios-plus-outline" style="margin-right:5px;"></Icon>增行</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <table class="table" v-show="levelModel.showTable" style="margin-bottom: 20px;">
+                <colgroup>
+                    <col>
+                    <col style="width: 20%">
+                    <col style="width: 20%">
+                    <col style="width: 75px">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>等级名称</th>
+                        <th>下限分数</th>
+                        <th>上限分数</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in levels">
+                        <td>{{item.name}}</td>
+                        <td>{{item.lowerScore}}</td>
+                        <td>{{item.upScore}}</td>
+                        <td style="font-size: 16px;">
+                            <a @click="doLevelEdit(item)" href="javascript:void(0);" style="margin-right: 10px;"><icon type="compose"></icon></a>
+                            <a @click="doLevelDelete(item)" href="javascript:void(0);"><icon type="trash-a"></icon></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="rip-item">
+            <div style="padding-bottom:5px;overflow: hidden;margin-bottom:10px;">
+                <div class="left"><i class="basicPng"></i><strong style="line-height: 24px;">要素得分</strong></div>
+                <div class="right sc-st">
+                    <iv-button @click="toggleView('table')" :class="{'active': viewType === 'table'}" type="text" icon="navicon-round">列表</iv-button>
+                    <iv-button @click="toggleView('bar')" :class="{'active': viewType === 'bar'}" type="text" icon="stats-bars">柱状图</iv-button>
+                    <iv-button @click="toggleView('pie')" :class="{'active': viewType === 'pie'}" type="text" icon="pie-graph">饼状图</iv-button>
+                </div>
+            </div>
+            <table class="table tb-table-w" v-show="viewType === 'table'">
+                <colgroup>
+                    <col style="width: 80px;">
+                    <col>
+                    <!--<col style="width: 100px;">-->
+                    <col style="width: 100px;">
+                    <col style="width: 100px;">
+                    <col style="width: 100px;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>编码</th>
+                        <th>要素名称</th>
+                        <!--<th>权重</th>-->
+                        <th>赋值</th>
+                        <th>审核得分</th>
+                        <th>折算得分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(index, item) in tasks">
+                        <td>{{index + 1}}</td>
+                        <td>{{item.elementName}}</td>
+                        <!--<td>{{item.auditElement.weight || 0}}%</td>-->
+                        <td>{{item.score}}</td>
+                        <td>{{item.actScore}}</td>
+                        <td>{{parseInt(item.actScore / item.score * 100)}}%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <vuecharts v-if="viewType === 'bar'" :options="barChartOption" v-ref:bar-chart></vuecharts>
+            <vuecharts v-if="viewType === 'pie'" :options="pieChartOption" v-ref:pie-chart></vuecharts>
+        </div>
+    </div>
+    <Modal :visible.sync="levelModel.showModal" title="评价等级" width="500" :footer-hide="true" class="userSelectModal">
+
+        <div class="edit-pop-container ">
+            <div class="epc-content riskAddCon">
+                <el-form :model="levelModel.vo" :rules="levelModel.rules" v-ref:ruleform>
+                    <el-form-item label="等级名称" prop="name">
+                        <iv-input :value.sync="levelModel.vo.name"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="下限分数" prop="lowerScore">
+                        <iv-input :value.sync="levelModel.vo.lowerScore" type="number"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="上限分数" prop="upScore">
+                        <iv-input type="number" :value.sync="levelModel.vo.upScore"></iv-input>
+                    </el-form-item>
+                    <div class="form-group h30"></div>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSaveLevel" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+</div>

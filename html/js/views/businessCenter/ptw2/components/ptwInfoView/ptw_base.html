@@ -1,0 +1,35 @@
+<div class="bip-content flex-layout" style="width:100%;">
+    <div style="height: calc(100vh - 250px)">
+        <base-according :border-right='false' v-ref:according :values="pwtInfoTypes" class="mr15"
+                        :current-index.sync="pwtInfoTypeSelectedIndex"     @on-selected="onTabSelected">
+        </base-according>
+    </div>
+    <div style="border-left:1px solid #ddd;margin-right: 15px;"></div>
+    <div class="flex-grow1  over-auto" style="height: calc(100vh - 250px)"><!--- over-auto--->
+        <div class="fip-content" v-show="pwtInfoTypeSelectedKey==1">
+            <baseinfo :model="model" :workcard="workcard" @on-custom-content="doEditCustomContent"></baseinfo>
+        </div>
+        <div class="fip-content"  style="width: 700px;" v-show="pwtInfoTypeSelectedKey==2">
+            <weihaibs :model="model" @on-custom-content="doEditCustomContent"></weihaibs>
+        </div>
+        <div class="fip-content"  style="width: 700px;" v-show="pwtInfoTypeSelectedKey==3">
+            <security-measures :vo="workcard.vo" :model="model" @on-custom-content="doEditCustomContent"></security-measures>
+        </div>
+        <div class="fip-content"  style="min-width: 700px;" v-show="pwtInfoTypeSelectedKey==4">
+            <ppe :model="model" @on-custom-content="doEditCustomContent"></ppe>
+        </div>
+        <div class="fip-content"  style="width: 850px;"v-show="pwtInfoTypeSelectedKey==5">
+           <gelifh :model="model" @on-custom-content="doEditCustomContent"></gelifh>
+        </div>
+        <div class="fip-content" style="width: 700px;" v-show="pwtInfoTypeSelectedKey==6">
+            <gas-detection :vo="workcard.vo" :model="model" @on-custom-content="doEditCustomContent"></gas-detection>
+        </div>
+        <div class="fip-content" v-show="pwtInfoTypeSelectedKey==7">
+            <license-issue :model="model" :vo="workcard.vo" :workcard="workcard"></license-issue>
+        </div>
+        <div  class="fip-content"  style="min-width:700px;" v-show="pwtInfoTypeSelectedKey==8">
+            <work-close :model="model" :workcard="workcard"  @on-custom-content="doEditCustomContent"></work-close>
+        </div>
+
+    </div>
+</div>

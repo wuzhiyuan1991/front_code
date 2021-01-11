@@ -1,0 +1,74 @@
+	<ul>
+	<div class="col-xs-6">
+		<iv-tree :model="treeData2" 
+					:selected-datas.sync="selectedTreeDatas"
+					id-attr="id"
+					pid-attr="pid"
+					display-attr="name"
+					:single-select="true"
+					:allow-parent-checked="true"
+				 	:show-checkbox="true"
+					></iv-tree>
+		<iv-tree :model="treeData2" 
+					:selected-datas.sync="selectedTreeDatas"
+					id-attr="id"
+					pid-attr="pid"
+					display-attr="name"
+					:single-select="true"
+					:allow-parent-checked="true"
+					@on-add-node="doAddNode"
+					@on-edit-node="doEditNode"
+					@on-del-node="doDelNode"
+					@on_tree_data_ready="doTreeDataReady"
+					:edit="true"
+					:open="false"
+					></iv-tree>
+
+	</div>
+	<div class="col-xs-6">
+		<iv-tree :model="treeData2" 
+				:selected-datas.sync="selectedTreeDatas"
+				id-attr="id"
+				pid-attr="pid"
+				 :show-checkbox="false"
+				display-attr="name"
+				></iv-tree>			
+	</div>
+
+     <iv-tree-select :model.sync="ttt" 
+     			:list="treeData2"
+				id-attr="id"
+				display-attr="name"
+     			style="width:240px">
+
+        <iv-tree :model="treeData2" 
+			:selected-datas.sync="selectedTreeDatas"
+			id-attr="id"
+			pid-attr="pid"
+			display-attr="name"
+			:single-select="true"
+			></iv-tree>
+    </iv-tree-select>
+
+
+  <vi-button type="primary" @click="printComboTreeSelectedData">打印combobox 里面 TreeSelectedData的值</vi-button>
+
+  <vi-button type="primary" @click="printTreeSelectedData">打印TreeSelectedData</vi-button>
+
+</ul>
+
+<div style="clear: both">------------------------------ssssssss---------------------------------------------------------</div>
+	<!--@on-star为选中星星方法-->
+<tree-star  :model="treestar"
+			:selected-datas.sync="selectedDatas"
+			id-attr="id"
+			pid-attr="pid"
+			display-attr="name"
+			:show-checkbox="false"
+			@on-star="doStar"
+			@on-del-node="doDel"
+			:open="false"
+			:index="true"
+			@on-title-click="doTitleClick"
+			></tree-star>
+<div>------------------------------dadasfa---------------------------------------------------------</div>

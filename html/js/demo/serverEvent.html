@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<input type="button"  onclick="startSSE();" value="start SSE"/>
+<input type="button"  onclick="stopSSE();" value="close SSE"/>
+<div id="result"></div>
+<script>
+    var startSSE = function () {
+
+        if( window.source &&  window.source.readyState == 1) {
+            document.getElementById("result").innerHTML = "正在运行SSE..." + "<br />" + document.getElementById("result").innerHTML;
+            return;
+        }
+
+        //接口地址
+        var serverEventUrl = document.location.origin + "/doEvent";
+
+        if (typeof(EventSource) !== "undefined") {
+            var source = new EventSource(serverEventUrl);
+            //打开连接
+            source.onopen = function (event) {
+                console.log("onopen", event);
+            };
+            //错误信息
+            source.onerror = function (e) {
+                console.log("err", e);
+                if(e.target.readyState == 0) {
+                    document.getElementById("result").innerHTML =  "服务器关闭SSE连接，10s后自动重新连接" + "<br />" + document.getElementById("result").innerHTML;
+                } else if(e.target.readyState == 2) {
+                    document.getElementById("result").innerHTML =  "服务器拒绝SSE连接，不再进行重新连接" + "<br />" + document.getElementById("result").innerHTML;
+                }
+            };
+            //处理接受到的消息
+            source.onmessage = function (event) {
+                console.log("onmessage", event);
+                document.getElementById("result").innerHTML = event.data + "<br />" + document.getElementById("result").innerHTML;
+            };
+        }
+        else {
+            document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+        }
+        window.source = source;
+        return source;
+    }
+
+    var stopSSE = function () {
+        if( window.source &&  window.source.readyState == 1) {
+            source.close();
+            document.getElementById("result").innerHTML = "关闭当前运行的SSE..." + "<br />" + document.getElementById("result").innerHTML;
+        } else {
+            document.getElementById("result").innerHTML = "没有正在运行的SSE..." + "<br />" + document.getElementById("result").innerHTML;
+        }
+    }
+
+</script>
+
+
+</body>
+</html>

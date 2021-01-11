@@ -1,0 +1,96 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<!--<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>-->
+				<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>-->
+				<!--<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>-->
+				<vi-button v-if="mainModel.isReadOnly" type="ghost" @click="doClose">{{$t("gb.common.close")}}</vi-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<vi-button type="ghost" v-if="hasAuth('exportDetail')" @click="doConfirmCallback('doExportDetail', '导出数据?')">{{$t("gb.common.exportDetail")}}</vi-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:300px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.courseCode')"  class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.courseName')"  class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.coursetType')" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.categorySubject.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.rehabCycle')"  class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.frequence" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<!--<span v-if="mainModel.isReadOnly">{{mainModel.vo.frequence}}年</span>-->
+						<iv-input :value.sync="mainModel.vo.frequence" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('bc.hal.modeTrain')"  class="small-info-box" >
+						<i-select  :model.sync="mainModel.vo.type" :list="getDataDicList('course_type')" :disabled="mainModel.opType=='update'" v-if="!mainModel.isReadOnly">
+							<i-option  v-for = "trainType in getDataDicList('course_type')"  :value="trainType.id">{{trainType.value}}</i-option>
+						</i-select>
+						<span v-else>{{getDataDic('course_type', mainModel.vo.type)}}</span>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')"  class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box">
+                        <iv-input  :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+                    </el-form-item>
+					<el-form-item :label="$t('bd.trm.forensicsType')" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.certificationSubject.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  :label="$t('bd.trm.teacher')" class="small-info-box" >
+						<span>{{teachersName}}</span>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.hours')" class="small-info-box" >
+						<span>{{mainModel.vo.trainHour || 0}}小时</span>
+						<!--<iv-input :value.sync="mainModel.vo.trainHour" :textonly="mainModel.isReadOnly"></iv-input>-->
+					</el-form-item>
+					<el-form-item  :label="$t('bd,trm.language')" class="small-info-box" >
+						<span>{{getDataDic('course_language', mainModel.vo.language)}}</span>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+		<div class="rel-info-panel">
+			<div class="rip-item">
+				<simple-card class="fip-content-item" filter :filter-when="true">
+					<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.staffList')}}</span>
+					</p>
+					<a slot="extra" >
+						<span class="leave-worker-select">
+						  <iv-checkbox :checked.sync="leaveWorkerSwitch">包含离职人员</iv-checkbox>
+						</span>
+					  </a>
+					<vue-bootstrap-table
+							:url="tableModel.courseFileTableModel.url"
+							:columns="tableModel.courseFileTableModel.columns"
+							:show-empty-row="false"
+							:use-default-global-filter="false"
+							:default-filter-value="tableModel.courseFileTableModel.defaultFilterValue"
+							:lazy-load="true"
+							:resizeable="true"
+							v-ref:course-file-table
+					>
+					</vue-bootstrap-table>
+				</simple-card>
+			</div>
+		</div>
+</div>
+
+
+
+

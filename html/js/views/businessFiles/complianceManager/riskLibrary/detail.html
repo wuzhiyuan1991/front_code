@@ -1,0 +1,83 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="检查项内容" prop="checkItemName">
+						<iv-input :value.sync="mainModel.vo.checkItemName" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="管控等级" prop="controlLevel">
+						<iv-input :value.sync="mainModel.vo.controlLevel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="控制措施" prop="controlMeasures">
+						<iv-input :value.sync="mainModel.vo.controlMeasures" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="危害因素分类" prop="hazardFactorType">
+						<iv-input :value.sync="mainModel.vo.hazardFactorType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="发生可能性" prop="possibility">
+						<iv-input :value.sync="mainModel.vo.possibility" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险等级(场景)" prop="riskLevelScene">
+						<iv-input :value.sync="mainModel.vo.riskLevelScene" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险点" prop="riskPoint">
+						<iv-input :value.sync="mainModel.vo.riskPoint" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险点分类" prop="riskPointType">
+						<iv-input :value.sync="mainModel.vo.riskPointType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险分类" prop="riskType.id">
+						<input-select :value="mainModel.vo.icmRiskType" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowIcmRiskTypeSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="风险场景" prop="scene">
+						<iv-input :value.sync="mainModel.vo.scene" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险得分" prop="score">
+						<iv-input :value.sync="mainModel.vo.score" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="后果严重性" prop="severity">
+						<iv-input :value.sync="mainModel.vo.severity" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="类型" prop="type">
+						<iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<file-list-simple-card title="附件列表" class="fip-content-item" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		-->
+			</div>
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<icmrisktype-select-modal :visible.sync="selectModel.icmRiskTypeSelectModel.visible" :filter-data="selectModel.icmRiskTypeSelectModel.filterData" single-select @do-save="doSaveIcmRiskType"></icmrisktype-select-modal>
+

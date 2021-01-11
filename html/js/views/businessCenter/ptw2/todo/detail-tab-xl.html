@@ -1,0 +1,181 @@
+<div class="detail-large-container" style="overflow:hidden;">
+  <div class="base-info-panel">
+    <div class="bip-header">
+      <div class="bip-header-title">
+        <i class="recordPng"></i><span>{{mainModel.title}}</span>
+      </div>
+      <div class="bip-header-btn-group">
+        <iv-button v-if="mainModel.isReadOnly && hasAuth('preview')" type="ghost" @click="doPreview">预览</iv-button>
+        <iv-button v-if="hasAuth('relate')" type="ghost" @click="doSetContact">关联作业</iv-button>
+        <iv-button v-if="hasAuth('delete')" type="ghost" @click="doDelete()">{{$t("gb.common.del")}}</iv-button>
+        <vi-button v-if="hasAuth('deal') && isShowBtn" type="ghost" @click="showApprovalModel(mainModel.vo)">处理
+        </vi-button>
+        <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rel-info-panel" style="background: #fff;padding-left:30px;padding-right:30px;">
+    <div class="rel-info-panel-content-tabs">
+      <el-tabs active-key="relTab">
+        <el-tab-pane label="作业票" key="relTab">
+          <div class="rel-info-panel" style="padding-left:0px;" :class="{'rel-info-panel-mask': showPanelMask}">
+            <div class="rip-item" style="padding-left:0px;height: calc(100vh - 260px);overflow: auto"
+              v-show="showOrder">
+              <simple-card :show-content.sync="cardModel.emerSceneCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>预约内容</span></p>
+                <span slot="extra" v-show="mainModel.vo.status==2 || mainModel.vo.status==6"
+                  style="display: block;padding: 5px 15px;background: #edeb20;">审批中</span>
+
+                <el-form class="el-form-item__label_light bip-content-form simple-card-head-none-form"
+                  style="width:650px;" :model="mainModel.vo">
+                  <iv-row class="bip-content-item">
+                    <el-form-item label="作业有效期" prop="workStartTime" class="small-info-box">
+                      <iv-input :value.sync="mainModel.vo.workStartTime" style="width:auto;"
+                        :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></iv-input>
+                      &nbsp;至&nbsp; <iv-input :value.sync="mainModel.vo.workEndTime" style="width:auto;"
+                        :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="作业类型" class="small-info-box">
+                      <iv-input v-if="mainModel.vo.workCatalog" style="width:auto;"
+                        :value='mainModel.vo.workCatalog.name' :textonly="mainModel.isReadOnly"></iv-input>
+                      <span
+                        v-if="mainModel.vo.workLevel && mainModel.vo.workLevel.name">({{mainModel.vo.workLevel.name}})</span>
+                    </el-form-item>
+                    <el-form-item label="生产单位" class="small-info-box">
+                      <iv-input v-show="mainModel.isReadOnly"
+                        :value="getDataDic('org', mainModel.vo.prodUnitId)['deptName']" textonly></iv-input>
+                      <div v-show="!mainModel.isReadOnly">
+                        <department-tree-select :id.sync="mainModel.vo.prodUnitId" :clearable="true"
+                          :comp-id.sync="mainModel.vo.compId" v-ref:dept></department-tree-select>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="作业地点" prop="workPlace" class="small-info-box">
+                      <iv-input :value.sync="mainModel.vo.workPlace" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="作业所在的设备" prop="workEquipment" class="small-info-box">
+                      <iv-input :value.sync="mainModel.vo.workEquipment" :textonly="mainModel.isReadOnly"
+                        :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="作业内容" prop="workContent" class="small-info-box">
+                      <iv-input :value.sync="mainModel.vo.workContent" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="作业审核人" prop="auditor" class="small-info-box">
+                      <iv-input v-if="mainModel.vo.auditor" :value.sync="mainModel.vo.auditor.name"
+                        :read-only="mainModel.isReadOnly" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="预约人" prop="applicant.name" class="small-info-box">
+                      <iv-input v-if="mainModel.vo.applicant" :value.sync="mainModel.vo.applicant.name"
+                        :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="预约提交时间" class="small-info-box">
+                      <iv-input :value.sync="mainModel.vo.createDate" :read-only="mainModel.isReadOnly"
+                        :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                  </iv-row>
+                </el-form>
+              </simple-card>
+              <simple-card v-if="mainModel.vo.enableReservation!=0"
+                :show-content.sync="cardModel.emerSceneCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>审核处理</span></p>
+                <el-form class="el-form-item__label_light bip-content-form simple-card-head-none-form"
+                  :model="mainModel.vo">
+                  <iv-row class="bip-content-item">
+                    <el-form-item label="审核人" prop="auditor" class="small-info-box">
+                      <iv-input v-if="mainModel.vo.auditor" :value.sync="mainModel.vo.auditor.name"
+                        :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></iv-input>
+                    </el-form-item>
+                    <el-form-item label="审核结果" prop="auditResult" class="small-info-box">
+                      <iv-input :value.sync="getDataDic('iptw_audit_result', mainModel.vo.auditResult)"
+                        :textonly="mainModel.isReadOnly"></iv-input>
+                      <!--<span style="font-size:14px;" v-if=" mainModel.vo.auditResult=='2'">通过</span>-->
+                      <!--<span style="font-size:14px;" v-if=" mainModel.vo.auditResult=='1'">不通过</span>-->
+
+                    </el-form-item>
+                    <el-form-item label="评审意见" prop="auditOpinion" class="small-info-box">
+                      <iv-input :value.sync="mainModel.vo.auditOpinion" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                  </iv-row>
+                </el-form>
+              </simple-card>
+            </div>
+            <div class="rip-item" style="padding:0" v-show="showPtwInfo">
+              <div style="float: right;margin-top:-43px;display: flex;align-items: center;position: relative">
+                <div style=" margin-right: 20px;border: 1px solid #ddd;padding: 0 5px;">
+                  {{getDataDic('iptw_work_status', mainModel.vo.status)}}</div>
+                <contact-tip :work-card="mainModel.vo" v-ref:contact-tip></contact-tip>
+                <div class="w200 ml20" v-show="false">
+                  <i-select :model.sync="mainModel.versionPermitId" :list="mainModel.versionPermitList">
+                    <i-option v-for="item in mainModel.versionPermitList" :value="item.id">
+                      {{item.permitStartTime.substr(0,10)}}至{{item.permitEndTime.substr(0,10)}}</i-option>
+                  </i-select>
+                </div>
+                <Icon title="刷新" @click="refreshMainTableData" style="color: #33a6ff;margin-left: 18px;margin-right:0;"
+                  class="main-refresh-icon" type="refresh"></Icon>
+                <div style="margin-left:20px">
+                  <!--<span class="link-ele" style="color:#33a6ff;"  @click="showOrderInfo">预约信息</span>-->
+                  <span class="link-ele" style="color:#33a6ff;" v-show="mainModel.vo.enableReservation==1"
+                    @click="showOrderInfo">预约信息</span>
+                  <!--<vi-button type="primary" v-show="mainModel.vo.enableReservation==1" @click="showOrderInfo">预约信息</vi-button>-->
+                </div>
+              </div>
+
+              <!--<ptw-info v-ref:ptw-info-view :permit-id="mainModel.versionPermitId" :workcard="mainModel"></ptw-info>-->
+              <!---- 最新版本号 ---->
+              <ptw-info v-ref:ptw-info-view :permit-id="mainModel.vo.lastPermitId" :workcard="mainModel"></ptw-info>
+
+            </div>
+          </div>
+
+        </el-tab-pane>
+        <el-tab-pane label="处理进度" key="basTab" v-if=false>
+          <simple-card class="fip-content-item emerPlan680 simple-card-head-none" v-show="mainModel.vo.status<11">
+            <div style='margin-top:10px;border:1px dashed #ddd;border-radius: 6px;display: inline-block;'>
+              <ul class="layout-timeline layout-timeline-6" style="width:760px;">
+                <li v-for="(i, item) in getItemList"
+                  v-show="!((mainModel.vo.attr1==1 && i==5) || (mainModel.vo.enableReservation==0 && (i==0 || i==1)))"
+                  class="layout-timeline-item" :class="calcClass(i, item)">
+                  <div class="name" :title="item.name">{{item.name}}</div>
+                  <div class="line"></div>
+                  <div :class="calcItemClass(item)" :style="getStyle(item)" :title="getTitle(item)">{{item.num}}</div>
+                </li>
+              </ul>
+            </div>
+          </simple-card>
+          <div style="min-height: 700px;">
+            <advance :attr1="mainModel.vo.attr1" :list="mainModel.vo.workHistories"></advance>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </div>
+</div>
+<job-approval @do-save="doSaveStatus" :visible.sync="formModel.jobApprovalFormModel.show"></job-approval>
+<!--<job-sign @do-save="doSaveSign" :visible.sync="formModel.jobSignFormModel.show"></job-sign>-->
+<fill-ptw-modal v-ref:ptw-fill disabled></fill-ptw-modal>
+<Modal :visible.sync="formModel.orderInfo.show" :footer-hide="true" width=520 title="预约信息">
+  <order-info1 :model="mainModel.vo"></order-info1>
+</Modal>
+<sel-tpl-modal v-ref:modal-sel-tpl @on-success="doSelectedTpl" :diabled.sync="selTplModel.disabled"></sel-tpl-modal>
+<model-contact-ptw v-ref:contact-ptw @on-success="doContactSuccess"></model-contact-ptw>
+<style>
+  .emerPlan680 .el-form-item__content {
+    width: 350px !important;
+  }
+
+  .simple-card-head-none .simple-card-head {
+    display: none;
+  }
+
+  .simple-card-head-none-form .el-form-item__label {
+    width: 140px !important;
+  }
+
+  .simple-card-head-none-form .el-form-item__content {
+    margin-left: 140px !important;
+  }
+
+  .w200>.ivu-select {
+    width: 200px;
+  }
+</style>

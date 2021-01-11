@@ -1,0 +1,142 @@
+/*br1848 yyt*/
+.inputRightBtn{
+	position: absolute;
+	top: -6px;
+	right: 0;
+	width: 30px;
+	height: 30px;
+}
+/*导入弹框样式*/
+.importModel .title{
+	font-size: 14px;
+	color: #000;
+	margin:0 0 20px 0;
+}
+.importModel .model{
+	margin: 15px;
+	font-size: 15px;
+}
+.importModel .careful{
+	color: #999;
+	padding: 20px 0;
+}
+.importModel .careful li{
+	margin: 10px 0;
+}
+.mb40{
+	margin-bottom: 40px;
+}
+.importModel .importButton .btn-default{
+	z-index: 1;
+	height: 40px;
+	width: 125px;
+	background: #eaf0f5;
+	color:#525558;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.importModel .importButton .ivu-icon {
+	font-size: 24px;
+	margin-right: 5px;
+}
+.importModel .listModel{
+	height: 60px;
+	width: 100%;
+	border: 1px solid #c8c8c8;
+	margin-top: 10px;
+}
+.importModel .listTitle{
+	margin: 15px 10px 0;
+	font-size: 14px;
+}
+.importModel .ivu-btn-primary.importProgress{
+	width: 60px !important;
+}
+.importModel .listTitle .right{
+	position: relative;
+	float: right;
+	font-size: 20px;
+}
+.importModel .ivu-progress{
+	display: block;
+	margin: 0 10px;
+	width: 95%;
+}
+.importModel .impoting .ivu-progress,.importModel .impoting .ivu-progress-show-info .ivu-progress-outer,.importModel .impoting .ivu-progress-inner{
+	height: 30px;
+	border-radius: 0;
+	margin: 0;
+	padding: 0;
+}
+.impoting .ivu-progress-bg{
+	border-radius: 0;
+	height:30px !important;
+}
+.importModel .impoting .ivu-progress-text{
+	position: relative;
+	float: right;
+	bottom: 25px;
+}
+.mb20{
+	margin-bottom: 20px;
+}
+.importModel .impoting .ivu-progress{
+	width: 100%;
+}
+.importModel .impoting .ivu-progress-inner{
+	background-color: #c9c9c9;
+}
+.progressModel{
+	position: relative;
+	/*display: inline-flex;*/
+	display: none;
+	margin-right: 14px;
+	max-width: 300px;
+	background: #fff none repeat scroll 0 0;
+	border: 1px solid #b8b8b8;
+	border-radius: 3px;
+	color: #666666;
+	padding: 0 0 0 5px;
+	height: 32px;
+	width: 120px;
+}
+.progressModel .progressTitle{
+	line-height: 30px;
+	padding: 6px 0 6px  ;
+	margin-right: 6px;
+	max-width: calc(100% - 98px);
+	min-width: 75px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 14px;
+	color: #000;
+}
+.progressModel .progressBody{
+	position: absolute;
+	padding-top: 4px;
+	right: 8px;
+	cursor: pointer;
+	color: #56bbff;
+	font-size: 14px;
+}
+.importModel .erro{
+	color:#f60;
+	margin-left: 10px;
+}
+.importModel .ivu-progress-show-info .ivu-progress-outer{
+	padding-right:0;
+}
+.careful .iconPro i{
+	color: #3c8dbc;
+	font-size: 16px;
+	margin: 10px 6px 10px 0;
+}
+.careful .iconPro{
+	margin-right:20px;
+	color: #f60;
+}
+.epc-content .ivu-dropdown-item:hover{
+	background: #eaf0f5;
+}

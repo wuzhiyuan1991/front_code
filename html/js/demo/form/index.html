@@ -1,0 +1,41 @@
+<!-- 表单代码示例 -->
+<el-form :model="form" :rules="rules" label-width="80px" v-ref:ruleform>
+	<el-form-item label="活动名称" prop="name">
+	    <input v-model="form.name"></input>
+	</el-form-item>
+	<el-form-item label="年龄" prop="age">
+	    <iv-input-number :max="10" :min="1" :value.sync="form.age"></iv-input-number>
+	</el-form-item>
+	<el-form-item label="性别" prop="sex">
+	    <iv-radio-group :model.sync="form.sex"> 
+	    	<iv-radio value="男"> <Icon type="social-apple"></Icon> <span>男</span></iv-radio>
+			<iv-radio value="女"> <Icon type="social-android"></Icon><span>女</span> </iv-radio>
+		</iv-radio-group>
+	</el-form-item>
+	<el-form-item prop="sex2">
+		<label class="col-sm-3" slot="label">(自定义标签)</label>
+	    <iv-radio-group :model.sync="form.sex2"> 
+	    	<iv-radio value="男"> <Icon type="social-apple"></Icon> <span>男</span></iv-radio>
+			<iv-radio value="女"> <Icon type="social-android"></Icon><span>女</span> </iv-radio>
+		</iv-radio-group>
+	</el-form-item>
+	<div class="col-sm-12">
+		<el-form-item label="风险等级" prop="riskModel" class="col-sm-2" >
+			<input readonly="readonly" type="text" placeholder="请选择fx" v-model="form.riskModel.result">
+		</el-form-item>
+		<div class="col-sm-10">
+			<div class="col-sm-1">
+				<risk-model :model.sync="form.riskModel"></risk-model>
+			</div>
+		</div>
+	</div>
+	<el-form-item label="擅长语言" prop="language" placement="right">
+	    <iv-checkbox-group :model.sync="form.language">
+                  <iv-checkbox value="Java">Java</iv-checkbox>
+                  <iv-checkbox value="C#">C#</iv-checkbox>
+              </iv-checkbox-group>
+	</el-form-item>
+</el-form>
+<iv-button icon="checkmark" @click="vailForm">提交</iv-button>
+<iv-button icon="ios-undo" @click="resetForm">重置</iv-button>
+<iv-button icon="ios-undo" @click="doPrintModel">打印模型信息</iv-button>

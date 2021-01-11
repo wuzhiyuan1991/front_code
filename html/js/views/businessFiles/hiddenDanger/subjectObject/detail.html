@@ -1,0 +1,84 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  label="" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="对象名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="是否禁用，0启用，1禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="负责人Id" prop="firstSuperId">
+						<iv-input :value.sync="mainModel.vo.firstSuperId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="排序" prop="orderNo">
+						<iv-input :value.sync="mainModel.vo.orderNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="上级对象ID" prop="parentId">
+						<iv-input :value.sync="mainModel.vo.parentId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="备注" prop="remarks">
+						<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="第二负责人id" prop="secondSuperId">
+						<iv-input :value.sync="mainModel.vo.secondSuperId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="类型" prop="type">
+						<iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>检查表</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCheckTableSelectModel" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:url="tableModel.checkTableTableModel.url"
+					:columns="tableModel.checkTableTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					:lazy-load="true"
+					@on-del-row="doRemoveCheckTables"
+					v-ref:checktable-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>
+
+<checktable-select-modal :visible.sync="selectModel.checkTableSelectModel.visible"  @do-save="doSaveCheckTables"></checktable-select-modal>
+

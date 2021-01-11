@@ -1,0 +1,647 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width="900" :footer-hide="true">
+    <div class="edit-pop-container "  id="editTable" >
+        <div class="epc-content" style="background-color: #fff;padding-bottom: 0;overflow: hidden;">
+            <div class="rel-info-panel-content-tabs" style="min-height: 550px;">
+                <div class="el-tabs" active-key="relTab">
+                    <div class="el-tabs__header">
+                        <div
+                                @click="doTabClick(tab.id)"
+                                class="el-tabs__item"
+                                :class="{'is-active': tab.id === checkedTabId}"
+                                style="font-size:14px;"
+                                v-for="tab in tabs">
+                            <b>{{tab.name}}</b>
+                        </div>
+                    </div>
+                    <div style='display: flex;height: 600px;padding-bottom: 100px;padding-top:8px;'>
+                        <!--------  左侧导航栏  ------->
+                        <div class="lr-layout-l" style="border-right: 1px solid #ddd;width: 140px;margin-right:10px;display:block;">
+                            <ul style="border-left: 1px solid #ddd;border-bottom: 1px solid #ddd;border-top: 1px solid #ddd;">
+                                <li v-for="(index, item) in riskJudgmentLevelList"
+                                    class="lr-layout-li"
+                                    :class="{'checked': index === checkedDepartmentIndex}"
+                                    style="display: flex;"
+                                    @click="doSelectDepartment(index)">
+                                    <span style='
+                                    display: block;
+                                    width: 110px;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    font-size:14px;
+                                    white-space: nowrap' :title="area.name">{{item.name}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="overflow: auto;width: 100%;position: relative">
+                            <!------  顶部模板名称导航栏  ---->
+                            <div class="label-tab" v-show="checkedTabId === '1'"    >
+                                <div class="label-tab-btn" @click="nextTabPage(-1)" style="font-size:24px;"> < </div>
+                                <div class="label-tab-btn-border" :style="borderWidth">
+                                    <div class="label-tab-btn-body" :style="leftWidth">
+                                        <div class="label-tab-btn"  style="display: inline-block;width:100px;" :title="item.name" :class="{' label-tab-btnis-active': index==templeteIndex}"  @click.stop="doChangeTemplete(index)" v-for="(index,item) in riskJudgmentTempletes" >{{item.name}}</div>
+                                    </div>
+                                </div>
+                                <div class="label-tab-btn" @click="nextTabPage(1)" style="font-size:24px;"> > </div>
+                                <div class="label-tab-btn" style="font-size:24px;" v-show.sync="isEdit==1" @click="doShowRiskJudgmentTempleteFormModal4Create" >+</div>
+                            </div>
+                            <div class="el-tabs__content" style='overflow: auto;width: 100%;padding-left: 10px;border:1px solid #ddd;' v-show="checkedTabId === '1'&& riskJudgmentTempletes && riskJudgmentTempletes.length>0">
+                                <div class="lr-layout" style="padding: 0;background-color: #fff;">
+                                    <div class="fip-content" style="width:96%;">
+                                        <div class="centerBtnGroups">
+                                            <div class="centerBtnGroupsLeft"  >
+                                                <span class="templateStatus0" v-show="riskJudgmentTempletes[templeteIndex].disable==0" > 启用 </span>
+                                                <span class="templateStatus1" v-show="riskJudgmentTempletes[templeteIndex].disable==1" > 停用 </span>
+                                                <span v-show.sync="isEdit==1" style="margin-right:16px;"  @click="doDeleteTemplate" ><Icon type="trash-b"  ></Icon>&nbsp;删除</span>
+                                                <span v-show.sync="isEdit==1&&riskJudgmentTempletes[templeteIndex].disable==0" style="margin-right:16px;"  @click="updateDisable(1)" ><Icon type="close"></Icon>&nbsp;停用</span>
+                                                <span v-show.sync="isEdit==1&&(riskJudgmentTempletes[templeteIndex].disable!='0')" style="margin-right:16px;"  @click="updateDisable(0)" ><Icon type="checkmark"></Icon>&nbsp;启用</span>
+                                                <span v-show.sync="isEdit==1" style="margin-right:16px;" @click="doShowRiskJudgmentTempleteFormModal4Update" ><Icon type="edit"  ></Icon>&nbsp;修改模板名称</span>
+                                            </div>
+                                            <div style="display:flex;align-items: center;position: relative;">
+                                                额定完成时间&nbsp;&nbsp;
+                                                <vi-time-picker style="width:80px;" v-show.sync="isEdit==1" class="cursorPointer" :editable="false" :clearable="false" format="HH:mm" @on-change="changeRatedCompleteDate" :value="riskJudgmentTempletes[templeteIndex].ratedCompleteDate"></vi-time-picker>
+                                                <span  v-show.sync="isEdit!=1">{{riskJudgmentTempletes[templeteIndex].ratedCompleteDate}}</span>
+                                            </div>
+                                        </div>
+                                        <simple-card  class="fip-content-item">
+                                            <p slot="title" style="line-height: 24px;"><i class="basicPng"></i><span>{{riskJudgmentLevelList[checkedDepartmentIndex].name}}状态</span></p>
+                                            <a slot="extra" v-show.sync="isEdit==1" @click="doShowGroupName()" >
+                                                <span  style="margin-right:16px;"><Icon type="plus"  ></Icon>新增</span>
+                                            </a>
+                                            <div v-for="(index,tir) in groups" style='padding:0 0 10px 0px;margin-bottom: 20px;'>
+                                                <div class="clearfixmytable" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+                                                    <div class="flexBlock">
+                                                        <div class="itemIndex">{{(index+1)}}</div>
+                                                        <div class="left itemName" :title='tir.name' >{{tir.name}}</div>
+                                                        <div style="width:35px">
+                                                            <div v-if="isEdit==1" class="itemIndex itemIndexEdit" @click="doShowGroupName(tir, index)"><Icon type="edit"></Icon></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="right itemBtnGroups"  style="display: flex;align-items: center;"  v-show.sync="isEdit==1">
+                                                        <div style="display: inline-block;">
+                                                            <iv-checkbox :checked.sync="tir.allExclude =='1'" @on-change="doChangeAllExclude(tir,index)" >研判时整组内容可排除</iv-checkbox>
+                                                        </div>
+                                                        <vi-button type="text" style="font-size:14px;color:#3c8dbc" icon="edit"  @click="isShowEdition(tir, index)">编辑</vi-button>
+                                                        <vi-button type="text" style="font-size:14px;color:#3c8dbc" icon="trash-b" @click="doDeleteGroup(tir, index)" >删除</vi-button>
+                                                    </div>
+                                                </div>
+                                                <!--<div class='riskItemContent'>研判项内容</div>-->
+                                                <div class="myContent editContent">
+                                                    <div class="myContent"  v-if='tir.content!=""' v-html="tir.content" name="myContent"></div>
+                                                </div>
+
+                                            </div>
+                                        </simple-card>
+                                        <simple-card class="fip-content-item">
+                                            <p slot="title" style="line-height: 24px;"><i class="basicPng"></i>
+                                                <span>{{riskJudgmentLevelList[checkedDepartmentIndex].name}}承诺：</span>
+                                            </p>
+                                            <a slot="extra"  @click="isShowEdition(editRiskPromise, -2)" v-show.sync="isEdit==1" >
+                                                <span  style="margin-right:16px;"><Icon type="edit"></Icon>编辑</span>
+                                            </a>
+                                            <div class="editContent">
+                                                <div id="myPromise"  v-html="mypromiseHtml" v-if='mypromiseHtml' ></div>
+                                            </div>
+                                        </simple-card>
+                                        <simple-card  class="fip-content-item">
+                                            <p slot="title" style="line-height: 24px;"><i class="basicPng"></i><span>附件</span></p>
+                                            <a slot="extra" v-show.sync="isEdit==1" @click="uploadClicked" v-if="mainModel.vo.cloudFiles.length < 9">
+                                                <span  style="margin-right:16px;"  ><Icon type="plus"  ></Icon>添加附件</span>
+                                            </a>
+
+                                            <ul>
+                                                <li v-for="(index, file) in mainModel.vo.cloudFiles" class="cert-file-item" @click="doClickFile(index)">
+                                                <div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+                                                <Icon  class="opcity0"  type="close-circled" v-if="!mainModel.isReadOnly && isEdit==1" @click.stop="removeFile(file.id, index)"></Icon>
+                                                </li>
+                                            </ul>
+                                            </simple-card>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="el-tabs__content" style='overflow: hidden;width: 100%;border:1px solid #ddd;height:100%;' v-show="checkedTabId === '2'">
+                                    <div class="edit-pop-container">
+                                        <div style='text-align: right;padding: 5px 20px;background: #fff;'>
+                                            <div class=""  style="display: inline-block">
+                                                <iv-input :maxlength="50" icon="ios-search" cleanable @on-remove="doFilter"  placeholder="请输入查询内容" :value.sync="mainModel.filterKey" @on-enter="doFilter" @on-click="doFilter"></iv-input>
+                                            </div>
+                                            <iv-button type="ghost" @click.stop="selectModalAddUser(0)" v-show.sync="isEdit==1" >添加</iv-button>
+                                            <iv-button type="ghost" v-show.sync="isEdit==1" @click="doImport">批量导入</iv-button>
+                                        </div>
+                                        <div class="epc-content" style="background-color: #fff;padding-top: 0;overflow: hidden;">
+                                            <div class="rel-info-panel-content-tabs" style="max-height: 450px;overflow: auto;">
+                                                <lite-table
+                                                        show-sequence
+                                                        show-page :columns="columns"
+                                                        :values="mainModel.riskJudgmentUnits"
+                                                        @on-click="onRowClicked"
+                                                        :tools="toolColumn"
+                                                        @on-update="selectModalAddUser"
+                                                        @on-delete="doItemDelete"
+                                                >
+                                                </lite-table>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="mytableMask" @click="doShowRiskJudgmentTempleteFormModal4Create" v-if="riskJudgmentTempletes && riskJudgmentTempletes.length==0&&checkedTabId === '1'" >请添加研判书模板</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  编辑弹框  -->
+</Modal>
+
+
+<vue-file-upload
+        v-ref:uploader
+        style="display: none;"
+        :multi-selection="true"
+        :params="uploadModel.params"
+        @on-before-upload="doUploadBefore"
+        @on-success-upload="doUploadSuccess"
+        @on-upload-complete="onUploadComplete"
+        :filters="uploadModel.filters">
+</vue-file-upload>
+
+<Modal  :visible.sync='selectModel.editDivModel.visible' :footer-hide="true"  :title="'设定研判内容项'" width="700" >
+    <!---  研判内容编辑  -->
+    <div class="edit-pop-container newEditionClass" >
+        <simple-card  class="fip-content-item" style="border-radius:0px">
+
+            <el-form class="fip-content-item-form" style='margin:0 auto;padding-bottom: 20px;width:100%' :model="mainModel.vo"  :rules="baseRules" v-ref:ruleform>
+
+                <div class="edit-dom-item" style='border:none;'>
+                    <!--<div class="edit-dom-item-label" style='margin-top:6px;' >编译内容</div>-->
+                    <div class="edit-mycontent">
+                        <div style="display:inline-block;">
+                            <vi-button type="button" class="edit-mycontent-btn" id='addInput' style="background: #fff;border-radius: 0px;"  @click='addInput'>+ 文本</vi-button>
+                            <vi-button type="button" class="edit-mycontent-btn"  id='addCheckBoxGroups' style="background: #fff;border-radius: 0px;"  @click='showEditDom(2)'>+ 多选框</vi-button>
+                            <!--selectIndex-->
+                            <vi-button type="button"  v-show="selectIndex === -2" class="edit-mycontent-btn"  id='addDaate' style="background: #fff;border-radius: 0px;"  @click='addSystemTime()'>+ 系统日期</vi-button>
+                            <vi-button type="button"  v-show="selectIndex === -2" class="edit-mycontent-btn"  id='addOperate' style="background: #fff;border-radius: 0px;"  @click='addSystemOperator()'>+ 人员签名</vi-button>
+                        </div>
+                        <div class="edit-editDom" id='editionDiv' @paste.prevent="initListen($event)" ref="editionDiv" contenteditable="true" ></div>
+                    </div>
+                </div>
+                <div class="edit-dom-item" style="display: none"  >
+                    <div class="edit-dom-item-label" style='margin-top:6px;' >预览</div>
+                    <div class="edit-mycontent" id='webview' ></div>
+                </div>
+                <!--<el-form-item label="预览" >-->
+                    <!--<div class="preview"></div>-->
+                <!--</el-form-item>-->
+            </el-form>
+        </simple-card>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="upDateRiskjudgmentGroup" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doCloseEditGroup" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+
+
+<!--- 组名弹框 --->
+<Modal :visible.sync='groupItemModel.show' :title='groupItemModel.title' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="groupItemModel.vo" :rules="groupItemModel.rules" v-ref:groupitemform>
+                <el-form-item label="组名" prop="name">
+                    <iv-input :value.sync="groupItemModel.vo.name" type='text'></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveGroupName" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doCloseGroupName" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+
+
+<!---- 多选框 弹框 ---->
+<Modal :visible.sync='selectModel.contralItemModel.visible' @on-cancel="doCloseAddItem" @on-ok='insertCheckBox' :title='"添加选项"' :footer-hide="true" >
+    <div class="edit-pop-container">
+
+        <div class="editDomCheckBox" style="padding-bottom:10px;" >
+            <vi-button type='text' style="margin-top: 11px" icon="plus" @click='addcheckBoxInput' class="pull-right">添加</vi-button>
+            <div class="editDomCheckBoxBody" name="editDomCheckBoxBody">
+                <div>
+                    <span class="myCheckboxStyle"></span>
+                    <input  class="editDomCheckInput" name="editDomCheckInput"/>
+                </div>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="insertCheckBox" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<!---- 研判人员 新增 修改 弹框 ---->
+<Modal :visible.sync='selectModel.showUserAddModal' :title='"信息详情"' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.info2Rules" v-ref:info2ruleform>
+                <el-form-item label="研判层级单位名称" prop="deptName">
+                    <iv-input :value.sync="mainModel.vo.deptName" type='text'  ></iv-input>
+                </el-form-item>
+                <el-form-item label="研判负责人" prop="users" class="small-info-box" prop="users">
+                    <!--<multiple-input-select-->
+                            <!--:selected-multiple.sync="mainModel.vo.users"-->
+                            <!--@on-click="doShowUserSelectModal"-->
+                    <!--&gt;</multiple-input-select>-->
+                    <risk-select-input
+                            :selected-multiple.sync="mainModel.vo.users"
+                            @on-click="doShowUserSelectModal">
+                    </risk-select-input>
+                </el-form-item>
+                <el-form-item label="下辖研判单位" v-show.sync='checkedDepartmentIndex > 0' prop="depts">
+                    <!--<multiple-input-select-->
+                            <!--:selected-multiple.sync="mainModel.vo.depts"-->
+                            <!--@on-click="doShowDepartmentSelectModal"-->
+                    <!--&gt;</multiple-input-select>-->
+                    <risk-select-input
+                        :selected-multiple.sync="mainModel.vo.depts"
+                        @on-click="doShowDepartmentSelectModal">
+                    </risk-select-input>
+
+                </el-form-item>
+                <el-form-item label="模板选择" prop="riskJudgmentTemplete">
+                    <risk-select-input
+                            :style="'min-height:31px;padding-right: 24px;'"
+                            :selected-multiple.sync="mainModel.vo.riskJudgmentTemplete"
+                            @on-click="doShowTempleteSelectModel">
+                    </risk-select-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doAddRiskjudgmentunit" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<templete-select-modal :visible.sync="selectModel.templeteModel.visible" :filter-data="selectModel.templeteModel.filterData"  @do-save="doSaveTempleteUnit" single-select></templete-select-modal>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>
+<level-select-modal :visible.sync="selectModel.leveltSelectModel.visible"   :filter-data="selectModel.leveltSelectModel.filterData" @do-save="doSaveBizOrgRels"></level-select-modal>
+<import-progress v-ref:import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+
+
+<risk-judgment-templete-form-modal
+        :visible.sync="formModel.riskJudgmentTempleteFormModel.show"
+        @do-save="doSaveTemplete"
+        @do-update="doUpdateTemplete"
+        :query-url="formModel.riskJudgmentTempleteFormModel.queryUrl"
+        v-ref:riskjudgmenttemplete-form-modal>
+</risk-judgment-templete-form-modal>
+
+<style>
+    .inputOperator{
+        /*width:100%;*/
+        /*text-align: right;*/
+        border:none;
+        border-bottom:1px solid #ddd;
+    }
+    .input_date{
+        display: inline;
+        border:none;
+    }
+    .label-tab-btn-border{
+        display: block;
+        width: 300px;
+        overflow: hidden;
+        position: relative;
+        /* border: 1px solid #ddd; */
+        height: 34px;
+    }
+    .label-tab-btn-body{
+        white-space: nowrap;
+        position: absolute;
+        height: 30px;
+        left:0;
+        top:2px;
+        transition: left 2s;
+    }
+    .mytableMask{
+        width: 100%;
+        height: 100%;
+        background: rgba(204,204,204,0.5);
+        position: absolute;
+        z-index: 1;
+        display: flex;
+        font-size: 28px;
+        color: #fff;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        /*padding-top: 200px;*/
+    }
+    .mytableMask:hover{
+        cursor:pointer;
+    }
+    .cursorPointer:hover{
+        cursor: pointer;
+    }
+    .centerBtnGroups{
+        display:flex;
+        align-items: center;
+        border:1px solid #ddd;
+        border-radius: 15px;
+        height: 44px;
+        margin-top:15px;
+        padding-right:10px;
+        justify-content: space-between;
+    }
+    .centerBtnGroupsLeft{
+        font-size: 14px;
+        color: #3c8dbc;
+        margin-left:10px;
+    }
+    .centerBtnGroupsLeft span:hover{
+        cursor: pointer;
+    }
+
+    .label-tab{
+        /* width: 100px; */
+        height: 30px;
+        /*border: 1px solid #ddd;*/
+        display: flex;
+        align-items: center;
+    }
+    .label-tab .label-tab-btn{
+        height: 30px;
+        border: 1px solid #ddd;
+        min-width: 50px;
+        max-width: 100px;
+        display: block;
+        padding-left: 5px;
+        padding-right: 5px;
+        align-items: center;
+        font-size: 14px;
+        justify-content: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        line-height: 30px;
+        text-align: center;
+    }
+    .label-tab .label-tab-btn{
+        cursor: pointer;
+    }
+    .label-tab-btnis-active{
+        background-color: #19a3e7;
+        color: #fff;
+    }
+    .flexBlock{
+        width:350px;
+        display: flex;
+        align-items: center;
+        flex:1;
+        position: relative;
+    }
+    .flexBlock:hover{
+        cursor: pointer;
+    }
+
+    .flexBlock .itemIndexEdit{
+         display: none;
+     }
+    .flexBlock:hover .itemIndexEdit{
+        display: block;
+        /*float: right;*/
+        /*position: absolute;*/
+        /*right:-26px;*/
+    }
+
+    #editionDiv p{
+        /*border:1px solid #ddd;*/
+    }
+    .editDomCheckInput{
+        font-size:14px;
+    }
+    .cert-file-item:hover .opcity0{
+        display: block;
+    }
+    .opcity0{
+        display: none;
+    }
+    .myCheckboxStyle{
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 1px solid #ddd;
+        background-color: rgb(235, 235, 228);
+        margin-left: 120px;
+        margin-right: 10px;
+        margin-bottom: -2px;
+    }
+    .edit-mycontent-btn{
+        display: inline-block;
+        color: #666;
+        font-size: 15px;
+        border: 1px solid #dad5d5;
+        /* padding-left: 5px; */
+        padding: 0 5px 0 5px
+    }
+    .edit-mycontent-btn:hover{
+        color:#1C6AC5;
+        border-color:#1C6AC5;
+        cursor: pointer;
+    }
+
+    .itemBtnGroups{
+        /*margin-left: 8px;*/
+        display: flex;
+        align-items: center
+    }
+    .itemBtnGroups input{
+        margin-right:2px;
+    }
+    .itemName{
+        width: 232px;
+        padding-left: 10px;
+        border: 1px solid #ddd;
+        height: 27px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        border-bottom: none;
+        color: #666;
+        font-weight: normal;
+        padding-right: 10px;
+    }
+    .clearfixmytable{
+        margin-bottom: 10px;
+        font-weight: bold;
+        line-height: 28px;
+        display: flex;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+        height: 28px;
+    }
+    .itemIndex{
+        width: 30px;
+        height: 27px;
+        background: #EEEEEE;
+        color: #666666;
+        text-align: center;
+        font-size: 12px;
+    }
+    .itemIndex:hover{
+        cursor: pointer;
+    }
+    .my-file-item{
+        color:#666 !important;
+    }
+    .my-file-item:hover{
+        color:#00f !important;
+    }
+    .myrow{
+        width:100%;
+        font-size: 0.3rem;
+        border:1px solid;
+    }
+    .myrow input{
+        border: none;
+        border-bottom:1px solid #123;
+    }
+    .groupItem{
+        border:1px solid #e9e9e9;
+    }
+    .riskSubmitBtn{
+        font-size: 0.32rem;
+        text-align: center;
+        position: fixed;
+        bottom: 0rem;
+        color: #6b68e2;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        background: #fff;
+    }
+    .riskSubmitBtn div{
+        width: 350px;
+        border: 1px solid #ddd;
+        padding: 0.15rem;
+    }
+    .inClass{
+        border: none;
+        border-bottom: 1px solid #d9d9d9;
+        width: 100px;
+        color: #666;
+        font-size: 0.12rem;
+        height: 20px;
+    }
+    .h5-style{
+        background: #4086cc;
+        margin: 0;
+        color: #fff;
+    }
+    .groupItemBody {
+        line-height: 0.8rem;
+        font-size: 0.24rem;
+    }
+    #webview{
+
+    }
+    .longRow{
+        width: 500px !important;
+        padding-left:10px;
+    }
+    .longRow label{
+        width:140px !important;
+    }
+    .longRow .el-form-item__content{
+        margin-left:140px !important;
+    }
+
+    .newEditionClass .simple-card-head{
+        display: none !important;
+    }
+    .newEditionClass .ivu-modal ,.newEditionClass .ivu-modal-content{
+        width:700px !important;
+    }
+    select{
+        /*height: 20px;*/
+    }
+    .riskItemContent{
+        font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","\5FAE\8F6F\96C5\9ED1",Arial,sans-serif;
+        font-size: 14px;
+        line-height: 40px;
+        color: #666666;
+        background: #eef3f5;
+        text-align: center;
+        font-weight: bold;
+        height: 40px;
+    }
+    .editContent{
+        /*background-color: #f9f9f9;*/
+        /* background-color: #f9f9f9; */
+        font-size: 12px;
+        padding: 10px;
+        line-height: 22px;
+        border: 1px solid #ddd;
+        min-height: 200px
+    }
+    .check{
+        /*rdisplay: inline-flex !important;*/
+        display: inline !important;
+        align-items: center;
+        flex-wrap: wrap
+    }
+    .check span{
+        display: inline-flex;
+        align-items: center;
+    }
+    .editContent select , .edit-dom-item select{
+        width: 80px;
+        color: #999;
+        appearance: button;
+        -moz-appearance: button;
+        -webkit-appearance: button;
+        background: url(/html/images/xiala.png) no-repeat right center transparent;
+        border: 1px solid #ddd;
+        padding-left: 3px;
+        height: 20px;
+        line-height: 1;
+        background-size: 19px;
+        margin-left: 3px;
+        color: #666;
+        font-size: 12px;
+    }
+    .editContent input[type=checkbox] ,.edit-dom-item input[type=checkbox]{
+        margin-left: 2px;
+        margin-right: 14px;
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-top: -4px;
+    }
+    .templateStatus0{
+        color: rgb(255, 255, 255);
+        padding: 4px 10px;
+        background-color: rgb(170, 205, 3);
+        margin-right:10px;
+        font-size: 12px;
+    }
+    .templateStatus1{
+        color: rgb(255, 255, 255);
+        padding: 4px 10px;
+        background-color: rgb(255, 0, 51);
+        margin-right: 10px;
+        font-size: 12px;
+    }
+
+    /*#editTable select, #editTable input{*/
+        /*border:none;*/
+        /*border-bottom:1px solid #000;*/
+        /*background: #e9e9e9;*/
+    /*}*/
+</style>
+
+

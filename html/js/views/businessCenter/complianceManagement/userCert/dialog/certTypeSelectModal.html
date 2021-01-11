@@ -1,0 +1,20 @@
+<Modal :visible.sync="visible" title="选择证书类型" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <div >
+                <div class="member-select-left-tree"
+                    style="margin: 0 10px;border: 1px #ddd solid;position: relative;">
+                    <iv-tree id-attr="id" pid-attr="parentId" display-attr="name" :model="legalTypes"
+                        :selected-datas.sync="treeSelectData" :show-checkbox="false" :single-select="true"
+                        :trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick"></iv-tree>
+                </div>
+            </div>
+
+        </div>
+        <div class="epc-footer">
+            <iv-button type="primary" class="pull-right" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+            <iv-button type="primary" @click="doSave" class="pull-right" >
+                确定</iv-button>
+        </div>
+    </div>
+</Modal>

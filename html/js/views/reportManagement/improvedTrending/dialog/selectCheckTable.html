@@ -1,0 +1,50 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+	    <vue-bootstrap-table
+	                  :columns="columns"
+	                  :filter-column="filterColumn"
+	                  :show-filter="true"
+	                  :show-column-picker="false"
+	                  :show-pager="true"
+	                  :selected-datas.sync="selectedDatas"
+                      :default-filter-value="defaultFilterValue"
+	                  :url.sync="url"
+	                  :reset-trigger-flag="resetTriggerFlag"
+	                  resizeable
+					  lazy-load
+					  :is-cache-selected-data="true"
+					  v-ref:table
+	      >
+	      </vue-bootstrap-table>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>
+
+
+<!-- <Modal visible="true" title="选择检查表" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container" style="width: 900px">
+        <div class="epc-content">
+            <vue-bootstrap-table
+                    :columns="columns"
+                    :filter-column="filterColumn"
+                    :selected-datas.sync="selectedDatas"
+                    :url="url"
+                    :reset-trigger-flag="resetTriggerFlag"
+                    :default-filter-value="defaultFilterValue"
+                    :is-cache-selected-data="true"
+                    :show-filter="true"
+	                :show-column-picker="false"
+	                :show-pager="true"
+	                lazy-load
+                    resizeable
+                    v-ref:table
+            >
+            </vue-bootstrap-table>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal> -->

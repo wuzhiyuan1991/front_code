@@ -1,0 +1,50 @@
+<Modal :visible.sync="visible"  :title="title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="height:400px; ">
+            <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+                <el-form-item label="任职/资质证书" prop="lookUpValue" full-width>
+                    <!--<div v-if="mainModel.isReadOnly" class="exam-paper-point">-->
+                        <!--<div class="ivu-tag" v-for="item in mainModel.vo.lookUpValue">-->
+                            <!--<span class="ivu-tag-text">{{ getDataDic('iptw_cert', item) }}</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <i-select v-else  clearable :model.sync="mainModel.vo.lookUpValue" :list="getDataDicList('iptw_cert')" ></i-select>
+                </el-form-item>
+                <el-form-item label="证书有效期" prop="expirationDate" full-width>
+                    <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.expirationDate" ></date-picker>
+                </el-form-item>
+                <el-form-item label="证书编号" prop="certificateNo" full-width>
+                    <iv-input :value.sync="mainModel.vo.certificateNo" class="inp"></iv-input>
+                </el-form-item>
+                <el-form-item label="证书附件"  full-width>
+                    <ul>
+                        <li v-for="(index, file) in mainModel.vo.fileList" class="cert-file-item" @click="doClickFile(index)">
+                            <div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+                            <Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <iv-button type="text" style="padding:0;color:#33A6FF"  @click="uploadClicked" >上传文件</iv-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+    <!-----   文件相关  ----->
+    <vue-file-upload
+            v-ref:uploader
+            style="display: none;"
+            :multi-selection="true"
+            :params="uploadModel.params"
+            @on-before-upload="doUploadBefore"
+            @on-success-upload="doUploadSuccess"
+            @on-upload-complete="onUploadComplete"
+            :filters="uploadModel.filters">
+    </vue-file-upload>
+</Modal>
+
+
+
+

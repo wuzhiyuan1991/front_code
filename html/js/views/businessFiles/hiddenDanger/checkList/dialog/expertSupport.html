@@ -1,0 +1,73 @@
+<Modal :visible.sync="visible" title="配置专家支持" width='900' :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <ul class="supprtUl">
+            <li :class="index==1?'checked':''" @click="doLiClick(1)">检查方法（{{checkMethod}}）</li>
+            <li :class="index==2?'checked':''" @click="doLiClick(2)">检查依据（{{checkBasis}}）</li>
+            <li :class="index==3?'checked':''" @click="doLiClick(3)">事故案例（{{checkAccident}}）</li>
+        </ul>
+        <span v-show="index==1"
+            style="position: absolute;right: 30px;top: 20px;color: #33a6ff;color: #33a6ff;font-size:14px;cursor: pointer;"
+            @click="doShowCheckMethodSelectModel">添加</span>
+        <span v-show="index==2"
+            style="position: absolute;right: 30px;top: 20px;color: #33a6ff;color: #33a6ff;font-size:14px;cursor: pointer;"
+            @click="doShowCheckBasisSelectModel">添加</span>
+        <span v-show="index==3"
+            style="position: absolute;right: 30px;top: 20px;color: #33a6ff;color: #33a6ff;font-size:14px;cursor: pointer;"
+            @click="doShowAccidentCaseSelectModel">添加</span>
+        <vue-bootstrap-table id="checkAccident" v-show="index==3" :url="tableModel.checkAccidentcaseTableModel.url"
+            :columns="tableModel.checkAccidentTableModel.columns" :show-empty-row="false"
+            :use-default-global-filter="false" :lazy-load="true" @on-del-row="delAccidentCase"
+            v-ref:checkaccidentcase-table>
+        </vue-bootstrap-table>
+        <vue-bootstrap-table id="checkBasis" v-show="index==2" :url="tableModel.checkBasisTableModel.url"
+            :columns="tableModel.checkBasisTableModel.columns" :show-empty-row="false"
+            :use-default-global-filter="false" :lazy-load="true" @on-del-row="delCheckBasis" v-ref:checkbasis-table>
+        </vue-bootstrap-table>
+        <vue-bootstrap-table id="checkMethod" v-show="index==1" :url="tableModel.checkMethodTableModel.url"
+            :columns="tableModel.checkMethodTableModel.columns" :show-empty-row="false"
+            :use-default-global-filter="false" :lazy-load="true" @on-del-row="delCheckMethod" v-ref:checkmethod-table>
+        </vue-bootstrap-table>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<style>
+    .supprtUl {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .supprtUl .checked {
+        color: #33a6ff;
+        border-bottom: 2px solid #33a6ff;
+    }
+
+    #exsuport .table-scroll-main-body,
+    #exsuport .table-scroll-main {
+        height: 443px;
+    }
+
+    #exsuport .table-scroll-main-body {
+        overflow-y: auto;
+        background-color: white;
+    }
+
+    #exsuport .table-content-box {
+        max-height: 432px;
+    }
+
+    .supprtUl li {
+        margin: 0 10px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+</style>
+<checkmethod-select-modal :visible.sync="selectModel.checkMethodSelectModel.visible" @do-save="doSaveCheckMethods">
+</checkmethod-select-modal>
+<check-basis-select-modal :visible.sync="selectModel.checkBasisSelectModel.visible" @do-save="doSaveCheckBasis">
+</check-basis-select-modal>
+<accident-case-select-modal :visible.sync="selectModel.accidentCaseSelectModel.visible" @do-save="doSaveAccident">
+</accident-case-select-modal>

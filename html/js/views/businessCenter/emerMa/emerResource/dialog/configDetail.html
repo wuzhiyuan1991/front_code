@@ -1,0 +1,53 @@
+
+<div class="lightblueModalTitle">
+    <Modal :visible.sync='visible' width="650" :title='"企业“危险化学品层级”对应“应急资源”配备参考"' :footer-hide="true">
+        <div class="edit-pop-container">
+            <div class="epc-content tableCardEmer">
+                <div class="tableCardRow"  style="color:#6C6C6C">
+                    <div class="tableCardRowTitle colorGree" style="background: #EEEEEE;" ></div>
+                    <!--<div class="tableCardRowTitle colorGreen">非危险化学品单位</div>-->
+                    <div class="tableCardRowTitle " style="background: #EEEEEE;font-weight: 600">第三类危险化学品<br>单位</div>
+                    <div class="tableCardRowTitle " style="background: #EEEEEE;font-weight: 600">第二类危险化学品<br>单位</div>
+                    <div class="tableCardRowTitle " style="background: #EEEEEE;font-weight: 600">第一类危险化学品<br>单位</div>
+                </div>
+                <div class="tableCardRow" v-for="(indexs, items) in lists">
+                    <div :style="getStyleBorder(indexs,index)" :class="item.name?'tableCardRowTitle colorGreen':'tableCardRowTitle'" v-for="(index, item) in items" >{{item.name}} <Icon  v-show="item.check" style="color:#58E9FF" type="checkmark-round"></div>
+                    <!--<div class="tableCardRowTitle "><Icon style="color:#00CBC8" type="checkmark-round"></Icon></div>-->
+                    <!--<div class="tableCardRowTitle "><Icon style="color:#00CBC8" type="checkmark-round"></Icon></div>-->
+                    <!--<div class="tableCardRowTitle "><Icon style="color:#00CBC8" type="checkmark-round"></Icon></div>-->
+                    <!--<div class="tableCardRowTitle "></div>-->
+                </div>
+            </div>
+            <div class="epc-footer" style="background: #fff;">
+                <!--<vi-button type="primary" @click="doSaveSelectPoint" class="pull-right">{{$t("gb.common.ok")}}</vi-button>-->
+                <vi-button type="primary"   @click="doClose" class="pull-right">关闭</vi-button>
+            </div>
+        </div>
+    </Modal>
+</div>
+
+
+
+<style>
+    .tableCardRow .colorGreen{
+        background: #C6E0B4;
+    }
+
+    .tableCardRow{display: flex;  margin-left: 66px;}
+    .tableCardRowTitle{font-weight:600;
+        color:#6C6C6C;width:120px;
+        border-right:1px solid #EAEAEA;
+        text-align: center;padding:5px;
+        height: 60px;display: flex;
+        align-items: center;justify-content: center;}
+    /*.tableCardEmer .d1{border-top:60px threedlightshadow solid;border-left:120px windowframe solid;width:0;height:0;position:relative;color:#FFF}*/
+
+    .lightblueModalTitle .ivu-modal-header{
+        background: #0089ED;
+    }
+    .lightblueModalTitle .epc-content{
+        background: #fff;
+    }
+</style>
+
+

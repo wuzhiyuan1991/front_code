@@ -1,0 +1,38 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('positionLevel') == -1)" label="级别" prop="positionLevel">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ipec_audit_role_position_level', mainModel.vo.positionLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.positionLevel" :list="getDataDicList('ipec_audit_role_position_level')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('positionType') == -1)" label="岗位" prop="positionType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ipec_audit_role_position_type', mainModel.vo.positionType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.positionType" :list="getDataDicList('ipec_audit_role_position_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('relId') == -1)" label="站队id/公司id/专业枚举值" prop="relId">
+						<iv-input :value.sync="mainModel.vo.relId" :disabled="(disabledFields.indexOf('relId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('relType') == -1)" label="审批形式" prop="relType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ipec_audit_role_rel_type', mainModel.vo.relType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.relType" :list="getDataDicList('ipec_audit_role_rel_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('auditorId') == -1)" label="审批人" prop="auditor.id">
+						<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('user') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<member-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></member-select-modal>

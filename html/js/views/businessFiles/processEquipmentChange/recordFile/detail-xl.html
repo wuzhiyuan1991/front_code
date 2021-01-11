@@ -1,0 +1,1143 @@
+<div class="detail-large-container"  style="overflow-x: hidden;" id="ipec">
+	<div class="base-info-panel" style="min-height: 100%;position: relative;">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if='mainModel.opType!="create"' type="ghost" @click="doPreview">预览</iv-button>
+				<!-- <iv-button v-if=" hasAuth('export')" type="ghost" @click="doExport">导出
+				</iv-button>  v-if="mainModel.isReadOnly"-->
+				<iv-button v-if=" hasAuth('delete')&&mainModel.opType!='create'" type="ghost" @click="doDelete">
+					{{$t("gb.common.del")}}</iv-button>
+
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div id="processChange" style="width:calc(100% - 50px);">
+			<ul class="layout-timeline layout-timeline-6" style="width: 70%;margin: 0 auto;justify-content: center">
+				<li v-for="(i, item) in itemList" class="layout-timeline-item ">
+					<div class="name" :style="getFontStyle(item)" :title="item.name">{{item.name}}</div>
+					<div class="line" :style="getLineStyle(item)"></div>
+					<div class="sq" :style="getStyle(item)" :title="getTitle(item)" @click="doStatusChange(item.index)">
+						{{item.num}}</div>
+
+				</li>
+			</ul>
+		</div>
+		<div v-show="mainModel.vo.status>0&&candidates.length>0" :title="candidate" style="position: absolute;width: 180px;white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			word-break: break-all;right:430px;top: 150px;">
+			待处理人: {{candidate}}
+		</div>
+
+		<div v-show="status==0" class="todoButton">
+
+			<span style="float: right;"><a @click="replaceTable.show=true">同类替换案例</a></span>
+			<!-- <span style="float: right;"><a @click="detailTable.show=true">处理过程总览</a></span> -->
+
+			<span style="float: right;"><a v-show="mainModel.vo.status>0&&!isReturn"
+					@click="doStatusChange(1)">下一步>></a></span><span style="float: right;"><a 
+						@click="doRefresh">刷新</a></span>
+		</div>
+		<div v-show="status==1" class="todoButton">
+
+			<span style="float: right;"><a @click="replaceTable.show=true">同类替换案例</a></span>
+			<!-- <span style="float: right;"><a
+					@click="detailTable.show=true">处理过程总览</a></span> -->
+			<span style="float: right;"><a v-show="mainModel.vo.status>1&&mainModel.vo.status!=7"
+					@click="doStatusChange(2)">下一步>></a></span><span style="float: right;"><a
+					@click="doStatusChange(0)">&lt;&lt;上一步</a></span><span style="float: right;"><a 
+						@click="afterInitData">刷新</a></span></div>
+		<div v-show="status==2" class="todoButton">
+
+			<span style="float: right;"><a @click="replaceTable.show=true">同类替换案例</a></span>
+			<!-- <span style="float: right;"><a @click="detailTable.show=true">处理过程总览</a></span> -->
+			<span style="float: right;"><a v-show="mainModel.vo.status>2"
+					@click="doStatusChange(3)">下一步>></a></span><span style="float: right;"><a
+					@click="doStatusChange(1)">&lt;&lt;上一步</a></span><span style="float: right;"><a 
+						@click="afterInitData">刷新</a></span> </div>
+		<div v-show="status==3" class="todoButton">
+
+			<span style="float: right;"><a @click="replaceTable.show=true">同类替换案例</a></span>
+			<!-- <span style="float: right;"><a @click="detailTable.show=true">处理过程总览</a></span> -->
+			<span style="float: right;"><a v-show="mainModel.vo.status>3"
+					@click="doStatusChange(4)">下一步>></a></span><span style="float: right;"><a
+					@click="doStatusChange(2)">&lt;&lt;上一步</a></span><span style="float: right;"><a 
+						@click="afterInitData">刷新</a></span> </div>
+		<div v-show="status==4" class="todoButton">
+
+			<span style="float: right;"><a @click="replaceTable.show=true">同类替换案例</a></span>
+			<!-- <span
+				style="float: right;"><a @click="detailTable.show=true">处理过程总览</a></span>  -->
+			<span style="float: right;"><a v-show="mainModel.vo.status>4"
+					@click="doStatusChange(5)">下一步>></a></span><span style="float: right;"><a
+					@click="doStatusChange(3)">&lt;&lt;上一步</a></span><span style="float: right;"><a 
+						@click="afterInitData">刷新</a></span> </div>
+		<div v-show="status==5" class="todoButton">
+			<span style="float: right;"><a @click="replaceTable.show=true">同类替换案例</a></span>
+			<!-- <span style="float: right;"><a
+					@click="detailTable.show=true">处理过程总览</a></span> -->
+			<span style="float: right;"><a @click="doStatusChange(4)">&lt;&lt;上一步</a></span><span style="float: right;"><a 
+				@click="afterInitData">刷新</a></span> </div>
+
+		<div class="bip-content" v-if="status==0" style="background-color: white;">
+			<div
+				style="text-align: center;font-size: 14px;border-bottom: 1px solid #666666;color: #666;margin: 5px 40px;width: 70px;font-weight: 700;">
+				基本信息</div>
+			<div>
+				<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical v-ref:ruleform>
+					<iv-row class="bip-content-item">
+						<el-form-item label="变更项目" prop="projectName" class="small-info-box">
+							<iv-input :value.sync="mainModel.vo.projectName" :textonly="mainModel.isReadOnly">
+							</iv-input>
+						</el-form-item>
+
+						<el-form-item label="变更所在功能区" prop="functionalZone" class="small-info-box">
+							<iv-input :value.sync="mainModel.vo.functionalZone" :textonly="mainModel.isReadOnly">
+							</iv-input>
+
+						</el-form-item>
+
+						<el-form-item label="申请单位" prop="orgId" class="small-info-box">
+							<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"
+								placeholder="请选择申请单位" :select-all-comp='true'></department-tree-select>
+							<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly
+								class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="申请日期" prop="applyDate" class="small-info-box">
+							<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd"
+								data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.applyDate"
+								clearable></date-picker>
+							<iv-input v-else :value="formatYMD(mainModel.vo.applyDate)" textonly class="inp"></iv-input>
+						</el-form-item>
+					</iv-row>
+					<iv-row class="bip-content-item">
+						<el-form-item label="变更开始时间" prop="startTime" class="small-info-box">
+							<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd"
+								data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.startTime"
+								clearable></date-picker>
+							<iv-input v-else :value="formatYMD(mainModel.vo.startTime)" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="变更结束时间" prop="endTime" class="small-info-box">
+							<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd"
+								data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.endTime" clearable>
+							</date-picker>
+							<iv-input v-else :value="formatYMD(mainModel.vo.endTime)" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="变更期限" prop="changeDeadline" class="small-info-box">
+							<div v-if="!mainModel.isReadOnly" style="display: flex;">
+								<div style="width: 110px;">
+									<i-select style="width: 110px;" :model.sync="mainModel.vo.changeMode"
+										:list="getDataDicList('ipec_timeType')"></i-select>
+								</div>
+								<div v-if="mainModel.vo.changeMode=='1'" style="width: 150px;" id='changeDeadline'>
+
+									<date-picker style="width: 150px;" format="yyyy-MM-dd"
+										data-format="yyyy-MM-dd 00:00:00"
+										:selected-date.sync="mainModel.vo.changeDeadline" clearable></date-picker>
+								</div>
+							</div>
+
+							<iv-input v-if="mainModel.vo.changeMode=='1'&&mainModel.isReadOnly"
+								:value="formatYMD(mainModel.vo.changeDeadline)" textonly class="inp">
+							</iv-input>
+							<iv-input v-if="mainModel.vo.changeMode=='2'&&mainModel.isReadOnly" value="永久变更" textonly
+								class="inp">
+							</iv-input>
+						</el-form-item>
+						<el-form-item label="变更申请人" prop="user.id" class="small-info-box">
+							<input-select :value="mainModel.vo.user" id-field="id" display-field="name" textonly
+								clearable></input-select>
+						</el-form-item>
+					</iv-row>
+					<iv-row class="bip-content-item">
+						<el-form-item label="变更事由" prop="changeReason" class="small-info-box" style="width: 600px;">
+							<iv-input :value.sync="mainModel.vo.changeReason" :textonly="mainModel.isReadOnly">
+							</iv-input>
+						</el-form-item>
+
+						<el-form-item label="所属专业" prop="profession" class="small-info-box">
+
+							<span
+								v-if="mainModel.isReadOnly">{{ getDataDic('ipec_profession', mainModel.vo.profession) }}</span>
+							<i-select v-else :model.sync="mainModel.vo.profession"
+								:list="getDataDicList('ipec_profession')" clearable></i-select>
+						</el-form-item>
+						<el-form-item label="业务级别" prop="bizType" class="small-info-box">
+							<i-select v-if="mainModel.opType!='view'&&mainModel.vo.status==0"
+								:model.sync="mainModel.vo.bizType" :list="getDataDicList('ipec_bizType')" clearable>
+							</i-select>
+							<span v-else>{{ getDataDic('ipec_bizType', mainModel.vo.bizType) }}</span>
+
+						</el-form-item>
+					</iv-row>
+				</el-form>
+			</div>
+			<div>
+				<div
+					style="text-align: center;font-size: 14px;border-bottom: 1px solid #666666;color: #666;margin: 5px 40px;width: 70px;font-weight: 700;">
+					变更检查表</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 100px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>安全健康
+				</p>
+				<div style="margin: 10px 0;">
+					<div style="height: 21px;position: relative;">
+						<a v-show="!mainModel.isReadOnly" style="float: right;" @click="showSafe=!showSafe">批量填写检查结果</a>
+						<ul v-show="showSafe" class="changeList">
+							<li @click="changeSafe(1,'safeHealthy','showSafe')">全部“是”</li>
+							<li @click="changeSafe(0,'safeHealthy','showSafe')">全部“否”</li>
+							<li @click="changeSafe(2,'safeHealthy','showSafe')">全部“不适用”</li>
+						</ul>
+					</div>
+					<div class="changeTable" style="background-color: #eef3f5;">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">序号</div>
+						<div style="flex: 1;
+								border:1px solid #ddd;line-height: 40px;text-align: center;">检查项目</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;text-align: center;">
+							检查结果
+						</div>
+
+					</div>
+					<div class="changeTable" v-for="(i,item) in safeHealthy">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">{{i+1}}</div>
+						<div style="flex: 1;text-indent: 20px;
+								border:1px solid #ddd;line-height: 40px">{{item.name}}</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;padding-left: 20px;">
+							<iv-radio-group :model.sync="item.checkResult">
+								<iv-radio value="1" :disabled="mainModel.isReadOnly"
+									@change="safeClick(i,1,'safeHealthy')">
+									是</iv-radio>
+								<iv-radio value="0" :disabled="mainModel.isReadOnly"
+									@change="safeClick(i,0,'safeHealthy')">
+									否</iv-radio>
+								<iv-radio value="2" :disabled="mainModel.isReadOnly"
+									@change="safeClick(i,2,'safeHealthy')">
+									不适用</iv-radio>
+							</iv-radio-group>
+
+						</div>
+
+					</div>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>环境影响
+					- 1.空气问题
+
+				</p>
+				<div style="margin: 10px 0;">
+					<div style="height: 21px;position: relative;">
+						<a v-show="!mainModel.isReadOnly" style="float: right;" @click="showAir=!showAir">批量填写检查结果</a>
+						<ul v-show="showAir" class="changeList">
+							<li @click="changeSafe(1,'airList','showAir')">全部“是”</li>
+							<li @click="changeSafe(0,'airList','showAir')">全部“否”</li>
+							<li @click="changeSafe(2,'airList','showAir')">全部“不适用”</li>
+						</ul>
+					</div>
+					<div class="changeTable" style="background-color: #eef3f5;">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">序号</div>
+						<div style="flex: 1;
+								border:1px solid #ddd;line-height: 40px;text-align: center;">检查项目</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;text-align: center;">
+							检查结果
+						</div>
+
+					</div>
+					<div class="changeTable" v-for="(i,item) in airList">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">{{i+1}}</div>
+						<div style="flex: 1;text-indent: 20px;
+								border:1px solid #ddd;line-height: 40px">{{item.name}}</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;padding-left: 20px;">
+							<iv-radio-group :model.sync="item.checkResult">
+								<iv-radio :disabled="mainModel.isReadOnly" value="1" @change="safeClick(i,1,'airList')">
+									是
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="0" @change="safeClick(i,0,'airList')">
+									否
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="2" @change="safeClick(i,2,'airList')">
+									不适用
+								</iv-radio>
+							</iv-radio-group>
+
+						</div>
+
+					</div>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>环境影响
+					- 2.废水问题
+
+				</p>
+				<div style="margin: 10px 0;">
+					<div style="height: 21px;position: relative;">
+						<a v-show="!mainModel.isReadOnly" style="float: right;"
+							@click="showWater=!showWater">批量填写检查结果</a>
+						<ul v-show="showWater" class="changeList">
+							<li @click="changeSafe(1,'waterList','showWater')">全部“是”</li>
+							<li @click="changeSafe(0,'waterList','showWater')">全部“否”</li>
+							<li @click="changeSafe(2,'waterList','showWater')">全部“不适用”</li>
+						</ul>
+					</div>
+					<div class="changeTable" style="background-color: #eef3f5;">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">序号</div>
+						<div style="flex: 1;
+								border:1px solid #ddd;line-height: 40px;text-align: center;">检查项目</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;text-align: center;">
+							检查结果
+						</div>
+
+					</div>
+					<div class="changeTable" v-for="(i,item) in waterList">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">{{i+1}}</div>
+						<div style="flex: 1;text-indent: 20px;
+								border:1px solid #ddd;line-height: 40px">{{item.name}}</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;padding-left: 20px;">
+							<iv-radio-group :model.sync="item.checkResult">
+								<iv-radio :disabled="mainModel.isReadOnly" value="1"
+									@change="safeClick(i,1,'waterList')">是
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="0"
+									@change="safeClick(i,0,'waterList')">否
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="2"
+									@change="safeClick(i,2,'waterList')">
+									不适用</iv-radio>
+							</iv-radio-group>
+
+						</div>
+
+					</div>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>环境影响
+					- 3.废弃物问题
+
+				</p>
+				<div style="margin: 10px 0;">
+					<div style="height: 21px;position: relative;">
+						<a v-show="!mainModel.isReadOnly" style="float: right;"
+							@click="showThing=!showThing">批量填写检查结果</a>
+						<ul v-show="showThing" class="changeList">
+							<li @click="changeSafe(1,'thingList','showThing')">全部“是”</li>
+							<li @click="changeSafe(0,'thingList','showThing')">全部“否”</li>
+							<li @click="changeSafe(2,'thingList','showThing')">全部“不适用”</li>
+						</ul>
+					</div>
+					<div class="changeTable" style="background-color: #eef3f5;">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">序号</div>
+						<div style="flex: 1;
+								border:1px solid #ddd;line-height: 40px;text-align: center;">检查项目</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;text-align: center;">
+							检查结果
+						</div>
+
+					</div>
+					<div class="changeTable" v-for="(i,item) in thingList">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">{{i+1}}</div>
+						<div style="flex: 1;text-indent: 20px;
+								border:1px solid #ddd;line-height: 40px">{{item.name}}</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;padding-left: 20px;">
+							<iv-radio-group :model.sync="item.checkResult">
+								<iv-radio :disabled="mainModel.isReadOnly" value="1"
+									@change="safeClick(i,1,'thingList')">是
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="0"
+									@change="safeClick(i,0,'thingList')">否
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="2"
+									@change="safeClick(i,2,'thingList')">
+									不适用</iv-radio>
+							</iv-radio-group>
+
+						</div>
+
+					</div>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>环境影响
+					- 4.其它问题
+
+				</p>
+				<div style="margin: 10px 0;">
+					<div style="height: 21px;position: relative;">
+						<a v-show="!mainModel.isReadOnly" style="float: right;"
+							@click="showOther=!showOther">批量填写检查结果</a>
+						<ul v-show="showOther" class="changeList">
+							<li @click="changeSafe(1,'otherList','showOther')">全部“是”</li>
+							<li @click="changeSafe(0,'otherList','showOther')">全部“否”</li>
+							<li @click="changeSafe(2,'otherList','showOther')">全部“不适用”</li>
+						</ul>
+					</div>
+					<div class="changeTable" style="background-color: #eef3f5;">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">序号</div>
+						<div style="flex: 1;
+								border:1px solid #ddd;line-height: 40px;text-align: center;">检查项目</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;text-align: center;">
+							检查结果
+						</div>
+
+					</div>
+					<div class="changeTable" v-for="(i,item) in otherList">
+
+						<div style="width: 50px;
+								border:1px solid #ddd;
+								text-align: center;line-height: 40px">{{i+1}}</div>
+						<div style="flex: 1;text-indent: 20px;
+								border:1px solid #ddd;line-height: 40px">{{item.name}}</div>
+						<div style="
+								border:1px solid #ddd;line-height: 40px;width: 200px;padding-left: 20px;">
+							<iv-radio-group :model.sync="item.checkResult">
+								<iv-radio :disabled="mainModel.isReadOnly" value="1"
+									@change="safeClick(i,1,'otherList')">是
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="0"
+									@change="safeClick(i,0,'otherList')">否
+								</iv-radio>
+								<iv-radio :disabled="mainModel.isReadOnly" value="2"
+									@change="safeClick(i,2,'otherList')">
+									不适用</iv-radio>
+							</iv-radio-group>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div>
+				<div
+					style="text-align: center;font-size: 14px;border-bottom: 1px solid #666666;color: #666;margin: 5px 40px;width: 140px;font-weight: 700;">
+					潜在的影响及控制措施</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>安全与健康（参见变更检查表）
+
+				</p>
+				<div class="xlelform" style="margin-left: 50px;">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:safeform
+						style="width: 1300px;">
+						<el-form-item label="是否有关" prop="safetyInfluence">
+							<iv-radio-group :model.sync="mainModel.vo.pecDetail.safetyInfluence">
+								<iv-radio style="color: #333333;" :disabled="safeDisabled||mainModel.isReadOnly"
+									value="1">是</iv-radio>
+								<iv-radio style="color: #333333;" :disabled="safeDisabled||mainModel.isReadOnly"
+									value="0">否</iv-radio>
+							</iv-radio-group>
+						</el-form-item>
+						<el-form-item label="结  论" prop="safetySummary" style="margin-bottom:20px;">
+							<iv-textarea style="color: #333333;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.safetySummary" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>环境影响（参见变更检查表）
+
+				</p>
+				<div class="xlelform" style="margin-left: 50px;">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:envform
+						style="width: 1300px;">
+						<el-form-item label="是否有关" prop="envInfluence">
+							<iv-radio-group :model.sync="mainModel.vo.pecDetail.envInfluence">
+								<iv-radio style="color: #333333;" :disabled="environmentDisabled||mainModel.isReadOnly"
+									value="1">是</iv-radio>
+								<iv-radio style="color: #333333;" :disabled="environmentDisabled||mainModel.isReadOnly"
+									value="0">否</iv-radio>
+							</iv-radio-group>
+						</el-form-item>
+						<el-form-item label="结  论" prop="envSummary" style="margin-bottom:20px;">
+							<iv-textarea style="color: #333333;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.envSummary" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>对成本/效益的考虑
+
+				</p>
+				<div class="xlelform" style="margin-left: 50px;">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:benefitform
+						style="width: 1300px;">
+						<el-form-item label="是否有关" prop='benefitInfluence'>
+							<iv-radio-group :model.sync="mainModel.vo.pecDetail.benefitInfluence">
+								<iv-radio style="color: #333333;" value="1" :disabled="mainModel.isReadOnly">是
+								</iv-radio>
+								<iv-radio style="color: #333333;" value="0" :disabled="mainModel.isReadOnly">否
+								</iv-radio>
+							</iv-radio-group>
+						</el-form-item>
+						<el-form-item label="结  论" prop="benefitSummary" style="margin-bottom:20px;">
+							<iv-textarea style="color: #333333;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.benefitSummary" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>其他影响（能耗、法律等）
+
+				</p>
+				<div class="xlelform" style="margin-left: 50px;">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:otherform
+						style="width: 1300px;">
+						<el-form-item label="是否有关" prop='otherInfluence'>
+							<iv-radio-group :model.sync="mainModel.vo.pecDetail.otherInfluence">
+								<iv-radio style="color: #333333;" value="1" :disabled="mainModel.isReadOnly">是
+								</iv-radio>
+								<iv-radio style="color: #333333;" value="0" :disabled="mainModel.isReadOnly">否
+								</iv-radio>
+							</iv-radio-group>
+						</el-form-item>
+						<el-form-item label="结  论" prop="otherSummary" style="margin-bottom:20px;">
+							<iv-textarea style="color: #333333;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.otherSummary" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 500px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>变更带来的问题陈述
+
+				</p>
+				<div class="lastelform" style="margin: 10px 50px">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:problemform
+						style="width: 1300px;">
+						<el-form-item prop='problem'>
+							<iv-textarea style="color: #333333;margin: 14px 0 38px 0;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.problem" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 700px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>变更的技术依据(预期改善的性质、实施此项变更的安全性、评审支持性的实验或工艺数据等)
+
+				</p>
+				<div class="lastelform" style="margin: 10px 50px">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:techform
+						style="width: 1300px;">
+						<el-form-item prop="technicalBase">
+							<iv-textarea style="color: #333333;margin: 14px 0 38px 0;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.technicalBase" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 500px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>工艺设备变更详细说明（包括操作程序、试验日志、关键的工艺变量值等）
+
+				</p>
+				<div class="lastelform" style="margin:10px 50px ">
+					<el-form class="bip-content-form" :model="mainModel.vo.pecDetail" v-ref:descriptform
+						style="width: 1300px;">
+						<el-form-item prop="description">
+							<iv-textarea style="color: #333333;margin: 14px 0 38px 0;font-size: 14px;"
+								:style="{'overflow-y':mainModel.isReadOnly==true?'auto':'hidden'}"
+								:value.sync="mainModel.vo.pecDetail.description" :readonly="mainModel.isReadOnly">
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+				<div
+					style="text-align: center;font-size: 14px;border-bottom: 1px solid #666666;color: #666;margin: 5px 40px;width: 70px;font-weight: 700;position: relative;">
+					附件资料 <span style="font-size: 12px;color: #999;position: absolute; top: 5px; left: 100px;
+									text-align: left;
+									top: 5px;
+									display: inline-block;
+									width: 700px;">（文件支持pdf,doc,docx,xls,xlsx,ppt,pptx,zip,rar,txt格式;
+						单个文件大小最大支持10mb; 每项最多上传9个文件）</span></div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>危害因素辨识和风险评价表
+
+				</p>
+				<div style="margin: 0 80px;">
+					<file-list :data="fileModel.default.data" readonly :config="fileModel.default.cfg">
+					</file-list>
+				</div>
+				<p
+					style="text-align: left;margin:5px 0;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 200px;">
+					<span
+						style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>其他
+
+				</p>
+				<div style="margin: 0 80px;">
+					<file-list :data="fileModel.other.data" readonly :config="fileModel.other.cfg">
+					</file-list>
+				</div>
+			</div>
+
+
+		</div>
+		<div class="bip-content" v-if="status==1">
+			<div class="melform" v-if="!pecAssessment.isReadOnly" style="margin: 10px 0;">
+				<el-form class="bip-content-form" :model="pecAssessment.vo" style="width: 400px;margin: 0 auto;"
+					v-ref:assessmentform>
+					<el-form-item label="评估结果" prop="result">
+						<iv-radio-group :model.sync="pecAssessment.vo.result">
+							<iv-radio value="0">同意</iv-radio>
+							<iv-radio value="1">不同意</iv-radio>
+						</iv-radio-group>
+					</el-form-item>
+					<el-form-item label="变更等级" prop="level">
+						<iv-radio-group :model.sync="pecAssessment.vo.level">
+							<iv-radio value="1">一般变更
+							</iv-radio>
+							<iv-radio value="2">重大变更</iv-radio>
+						</iv-radio-group>
+					</el-form-item>
+					<el-form-item label="意  见" prop="opinion">
+						<iv-textarea style="max-height: 200px;font-size: 14px;" :value.sync="pecAssessment.vo.opinion"
+							:readonly="pecAssessment.isReadOnly">
+						</iv-textarea>
+					</el-form-item>
+				</el-form>
+			</div>
+			<div class="melform" v-else style="margin: 10px 0;">
+				<el-form class="bip-content-form" :model="pecAssessment.vo" style="width: 400px;margin: 0 auto;">
+					<el-form-item label="评估人">
+						<iv-input :value="pecAssessment.vo.user.name||'暂无'" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="处理时间">
+						<iv-input :value="formatYMD(pecAssessment.vo.assessTime)||'暂无'" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="评估结果" prop="result">
+						<Icon v-if="pecAssessment.vo.result==0"  type="android-checkbox-outline" style="margin-right: 20px;">同意</Icon>
+						<Icon v-else type="android-checkbox-outline-blank" style="margin-right: 20px;">同意</Icon>
+
+						<Icon v-if="pecAssessment.vo.result==1" type="android-checkbox-outline"
+							style="margin-right: 20px;">不同意</Icon>
+						<Icon v-else type="android-checkbox-outline-blank" style="margin-right: 20px;">不同意</Icon>
+
+
+					</el-form-item>
+					<el-form-item label="变更等级">
+						<div style="line-height: 30px;">
+							<Icon v-if="pecAssessment.vo.level==1" type="android-checkbox-outline"
+								style="margin-right: 20px;">一般变更</Icon>
+							<Icon v-else type="android-checkbox-outline-blank" style="margin-right: 20px;">一般变更</Icon>
+							<Icon v-if="pecAssessment.vo.level==2" type="android-checkbox-outline"
+								style="margin-right: 20px;">重大变更</Icon>
+							<Icon v-else type="android-checkbox-outline-blank" style="margin-right: 20px;">重大变更</Icon>
+						</div>
+					</el-form-item>
+					<el-form-item label="意  见">
+						<iv-textarea style=" padding-top: 5px;font-size: 14px;" :value.sync="pecAssessment.vo.opinion"
+							readonly>
+						</iv-textarea>
+					</el-form-item>
+				</el-form>
+			</div>
+		</div>
+		<div class="bip-content" v-if="status==2">
+			<div class="selform" style="margin: 10px 0;">
+				<div v-if="mainModel.vo.bizType!=2&&mainModel.vo.level==1"
+					style="width: 900px;margin: 0 auto;display: flex;align-items: center;justify-content: center;height: 70px;">
+					<div class="arrow-thin" :style="getBizStyle(1)">管理处机关科室长</div>
+					<!-- <Icon type="ios-arrow-thin-right"></Icon> -->
+					<div class="arrow-thin" :style="getBizStyle(2)">管理处机关主管领导</div>
+
+				</div>
+				<div v-if="mainModel.vo.bizType!=2&&mainModel.vo.level==2"
+					style="width: 900px;margin: 0 auto;display: flex;align-items: center;justify-content: center;height: 70px;">
+					<div class="arrow-thin" :style="getBizStyle(1)">管理处机关科室长</div>
+
+					<!-- <Icon type="ios-arrow-thin-right"></Icon> -->
+					<div class="arrow-thin" :style="getBizStyle(2)">管理处机关主管领导</div>
+					<!-- <Icon type="ios-arrow-thin-right"></Icon> -->
+					<div class="arrow-thin" :style="getBizStyle(3)">公司业务处室业务人员</div>
+					<!-- <Icon type="ios-arrow-thin-right"></Icon> -->
+					<div class="arrow-thin" :style="getBizStyle(4)">公司业务处室主管领导</div>
+				</div>
+				<div v-if="mainModel.vo.bizType==2"
+					style="width: 900px;margin: 0 auto;display: flex;align-items: center;justify-content: center;height: 70px;">
+
+					<div class="arrow-thin" :style="getBizStyle(1)">公司机关科室长</div>
+					<!-- <Icon type="ios-arrow-thin-right"></Icon> -->
+					<div class="arrow-thin" :style="getBizStyle(2)">公司机关主管领导</div>
+				</div>
+				<div v-for="item in PecAuditRecords" style="color: #333333">
+					<p
+					style="text-align: left;margin:12px auto;position: relative;font-size: 14px;width: 340px;">
+						<span
+							style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>{{getDataDic('ipec_application_applicant_type',item.handlerType)}}
+						<span style="background-color: #8bcc1e;color: white;font-size: 12px;padding: 2px 5px;">已评</span>
+					</p>
+					<el-form style="width: 365px;margin: 10px auto;" class="bip-content-form">
+						<el-form-item label="审批人">
+							<iv-input :value='item.user.name' textonly></iv-input>
+						</el-form-item>
+						<el-form-item label="审批时间">
+							<iv-input :value="item.auditTime" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="审批结果">
+							<div>
+								<Icon v-if="item.result==1" type="android-checkbox-outline-blank"
+									style="margin-right: 20px;">同意</Icon>
+								<Icon v-else type="android-checkbox-outline" style="margin-right: 20px;">同意</Icon>
+								<Icon v-if="item.result==0" type="android-checkbox-outline-blank"
+									style="margin-right: 20px;">不同意</Icon>
+								<Icon v-else type="android-checkbox-outline" style="margin-right: 20px;">不同意</Icon>
+							</div>
+						</el-form-item>
+						<el-form-item v-if="item.cloudFiles.length>0" label="审批签名">
+							<img style="width: 100px;height: 60px;object-fit: cover;"
+								:src="getFiles(item.cloudFiles[0])" alt="">
+						</el-form-item>
+						<el-form-item label="审批意见">
+							<iv-textarea style="font-size: 14px;color:#333" :value.sync="item.opinion" readonly>
+							</iv-textarea>
+						</el-form-item>
+					</el-form>
+				</div>
+
+			</div>
+		</div>
+		<div class="bip-content" v-if="status==3">
+			<div class="melform" style="margin: 10px 0;">
+				<el-form class="bip-content-form" :model="implementation.vo" style="width: 700px;margin: 0 auto;"
+					v-ref:implementationrules>
+					<div style="display: flex;">
+						<div style="flex: 1;padding: 0 10px;">
+							<el-form-item label="实施部门负责人">
+								<iv-input style="margin-top: 3px;width:200px;color: #333;" :value='principals' textonly>
+								</iv-input>
+							</el-form-item>
+						</div>
+						<div style="flex: 1;padding: 0 10px;">
+							<el-form-item label="提交日期">
+								<iv-input style="margin-top: 3px;color: #333;"
+									:value="formatYMD(implementation.vo.submitTime)||'未提交'" textonly class="inp">
+								</iv-input>
+
+								</iv-input>
+							</el-form-item>
+						</div>
+					</div>
+					<div style="display: flex;">
+						<div style="flex: 1;padding: 0 10px;">
+							<el-form-item label="实施开始日期" prop="implStartTime">
+								<date-picker :default-date="false" v-if="!implementation.isReadOnly" format="yyyy-MM-dd"
+									data-format="yyyy-MM-dd 00:00:00"
+									:selected-date.sync="implementation.vo.implStartTime" clearable>
+								</date-picker>
+								<iv-input v-else style="margin-top: 3px;color: #333;"
+									:value="formatYMD(implementation.vo.implStartTime)" textonly class="inp">
+								</iv-input>
+							</el-form-item>
+						</div>
+						<div style="flex: 1;padding: 0 10px;">
+							<el-form-item label="实施完成日期" prop="implEndTime">
+								<date-picker :default-date="false" v-if="!implementation.isReadOnly" format="yyyy-MM-dd"
+									data-format="yyyy-MM-dd 00:00:00"
+									:selected-date.sync="implementation.vo.implEndTime" clearable>
+								</date-picker>
+								<iv-input v-else style="margin-top: 3px;color: #333;"
+									:value="formatYMD(implementation.vo.implEndTime)" textonly class="inp">
+								</iv-input>
+							</el-form-item>
+						</div>
+					</div>
+
+
+					<el-form-item label="实施情况" prop="presentation" style="padding-left:10px;">
+						<iv-textarea
+							:style="{'overflow-y':implementation.isReadOnly==true?'auto':'hidden','max-height': '200px','margin-top':'3px','font-size': '14px','color':'#333'}"
+							:value.sync="implementation.vo.presentation" :readonly="implementation.isReadOnly">
+						</iv-textarea>
+					</el-form-item>
+					<el-form-item label="上传培训告知记录" prop="content" style="padding-left:10px;">
+						<span v-if='!implementation.isReadOnly'
+							style="color: red;transform: translateX(-107px);display: inline-block;">*</span>
+						<!-- <a v-if='!implementation.isReadOnly' style="margin-left: 30px;" @click="uploadClicked">请上传</a> -->
+						<div v-for='(index,item) in fileList' v-if='fileList.length>0'><span
+								style="cursor: pointer;margin-left: 30px;" @click='doClickFile(index)'
+								class="link-ele">{{item.orginalName}}</span>
+							<Icon v-show="!implementation.isReadOnly" @click.stop="removeFile(item.id, index)"
+								type="close-circled" style="margin-left: 10px ; cursor: pointer; color: red;">
+							</Icon>
+						</div>
+						<vue-file-upload v-ref:uploader style="display: none;" :multi-selection="true"
+							:params="uploadModel.params" @on-before-upload="doUploadBefore"
+							@on-success-upload="doUploadSuccess" @on-upload-complete="onUploadComplete"
+							:filters="uploadModel.filters">
+						</vue-file-upload>
+					</el-form-item>
+				</el-form>
+
+			</div>
+
+		</div>
+		<div class="bip-content" v-if="status==4" id="filelist">
+			<div class="melform" style="margin: 10px 0;">
+				<el-form class="bip-content-form" :model="acceptance.vo" style="width: 700px;margin: 0 auto;"
+					v-ref:acceptancerules>
+					<div style="display: flex;">
+						<div style="flex: 1;">
+							<el-form-item label="效果验证负责人">
+								<iv-input style="margin-top: 3px;color: #333;" :value="accprincipals"
+									style="width:200px" textonly class="inp"></iv-input>
+							</el-form-item>
+						</div>
+						<div style="flex: 1;">
+							<el-form-item label="变更验收日期" prop="acceptDate">
+								<date-picker v-if="!acceptance.isReadOnly" format="yyyy-MM-dd "
+									data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="acceptance.vo.acceptDate"
+									clearable>
+								</date-picker>
+								<iv-input style="margin-top: 3px;color: #333;" v-else
+									:value="formatYMD(acceptance.vo.acceptDate)" textonly class="inp">
+								</iv-input>
+							</el-form-item>
+						</div>
+					</div>
+
+
+					<el-form-item label="变更效果验证（验证变更项目的完整性、适用性、有效性、安全可靠性及对环境的影响）" prop="description">
+						<iv-textarea id="changedescription"
+							:style="{ 'overflow-y':acceptance.isReadOnly==true?'auto':'hidden','max-height': '200px','margin':' 20px 10px','transform': 'translate(-110px,20px)','font-size': '14px','color':'#333'}"
+							:value.sync="acceptance.vo.description" :readonly="acceptance.isReadOnly"></iv-textarea>
+					</el-form-item>
+
+				</el-form>
+			</div>
+			<div style="width: 700px;margin: 10px auto;text-align: left;padding-left: 10px;">在变更过程或者变更发生后， 是否更新了以下信息：
+			</div>
+			<div class="changeTable" style="width: 700px;margin: 0 auto;">
+
+				<div style="width: 50px;
+							border:1px solid #ddd;
+							background-color: #eef3f5;
+							text-align: center;line-height: 40px;margin-left: 10px;">序号</div>
+				<div style="width:365px;background-color: #eef3f5;
+							border:1px solid #ddd;line-height: 40px;text-align: center;">确认项</div>
+				<div style="background-color: #eef3f5;
+							border:1px solid #ddd;line-height: 40px;width: 375px;text-align: center;">
+					结果
+				</div>
+
+			</div>
+			<div class="changeTable" style="width: 700px;margin: 0 auto;" v-for="(i,item) in updateList">
+
+				<div style="width: 50px;
+							border:1px solid #ddd;
+							text-align: center;line-height: 40px;margin-left: 10px;">{{i+1}}</div>
+				<div style="width: 365px;text-indent: 20px;
+							border:1px solid #ddd;line-height: 40px">{{item.name}}</div>
+				<div style="
+							border:1px solid #ddd;line-height: 40px;width: 375px;padding-left: 20px;text-align: center;"">
+								<iv-radio-group :model.sync=" item.result">
+					<iv-radio value="1" :disabled='acceptance.opType=="view"'>已更新</iv-radio>
+					<iv-radio value="2" :disabled='acceptance.opType=="view"'>不涉及</iv-radio>
+					</iv-radio-group>
+
+				</div>
+
+			</div>
+			<p
+				style="text-align: left;position: relative;margin-top: 12px;left:60px;font-size: 14px;width: 850px;margin: 10px auto;">
+				<span
+					style="border-left: 4px solid #33a6ff;position: absolute;top:3px;left:-8px;display: inline-block;height: 16px;"></span>附件
+
+			</p>
+			<div style="width: 700px;margin: 10px auto;">
+				<file-list-simple-card title="图片" readonly :data="fileModel.img.data" :config="fileModel.img.cfg">
+				</file-list-simple-card>
+				<file-list-simple-card title="视频" readonly :data="fileModel.vedio.data" :config="fileModel.vedio.cfg">
+				</file-list-simple-card>
+				<file-list-simple-card title="参考资料" readonly :data="fileModel.file.data" :config="fileModel.file.cfg">
+				</file-list-simple-card>
+			</div>
+
+
+		</div>
+		<div class="bip-content" v-if="status==5">
+			<div class="melform" style="margin: 10px 0;">
+				<el-form class="bip-content-form" :model="useRangeEvaluation.vo" style="width: 500px;margin: 0 auto;"
+					v-ref:userange>
+					<el-form-item label="变更类别" prop="changeType">
+						<i-select v-if="!useRangeEvaluation.isReadOnly" style="width: 150px;padding-left:20px"
+							:model.sync="useRangeEvaluation.vo.changeType" :list="getDataDicList('ipec_change_type')"
+							clearable></i-select>
+						<span v-else
+							style="padding-left:20px;color: #333;">{{getDataDic('ipec_change_type', useRangeEvaluation.vo.changeType)}}</span>
+					</el-form-item>
+					<el-form-item label="主管部门">
+						<iv-input style="padding-left:20px;color: #333;"
+							:value="getDataDic('org', mainModel.vo.competentDeptId)['deptName']" textonly class="inp">
+						</iv-input>
+					</el-form-item>
+					<el-form-item label="阶段性审批时间">
+						<iv-input style="padding-left:20px;color: #333;" :value="mainModel.vo.auditTime" textonly
+							class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="实施时间">
+						<iv-input style="width:100px;padding-left:20px;color: #333;margin-right: 20px;"
+							:value="formatYMD(implementation.vo.implStartTime)" textonly class="inp">
+						</iv-input>至
+						<iv-input style="width:100px;padding-left:20px;color: #333;"
+							:value="formatYMD(implementation.vo.implEndTime)" textonly class="inp">
+						</iv-input>
+					</el-form-item>
+					<el-form-item label="控制措施落实" prop="ctrlMeasureResult">
+						<iv-radio-group style="padding-left:20px" :model.sync="useRangeEvaluation.vo.ctrlMeasureResult">
+							<iv-radio style="color: #333;" :disabled="useRangeEvaluation.isReadOnly" value="0">同意
+							</iv-radio>
+							<iv-radio style="color: #333;" :disabled="useRangeEvaluation.isReadOnly" value="1">不同意
+							</iv-radio>
+						</iv-radio-group>
+					</el-form-item>
+					<iv-textarea style="margin: 10px 0;color: #333;font-size: 14px;"
+						:style="{'overflow-y':useRangeEvaluation.isReadOnly==true?'auto':'hidden','max-height': '200px','margin-left': '130px'}"
+						:value.sync="useRangeEvaluation.vo.ctrlMeasureDesc" :readonly="useRangeEvaluation.isReadOnly">
+					</iv-textarea>
+					<el-form-item label="资料更新落实" prop="dataUpdateResult">
+						<iv-radio-group style="padding-left:20px" :model.sync="useRangeEvaluation.vo.dataUpdateResult">
+							<iv-radio style="color: #333;" :disabled="useRangeEvaluation.isReadOnly" value="0">同意
+							</iv-radio>
+							<iv-radio style="color: #333;" :disabled="useRangeEvaluation.isReadOnly" value="1">不同意
+							</iv-radio>
+						</iv-radio-group>
+					</el-form-item>
+					<iv-textarea style="margin: 10px 0;color: #333;font-size: 14px;"
+						:style="{'overflow-y':useRangeEvaluation.isReadOnly==true?'auto':'hidden','max-height': '200px','margin-left': '130px'}"
+						:value.sync="useRangeEvaluation.vo.dataUpdateDesc" :readonly="useRangeEvaluation.isReadOnly">
+					</iv-textarea>
+				</el-form>
+			</div>
+		</div>
+	</div>
+
+	<style>
+		.selform .ivu-icon-ios-arrow-thin-right:before {
+			font-size: 30px;
+		}
+
+		#filelist .simple-card-head {
+			padding: 0;
+		}
+
+		.arrow-thin {
+			background-color: white;
+			/* border: 1px #ddd solid; */
+			width: 170px;
+			text-align: center;
+			padding: 5px 0;
+			/* height: 34px; */
+		}
+
+		.lastelform .ivu-textarea-wrapper {
+			width: 1300px !important;
+		}
+
+		.lastelform .el-form-item__content {
+			margin-left: 0px !important;
+		}
+
+		.selform .el-form-item__label {
+			padding: 5px 12px;
+		}
+
+		.melform .el-form-item__label {
+			white-space: nowrap;
+			/* width: 130px!important; */
+		}
+
+		.selform .el-form-item__content {
+			padding-top: 1px;
+		}
+
+		.selform .ivu-textarea-wrapper {
+			width: 590px !important;
+		}
+
+		.melform .ivu-textarea-wrapper {
+			width: 590px !important;
+		}
+
+		.xlelform .ivu-textarea-wrapper {
+			width: 1190px !important;
+		}
+
+		.changeTable {
+			margin-left: 50px;
+			display: flex;
+		}
+
+		.changeList {
+			width: 112px;
+			font-size: 14px;
+			position: absolute;
+			right: 0px;
+			bottom: -92px;
+			border-radius: 3px;
+			z-index: 10;
+		}
+
+		.changeList li {
+			cursor: pointer;
+			line-height: 30px;
+			text-align: center;
+			background-color: white;
+			color: #666;
+			border: 1px solid #ddd;
+
+
+		}
+
+		#changedescription {
+			width: 690px !important;
+		}
+
+		.changeList li:hover {
+			background-color: #0075d3;
+			color: white;
+		}
+
+		.todoButton {
+			border-bottom: 1px solid #ddd;
+			margin: 0 0 0 40px;
+			height: 22px;
+		}
+
+		.todoButton a {
+			margin: 0 10px;
+		}
+
+		.todoButton a:last-child {
+			margin: 0 0 0 10px;
+		}
+
+		.replaceTable {
+			padding: 0;
+			height: calc(100vh - 400px);
+			overflow-y: auto;
+			width: 100%;
+		}
+
+		.replaceTable .table tbody tr td,
+		.replaceTable .table tbody tr td span,
+		.replaceTable .table tbody tr td div {
+			white-space: normal !important;
+			/* max-height: 100px; */
+			margin: 5px 0;
+		}
+
+		.replaceTable .table-fixed-left {
+			z-index: 0 !important;
+		}
+
+		#ipec .ivu-textarea {
+			max-height: 200px;
+			overflow-y: auto;
+		}
+
+		#ipec .ivu-textarea-wrapper div {
+			font-size: 14px !important;
+		}
+
+		#changeDeadline .ivu-select {
+			width: 150px;
+		}
+	</style>
+	<modal :visible.sync="replaceTable.show" title="同类替换案例" :footer-hide="true" width="1060">
+		<div class="replaceTable" style="background-color: white;padding:10px;">
+			<vue-bootstrap-table :values="replaceTable.values" :columns="replaceTable.columns" :show-empty-row="false"
+				:page-size-opts="[9999]" :lazy-load='true' :show-pager='false'>
+			</vue-bootstrap-table>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="replaceTable.show=false" class="pull-right">{{$t("gb.common.close")}}
+			</vi-button>
+
+		</div>
+	</modal>
+	<modal :visible.sync="detailTable.show" title="处理过程总览" :footer-hide="false" width="700">
+		<div style="
+	height: 550px;
+	padding:10px;
+	overflow-y: auto;
+	width: 100%;background-color: white;">
+			<vue-bootstrap-table :setting="detailTable" :show-empty-row="false" :lazy-load='true'>
+			</vue-bootstrap-table>
+		</div>
+
+	</modal>
+	<entrust :visible.sync="entrust.show" @do-save="doEntrust" :candidates="candidates"
+		:task-type="mainModel.vo.status"></entrust>
+	<deliver :visible.sync="deliver.show" @do-save="doDeliver" :candidates="candidates"
+		:task-type="mainModel.vo.status"></deliver>
+	<approval :visible.sync="approval.show" @do-save="doApproval" :candidates="candidates" :vo="mainModel.vo">
+	</approval>
+	<user-select-modal :visible.sync="selectModel.userSelectModel.visible"
+		:filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>

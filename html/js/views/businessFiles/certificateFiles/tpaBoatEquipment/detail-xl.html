@@ -1,0 +1,124 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasPermission('3060005002')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && hasPermission('3060005001')" type="ghost" @click="doSave" style="margin-right: 4px">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasPermission('3060005003')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:300px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="设备编号" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="设备名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="设备分类"  class="small-info-box" prop="type">
+						<i-select  v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.type"  :list="getDataDicList('boat_equipment_type')" >
+							<i-option  v-for = "type in getDataDicList('boat_equipment_type')" :value="type.id">{{type.value}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly">{{getDataDic('boat_equipment_type', mainModel.vo.type)}}</span>
+					</el-form-item>
+					<el-form-item  label="设备型号"  prop="version" class="small-info-box" >
+                        <iv-input :value.sync="mainModel.vo.version" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="设备类型" prop="tpaBoatEquipmentType.id"  class="small-info-box" >
+						<input-select :value="mainModel.vo.tpaBoatEquipmentType" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowTpaBoatEquipmentTypeSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="登记日期"  class="small-info-box" >
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.createDate" :end="mainModel.vo.retirementDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.createDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="保修期(月)" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.warranty" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="报废日期" class="small-info-box" >
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.retirementDate" :begin="mainModel.vo.createDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.retirementDate" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item  label="负责人" class="small-info-box" >
+						<input-select   :value.sync="mainModel.vo.user" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!isReadOnly) && doShowUserSelectModal()" ></input-select>
+					</el-form-item>
+					<el-form-item  label="所属公司"  prop="compId" class="small-info-box" >
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属部门" prop="orgId"  class="small-info-box" >
+                        <department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="状态"  class="small-info-box" >
+                        <i-select :model.sync="mainModel.vo.state" :list="getDataDicList('stateData')"  v-if="!mainModel.isReadOnly" >
+                            <i-option v-for="item in getDataDicList('stateData')" :value="item.id">{{item.value}}</i-option>
+                        </i-select>
+                        <span v-else>{{getDataDic('stateData', mainModel.vo.state)}}</span>
+					</el-form-item>
+
+
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.tpaBoatEquipmentItemCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>设备设施子项</span></p>
+				<a slot="extra" @click.prevent="cardModel.tpaBoatEquipmentItemCardModel.showContent = !cardModel.tpaBoatEquipmentItemCardModel.showContent;" >
+					<span v-if="cardModel.tpaBoatEquipmentItemCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowTpaBoatEquipmentItemFormModal4Create" >
+					<span><Icon type="plus"></Icon>新增</span>
+				</a>
+				<vue-bootstrap-table
+					:url="tableModel.tpaBoatEquipmentItemTableModel.url"
+					:columns="tableModel.tpaBoatEquipmentItemTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					:lazy-load="true"
+					@on-del-row="doRemoveTpaBoatEquipmentItems"
+					@on-edit-row="doShowTpaBoatEquipmentItemFormModal4Update"
+					v-ref:tpaboatequipmentitem-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+	</div>
+	
+</div>
+
+<tpaboatequipmenttype-select-modal single-select :visible.sync="selectModel.tpaBoatEquipmentTypeSelectModel.visible" :filter-data="selectModel.tpaBoatEquipmentTypeSelectModel.filterData"  @do-save="doSaveTpaBoatEquipmentType"></tpaboatequipmenttype-select-modal>
+
+<tpaboatequipmentitem-form-modal
+		:visible.sync="formModel.tpaBoatEquipmentItemFormModel.show"
+		@do-save="doSaveTpaBoatEquipmentItem"
+		@do-update="doUpdateTpaBoatEquipmentItem"
+		:query-url="formModel.tpaBoatEquipmentItemFormModel.queryUrl"
+		v-ref:tpaboatequipmentitem-form-modal>
+</tpaboatequipmentitem-form-modal>
+<!--<equipmentitem-form-modal-->
+        <!--:visible.sync="formModel.tpaBoatEquipmentItemFormModel.show"-->
+        <!--@do-save="doSaveTpaBoatEquipmentItem"-->
+        <!--@do-update="doUpdateTpaBoatEquipmentItem"-->
+        <!--:query-url="formModel.tpaBoatEquipmentItemFormModel.queryUrl"-->
+        <!--v-ref:tpaboatequipmentitem-form-modal>-->
+<!--</equipmentitem-form-modal>-->
+
+<user-select-modal single-select :visible.sync="mainModel.showUserSelectModal"  @do-save="doSaveUser"></user-select-modal>
+
+
+

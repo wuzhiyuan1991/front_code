@@ -1,0 +1,130 @@
+<div class="edit-pop-container ">
+    <div class="epc-content riskAddCon">
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+            <el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+                <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+            </el-form-item>
+
+            <el-form-item  label="所属部门" prop="orgId" >
+                <department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+            </el-form-item>
+
+            <el-form-item  label="属地" prop="dominationArea.id">
+                <input-select :value="mainModel.vo.dominationArea" id-field="id" display-field="name" @click="doShowDominationAreaSelectModal"></input-select>
+            </el-form-item>
+
+            <el-form-item label="风险点" prop="riskPoint">
+                <iv-input type="textarea" :rows="2" :value.sync="mainModel.vo.riskPoint"></iv-input>
+            </el-form-item>
+
+            <el-form-item label="风险点类型" prop="checkObjType">
+                <i-select :model.sync="mainModel.vo.checkObjType" :list="getDataDicList('check_obj_risk_type')">
+                    <i-option v-for="item in getDataDicList('check_obj_risk_type')" :value="item.id">{{ item.value }}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="重点关注类型" prop="focusType" v-if="enableMajorRiskSource">
+                <i-select :model.sync="mainModel.vo.focusType" clearable :list="getDataDicList('special_type')">
+                    <i-option v-for="item in getDataDicList('special_type')" :value="item.id">{{ item.value }}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('bc.ria.scene')" prop="scene">
+                <iv-input type="textarea" :rows="2" :value.sync="mainModel.vo.scene"></iv-input>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.hazardFactor')" prop='hazardFactor.id'>
+                <iv-tree-select :model.sync="mainModel.vo.hazardFactor.id" :list="hazardFactorList" id-attr="id" display-attr="name">
+                    <iv-tree :model="hazardFactorList" :serch-filterable="true" :default-open-layer="1" :selected-datas.sync="selectedDataHazard" id-attr="id" pid-attr="parentId" display-attr="name" :single-select="true" :allow-parent-checked="true"></iv-tree>
+                </iv-tree-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.riskGrade')" prop="riskLevel">
+                <risk-model :model.sync="riskModel"></risk-model>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.controlMeasures')" prop="controlMeasures">
+                <iv-input type="textarea" :rows="2" :value.sync="mainModel.vo.controlMeasures"></iv-input>
+            </el-form-item>
+
+            <el-form-item label="控制措施-类型" prop="typeOfCtrlMeas">
+                <i-select :model.sync="mainModel.vo.typeOfCtrlMeas" :list="getDataDicList('type_of_ctrl_meas')" clearable>
+                    <i-option v-for="item in getDataDicList('type_of_ctrl_meas')" :value="item.id">{{item.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="控制措施-层级" prop="hierOfCtrlMeas">
+                <i-select :model.sync="mainModel.vo.hierOfCtrlMeas" :list="getDataDicList('hier_of_ctrl_meas')" clearable>
+                    <i-option v-for="item in getDataDicList('hier_of_ctrl_meas')" :value="item.id">{{item.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+
+            <!-- <el-form-item label="检查项内容" prop="checkItem.name">
+                <iv-input type="textarea" :rows="2" :value.sync="mainModel.vo.checkItem.name"></iv-input>
+            </el-form-item>
+
+            <el-form-item label="检查项类型" prop="checkItem.type">
+                <i-select :model.sync="mainModel.vo.checkItem.type" :list="getDataDicList('pool_type')">
+                    <i-option v-for="item in getDataDicList('pool_type')" :value="item.id">{{ item.value }}</i-option>
+                </i-select>
+            </el-form-item> -->
+            
+            <div v-if="isCreated" style="margin-top:4px;" class="select-style">
+                <el-form-item :label="$t('gb.common.chioceCheck')">
+                    <input-select :value="mainModel.vo.checkItem" show-title @do-clear-input="doClearInput" :clearable="true"  display-field="name" @click="(mainModel.showItemSelectModal= true)"></input-select>
+                    <iv-button @click="doCreate" style="margin-top:2px;float: left;margin-left: 5px;font-size: 13px">
+                        <Icon type="edit"></Icon>
+                    </iv-button>
+                </el-form-item>
+
+            </div>
+            <div v-if="!isCreated" style="margin-top:4px;">
+                <el-form-item :label="$t('gb.common.checkItemContent')" prop="checkItem.name">
+                    <iv-input :value.sync="mainModel.vo.checkItem.name"></iv-input>
+                    <span for="checkbox1" class="error"></span>
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.checkType')" prop="checkItem.type">
+                    <i-select :model.sync="mainModel.vo.checkItem.type" :list="getDataDicList('pool_type')" style="width: 211px;float: left">
+                    	<i-option v-for="item in getDataDicList('pool_type')" :value="item.id">{{ item.value }}</i-option>
+                	</i-select>
+                    <iv-button @click="doSelect" style="float: left;margin-left: 5px;font-size: 13px">
+                        <Icon type="reply"></Icon>
+                    </iv-button>
+                </el-form-item>
+            </div>
+
+            <el-form-item label="管控等级" prop="levelOfControl">
+                <i-select :model.sync="mainModel.vo.levelOfControl" :list="getDataDicList('level_of_control')">
+                    <i-option v-for="item in getDataDicList('level_of_control')" :value="item.id">{{item.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="隐患等级"  class="small-info-box">
+                <i-select :model.sync="mainModel.vo.hiddenDangerLevel" :list="getDataDicList('risk_type')" clearable>
+                    <i-option v-for="type in getDataDicList('risk_type')" :value="type.id">{{type.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="隐患类别"  class="small-info-box">
+                <i-select :model.sync="mainModel.vo.hiddenDangerType" :list="getDataDicList('hidden_danger_type')" clearable>
+                    <i-option v-for="type in getDataDicList('hidden_danger_type')" :value="type.id">{{type.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <div class="form-group h30"></div>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<checkitem-select-modal single-select :visible.sync="mainModel.showItemSelectModal" @do-save="doSaveItemTable"></checkitem-select-modal>
+
+<domination-area-select-modal
+        single-select
+        :visible.sync="dominationAreaSelectModel.visible"
+        :filter-data="dominationAreaSelectModel.filterData"
+        @do-save="doSaveDominationArea"
+></domination-area-select-modal>

@@ -1,0 +1,19 @@
+<iv-tree-select
+        :model.sync="id"
+        :list="catalogs"
+        id-attr="id"
+        display-attr="name"
+        clearable
+        @on-single-change="onSingleChange"
+>
+    <iv-tree
+            :model="catalogs"
+            :selected-datas.sync="selectedDatas"
+            serch-filterable
+            id-attr="id"
+            pid-attr="parentId"
+            display-attr="name"
+            single-select
+            allow-parent-checked>
+    </iv-tree>
+</iv-tree-select>

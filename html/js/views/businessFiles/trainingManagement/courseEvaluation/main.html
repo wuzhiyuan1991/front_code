@@ -1,0 +1,63 @@
+<div style="background-color: #fff;overflow-y: auto;height: 100%;">
+    <div class="my-evaluation-box">
+        <div class="my-evaluation">
+            <div class="tit"><Icon type="navicon-round"></Icon>平均星级</div>
+            <ul style="margin-top: 10px;">
+                <li class="all-evaluation-item" style="margin: 15px 0 10px;">
+                    <span>课件质量</span>
+                    <span style="margin: 0 10px;">{{avgModel.qualityGrade}}</span>
+                    <rate disabled :value="avgModel.qualityGrade_float"></rate>
+                </li>
+                <li>
+                    <table class="evaluation-table">
+                        <tr style="background-color: #eef3f5;">
+                            <td v-for="label in courseLabels">{{label.name}}</td>
+                        </tr>
+                        <tr> <td v-for="label in courseLabels">{{displayNum('course', label.value)}}</td></tr>
+                    </table>
+                </li>
+                <li class="all-evaluation-item" style="margin: 15px 0 10px;">
+                    <span>讲师水平</span>
+                    <span style="margin: 0 10px;">{{avgModel.teacherGrade}}</span>
+                    <rate disabled :value="avgModel.teacherGrade_float"></rate>
+                </li>
+                <li>
+                    <table class="evaluation-table">
+                        <tr style="background-color: #eef3f5;">
+                            <td v-for="label in teacherLabels">{{label.name}}</td>
+                        </tr>
+                        <tr> <td v-for="label in teacherLabels">{{displayNum('teacher', label.value)}}</td></tr>
+                    </table>
+                </li>
+                <li class="all-evaluation-item" style="margin: 15px 0 10px;">
+                    <span>环境体验</span>
+                    <span style="margin: 0 10px;">{{avgModel.envirGrade}}</span>
+                    <rate disabled :value="avgModel.envirGrade_float"></rate>
+                </li>
+                <li>
+                    <table class="evaluation-table">
+                        <tr style="background-color: #eef3f5;">
+                            <td v-for="label in envirLabels">{{label.name}}</td>
+                        </tr>
+                        <tr>
+                            <td v-for="label in envirLabels">{{displayNum('envir', label.value)}}</td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+        </div>
+        <div class="my-evaluation" style="margin: 20px 0;">
+            <div class="tit" style="margin-bottom: 10px;"><Icon type="navicon-round"></Icon>评价详情</div>
+            <vue-bootstrap-table
+                    :url="tableModel.url"
+                    :columns="tableModel.columns"
+                    :show-empty-row="false"
+                    :use-default-global-filter="false"
+                    :lazy-load="true"
+                    v-ref:comment-table
+            ></vue-bootstrap-table>
+            </div>
+        </div>
+    </div>
+
+</div>

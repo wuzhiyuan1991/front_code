@@ -1,0 +1,40 @@
+
+<div class="edit-pop-container" >
+    <!--epc-content-row-space 控制每一行的间距-->
+    <div class="epc-content epc-content-row-space">
+        <el-form :model="mainModel" :rules="rules" v-ref:ruleform>
+            <el-form-item :label="$t('hag.hazc.hiddenGrade')" prop="vo.riskType">
+                <i-select :model.sync="mainModel.vo.riskType" :list="mainModel.riskType">
+                    <i-option v-for="s in mainModel.riskType" :value="s.id">{{s.name}}</i-option>
+                </i-select>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.riskGrade')" prop="vo.riskLevel">
+                <risk-model  :model.sync="riskModel"></risk-model>
+            </el-form-item>
+            <el-form-item :label="$t('hag.hazc.rectifyReson')" prop="vo.dealDemand">
+                <iv-input type="textarea" :value.sync="mainModel.vo.dealDemand"></iv-input>
+
+                <!--<textarea class="form-control" rows="3" v-model="mainModel.vo.dealDemand"></textarea>-->
+            </el-form-item>
+            <el-form-item :label="$t('hag.hazc.rectifyPerson')" prop="dealCandidates">
+                <!--<user-select @do-save="doSaveSelect" :data-model="mainModel.vo.userNames" :single-select="true"></user-select>-->
+                <!--<input-select :value="mainModel.vo.userNames" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUserTableSelectModal())" ></input-select>-->
+                <multi-select-input :selected-multiple="mainModel.dealCandidates" id-field="id" display-field="name" @on-click="doShowUserTableSelectModal(1)"></multi-select-input>
+            </el-form-item>
+            <el-form-item :label="$t('hag.hazc.rectifyTime')" prop="vo.maxDealDate">
+                <date-picker format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.maxDealDate" :end="mainModel.vo.maxAcceptDate"></date-picker>
+            </el-form-item>
+            <el-form-item :label="$t('hat.hazt.Verifier')" prop="accepterCandidates">
+                <!--<user-select @do-save="doSaveVerify" :data-model="mainModel.vo.accepterName" :single-select="true"></user-select>-->
+                <multi-select-input :selected-multiple="mainModel.accepterCandidates" id-field="id" :readonly="!canUpdateVerifyUser" display-field="name" @on-click="doShowUserTableSelectModal(2)"></multi-select-input>
+            </el-form-item>
+            <el-form-item :label="$t('hat.hazt.termTime')" prop="vo.maxAcceptDate">
+                <date-picker format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.maxAcceptDate" :begin="mainModel.vo.maxDealDate"></date-picker>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<user-select-modal :visible.sync="selectModal.userSelectModel.visible"	@do-save="doSaveUser"  :filter-data="selectModal.userSelectModal.filterData"></user-select-modal>

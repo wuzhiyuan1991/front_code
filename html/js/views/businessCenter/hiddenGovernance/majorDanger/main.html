@@ -1,0 +1,79 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col span="12">
+                    <all-classification $main-header-classification-attr-mixBusiness>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="12">
+                    <div class="prelative addButton pull-right export-btn">
+                        <iv-dropdown trigger="click" placement="bottom-end" style="vertical-align: middle;" v-ref:filter-box>
+                            <iv-button v-if="hasAuth('search')" @click="initFilterBoxData" type="default" icon="ios-search" style="width: auto;">搜索</iv-button>
+                            <div slot="list" class="filter-box-list">
+                                <div class="filter-box-item">
+                                    <div class="filter-box-item-name" style="width: 75px;margin-right:0;">超期类型</div>
+                                    <div class="filter-box-item-value" style="margin-left:15px;margin-right:0;" :class="{'checked': filterModel.checkedExpiredStatus === item.id}" v-for="item in filterModel.filterStatusArray" @click="doChangeExpiredtatusFilter(item.id)">{{item.name}}</div>
+                                </div>
+                                <div class="filter-box-footer">
+                                    <iv-button @click="doFilterFromBox">确定</iv-button>
+                                    <iv-button @click="doFilterBoxClose" style="background-color: #fff;border: 1px solid #e8e8e8;color: #333;">取消</iv-button>
+                                </div>
+                            </div>
+                        </iv-dropdown>
+                        <vi-button @click="doExportExcel" v-if="hasAuth('majorDangerExport')">{{$t("gb.common.export")}}</vi-button>
+                        <iv-dropdown trigger="click" style="vertical-align: middle;" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+<!--                                <iv-dropdown-item>-->
+<!--                                    <div v-if="hasAuth('totalImport')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>-->
+<!--                                </iv-dropdown-item>-->
+<!--                                <iv-dropdown-item v-if="mainModel.showTempSetting && hasAuth('templateSet')">-->
+<!--                                    <div class="uploadAport">-->
+<!--                                        <a href="javascript:void(0);" @click="showTemplateSetting">导出模板设置</a>-->
+<!--                                    </div>-->
+<!--                                </iv-dropdown-item>-->
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                    <div class="main-special-box-1">
+                        <a @click="doFilterBySpecial('1')" :class="{'checked': filterTabId === 'todo1'}" class="main-special-item"  href="javascript:void(0);">待办</a>
+                        <a @click="doFilterBySpecial()" :class="{'checked': filterTabId === 'todo'}" class="main-special-item" href="javascript:void(0);">所有</a>
+                    </div>
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doRisk" v-if="hasAuth('majorDangerTotalBack') && [tableModel.selectedDatas.length] == 1">{{$t("hag.hazt.rotation")}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doDelete" v-if="hasAuth('majorDangerDelete')">{{$t("gb.common.del")}}</vi-button>
+<!--                    <vi-button type="text" class="mp-header-item-btn" @click="doCreateExport" v-if="hasAuth('createReport')">生成报告</vi-button>-->
+                </iv-col>
+            </iv-row>
+
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+
+</div>
+
+<export-template title="导出模版设置" :visible.sync="templateModel.visible"></export-template>
+<!-- 右滑弹框 -->
+<aside :show.sync="detailModel.show" placement="right">
+    <detail-component></detail-component>
+</aside>
+
+<!-- 弹框 -->
+<Modal :visible.sync="riskModel.show" :title="riskModel.title" footer-hide>
+    <risk-component></risk-component>
+</Modal>
+
+<print-modal v-ref:print-modal></print-modal>
+
+<!--<import-progress @do-export-excel="doExportExcel" :max-file-size="importProgress.maxFileSize" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>-->

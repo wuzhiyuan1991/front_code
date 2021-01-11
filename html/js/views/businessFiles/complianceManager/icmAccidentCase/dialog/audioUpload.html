@@ -1,0 +1,60 @@
+<simple-card :class="{ 'icmAccidentCase-upload': true }">
+  <span slot="title" style="overflow: hidden;display: block;">
+    <span class="titlePrompt left">（文件支持{{fileType}}格式; 限制文件大小为{{fileMaxSize}};）</span>
+    <!-- <vi-Button type="ghost" icon="ios-cloud-upload-outline" @click="updateLoad" class="right"
+      style="margin-top: 35px;display: block;">添加</vi-Button> -->
+  </span>
+  <div>
+    <vue-file-upload v-ref:uploader v-if="!readonly && data.length < 9" @on-success-upload="referMater" :params="params"
+      :filters="filters" class="file_upload">
+    </vue-file-upload>
+    <ul style="display: flex;flex-wrap: wrap;padding:12px;border:none;" class="ul-lite-box">
+      <li v-for="(index, audio) in data" @click="doPlayAudio(audio.ctxPath)" class="lite-box"
+        style="text-align: center; background-color: #fff;line-height: 98px;cursor: pointer;border: 1px solid #ddd;margin: 0 10px 10px 0;border-radius: 5px;">
+        <Icon type="music-note" style="font-size: 15px;"></Icon>
+        <i class="ivu-icon ivu-icon-android-close" @click.stop="doDeleteFile(audio.fileId, index)"></i>
+      </li>
+    </ul>
+  </div>
+  <audio-player :visible.sync="audioModel.visible" :path="audioModel.path"></audio-player>
+
+</simple-card>
+<style>
+  /* .icmAccidentCase-upload-audio>:first-child {
+    display: none;
+  } */
+
+  .icmAccidentCase-upload .ul-lite-box {
+    margin-top: 20px;
+    display: block;
+    word-wrap: break-word;
+    word-break: normal;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  /* .icmAccidentCase-upload .ul-lite-box:first-child {
+    display: none;
+  } */
+
+  .no-simple-head .simple-card-head {
+    padding: 0px;
+    overflow: hidden;
+  }
+
+
+  .icmAccidentCase-upload .ul-lite-box .lite-box {
+    width: 50px;
+    height: 50px;
+    margin-right: 13px;
+    display: block;
+  }
+
+  .icmAccidentCase-upload .ul-lite-box .lite-box .ivu-icon-music-note {
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    font-size: 16px;
+    opacity: 1;
+  }
+</style>

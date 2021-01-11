@@ -1,0 +1,53 @@
+<div class="tab-container report">
+    <div class="main-panel">
+        <div class="mp-content">
+            <div class="reportChartMain">
+                <div class="mp-header formTitle" style="margin-left: 10px;">
+                    <div class="basic">{{mainModel.title}}</div>
+                </div>
+                <div class="report-qry-head" style="padding-top: 8px;">
+                    <iv-row style="line-height: 32px;" >
+
+<!--                        <iv-col span="4" style="margin-top: 2px;">-->
+<!--                            <span style="float: left;">年份：</span>-->
+<!--                            <vi-date-picker style="float: left;width:calc(100% - 52px);font-size: 12px" type="year" @on-change="changeQryYear"></vi-date-picker>-->
+<!--                        </iv-col>-->
+                        <iv-col span="4" style="margin-right: 5px;">
+                            <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="mainModel.vo.dateRange" placeholder="选择日期范围"></vi-date-picker>
+                        </iv-col>
+                        <iv-col span="6">
+                            <obj-select style="margin-top: 3px" type="frw" :values.sync="mainModel.vo.objRange"></obj-select>
+                        </iv-col>
+                        <iv-col span="2" style="padding-left: 10px;">
+                            <i-select style="width: 100%;" :list="mainModel.stateList" :model.sync="mainModel.vo.type">
+                                <i-option v-for="g in mainModel.stateList" :value="g.value">{{ g.label }}</i-option>
+                            </i-select>
+                        </iv-col>
+                        <iv-col span="4" style="padding-left: 10px;">
+                            <iv-button @click="doQry()">统计</iv-button>
+                        </iv-col>
+                    </iv-row>
+                </div>
+                <iv-row type="flex" justify="end" style="padding: 0;height: 30px;">
+                    <iv-col span="5" style="line-height: 32px">
+                        <iv-radio-group style="line-height: 32px" :model.sync="mainModel.vo.timeType">
+                            <iv-radio value="1">
+                                <span>年度</span>
+                            </iv-radio>
+                            <iv-radio value="2">
+                                <span>季度</span>
+                            </iv-radio>
+                            <iv-radio value="3">
+                                <span>月度</span>
+                            </iv-radio>
+                        </iv-radio-group>
+                    </iv-col>
+                </iv-row>
+                <div class="echarts-box">
+                    <vuecharts class="left-pie-chart" :options="mainModel.charts.pieChartOpt" v-ref:pie-chart></vuecharts>
+                    <vuecharts class="right-bar-chart" :options="mainModel.charts.barChartOpt" v-ref:bar-chart></vuecharts>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

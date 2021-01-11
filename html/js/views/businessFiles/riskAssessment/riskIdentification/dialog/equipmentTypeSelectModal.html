@@ -1,0 +1,56 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :width="tableModelRight ? 1200 : 900" v-ref:tree
+    :footer-hide="true" class="userSelectModal">
+
+    <iv-row type="flex">
+        <iv-col span="3" style="background-color: #eaf0f5;padding: 20px 0 0 20px;">
+            <iv-input :value="treeModel.keyword" icon="ios-search" @on-click="doFilterLeft" @on-enter="doFilterLeft"
+                clearable></iv-input>
+            <div class="member-select-left-tree" v-el:mtree>
+                <div class="loading-text" v-if="treeModel.showLoading">加载中</div>
+                <iv-tree id-attr="id" pid-attr="parentId" display-attr="name" :model="treeModel.data"
+                    :selected-datas.sync="treeModel.selectedData" :show-checkbox="false" :single-select="true"
+                    :trigger-parent-event="true" :data-query="treeModel.keyword" @on-tree-node-click="doTreeNodeClick">
+                </iv-tree>
+            </div>
+
+        </iv-col>
+        <iv-col :span="tableModelRight ? '9' : '20'" style=" background-color: #eaf0f5;padding-top: 20px;">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModel.keyword" placeholder="编码、设备设施类型名" icon="ios-search"
+                    @on-click="doFilterRight" @on-enter="doFilterRight"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table :columns="tableModel.columns" :filter-column="tableModel.filterColumn"
+                        :show-pager="true" :selected-datas.sync="tableModel.selectedDatas" :url="tableModel.url"
+                        :page-size-opts="[100,300,500]" :is-single-check="isSingleSelect"
+                        :default-filter-value="tableModel.defaultFilterValue" @on-dbclick-cell="onDbClickCell"
+                        :is-cache-selected-data="isCacheSelectedData" lazy-load resizeable v-ref:table>
+                    </vue-bootstrap-table>
+                </div>
+            </div>
+        </iv-col>
+        <iv-col span="12" style="background-color: #eaf0f5;padding-top: 20px;">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModelRight.keyword" placeholder="设备设施名" icon="ios-search"
+                    @on-click="doFilterTableRight" @on-enter="doFilterTableRight"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table :columns="tableModelRight.columns"
+                        :filter-column="tableModelRight.filterColumn" :show-pager="false"
+                        :isSingleCheck="tableModelRight.isSingleCheck" @on-data-loaded="tableModelRightLoad"
+                        :selected-datas.sync="tableModelRight.selectedDatas" :url="tableModelRight.url"
+                        :page-size-index="tableModelRight.currentPageIndex"
+                        :page-size-opts="tableModelRight.pageSizeOpts" :is-single-check="tableModelRight.isSingleSelect"
+                        :default-filter-value="tableModelRight.defaultFilterValue"
+                        :is-cache-selected-data="tableModelRight.isCacheSelectedData" lazy-load resizeable v-ref:table2>
+                    </vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+    </iv-row>
+</Modal>

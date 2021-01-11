@@ -1,0 +1,101 @@
+<div class="sw-risk-map" style="overflow: hidden;" v-el:container>
+
+    <div style="height: 100%;position: absolute;z-index: 5;width: 100%;" @mousedown="onmousedown" @click="onMaskClick" v-el:mask></div>
+
+    <div style="will-change: transform; width: 1920px; height: 960px;position: relative;" v-el:box>
+        <canvas width="1920" height="960" v-el:canvas class="front-canvas"></canvas>
+    </div>
+    <!--按钮-->
+    <div style="position: absolute;z-index:6;left: 30px;top: 20px;">
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="howToUse">使用说明</button>
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="output">输出结果</button>
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="drawClear">清除</button>
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="drawEnd">结束</button>
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="drawStart">开始</button>
+    </div>
+
+    <Modal :visible.sync="showResultBox" :footer-hide="true" width="900" title="输出结果" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 900px">
+            <div class="epc-content">
+                <div class="risk-point-form-item">
+                    <label>pictureId</label>
+                    <iv-input :value.sync="vo.pictureId"></iv-input>
+                </div>
+                <div class="risk-point-form-item">
+                    <label>areaId</label>
+                    <iv-input :value.sync="vo.areaId"></iv-input>
+                </div>
+                <div class="risk-point-form-item">
+                    <label>areaName</label>
+                    <iv-input :value.sync="vo.areaName"></iv-input>
+                </div>
+                <div class="risk-point-form-item">
+                    <label>orgId</label>
+                    <div style="position: relative;flex-grow: 1;">
+                        <company-tree-select :id.sync="vo.orgId"></company-tree-select>
+                    </div>
+                </div>
+                <div class="risk-point-form-item">
+                    <label>drawOrgId</label>
+                    <div style="position: relative;flex-grow: 1;">
+                        <department-tree-select :id.sync="vo.drawOrgId" :comp-id.sync ="vo.orgId"></department-tree-select>
+                    </div>
+                </div>
+                <div class="risk-point-form-item">
+                    <label>areaGroupId</label>
+                    <!--<iv-input :value.sync="vo.areaGroupId"></iv-input>-->
+                    <cascade-input-select
+                            :value="dominationArea"
+                            :cascade-id="vo.drawOrgId"
+                            @click="doShowDominationAreaSelectModal"
+                    ></cascade-input-select>
+                </div>
+
+                <div class="risk-point-form-item">
+                    <label>dominationAreaIds</label>
+                    <iv-input :value.sync="dominationAreaIdsString"></iv-input>
+                </div>
+                <div class="risk-point-form-item">
+                    <label>points</label>
+                    <iv-input :value="pointsString" disabled></iv-input>
+                </div>
+                <div>{{stringResult}}</div>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+
+    <dominationarea-select-modal
+            single-select
+            :visible.sync="dominationAreaSelectModel.visible"
+            :filter-data="dominationAreaSelectModel.filterData"
+            @do-save="doSaveDominationArea"
+    ></dominationarea-select-modal>
+
+    <Modal :visible.sync="showUseInfo" :footer-hide="true" width="720" title="使用说明" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 720px">
+            <div class="epc-content">
+                <p>1. 点击开始按钮，开始描点（每一个区域都要从点击开始按钮开始，点击结束按钮结束）</p>
+                <p>2. 在图片上单击需要的坐标点，会在鼠标当前位置添加黄色圆点（风险地图上的文字在第一个点的右上方，请注意描点顺序）</p>
+                <p>3. 区域坐标点都描完后，点击结束按钮，会生成一个闭合的区域</p>
+                <p>4. 点击黄色圆点，按键盘方向键，可以微调黄色圆点坐标位置（点击结束按钮后才可调整）</p>
+                <p>5. 按住 CTRL 键点击黄色圆点，弹出编辑描点区域信息弹窗</p>
+                <p>6. 按住 SHIFT 键， 可拖动图片（先拖动图片后再描点）</p>
+                <p>7. 清除按钮可清除当前图片上所有点和线</p>
+                <p>8. 输出结果按钮 数据当前所有描点区域的数据信息</p>
+            </div>
+            <div class="epc-footer"></div>
+        </div>
+    </Modal>
+
+    <Modal :visible.sync="showResultModal" :footer-hide="true" width="720" title="使用说明" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 720px">
+            <div class="epc-content">
+               <p style="word-break: break-all;">{{endResultString}}</p>
+            </div>
+            <div class="epc-footer"></div>
+        </div>
+    </Modal>
+</div>

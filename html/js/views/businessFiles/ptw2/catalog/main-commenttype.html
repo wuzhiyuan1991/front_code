@@ -1,0 +1,22 @@
+<div class="flex-layout">
+    <div class="flex-grow1">
+        <div class="flex-layout-between list-li-h">
+            <div class="flex-v-center">
+                <span class="link-ele" @click="doUpdate" style="margin-left: 15px;">{{$t("gb.common.edition")}}</span>
+            </div>
+        </div>
+        <vue-bootstrap-table v-ref:table-task-level
+                             :show-pager="false"
+                             :is-single-check="true"
+                             :lazy-load="true"
+                             :columns="tableModel.columns"
+                             :values.sync="tableModel.values"
+                             :selected-datas.sync="tableModel.selectedDatas"
+                             :page-size-opts="tableModel.pageSizeOpts"
+                             :show-seq="true"
+        ></vue-bootstrap-table>
+    </div>
+</div>
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel v-ref:detail-model></detail-panel>
+</aside>

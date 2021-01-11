@@ -1,0 +1,726 @@
+<div class="detail-large-container detail-ri-duty-record">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<vi-button v-if="mainModel.vo.status == 1" type="" @click="shiftOver" >交班</vi-button>
+				<vi-button v-if="mainModel.vo.status == 2" type="" @click="succession">接班</vi-button>
+				<!--<iv-button v-if="!mainModel.isReadOnly && isEditStatus" type="" @click.stop="exportInfo">导出</iv-button>-->
+				<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+			<div class="bip-content">
+				<div class="rel-info-panel" v-if="mainModel.opType != 'create'">
+					<div class="rip-tableFirst">
+					  <simple-card class="fip-content-item">
+						<!-- <p slot="title"><i class="basicPng"></i><span></span></p> -->
+						<div class="rel-info-panel-content-tabs">
+						  <el-tabs active-key="">
+							<el-tab-pane label="值班记录">
+							  <div class="rip-item">
+								<simple-card>
+									<div class="base-info-panel lg-base-info-panel padding-bottom">
+										<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+										  :rules="mainModel.isReadOnly ? emptyRules : rules" v-ref:ruleform>
+										    <iv-row class="bip-content-item inline-block">
+											  <div class="do-btns btns-posit" v-if="mainModel.vo.status=='1'" style="margin-right: -10px;">
+											    <a class="float-right" @click="editDutyInfo" v-if="!btnsModel.show">编辑</a>
+											    <a class="float-right" @click="saveDutyInfo" v-if="btnsModel.show">保存</a>
+											    <a class="float-right" @click="cancelDutyInfo" v-if="btnsModel.show">取消</a>
+											  </div>
+											  
+												<el-form-item class="small-info-box" label="所属部门" prop="orgId">
+													<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+												</el-form-item>
+												
+												<el-form-item class="small-info-box" label="所属公司">
+													<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+												</el-form-item>
+											</iv-row>
+											
+											<iv-row class="bip-content-item inline-block">
+												<el-form-item label="班    次" prop="dutyClasses" class="small-info-box">
+													<span v-show="!btnsModel.show">{{ getDataDic('dutyClasses', mainModel.vo.dutyClasses) }}</span>
+													<div class="ivu-select-dropdown-min180" v-show="btnsModel.show">
+														<i-select :model.sync="mainModel.vo.dutyClasses">
+															<i-option v-for="item in getDataDicList('dutyClasses')" :value="item.id">{{ item.value }}</i-option>
+														</i-select>
+													</div>
+												</el-form-item>
+												
+												<el-form-item label="值班时间" class="small-info-box" prop="checkDate">
+												   <iv-input :value="mainModel.vo.startDate.slice(0, 16) || ''" textonly class="inp"></iv-input>		
+												   <span>至</span>
+												   <iv-input :value="mainModel.vo.endDate.slice(0, 16) || ''" textonly class="inp"></iv-input>
+												</el-form-item>
+										  </iv-row>
+										  
+											<iv-row class="bip-content-item bip-content-list">
+												<a class="float-right posit-absol-r" v-if="mainModel.vo.status=='1'" @click="doAddDialog">添加</a>
+												<a class="float-right posit-absol-r" v-if="mainModel.vo.status=='1'" style="right: 60px" @click="doAddLastDialog">沿用上个班次流程</a>
+<span style="clear: both; display: block; margin-bottom: 15px;"></span>
+												<el-form-item class="small-info-box info-box-wrap width100" label="本班流程" style="padding-right: 0;">
+													<div class="calc-130" v-for="item in mainModel.vo.processTemplates" style="margin-top: 20px; border: 1px solid #eee;">
+														<img class="img-center" :src="'data:image/png;base64,'+item.img" v-if="item.img && item.img!='undefined'" />
+														<div class="btns btn-group" style="position: absolute; top: -15px; right: -147px;">
+															<a class="float-right" v-if="mainModel.vo.status=='1'" @click="doUpdateDialog(item)">编辑</a>
+															<a class="float-right" v-if="mainModel.vo.status=='1'" @click="delDialog(item)">删除</a>
+														</div>
+													</div>
+												</el-form-item>
+											</iv-row>		
+																					 
+											 <iv-row class="bip-content-item bip-content-list">
+											    <a class="float-right posit-absol-r" v-if="mainModel.vo.status=='1'" @click="addProductRecord">添加</a>
+												<el-form-item class="small-info-box info-box-wrap width100 required" label="生产记事">
+													<div class="calc-100" v-show="mainModel.vo.dutyProductionRecords == ''">
+														<span class="list-date break-all">无</span>
+													</div>
+													<div class="calc-100" v-for="item in mainModel.vo.dutyProductionRecords">
+														<span class="list-date break-all">{{ item.startDate.slice(11, 16) || "" }} -  {{ item.endDate.slice(11, 16) || "" }}</span>
+														<!-- <span class="list-label">+{{ acrossDay }}天</span> -->
+														<span class="list-person break-all">{{ getRecodsUsers(item.recordsUsers) }}</span>
+														<span class="list-content break-all white-space-pre">{{ item.eventContent }}</span>
+														<div class="btns btn-group" v-if="mainModel.vo.status=='1'" style="position: absolute; top: 0; right: -145px;">
+															<a class="float-right"  @click="editProductRecord(item)">编辑</a>
+															<a class="float-right" @click="delProductRecord(item)">删除</a>
+														</div>
+													</div>
+												</el-form-item>
+											</iv-row>			
+																				 
+											<iv-row class="bip-content-item bip-content-list">
+												<a class="float-right posit-absol-r" v-if="mainModel.vo.status=='1'" @click="addTelfax">添加</a>
+												<el-form-item class="small-info-box info-box-wrap width100 required" label="重要电话及传真">
+													<div class="calc-100" v-show="mainModel.vo.dutyCallsFaxes == ''">
+														<span class="list-date break-all">无</span>
+													</div>
+													<div class="calc-100" v-for="item in mainModel.vo.dutyCallsFaxes">
+														<span class="list-date break-all">{{ item.date.slice(11, 16) || "" }}</span>
+														<span class="list-content break-all white-space-pre">{{ item.eventContent }}</span>
+														<div class="btns btn-group" v-if="mainModel.vo.status=='1'" style="position: absolute; top: 0; right: -145px;">
+															<a class="float-right" @click="editTelfax(item)">编辑</a>
+															<a class="float-right" @click="delTelfax(item)">删除</a>
+														</div>
+													</div>
+												</el-form-item>
+											</iv-row>													
+											
+											<iv-row class="bip-content-item bip-content-list">
+												<a class="float-right posit-absol-r" v-if="mainModel.vo.status=='1'" @click="addReportrecord">添加</a>
+												<el-form-item class="small-info-box info-box-wrap width100 required" label="阀室看护工汇报阀室情况记录">
+													<div class="calc-100" v-show="mainModel.vo.dutyValvechamberRecords == ''">
+														<span class="list-date break-all">正常</span>
+													</div>
+													<div class="calc-100" v-for="item in mainModel.vo.dutyValvechamberRecords">
+														<span class="list-date break-all">{{ item.date.slice(11, 16) || "" }}</span>
+														<span class="list-content break-all white-space-pre">{{ item.eventContent }}</span>
+														<div class="btns btn-group" v-if="mainModel.vo.status=='1'" style="position: absolute; top: 0; right: -145px;">
+															<a class="float-right" @click="editReportrecord(item)">编辑</a>
+															<a class="float-right" @click="delportrecord(item)">删除</a>
+														</div>
+													</div>
+												</el-form-item>
+											</iv-row>										  
+										</el-form>
+									</div>
+								</simple-card>
+							  </div>
+							</el-tab-pane>
+							<el-tab-pane label="阀室参数记录">
+							  <div class="detail-table">
+								<p class="text-center title">（时间：精确到时分，单位：温度℃，压力MPa，电压V）</p>
+								<div class="btns btn-group" >
+									<a href="javascript:;" v-if="mainModel.vo.status=='1'" @click="addRowValveparam">添加</a>
+								</div>
+								<div class="mp-content w100-table-panel">
+									<!-- <group-partial@do-create-item="addRowValveparam"> -->
+										<vue-bootstrap-table
+											:columns="tableModel.veparamTable.columns"
+											:values.sync="tableModel.veparamTable.columnsBody"
+											lazy-load
+											:resizeable = "false"
+											:show-empty-row = "false"
+											show-loading:show-scroll = "true"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="delRowValveparam"
+											@on-edit-row="editRowValveparam"
+											v-ref:valveparam-table
+										>
+										</vue-bootstrap-table>
+									<!-- </group-partial> -->
+								</div>
+							  </div>
+							</el-tab-pane>
+							<el-tab-pane label="维护检修">
+							  <div class="detail-table">
+								<div class="btns" v-if="mainModel.vo.status=='1'">
+									<a href="javascript:;" @click="addRowMaintain">添加</a>
+									<a href="javascript:;" @click="showMaintainTable">刷新</a>
+								</div>
+								<div class="mp-content w100-table-panel iepcExecl" style="padding-top: 20px;">
+									<!-- <group-partial@do-create-item="addRowMaintain"> -->
+										<vue-bootstrap-table
+											:columns="tableModel.maintainTable.columns"
+											:values.sync="tableModel.maintainTable.columnsBody"
+											lazy-load
+											:resizeable = "false"
+											:show-empty-row = "false"
+											show-loading:show-scroll = "true"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="delRowMaintain"
+											@on-edit-row="editRowMaintain"
+											v-ref:maintain-table
+										>
+										</vue-bootstrap-table>
+									<!-- </group-partial> -->
+								</div>
+							  </div>
+							</el-tab-pane>
+							<el-tab-pane label="工艺站场巡检">
+							  <div class="gyxj">
+								<div class="btns">
+									<!-- <a href="javascript:;">编辑</a> -->
+									<a href="javascript:;" @click="refreshStationInspectTable">刷新</a>
+								</div>
+								<table class="table" v-for="item in tableModel.stationInspectTable">
+									<thead>
+										<th colspan="2">{{item.type}}</th>
+									</thead>
+									<tbody>
+										<tr>
+											<td>时间</td>
+											<td>
+												<span>开始时间<a href="javascript:;" style="color: #666;">{{item.startTime}}</a></span>
+												<span>结束时间<a href="javascript:;" style="color: #666;">{{item.endTime}}</a></span>
+											</td>
+										</tr>
+										<tr>
+											<td><div class="vertical-text">详细记录</div></td>
+											<td>
+												<p class="line-break">{{item.record}}</p>
+											</td>
+										</tr>
+										<tr>
+											<td>巡检人员</td>
+											<td>{{item.user}}</td>
+										</tr>
+									</tbody>
+								</table>
+							  </div>
+							</el-tab-pane>
+							<el-tab-pane label="交班内容">
+							  <div class="">
+								  <div class="detail-table">
+									<p class="title">交班内容</p>
+									<div class="btns btn-group" v-if="mainModel.vo.status=='1'">
+										<a class="float-right" @click="editShiftHandoverContent" v-if="!btnsModelShiftHandover.show">编辑</a>
+										<a class="float-right" @click="saveShiftHandoverContent" v-if="btnsModelShiftHandover.show">保存</a>
+										<a class="float-right" @click="cancelShiftHandoverContent" v-if="btnsModelShiftHandover.show">取消</a>
+									</div>
+								  </div>
+								<simple-card>
+									<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+									  :rules="mainModel.isReadOnly ? emptyRules : rules" v-ref:ruleform>
+									  <iv-row class="bip-content-item label-content-form inline-block padd-left">
+									    <el-form-item class="small-info-box width-col-12" label="运行参数">
+										  <div>
+										  	<iv-radio-group :model.sync="tableModel.shiftHandoverContent.workingParam">
+										  		<iv-radio value="1">正常</iv-radio>
+										  		<iv-radio value="2">异常</iv-radio>
+												<div class="input-mask" v-if="!btnsModelShiftHandover.show"></div>
+										  	</iv-radio-group>
+										  </div>
+									      <span class="block mar-t10 break-all" v-if="!btnsModelShiftHandover.show">{{ tableModel.shiftHandoverContent.workingParamVal }}</span>
+									      <iv-input type="textarea" :rows="2" class="block mar-t10" v-if="btnsModelShiftHandover.show" :value.sync="tableModel.shiftHandoverContent.workingParamVal"></iv-input>
+									    </el-form-item>
+									    <el-form-item class="small-info-box width-col-12" label="工具资料">
+										  <div>
+										  	<iv-radio-group :model.sync="tableModel.shiftHandoverContent.toolDatum">
+										  		<iv-radio value="1">齐全</iv-radio>
+										  		<iv-radio value="2">缺失</iv-radio>
+												<div class="input-mask" v-if="!btnsModelShiftHandover.show"></div>
+										  	</iv-radio-group>
+										  </div>
+										  <span class="block mar-t10 break-all" v-if="!btnsModelShiftHandover.show">{{ tableModel.shiftHandoverContent.toolDatumVal }}</span>
+										  <iv-input type="textarea" :rows="2" class="block mar-t10" v-if="btnsModelShiftHandover.show" :value.sync="tableModel.shiftHandoverContent.toolDatumVal"></iv-input>
+									    </el-form-item>
+									    <el-form-item class="small-info-box width-col-12" label="消防器材">
+										  <div>
+										  	<iv-radio-group :model.sync="tableModel.shiftHandoverContent.fireEquipm">
+										  		<iv-radio value="1">合格</iv-radio>
+										  		<iv-radio value="2">不合格</iv-radio>
+												<div class="input-mask" v-if="!btnsModelShiftHandover.show"></div>
+										  	</iv-radio-group>
+										  </div>
+										  <span class="block mar-t10 break-all" v-if="!btnsModelShiftHandover.show">{{ tableModel.shiftHandoverContent.fireEquipmVal }}</span>
+										  <iv-input type="textarea" :rows="2" class="block mar-t10" v-if="btnsModelShiftHandover.show" :value.sync="tableModel.shiftHandoverContent.fireEquipmVal"></iv-input>
+									    </el-form-item>
+									    <el-form-item class="small-info-box width-col-12" label="岗位卫生">
+										  <div>
+										  	<iv-radio-group :model.sync="tableModel.shiftHandoverContent.posiHygiene">
+										  		<iv-radio value="1">整洁</iv-radio>
+										  		<iv-radio value="2">不整洁</iv-radio>
+												<div class="input-mask" v-if="!btnsModelShiftHandover.show"></div>
+										  	</iv-radio-group>
+										  </div>
+										  <span class="block mar-t10 break-all" v-if="!btnsModelShiftHandover.show">{{ tableModel.shiftHandoverContent.posiHygieneVal }}</span>
+										  <iv-input type="textarea" :rows="2" class="block mar-t10" v-if="btnsModelShiftHandover.show" :value.sync="tableModel.shiftHandoverContent.posiHygieneVal"></iv-input>
+									    </el-form-item>
+									    <el-form-item class="small-info-box width-col-12" label="设备状态">
+										  <div>
+										  	<iv-radio-group :model.sync="tableModel.shiftHandoverContent.equipmStatus">
+										  		<iv-radio value="1">正常</iv-radio>
+										  		<iv-radio value="2">异常</iv-radio>
+												<div class="input-mask" v-if="!btnsModelShiftHandover.show"></div>
+										  	</iv-radio-group>
+										  </div>
+										  <span class="block mar-t10 break-all" v-if="!btnsModelShiftHandover.show">{{ tableModel.shiftHandoverContent.equipmStatusVal }}</span>
+										  <iv-input type="textarea" :rows="2" class="block mar-t10" v-if="btnsModelShiftHandover.show" :value.sync="tableModel.shiftHandoverContent.equipmStatusVal"></iv-input>
+									    </el-form-item>
+									  </iv-row>
+									</el-form>
+								</simple-card>
+								<div class="detail-table">
+									<p class="title">交接班记录</p>
+									<div class="mp-content w100-table-panel">
+										<vue-bootstrap-table
+											lazy-load
+											:values = "tableModel.shiftHandoverRecordTable.columnsBody"
+											:columns = "tableModel.shiftHandoverRecordTable.columns"
+											:page-size-opts = "[20,50,100]"
+											:resizeable = "false"
+											:show-empty-row = "false"
+											show-loading:show-scroll = "true"
+										></vue-bootstrap-table>
+									</div>
+								</div>
+							  </div>
+							</el-tab-pane>
+							<span class="title-person">
+								<span>值班人员：<a href="javascript:;" style="color: #444">{{mainModel.vo.createUser.name}}</a></span>
+								<span>接班人：<a href="javascript:;" style="color: #444">{{mainModel.vo.receiveUser.name}}</a></span>
+							</span>
+						  </el-tabs>
+						</div>
+					  </simple-card>
+					</div>
+				  </div>
+				</div>
+		</div>
+</div>
+
+<ri-duty-record-group-form-modal
+	:visible.sync="formModel.riDutyRecordGroupFormModel.show"
+	@do-save="doSaveRiDutyRecordGroup"
+	@do-update="doUpdateRiDutyRecordGroup"
+	
+	:query-url="formModel.riDutyRecordGroupFormModel.queryUrl"
+	:hidden-fields="formModel.riDutyRecordGroupFormModel.hiddenFields"
+	v-ref:riDutyRecord>
+</ri-duty-record-group-form-modal>
+
+<!-- 接班 -->
+<modal-succession 
+	v-ref:succession-tpl
+	@on-save="successionSave"
+	@close-detail-modal="closeDetailModal"
+	>
+</modal-succession>
+
+<!-- 交班 -->
+<modal-shift-over
+	v-ref:shift-over-tpl 
+	@on-save="shiftOverSave"
+	@close-detail-modal="closeDetailModal">
+</modal-shift-over>
+
+<!-- 生产记事 -->
+<modal-add-edit-product 
+	:visible.sync="formModel.addEditProductForm.show"
+	v-ref:add-edit-product-tpl 
+	@refresh-duty-record="refreshDutyRecord"
+	>
+</modal-add-edit-product>
+
+<!-- 重要电话及传真 -->
+<modal-add-edit-telfax 
+	:visible.sync="formModel.addEditTelfaxForm.show"
+	v-ref:add-edit-telfax-tpl 
+	@refresh-duty-record="refreshDutyRecord"
+	>
+</modal-add-edit-telfax>
+
+<!-- 阀室汇报记录 -->
+<modal-add-edit-reportrecord 
+	:visible.sync="formModel.addEditReportrecordForm.show"
+	v-ref:add-edit-reportrecord-tpl 
+	@refresh-duty-record="refreshDutyRecord"
+	>
+</modal-add-edit-reportrecord>
+
+<model-valveparam-add-edit
+	:visible.sync="formModel.rowValveparamFormModel.show"
+	@do-save="valveParamSave"
+	@do-update="valveParamUpdate"
+	@create-refresh="createRefresh"
+	@update-refresh="updateRefresh"
+	:query-url="formModel.rowValveparamFormModel.queryUrl"
+	:hidden-fields="formModel.rowValveparamFormModel.hiddenFields"
+	v-ref:model-valveparam-add-edit-tpl>
+</model-valveparam-add-edit>
+
+<model-maintain-add-edit
+	:visible.sync="formModel.rowMaintainModel.show"
+	@do-save="doSaveRowMaintain"
+	@do-update="doUpdateRowMaintain"
+	@create-refresh-maintain="createRefreshMaintain"
+	@update-refresh-maintain="updateRefreshMaintain"
+	:query-url="formModel.rowMaintainModel.queryUrl"
+	:hidden-fields="formModel.rowMaintainModel.hiddenFields"
+	v-ref:model-maintain-add-edit-tpl>
+</model-maintain-add-edit>
+
+<!-- <modal-export-info v-ref:export-info-tpl @on-save="exportInfoSave"></modal-export-info> -->
+
+<process-modal :visible.sync="processModel.show" v-if="processModel.show" :org-id="mainModel.vo.orgId" @do-save="doSaveProcess" v-ref:process-modal></process-modal>
+
+<style type="text/css">
+	.mp-content.w100-table-panel .table tbody tr td div {
+		overflow: visible !important;
+		text-overflow: unset !important;
+		white-space: normal !important;		
+		word-break: break-all !important;
+	}
+	
+	.mp-content.w100-table-panel .table thead tr th, 
+	.mp-content.w100-table-panel .table tbody tr td {
+		padding: 8px;
+	}
+	
+	.width100,
+	.width-col-12 {
+		width: 100% !important;
+	}
+	
+	.block {
+		display: block !important;
+	}
+	
+	.mar-t10 {
+		margin-top: 10px;
+	}
+	
+	.float-right {
+		float: right;
+	}
+	
+	.posit-absol-r {
+		position: absolute;
+		right: 0;
+		z-index: 99;
+	}
+	
+	.line-break {
+		line-height: 1.8;
+		white-space: normal;
+	}
+	
+	.break-all {
+		word-break: break-all;
+	}
+	
+	table .line-break {
+		padding-top: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;
+	}
+	
+	.calc-145 {
+		position: relative;
+		width: -webkit-calc(100% - 145px) !important;
+		width: -moz-calc(100% - 145px) !important;
+		width: -ms-calc(100% - 145px) !important;
+		width: -o-calc(100% - 145px) !important;
+		width: calc(100% - 145px) !important;
+	}
+	
+	.calc-130 {
+		position: relative;
+		width: -webkit-calc(100% - 130px) !important;
+		width: -moz-calc(100% - 130px) !important;
+		width: -ms-calc(100% - 130px) !important;
+		width: -o-calc(100% - 130px) !important;
+		width: calc(100% - 130px) !important;
+	}
+	
+	.img-center {
+		display: block;
+		margin: auto;
+	}
+	
+	.calc-100 {
+		position: relative;
+		width: -webkit-calc(100% - 100px) !important;
+		width: -moz-calc(100% - 100px) !important;
+		width: -ms-calc(100% - 100px) !important;
+		width: -o-calc(100% - 100px) !important;
+		width: calc(100% - 100px) !important;
+	}
+	
+	.calc-100 span {
+		display: inline-block;
+	}
+	
+	.calc-100 .list-date {
+		/* width: 290px; */
+		width: 90px;
+		margin-top: 10px;
+		margin-right: 30px;
+	}
+	
+	.calc-100 .list-content {
+		display: block;
+		margin-bottom: 5px;
+	}
+	
+	.bip-content .padd-left .small-info-box {
+		padding-left: 10px !important;
+		margin:  10px auto;
+		border-bottom: 1px solid #e9e9e9;
+	}
+	
+	.detail-ri-duty-record .simple-card-head {
+		display: none;
+	}
+	
+	.inline-block .el-form-item__vertical_content,
+	.inline-block .el-form-item__vertical_content .ivu-poptip-rel div {
+		display: inline-block;
+	}
+	
+	.inline-block .width100 .el-form-item__vertical_content {
+		position: absolute;
+		display: inline-block;
+		width: -webkit-calc(100% - 95px);
+		width: -moz-calc(100% - 95px);
+		width: -ms-calc(100% - 95px);
+		width: -o-calc(100% - 95px);
+		width: calc(100% - 95px);
+	}
+	
+	.inline-block .width100.info-box-wrap .el-form-item__vertical_content {
+		position: static;
+		width: -webkit-calc(100% - 120px);
+		width: -moz-calc(100% - 120px);
+		width: -ms-calc(100% - 120px);
+		width: -o-calc(100% - 120px);
+		width: calc(100% - 120px);
+	}
+	
+	.inline-block .width-col-12 .el-form-item__vertical_content {
+		position: relative;
+		top: -25px;
+		left: 95px;
+		width: -webkit-calc(100% - 95px);
+		width: -moz-calc(100% - 95px);
+		width: -ms-calc(100% - 95px);
+		width: -o-calc(100% - 95px);
+		width: calc(100% - 95px);
+	}
+
+	.inline-block .el-form-item__vertical_content .ivu-poptip-rel div {
+		width: auto;
+	}
+	
+	.lg-base-info-panel {
+	    padding: 10px 0;
+	}
+	
+	.lg-base-info-panel .small-info-box {
+		width: 430px;
+	    padding-right: 30px;
+		padding-left: 0;
+		margin-bottom: 20px;
+	}
+	
+	.lg-base-info-panel .small-info-box .ivu-poptip-rel {
+		padding-left: 10px;
+	}
+	
+	.lg-base-info-panel .small-info-box .ivu-poptip-rel p span {
+		margin: 0 3px;
+		vertical-align: middle;
+		/* color: #f00; */
+	}
+	
+	.lg-base-info-panel .bip-content-form .el-form-item__vertical_label {
+	    display: inline-block;
+	    width: 95px !important;
+		padding-left: 10px;
+	}
+	
+	.label-content-form .width-col-12 .el-form-item__vertical_label {
+	    display: inline-block;
+	    width: 95px !important;
+		padding-left: 10px;
+		vertical-align: top;
+	}
+	
+	.lg-base-info-panel .bip-content-form .width100 .el-form-item__vertical_label {
+		vertical-align: top;
+	}
+	
+	.lg-base-info-panel .bip-content-form .bip-content-list .el-form-item__vertical_label {
+	    display: block;
+	    width: 100% !important;
+	}
+	
+	.required .el-form-item__vertical_label:before {
+		position: absolute;
+		top: 17px;
+		left: 0;
+		color: #f00;
+		content: "*";
+	}
+	
+	.detail-ri-duty-record .padding-bottom {
+	    padding-bottom: 0;
+	}
+	
+	.detail-ri-duty-record .el-tab-pane .rip-item {
+		padding: 0;
+	}
+	
+	.bip-content-item.overflow {
+		min-height: 100px;
+		overflow: auto;
+	}
+	
+	.btns a {
+		float: right;
+		padding: 10px 15px;
+	}
+	
+	.detail-ri-duty-record .gyxj .table {
+		margin-bottom: 20px !important;
+		border-bottom: 0 !important;
+	}
+	
+	.detail-ri-duty-record .table th {
+		border-bottom: 0 !important;
+	}
+	
+	.detail-ri-duty-record .table td:first-child {
+		width: 15%;
+	}
+	
+	.detail-ri-duty-record .table td span {
+		margin-right: 20px;
+	}
+	
+	.detail-ri-duty-record .table td span a {
+		margin: 0 15px;
+	}
+	
+	.vertical-text {
+		padding-top: 8px;
+		padding-bottom: 8px;
+		margin: auto;
+		letter-spacing: 5px;
+		-webkit-writing-mode: vertical-rl;
+		-moz-writing-mode: vertical-rl;
+		-ms-writing-mode: vertical-rl;
+		-o-writing-mode: vertical-rl;
+		writing-mode: vertical-rl;
+	}
+	
+	.w100-table-panel .table-panel {
+		width: 100%;
+	}
+	
+	.detail-table {
+		position: relative;
+	}
+	
+	.detail-table .title {
+		height: 40px; 
+		line-height: 40px;
+	}
+	
+	.detail-table .btn-group {
+		position: absolute; 
+		top: 0; 
+		right: 0
+	}
+	
+	.title-person {
+		position: absolute;
+		top: 8px;
+		right: 0;
+	}
+	
+	.title-person span  {
+		margin-left: 25px;
+	}
+	
+	.title-person span a {
+		margin: 0 10px;
+	}
+	
+	.ivu-select-dropdown-min180 .ivu-select-selection,
+	.ivu-select-dropdown-min180 .ivu-select-dropdown {
+		min-width: 180px;
+	}
+	
+	.btns-posit {
+		position: relative;
+		top: -21px;
+	}
+	
+	.do-btns a {
+		display: inline-block;
+		padding: 5px 10px;
+		margin-left: 5px;
+	}
+	
+	.input-mask {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 1;
+		width: 100% !important;
+		height: 25px;
+	}
+	
+	.white-space-pre {
+		white-space: pre-wrap;
+	}
+	
+	.list-label {
+		position: absolute;
+		top: 11px;
+		left: 115px;
+		height: 16px;
+		padding: 0 6px;
+		font-size: 12px !important;
+		color: #fff;
+		background: #8ccc20;
+		-webkit-border-radius: 30px;
+		-moz-border-radius: 30px;
+		-ms-border-radius: 30px;
+		-o-border-radius: 30px;
+		border-radius: 30px;
+	}
+</style>

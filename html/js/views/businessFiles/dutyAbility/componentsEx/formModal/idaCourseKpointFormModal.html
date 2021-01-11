@@ -1,0 +1,67 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="文本" prop="content">
+						<iv-input :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('courseId') == -1)" label="课程" prop="courseId">
+						<iv-input :value.sync="mainModel.vo.courseId" :disabled="(disabledFields.indexOf('courseId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('fileType') == -1)" label="课件类型" prop="fileType">
+						<iv-input :value.sync="mainModel.vo.fileType" :disabled="(disabledFields.indexOf('fileType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isFree') == -1)" label="是否可以试听" prop="isFree">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ida_course_kpoint_is_free', mainModel.vo.isFree) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isFree" :list="getDataDicList('ida_course_kpoint_is_free')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('kpointType') == -1)" label="节点类型" prop="kpointType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ida_course_kpoint_kpoint_type', mainModel.vo.kpointType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.kpointType" :list="getDataDicList('ida_course_kpoint_kpoint_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('liveBeginTime') == -1)" label="直播开始时间" prop="liveBeginTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.liveBeginTime" :disabled="(disabledFields.indexOf('liveBeginTime') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.liveBeginTime)" :disabled="(disabledFields.indexOf('liveBeginTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('liveEndTime') == -1)" label="直播结束时间" prop="liveEndTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.liveEndTime" :disabled="(disabledFields.indexOf('liveEndTime') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.liveEndTime)" :disabled="(disabledFields.indexOf('liveEndTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('liveUrl') == -1)" label="直播地址" prop="liveUrl">
+						<iv-input :value.sync="mainModel.vo.liveUrl" :disabled="(disabledFields.indexOf('liveUrl') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('pageCount') == -1)" label="页数" prop="pageCount">
+						<iv-input :value.sync="mainModel.vo.pageCount" :disabled="(disabledFields.indexOf('pageCount') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('paperVersion') == -1)" label="课后作业版本号" prop="paperVersion">
+						<iv-input :value.sync="mainModel.vo.paperVersion" :disabled="(disabledFields.indexOf('paperVersion') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('parentId') == -1)" label="父级" prop="parentId">
+						<iv-input :value.sync="mainModel.vo.parentId" :disabled="(disabledFields.indexOf('parentId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('playCount') == -1)" label="播放次数" prop="playCount">
+						<iv-input :value.sync="mainModel.vo.playCount" :disabled="(disabledFields.indexOf('playCount') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('playTime') == -1)" label="播放时间" prop="playTime">
+						<iv-input :value.sync="mainModel.vo.playTime" :disabled="(disabledFields.indexOf('playTime') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('videoType') == -1)" label="视频类型" prop="videoType">
+						<iv-input :value.sync="mainModel.vo.videoType" :disabled="(disabledFields.indexOf('videoType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('videoUrl') == -1)" label="视频地址" prop="videoUrl">
+						<iv-input :value.sync="mainModel.vo.videoUrl" :disabled="(disabledFields.indexOf('videoUrl') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

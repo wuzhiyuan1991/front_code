@@ -1,0 +1,56 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('maintQuantity') == -1)" label="维护/保养数量" prop="maintQuantity">
+						<iv-input :value.sync="mainModel.vo.maintQuantity" :disabled="(disabledFields.indexOf('maintQuantity') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsId') == -1)" label="重大危险源" prop="mrs.id">
+						<input-select :value="mainModel.vo.majorRiskSource" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('majorRiskSource') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowMajorRiskSourceSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('operationType') == -1)" label="作业类别" prop="operationType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icpe_mrs_equip_maint_record_operation_type', mainModel.vo.operationType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.operationType" :list="getDataDicList('icpe_mrs_equip_maint_record_operation_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsEquipmentId') == -1)" label="设备/管道/监控系统" prop="mrsEquipment.id">
+						<input-select :value="mainModel.vo.mrsEquipment" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('mrsEquipment') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowMrsEquipmentSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('operationContent') == -1)" label="操作内容" prop="operationContent">
+						<iv-input :value.sync="mainModel.vo.operationContent" :disabled="(disabledFields.indexOf('operationContent') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsEquipmentType') == -1)" label="设备类型" prop="mrsEquipmentType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icpe_mrs_equip_maint_record_mrs_equipment_type', mainModel.vo.mrsEquipmentType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.mrsEquipmentType" :list="getDataDicList('icpe_mrs_equip_maint_record_mrs_equipment_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('maintTime') == -1)" label="维护/保养时间" prop="maintTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.maintTime" :disabled="(disabledFields.indexOf('maintTime') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.maintTime)" :disabled="(disabledFields.indexOf('maintTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('phase') == -1)" label="作业阶段" prop="phase">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icpe_mrs_equip_maint_record_phase', mainModel.vo.phase) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.phase" :list="getDataDicList('icpe_mrs_equip_maint_record_phase')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('operators') == -1)" label="作业操作人员" prop="operators">
+						<iv-input :value.sync="mainModel.vo.operators" :disabled="(disabledFields.indexOf('operators') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<mrsequipment-select-modal :visible.sync="selectModel.mrsEquipmentSelectModel.visible" :filter-data="selectModel.mrsEquipmentSelectModel.filterData" single-select @do-save="doSaveMrsEquipment"></mrsequipment-select-modal>
+<majorrisksource-select-modal :visible.sync="selectModel.majorRiskSourceSelectModel.visible" :filter-data="selectModel.majorRiskSourceSelectModel.filterData" single-select @do-save="doSaveMajorRiskSource"></majorrisksource-select-modal>

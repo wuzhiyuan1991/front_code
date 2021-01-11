@@ -1,0 +1,20 @@
+<div id="searchListBgId" style="position: relative;" >
+    <iv-input v-if="isText" :icon="icon" @on-blur="doBlur"  @on-focus="doFocus"  :value.sync="inputVal" :placeholder="placeholder" @click.stop="doClick"  ></iv-input>
+    <iv-textarea @scroll="handleScroll" v-else :rows="4" @on-blur="doBlur"  @on-focus="doFocus"  :value.sync="inputVal" :placeholder="placeholder" :disabled="disabled" readonly=false ></iv-textarea>
+
+    <div v-if="isShowSearchList" class="searchListBgStyle" :style="bgPositionStyle">
+        <ul class="ivu-select-dropdown-list" style="max-height: 182px;">
+            <li @click.stop="selectItem(item)" class="ivu-select-item" v-for="item in searchList">{{getName(item)}}</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .searchListBgStyle{
+        background: rgb(255, 255, 255);
+        border-radius: 5px;
+        transform-origin: center top;
+        /*position: fixed;*/
+        z-index: 20;
+    }
+</style>

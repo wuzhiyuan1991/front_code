@@ -1,0 +1,88 @@
+<div class="edit-pop-container" >
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<!--<el-form-item label="菜单类型">-->
+				<!--<iv-radio-group :model.sync="menuType" @on-change="onMenuTypeChange">-->
+					<!--<iv-radio value="1">-->
+						<!--<span>内部菜单</span>-->
+					<!--</iv-radio>-->
+					<!--<iv-radio value="2">-->
+						<!--<span>第三方链接</span>-->
+					<!--</iv-radio>-->
+				<!--</iv-radio-group>-->
+			<!--</el-form-item>-->
+			<el-form-item :label="$t('gb.common.code')" prop="code" >
+				<iv-input  :value.sync = "mainModel.vo.code"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.name')" prop="name" >
+				<iv-input  :value.sync = "mainModel.vo.name"></iv-input>
+			</el-form-item>
+			<!--<el-form-item label="菜单引用" prop="quote" v-show="mainModel.vo.menuLevel === '3'">-->
+				<!--&lt;!&ndash;<iv-input  :value.sync = "mainModel.vo.quote"></iv-input>&ndash;&gt;-->
+				<!--<input-select :value="mainModel.vo.quote" id-field="id" display-field="name"  @click="doShowMenuModal" ></input-select>-->
+			<!--</el-form-item>-->
+			<!--<el-form-item :label="$t('ori.rolm.routAddr')">-->
+				<!--<iv-input :value.sync = "mainModel.vo.attr1" :disabled="menuType === '2'"></iv-input>-->
+			<!--</el-form-item>-->
+			<!--<el-form-item :label="$t('ori.rolm.ComponentAddr')">-->
+				<!--<iv-input :value.sync = "mainModel.vo.attr2" :disabled="menuType === '2'"></iv-input>-->
+			<!--</el-form-item>-->
+			<el-form-item :label="$t('gb.common.remarks')">
+				<iv-input :value.sync = "mainModel.vo.remarks"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.EnableDisable')">
+				<i-select :model.sync="mainModel.vo.disable" :list="mainModel.disableList" v-else>
+					<i-option v-for="item in mainModel.disableList" :value="item.value">{{ item.name }}</i-option>
+				</i-select>
+			</el-form-item>
+			<el-form-item label="排序位置" prop="insertPointObjId">
+				<span>当前节点之后</span>
+				<i-select :model.sync="mainModel.vo.insertPointObjId" clearable :list="orderList" style="width: 180px;margin-left: 3px;">
+					<i-option  v-for = "upper in orderList" :value="upper.id">{{upper.name}}</i-option>
+				</i-select>
+			</el-form-item>
+			<!--<el-form-item label="图标">-->
+				<!--&lt;!&ndash;<iv-input :value.sync = "mainModel.vo.icon"></iv-input>&ndash;&gt;-->
+				<!--<i-select :model.sync="mainModel.vo.icon" :list="icons">-->
+					<!--<i-option v-for="item in icons" :value="item.value" class="icons-menu-wrap"><i :class="item.value"></i>{{ item.value }}</i-option>-->
+				<!--</i-select>-->
+			<!--</el-form-item>-->
+			<!--<el-form-item label="菜单类型">-->
+				<!--<i-select :model.sync="mainModel.vo.attr5" :list="mainModel.menuTypeList">-->
+					<!--<i-option v-for="item in mainModel.menuTypeList" :value="item.value">{{ item.name }}</i-option>-->
+				<!--</i-select>-->
+			<!--</el-form-item>-->
+			<!--<div v-show="menuType === '2'">-->
+				<!--<el-form-item label="第三方网址">-->
+					<!--<iv-input :value.sync = "mainModel.vo.tpaUrl"></iv-input>-->
+				<!--</el-form-item>-->
+				<!--<el-form-item label="回调函数">-->
+					<!--<iv-input type="textarea" :rows="5" :value.sync = "mainModel.vo.callBackContent"></iv-input>-->
+				<!--</el-form-item>-->
+			<!--</div>-->
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+		<!--<vi-button type="primary" @click="docancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>
+<Modal :visible.sync="menuModel.show" :title="menuModel.title" width="540" :footer-hide="true">
+	<div class="edit-pop-container" >
+		<div class="epc-content" style="height: 450px;">
+			<iv-tree-grid
+					:model="menus"
+					v-ref:menugrid
+					:selected-datas.sync="selectedDatas"
+					id-attr="id"
+					pid-attr="parentId"
+					display-attr="name"
+					:single-select="true"
+					:show-checkbox="false"
+					:allow-parent-checked="true"
+					:open="true"
+					@on-tree-node-click="doChooseMenu"
+			></iv-tree-grid>
+		</div>
+	</div>
+</Modal>

@@ -1,0 +1,25 @@
+<div class="layout-table-box">
+    <table class="layout-table">
+        <thead>
+        <tr class="layout-table-tr">
+            <th>被指派次数</th>
+            <th>派工完成情况</th>
+            <th>时间</th>
+            <th>上报隐患数</th>
+            <th>整改完成数</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr v-if="values.personnelPoolRecordBeans.length>0" v-for="(index,item) of values.personnelPoolRecordBeans" class="layout-table-tr">
+            <template v-if="index===0">
+                <td class="rowspan" :rowspan="values.personnelPoolRecordBeans.length">{{values.total ? values.total : 0}}</td>
+                <td class="rowspan" :rowspan="values.personnelPoolRecordBeans.length">{{values.done ? values.done : 0}}</td>
+            </template>
+            <td>{{item.time}}</td>
+            <td>{{item.total}}</td>
+            <td>{{item.done}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

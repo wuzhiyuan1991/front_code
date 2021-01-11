@@ -1,0 +1,21 @@
+<simple-card class="ul-style-none" style="width:750px;">
+    <p slot="title" class="ptw-title">危害辨识</p>
+    <!--<el-form style="width:680px;">-->
+        <!--<el-form-item label="危害辨识">-->
+                <!--<ul class="ul-inside">-->
+                    <!--<li v-for="item of weihaibsList">-->
+                        <!--<input type="checkbox" disabled :checked="item.checkResult == '2'" class="width-auto" />-->
+                        <!--{{item.isExtra==1?item.content:item.name}}-->
+                    <!--</li>-->
+                <!--</ul>-->
+        <!--</el-form-item>-->
+    <!--</el-form>-->
+    <div class="ptw-border">
+        <ul class="ul-inside">
+            <li v-for="item of weihaibsList" style="margin-bottom:5px;">
+                <input type="checkbox" disabled :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')" class="width-auto" />
+               {{getItemName(item)}}
+            </li>
+        </ul>
+    </div>
+</simple-card>

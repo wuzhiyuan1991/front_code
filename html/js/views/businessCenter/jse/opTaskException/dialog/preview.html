@@ -1,0 +1,99 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;"  class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div class="preview-box" id="section-to-print">
+        <h4 style="font-weight: bold;word-break: break-all; margin-bottom: 20px;" class="text-center">操作票</h4>
+
+        <table class="preview-box-table">
+            <colgroup>
+                <col style="width: 150px;">
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td colspan="5">
+                    <span>编号：{{vo.attr1}}</span>
+                    <span style="float: right; margin-right: 120px;">{{vo.firstLineDate}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center">发令调度员</td>
+                <td colspan="2">
+                    <span>编号：{{vo.dispatcherCode}}</span>
+                    <span style="margin-left: 40px;">姓名：{{vo.dispatcherName}}</span>
+                </td>
+                <td class="text-center">调度令编号</td>
+                <td class="text-center">{{vo.dispatchCode}}</td>
+            </tr>
+            <tr>
+                <td class="text-center">操作任务</td>
+                <td class="text-center" colspan="4" >
+                    {{vo.name}}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center">接令时间</td>
+                <td class="text-center" >
+                    {{vo.compileTime}}
+                </td>
+                <td class="text-center">执行时间</td>
+                <td class="text-center" colspan="2" >{{vo.publishTime}}</td>
+            </tr>
+            <tr>
+                <td class="text-center">操作人（签字）</td>
+                <td class="text-center">
+                    <img v-for="s in operatorSignatures" :src="s" alt="" width="80" height="32">
+                </td>
+                <td class="text-center">监护人（签字）</td>
+                <td class="text-center" colspan="2">
+                    <img v-for="s in supervisorSignatures" :src="s" alt="" width="80" height="32">
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center">审批人（签字）</td>
+                <td class="text-center">
+                    <img v-for="s in auditorSignatures" :src="s" alt="" width="80" height="32">
+                </td>
+                <td class="text-center">审批时间</td>
+                <td class="text-center" colspan="2">{{vo.auditDate}}</td>
+            </tr>
+            <tr>
+                <td class="text-center" :rowspan="items.length + 1">操作顺序</td>
+                <td class="text-center" colspan="2">操作内容</td>
+                <td class="text-center">操作时间</td>
+                <td class="text-center">确认人签字</td>
+            </tr>
+            <tr v-for="(i, tr) in items">
+                <td colspan="2" :class="calcClass(tr)">{{{tr.content}}}</td>
+                <td class="text-center">{{tr.operateTime}}</td>
+                <td class="text-center">
+                    <img v-for="s in getOperatorSignFiles(tr.operatorId)" v-if="!tr.isGroup && !!tr.operateTime" :src="s" alt="" width="80" height="32">
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center">风险提示</td>
+                <td colspan="4">
+                    <p v-for="(i, tr) in items">{{tr.risk}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <p>说明：</p>
+                    <p>1. 本操作票适用于现场就地操作和站控操作；</p>
+                    <p>2. 流程切换遵循先开后关、先启后停、先导通低压、再导通高压（截断时相反）的原则；</p>
+                    <p>3. 操作顺序列明“开”“关”动作及操作设备的编号，每个操作动作之间以“—”分隔，例如关CXXXXX至10%—开CXXXXX—关CXXXXX。</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <p style="margin-top: 20px;">保存单位：作业区(站场)</p>
+            <p style="margin-top: 20px;">保存期限：二年</p>
+        </div>
+    </div>
+</Modal>

@@ -1,0 +1,189 @@
+<div class="detail-container" style="position: relative;">
+  <div class="few-info-panel pull-left">
+    <div class="fip-header">
+      <Icon type="ios-photos"></Icon>
+      <span>{{mainModel.title}}</span>
+    </div>
+    <div class="fip-content">
+      <!-- 模型基础信息 -->
+      <simple-card class="fip-content-item icmAccidentCase-container">
+        <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+        <el-form class="fip-content-item-form" :model="mainModel.vo" :rules="baseRules" v-ref:ruleform>
+          <!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+            <code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :disabled="true"
+              :allow-empty="allowEmpty" v-ref:code-input></code-input>
+          </el-form-item> -->
+          <el-form-item label="标题" prop="title">
+            <iv-input :value.sync="mainModel.vo.title" :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <el-form-item label="事故发生日期" prop="accidentDate">
+            <date-picker :default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd"
+              data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.accidentDate" clearable></date-picker>
+            <iv-input v-else :value="formatYMD(mainModel.vo.accidentDate)" textonly class="inp"></iv-input>
+          </el-form-item>
+          <el-form-item label="事故发生地点" prop="place">
+            <iv-input type="textarea" :value.sync="mainModel.vo.place" :rows="3" :textonly="mainModel.isReadOnly">
+            </iv-input>
+          </el-form-item>
+          <el-form-item label="事故类别" prop="type">
+            <iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <el-form-item label="事故经过" prop="process">
+            <iv-input type="textarea" :value.sync="mainModel.vo.process" :rows="5" :textonly="mainModel.isReadOnly">
+            </iv-input>
+          </el-form-item>
+          <el-form-item label="事故直接原因" prop="directCause">
+            <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.directCause" :textonly="mainModel.isReadOnly">
+            </iv-input>
+          </el-form-item>
+          <el-form-item label="事故间接原因" prop="indirectCause">
+            <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.indirectCause"
+              :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <!-- 事件后果 -->
+          <div class="responsibility-group">
+            <p style="text-align: left;margin:5px 0;line-height: 18px;position: relative;clear: both;">
+              <span
+                style="border-left: 3px solid #33a6ff;height: 12px;position: absolute;top:3px;left:-10px;display: inline-block;"></span>事件后果
+            </p>
+            <el-form-item label="人员伤亡" prop="casualties">
+              <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.casualties"
+                :textonly="mainModel.isReadOnly">
+              </iv-input>
+            </el-form-item>
+            <el-form-item label="财产损失" prop="propertyLoss">
+              <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.propertyLoss"
+                :textonly="mainModel.isReadOnly"></iv-input>
+            </el-form-item>
+            <el-form-item label="环境影响" prop="envirImpact">
+              <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.envirImpact"
+                :textonly="mainModel.isReadOnly">
+              </iv-input>
+            </el-form-item>
+            <el-form-item label="企业声誉" prop="corporateReputation">
+              <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.corporateReputation"
+                :textonly="mainModel.isReadOnly"></iv-input>
+            </el-form-item>
+          </div>
+          <el-form-item label="事故性质" prop="nature">
+            <span v-if="mainModel.isReadOnly">{{ getDataDic('icm_accident_case_nature', mainModel.vo.nature) }}</span>
+            <iv-radio-group v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.nature" @on-change="doChangeNature">
+              <iv-radio value="1">责任事故</iv-radio>
+              <iv-radio value="0">
+                非责任事故</iv-radio>
+            </iv-radio-group>
+          </el-form-item>
+          <!-- 责任认定 -->
+          <div class="responsibility-group" v-if="mainModel.vo.nature === '1'">
+            <p style="text-align: left;margin:5px 0;line-height: 18px;position: relative;clear: both;">
+              <span
+                style="border-left: 3px solid #33a6ff;height: 12px;position: absolute;top:3px;left:-10px;display: inline-block;"></span>责任认定
+            </p>
+            <el-form-item label="对责任人员的处理建议" class="special-item" prop="personSuggestions">
+              <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.personSuggestions"
+                :textonly="mainModel.isReadOnly"></iv-input>
+            </el-form-item>
+            <el-form-item label="对责任单位的处理建议" class="special-item" prop="deptSuggestions">
+              <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.deptSuggestions"
+                :textonly="mainModel.isReadOnly"></iv-input>
+            </el-form-item>
+          </div>
+          <el-form-item label="整改和防范措施" prop="measures">
+            <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.measures" :textonly="mainModel.isReadOnly">
+            </iv-input>
+          </el-form-item>
+          <el-form-item label="事故启示和教训" prop="enlightenment">
+            <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.enlightenment"
+              :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <el-form-item :label="$t('gb.common.remarks')" prop="remark">
+            <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.remark" :textonly="mainModel.isReadOnly">
+            </iv-input>
+          </el-form-item>
+          <!-- <el-form-item :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item> -->
+        </el-form>
+      </simple-card>
+    </div>
+    <simple-card
+      :class="{ 'fip-content-item': true, 'rel-info-panel': true, 'rel-info-panel-mask': mainModel.opType == 'create'   }"
+      style="padding: 10px 0px;">
+      <p slot="title"><i class="basicPng"></i><span>附件</span></p>
+      <div class="rel-info-panel-content-tabs">
+        <el-tabs active-key="picTab" style="width: 75%;">
+          <el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+            <image-list-simple-card remark="" :readonly="false" :data="fileModel.pic.data" :config="fileModel.pic.cfg">
+            </image-list-simple-card>
+          </el-tab-pane>
+          <el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+            <video-list-simple-card remark="" :readonly="false" :data="fileModel.video.data"
+              :config="fileModel.video.cfg">
+            </video-list-simple-card>
+          </el-tab-pane>
+          <el-tab-pane :label="'音频(' + fileModel.audio.data.length + ')'" key="audioTab">
+            <audio-upload :readonly="false" remark="" :data="fileModel.audio.data" :config="fileModel.audio.cfg" />
+          </el-tab-pane>
+          <el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+            <file-list-simple-card :readonly="false" remark="" :data="fileModel.file.data" :config="fileModel.file.cfg">
+            </file-list-simple-card>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </simple-card>
+  </div>
+  <div class="few-info-sider pull-right" style="position: absolute;right: 30px;">
+    <iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+    <iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">
+      {{$t('gb.common.edition')}}</iv-button>
+    <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">
+      复制</iv-button>
+    <vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"
+      icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+    <iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')"
+      type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+    <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">
+      {{$t('gb.comnon.save')}}</iv-button>
+    <vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel"
+      icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+  </div>
+</div>
+<style scoped>
+  .icmAccidentCase-container .special-item label {
+    line-height: 18px;
+  }
+
+  .icmAccidentCase-container .special-item .el-form-item__content {
+    padding-top: 11px;
+  }
+
+  .tab-cell-title:first-child {
+    margin-top: 17px;
+  }
+
+  .responsibility-group {
+    margin-left: -15px;
+    padding: 10px;
+    padding-left: 15px;
+    padding-top: 5px;
+    width: 75%;
+    margin-top: 10px;
+    padding-bottom: 20px;
+  }
+
+  .responsibility-group:hover {
+    background: rgb(242, 242, 242);
+  }
+
+  .responsibility-group .el-form-item__content {
+    width: 64% !important;
+  }
+</style>

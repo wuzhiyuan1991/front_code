@@ -1,0 +1,238 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button v-if="mainModel.isReadOnly && mainModel.vo.state != 2 && hasAuth('edit')" type="ghost" @click="doEdit">
+                    {{$t('gb.common.edition')}}
+                </iv-button>
+                <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}
+                </iv-button>
+                <iv-button v-if="mainModel.isReadOnly && mainModel.opType !== 'create'&& hasAuth('delete')"
+                           type="ghost" @click="doDelete">{{$t("gb.common.del")}}
+                </iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.code')" class="small-info-box" v-else>
+                        <iv-input :value="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('bc.ria.scene')" class="small-info-box">
+                        <iv-input class="display-two-line" :value="mainModel.vo.scene" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                        <!--<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>-->
+                    </el-form-item>
+                    <el-form-item label="风险点类型" prop="checkObjType" class="small-info-box">
+                        <iv-input :value="getDataDic('check_obj_risk_type',mainModel.vo.checkObjType)" :show-tip="true"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.hazardFactor')" prop="hazardFactor.id" class="small-info-box">
+                        <iv-input :value="mainModel.vo.hazardFactor.name" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.riskGrade')" class="small-info-box">
+                        <iv-input :value="mainModel.vo.riskLevel" :textonly="mainModel.isReadOnly"></iv-input>
+                        <!--<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>-->
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.controlMeasures')" class="small-info-box">
+                        <iv-input class="display-two-line" :show-tip="true" :value="mainModel.vo.controlMeasures"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                        <!--<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>-->
+                    </el-form-item>
+                    <el-form-item label="控制措施-类型" class="small-info-box">
+                        <iv-input :value="getDataDic('type_of_ctrl_meas', mainModel.vo.typeOfCtrlMeas)"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="控制措施-层级" class="small-info-box">
+                        <iv-input :value="getDataDic('hier_of_ctrl_meas', mainModel.vo.hierOfCtrlMeas)"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.checkItemName')" class="small-info-box">
+                        <iv-input class="display-two-line" :show-tip="true" :value="mainModel.vo.checkItem.name"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                        <!--<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>-->
+                    </el-form-item>
+                    <el-form-item label="检查项-类型" class="small-info-box">
+                        <iv-input class="display-two-line" :show-tip="true" :value="getDataDic('pool_type', mainModel.vo.checkItem.type)"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                        <!--<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>-->
+                    </el-form-item>
+                    <el-form-item label="管控等级" class="small-info-box">
+                        <iv-input :value="getDataDic('level_of_control', mainModel.vo.levelOfControl)"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedComp')" class="small-info-box">
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['compName']"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                        <!--<company-tree-select  :id.sync="mainModel.vo.orgId"></company-tree-select>-->
+                    </el-form-item>
+                    <!--<el-form-item label="控制措施-分值" class="small-info-box">-->
+                    <!--<iv-input :value="mainModel.vo.scoreOfCtrlMeas"-->
+                    <!--:textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="隐患等级"  class="small-info-box">
+                        <i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.hiddenDangerLevel" :list="getDataDicList('risk_type')" >
+                            <i-option v-for="type in getDataDicList('risk_type')" :value="type.id">{{type.value}}</i-option>
+                        </i-select>
+                        <span v-if="mainModel.isReadOnly">{{getDataDic('risk_type', mainModel.vo.hiddenDangerLevel)}}</span>
+                    </el-form-item>
+
+                    <el-form-item label="隐患类别"  class="small-info-box">
+                        <i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.hiddenDangerType" :list="getDataDicList('hidden_danger_type')" >
+                            <i-option v-for="type in getDataDicList('hidden_danger_type')" :value="type.id">{{type.value}}</i-option>
+                        </i-select>
+                        <span v-if="mainModel.isReadOnly">{{getDataDic('hidden_danger_type', mainModel.vo.hiddenDangerType)}}</span>
+                    </el-form-item>
+
+                    <el-form-item label="风险数据来源"  class="small-info-box">
+                        <i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.bizType" :list="getDataDicList('risk_biz_source_type')" >
+                            <i-option v-for="type in getDataDicList('risk_biz_source_type')" :value="type.id">{{type.value}}</i-option>
+                        </i-select>
+                        <span v-if="mainModel.isReadOnly">{{getDataDic('risk_biz_source_type', mainModel.vo.bizType)}}</span>
+                    </el-form-item>
+
+                    <el-form-item label="评估方法"  class="small-info-box">
+                        <span v-if="mainModel.isReadOnly">{{getDataDic('risk_evalu_method', mainModel.vo.evaluMethod)}}</span>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+    <div class="rel-info-panel">
+        <div class="rip-item" style="border-top: none">
+            <simple-card :show-content.sync="cardModel.checkMethodCardModel.showContent">
+                <p slot="title"><i
+                        class="checkFunPng"></i><span>{{$t("gb.common.inspectMethond")}}</span></p>
+                <a slot="extra"
+                   @click.prevent="cardModel.checkMethodCardModel.showContent = !cardModel.checkMethodCardModel.showContent;">
+                            <span v-if="cardModel.checkMethodCardModel.showContent"><Icon
+                                    type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}</span>
+                    <span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
+                </a>
+                <a slot="extra" v-show="hasAuth('edit') && mainModel.opType !== 'create' && mainModel.vo.checkItem.id != ''"
+                   @click.prevent="doShowCheckMethodSelectModal">
+                    <span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+                </a>
+                <vue-bootstrap-table
+                        :url="tableModel.checkMethodTableModel.url"
+                        :columns="tableModel.checkMethodTableModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        @on-del-row="delCheckMethod"
+                        v-ref:checkmethod-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardMode2.checkMethodCardModel.showContent">
+                <p slot="title">
+                    <i class="inspectionPng"></i>
+                    {{$t("gb.common.inspectBasis")}}
+                </p>
+                <a slot="extra"
+                   @click.prevent="cardMode2.checkMethodCardModel.showContent = !cardMode2.checkMethodCardModel.showContent">
+                                <span v-if="cardMode2.checkMethodCardModel.showContent">
+                                    <Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}
+                                </span>
+                    <span v-else>
+                                    <Icon type="arrow-down-b"></Icon> {{$t("bd.ria.open")}}
+                                </span>
+                </a>
+                <a slot="extra" v-if="hasAuth('edit') && mainModel.vo.checkItem.id != ''"
+                   @click.prevent="doShowCheckBasisSelectModal">
+                    <Icon type="plus"></Icon>
+                    {{$t("bc.ria.append")}}
+                </a>
+                <!--<vue-bootstrap-table-->
+                        <!--:url="tableModel.checkBasisTableModel.url"-->
+                        <!--:columns="tableModel.checkBasisTableModel.columns"-->
+                        <!--:show-empty-row="false"-->
+                        <!--:use-default-global-filter="false"-->
+                        <!--:lazy-load="true"-->
+                        <!--@on-del-row="delCheckBasis"-->
+                        <!--v-ref:checkbasis-table>-->
+                <!--</vue-bootstrap-table>-->
+
+                <vue-bootstrap-table
+                        :setting="tableModel.checkBasisTableModel"
+                        @on-del-row="delCheckBasis"
+                        v-ref:checkbasis-table>
+                </vue-bootstrap-table>
+
+
+            </simple-card>
+        </div>
+    </div>
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardMode3.checkMethodCardModel.showContent">
+                <p slot="title">
+                    <i class="accidentPng"></i>
+                    {{$t("gb.common.accidentCase")}}
+                </p>
+                <a slot="extra"
+                   @click.prevent="cardMode3.checkMethodCardModel.showContent = !cardMode3.checkMethodCardModel.showContent">
+                                    <span v-if="cardMode3.checkMethodCardModel.showContent">
+                                     <Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}
+                                    </span>
+                    <span v-else>
+                                        <Icon type="arrow-down-b"></Icon> {{$t("bd.ria.open")}}
+                                    </span>
+                </a>
+                <a slot="extra" v-show="hasAuth('edit') && mainModel.opType != 'create' && mainModel.vo.checkItem.id != ''"
+                   @click.prevent="doShowAccidentCaseSelectModal">
+                    <span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+                </a>
+                <vue-bootstrap-table
+                        :url="tableModel.checkAccidentcaseTableModel.url"
+                        :columns="tableModel.checkMethodTableModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        @on-del-row="delAccidentCase"
+                        v-ref:checkaccidentcase-table>
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+
+<risktype-select-modal
+        single-select
+        :visible.sync="selectModel.risktypeSelectModel.visible"
+        @do-save="doSaveRiskType"
+></risktype-select-modal>
+
+<checkmethod-select-modal
+        :visible.sync="selectModel.checkMethodSelectModel.visible"
+        @do-save="doSaveCheckMethods"
+></checkmethod-select-modal>
+
+<!--<check-basis-select-modal-->
+        <!--:visible.sync="selectModel.checkBasisSelectModel.visible"-->
+        <!--@do-save="doSaveCheckBasis"-->
+<!--&gt;</check-basis-select-modal>-->
+
+<accident-case-select-modal
+        :visible.sync="selectModel.accidentCaseSelectModel.visible"
+        @do-save="doSaveAccident"
+></accident-case-select-modal>
+
+<check-basis-select-modal :visible.sync="selectModel.checkBasisSelectModel.visible" :filter-data="checkBasis.filterData" @do-save="doSaveLegalRegulations"></check-basis-select-modal>
+

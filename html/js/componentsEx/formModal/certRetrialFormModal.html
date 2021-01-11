@@ -1,0 +1,52 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+						<!--<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item v-if="(hiddenFields.indexOf('certId') == -1)" label="证书类型" prop="cert.id">-->
+						<!--<input-select :value="mainModel.vo.cert" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('cert') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowCertSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+					<el-form-item label="预定复审时间" prop="retrialDate">
+						<date-picker format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.retrialDate" disabled></date-picker>
+						<!--<iv-input :value.sync="mainModel.vo.retrialDate" disabled class="inp"></iv-input>-->
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('result') == -1)" label="复审结果" prop="result">
+						<iv-radio-group :model.sync="mainModel.vo.result" @on-change="changeCheckedRequired">
+							<iv-radio :value="item.id" v-for="item in resultList">
+								<span>{{item.value}}</span>
+							</iv-radio>
+						</iv-radio-group>
+
+						<!--<span v-if="mainModel.isReadOnly">{{ getDataDic('itm_cert_retrial_result', mainModel.vo.result) }}</span>-->
+						<!--<i-select v-else :model.sync="mainModel.vo.result" :list="getDataDicList('itm_cert_retrial_result')" clearable></i-select>-->
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('uploadDate') == -1)" label="附件" prop="uploadDate">
+						<a @click="uploadClicked" href="javascript:void(0);" style="color: #0000FF">上传文件</a>
+						<!--<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.uploadDate" :disabled="(disabledFields.indexOf('uploadDate') != -1)" clearable></date-picker>-->
+						<!--<iv-input v-else :value.sync="mainModel.vo.uploadDate" :disabled="(disabledFields.indexOf('uploadDate') != -1)" textonly class="inp"></iv-input>-->
+					</el-form-item>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('uploaderId') == -1)" label="上传人" prop="uploader.id">-->
+						<!--<input-select :value="mainModel.vo.uploader" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('uploader') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowUploaderSelectModal())" ></input-select>-->
+					<!--</el-form-item>-->
+			</el-form>
+			<vue-file-upload
+					v-ref:uploader
+					style="display: none;"
+					:multi-selection="false"
+					:params="uploadModel.params"
+					@on-before-upload="doUploadBefore"
+					@on-success-upload="doUploadSuccess"
+					@on-upload-complete="onUploadComplete"
+					:filters="uploadModel.filters">
+			</vue-file-upload>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<!--<cert-select-modal :visible.sync="selectModel.certSelectModel.visible" :filter-data="selectModel.certSelectModel.filterData" single-select @do-save="doSaveCert"></cert-select-modal>-->
+<!--<user-select-modal :visible.sync="selectModel.uploaderSelectModel.visible" :filter-data="selectModel.uploaderSelectModel.filterData" single-select @do-save="doSaveUploader"></user-select-modal>-->

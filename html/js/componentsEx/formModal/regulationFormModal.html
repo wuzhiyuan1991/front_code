@@ -1,0 +1,87 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('approver') == -1)" label="批准人" prop="approver">
+						<iv-input :value.sync="mainModel.vo.approver" :disabled="(disabledFields.indexOf('approver') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('audit') == -1)" label="专业审核人" prop="audit">
+						<iv-input :value.sync="mainModel.vo.audit" :disabled="(disabledFields.indexOf('audit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('author') == -1)" label="文件作者" prop="author">
+						<iv-input :value.sync="mainModel.vo.author" :disabled="(disabledFields.indexOf('author') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('annulment') == -1)" label="废止信息" prop="annulment">
+						<iv-input :value.sync="mainModel.vo.annulment" :disabled="(disabledFields.indexOf('annulment') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('annulmentDate') == -1)" label="废止日期" prop="annulmentDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.annulmentDate" :disabled="(disabledFields.indexOf('annulmentDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.annulmentDate)" :disabled="(disabledFields.indexOf('annulmentDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="文件概述" prop="content">
+						<iv-input :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('discernId') == -1)" label="用来标识法律法规(方便记录修订信息)" prop="discernId">
+						<iv-input :value.sync="mainModel.vo.discernId" :disabled="(disabledFields.indexOf('discernId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('effectiveDate') == -1)" label="实施日期" prop="effectiveDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.effectiveDate" :disabled="(disabledFields.indexOf('effectiveDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.effectiveDate)" :disabled="(disabledFields.indexOf('effectiveDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('fileLevel') == -1)" label="文件级别" prop="fileLevel">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_file_level', mainModel.vo.fileLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.fileLevel" :list="getDataDicList('icm_regulation_file_level')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('fileType') == -1)" label="文件类型" prop="fileType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_file_type', mainModel.vo.fileType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.fileType" :list="getDataDicList('icm_regulation_file_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isRevise') == -1)" label="是否是已修订" prop="isRevise">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_is_revise', mainModel.vo.isRevise) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isRevise" :list="getDataDicList('icm_regulation_is_revise')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('limitation') == -1)" label="文件时效" prop="limitation">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_limitation', mainModel.vo.limitation) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.limitation" :list="getDataDicList('icm_regulation_limitation')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('manageElement') == -1)" label="管理要素" prop="manageElement">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_manage_element', mainModel.vo.manageElement) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.manageElement" :list="getDataDicList('icm_regulation_manage_element')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('manageScope') == -1)" label="管理范围" prop="manageScope">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_manage_scope', mainModel.vo.manageScope) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.manageScope" :list="getDataDicList('icm_regulation_manage_scope')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('managerOrg') == -1)" label="管理部门" prop="managerOrg">
+						<iv-input :value.sync="mainModel.vo.managerOrg" :disabled="(disabledFields.indexOf('managerOrg') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('number') == -1)" label="文件编号" prop="number">
+						<iv-input :value.sync="mainModel.vo.number" :disabled="(disabledFields.indexOf('number') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('publishDate') == -1)" label="发布日期" prop="publishDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.publishDate" :disabled="(disabledFields.indexOf('publishDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.publishDate)" :disabled="(disabledFields.indexOf('publishDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('revise') == -1)" label="修订信息" prop="revise">
+						<iv-input :value.sync="mainModel.vo.revise" :disabled="(disabledFields.indexOf('revise') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('typeId') == -1)" label="分类" prop="typeId">
+						<iv-input :value.sync="mainModel.vo.typeId" :disabled="(disabledFields.indexOf('typeId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('underOrg') == -1)" label="归口部门" prop="underOrg">
+						<iv-input :value.sync="mainModel.vo.underOrg" :disabled="(disabledFields.indexOf('underOrg') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

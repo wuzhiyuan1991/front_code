@@ -1,0 +1,18 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item label="现场处置" prop="content">
+					<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.content"></iv-input>
+				</el-form-item>
+				<el-form-item label="负责人" prop="principal">
+					<iv-input :value.sync="mainModel.vo.principal"></iv-input>
+				</el-form-item>
+
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

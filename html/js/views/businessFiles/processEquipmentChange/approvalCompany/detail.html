@@ -1,0 +1,167 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left" style="min-height: 100%;">
+		<div class="fip-header">
+			
+				<i class="recordPng"></i><span>{{getDataDic("ipec_position_type", mainModel.vo.type)}}</span>
+			
+		</div>
+
+		<div class="fip-content" id="approvalUsersDetail" style="position: relative;">
+			<!-- 模型基础信息 -->
+			<div style="width: 240px;overflow: hidden;">
+				配置参与变更审批流程的人员
+				<company-tree-select :id.sync="mainModel.vo.compId" placeholder="请选择公司"></company-tree-select>
+			</div>
+			<div v-if="mainModel.vo.type==5">
+				<div
+				style="position: absolute;top: 67px;left: 10px;z-index: 5; display: flex;width: 120px;border-radius: 5px;border: 1px solid #ccc;line-height: 28px;color: #666;cursor: pointer;">
+				<div @click="type=0" style="flex: 1;text-align: center;" :class="type==0?'checked':''">
+					按人员
+				</div>
+				<div @click="type=1" style="flex: 1;text-align: center;;" :class="type==1?'checked':''">
+					按专业
+				</div></div>
+				<div v-if='type==0' style="position: relative;width: 800px;margin-top: 30px;">
+					<simple-card class="fip-content-item fixed-table-card">
+						<p slot="title"></p>
+						<a slot="extra" v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'"
+							@click.prevent="doAdduser">
+							<span>
+								<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+							</span>
+						</a>
+						<vue-bootstrap-table :columns="tableModel.userTableModel.columns"
+							:values='tableModel.userTableModel.values' :show-empty-row="false"
+							:use-default-global-filter="false" :lazy-load="true" @on-edit-row="doEdit"
+							@on-del-row="doRemove" v-ref:user-table>
+						</vue-bootstrap-table>
+					</simple-card>
+
+
+
+				</div>
+				<div v-else style="position: relative;width: 800px;margin-top: 30px;">
+					<simple-card class="fip-content-item fixed-table-card">
+						<p slot="title"></p>
+						<a slot="extra" v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'"
+							@click.prevent="doAdduser">
+							<span>
+								<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+							</span>
+						</a>
+						<vue-bootstrap-table :columns="tableModel.majorTableModel.columns"
+							:values='tableModel.majorTableModel.values' :show-empty-row="false"
+							:use-default-global-filter="false" :lazy-load="true" @on-edit-row="doEdit"
+							@on-del-row="doRemove" v-ref:user-table>
+						</vue-bootstrap-table>
+					</simple-card>
+
+
+
+				</div>
+			</div>
+			<div v-else style="position: relative;width: 800px;">
+				<simple-card class="fip-content-item fixed-table-card">
+					<p slot="title"></p>
+					<a slot="extra" v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'"
+						@click.prevent="doAdduser1">
+						<span>
+							<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+						</span>
+					</a>
+					<vue-bootstrap-table :values="tableModel.userTable.values" :columns="tableModel.userTable.columns"
+						:show-empty-row="false" :use-default-global-filter="false" :lazy-load="true"
+						@on-del-row="doRemoveUsers" v-ref:user-table>
+					</vue-bootstrap-table>
+				</simple-card>
+			</div>
+
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false"
+	:filter-data="type==0?selectModel.userSelectModel.filterData:{}" @do-save="doSaveUsers"  :single-select="type==0?true:false"></user-select-modal>
+<!-- 
+<dependency-tree :visible.sync="dependencyTreeModel.visible" :id.sync="mainModel.vo.dependencyId"
+	:comp-id.sync="mainModel.vo.compId" :org-id="mainModel.vo.orgId" @do-save="doSaveDependencyInfo"
+	@do-cancel="closeDependencyInfo" clearable>
+</dependency-tree> -->
+<style>
+	#approvalUsersDetail .simple-card-body {
+		min-height: 20px;
+	}
+	#approvalUsersDetail .table-scroll-main-body{
+		min-height: 130px;
+	}
+	#approvalUsersDetail .table-scroll-main{
+		background-color: transparent;
+	}
+	#approvalUsersDetail .checked {
+		/* padding: 2px 3px;
+		border: 1px solid #aaa; */
+		background-color: #aacd03;
+		color: white !important;
+	}
+
+	#appravalModel .el-form-item__label {
+		width: 150px !important;
+	}
+
+	#appravalModel .el-form-item__content {
+		margin-left: 150px !important;
+	}
+
+	#approvalUsersDetail .simple-card-head {
+		padding: 0;
+	}
+	#appravalModel  .diy-select.ivu-select-multiple .ivu-select-selection{
+		height: auto;
+	}
+</style>
+<company-select-model @do-save='doSaveCompany' :visible.sync="companySelectModel.show"
+	:filter-data="companySelectModel.filterData" single-select></company-select-model>
+
+<Modal :visible.sync="selectModal.show" footer-hide title="配置" width="700" id="appravalModel">
+
+	<div v-show='type==0' class="epc-content" style="background-color: white;max-height: 630px;">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item label="人员">
+				<multi-input-select :values="users" @click="doSelectUser" v-ref:user-select>
+				</multi-input-select>
+			</el-form-item>
+			<el-form-item label="电气专业">
+				<i-select style="width: 220px;" :model.sync="professions" :list="getDataDicList('ipec_profession')" clearable
+					:multiple='true'></i-select>
+			</el-form-item>
+		</el-form>
+
+
+
+	</div>
+	<div v-show='type==1' class="epc-content" style="background-color: white;max-height: 630px;">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item label="专业" prop="name">
+				<i-select style="width: 220px;" :model.sync="profession" :list="getDataDicList('ipec_profession')" clearable></i-select>
+			</el-form-item>
+			</el-form-item>
+			<el-form-item label="人员" prop="name">
+				<multi-input-select :values="users" @click="doAddmajorUser"
+					v-ref:major-select></multi-input-select>
+			</el-form-item>
+		</el-form>
+
+
+
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="selectModal.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="doSaveData" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>

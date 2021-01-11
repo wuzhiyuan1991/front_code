@@ -1,0 +1,40 @@
+
+<div class="edit-pop-container">
+	<div class="epc-content">
+        <table class="table table-hover">
+            <thead>
+            <tr class="remindTh4">
+                <th class="remindTh4">邮件行动</th>
+                <th class="remindTh4">{{$t("gb.common.state")}}</th>
+                <th class="remindTh4">错误信息</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr  v-if="mainModel.showConnect">
+                <td>建立网络连接</td>
+                <td>成功</td>
+                <td></td>
+            </tr>
+            <tr  v-if="mainModel.showSearchServer">
+                <td>查找发送服务器</td>
+                <td>成功</td>
+                <td></td>
+            </tr>
+            <tr  v-if="mainModel.showLoginError">
+                <td>登录到接收服务器</td>
+                <td>成功</td>
+                <td></td>
+            </tr>
+            <tr  v-if="mainModel.showLoginSuccess">
+                <td>登录到接收服务器</td>
+                <td>成功</td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+	</div>
+	
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>	
+</div>

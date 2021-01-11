@@ -1,0 +1,102 @@
+<div class="detail-container">
+
+    <div class="few-info-panel pull-left">
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>更多设置</span>
+        </div>
+        
+        <div class="fip-content">
+            <div v-if="morePanelType === 'incentiveMechanism'">注释：当前选择的人员或者岗位（对应人员）都<span style="color: red;">不是</span>“有效账号”，系统会计算个人“相关绩效”；
+                但是“个人绩效的积分”<span style="color: red;">不会</span>纳入到部门相应积分的计算。</div>
+            <simple-card class="fip-content-item" v-if="morePanelType === 'checkResult'">
+                <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+                <el-form class="fip-content-item-form" :model="{}">
+                    <el-form-item label="检查结果值集">
+                        <span>{{mainModel.description}}</span>
+                    </el-form-item>
+                    <el-form-item label="结果必填校验">
+                        <span>{{mainModel.vo.description}}</span>
+                    </el-form-item>
+                    <el-form-item label="所属公司">
+                        <span>{{getDataDic('org',mainModel.vo.compId)['compName']}}</span>
+                    </el-form-item>
+                    <el-form-item label="适用范围" >
+                        <iv-radio-group :model.sync="mainModel.vo.result">
+                            <Radio value="3">
+                                <span>适用所有检查项</span>
+                            </Radio>
+                            <Radio value="2">
+                                <span>适用部分检查项</span>
+                            </Radio>
+                        </iv-radio-group>
+                    </el-form-item>
+                </el-form>
+            </simple-card>
+            <simple-card v-if="morePanelType === 'checkResult'" class="fip-content-item" filter :filter-when="true" :custom-filter="true" @do-filter="getCheckItems">
+                <p slot="title"><i class="basicPng"></i><span>更多设置</span></p>
+                <a slot="extra" @click.prevent="doAddClick">
+                    <span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+                </a>
+                <vue-bootstrap-table
+                        :columns="tableModel.checkItemTableModel.columns"
+                        :filter-column="tableModel.filterColumn"
+                        :show-pager="true"
+                        :url="tableModel.checkItemTableModel.url"
+                        :show-empty-row="false"
+                        :default-filter-value="tableModel.defaultFilterValue"
+                        @on-click-cell="doTableCellClick"
+                        lazy-load
+                        v-ref:item-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+
+            <simple-card class="fip-content-item" v-if="morePanelType === 'incentiveMechanism'" >
+                <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+                <el-form class="fip-content-item-form" :model="{}">
+                    <el-form-item  :label="$t('gb.common.ownedComp')" class="small-info-box" >
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.detailCompId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.detailCompId)['compName']" textonly></iv-input>
+                    </el-form-item>
+                </el-form>
+            </simple-card>
+
+            <simple-card v-if="morePanelType === 'incentiveMechanism'" class="fip-content-item"  filter filter-when :show-content.sync="cardModel.taskDetailModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>岗位</span></p>
+                <a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowPositionSelectModal()" >
+                    <span><Icon type="plus"></Icon>添加</span>
+                </a>
+                <vue-bootstrap-table
+                        :setting="tableModel.positionTableModel"
+                        @on-del-row="doRemovePosition"
+                        v-ref:position-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+            <simple-card v-if="morePanelType === 'incentiveMechanism'" class="fip-content-item"  filter filter-when :show-content.sync="cardModel.taskDetailModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>人员</span></p>
+                <a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowUserSelectModal()" >
+                    <span><Icon type="plus"></Icon>添加</span>
+                </a>
+                <vue-bootstrap-table
+                        :setting="tableModel.userTableModel"
+                        @on-del-row="doRemoveUser"
+                        v-ref:user-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+        <iv-button type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+    </div>
+</div>
+<check-item-select-modal
+        :visible.sync="selectModel.checkItemSelectModal.visible"
+        :comp-id="mainModel.vo.compId"
+        @do-save="doSaveCheckItem"
+></check-item-select-modal>
+<position-select-modal :visible.sync="selectModel.positionSelectModel.visible" :filter-data="selectModel.positionSelectModel.filterData"  @do-save="doSavePositions"></position-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>

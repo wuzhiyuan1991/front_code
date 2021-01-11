@@ -1,0 +1,34 @@
+<Modal :visible.sync="visible" width='600' :title="mainModel.title" @on-cancel="doClose" :footer-hide="true">
+    <el-form class="modal-box-default width100 width65" style="background: #fff;" :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+		<el-form-item label="时间" prop="date">
+			<date-picker format="yyyy-MM-dd HH:mm" :begin="beginDate":selected-date.sync="mainModel.vo.date" time-zero type="datetime"></date-picker>			
+		</el-form-item>
+		<el-form-item label="事件内容" class="ivu-select-dropdown-width450" prop="eventContent">
+			<iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.eventContent" placeholder="请输入"></iv-input>
+		</el-form-item>
+    </el-form>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<!-- <shift-over-select-modal 
+	:visible.sync="selectModel.userSelectModel.visible"
+    :filter-data="selectModel.userSelectModel.filterData" 
+	:show-only-type.sync="selectModel.userSelectModel.onlyType"
+	:single-select = "false" 
+    @do-save="doSaveUsers">
+</shift-over-select-modal> -->
+
+<style>
+	.width65 .el-form-item .el-form-item__content {
+		width: 65%;
+	}
+</style>

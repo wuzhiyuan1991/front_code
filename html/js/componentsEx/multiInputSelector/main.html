@@ -1,0 +1,22 @@
+<div class=" ivu-select-top ivu-select ivu-select-multiple exam-paper-point" :class="{'diy-select':overflowHover}" style="width:100%;">
+    <div class="ivu-select-selection"   @click.stop.prevent=";"   style="line-height: 24px;cursor: default;">
+        <div style="color: #ccc;margin-top: 2px;" v-if="!values||values.length===0">{{placeholder}}</div>
+        <div v-else class="ivu-tag" v-for="(index, tag) in values">
+            <span class="ivu-tag-text" @click.stop.prevent=";" style="cursor: default">{{getTagName(tag)}}</span>
+            <i class="ivu-icon ivu-icon-ios-close-empty" style="cursor: pointer"
+               @click.stop.prevent="doRemoveItem(index)"></i>
+        </div>
+    </div>
+    <div :style="copySyle" style="position: relative;" v-if="overflowHover">
+        <div class="ivu-select-selection-copy" style="line-height: 24px;">
+            <div class="ivu-tag" v-for="(index, tag) in values">
+                <span class="ivu-tag-text">{{tag.name}}</span>
+                <i class="ivu-icon ivu-icon-ios-close-empty"
+                   @click.stop.prevent="doRemoveItem(index)"></i>
+            </div>
+        </div>
+    </div>
+    <span style="font-size: 16px;" class="select-ico-add"  @click="doClick">
+                                <i class="ivu-icon ivu-icon-plus"></i>
+                            </span>
+</div>

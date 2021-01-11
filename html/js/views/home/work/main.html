@@ -1,0 +1,216 @@
+<div class="tab-container-wrap home-work">
+    <iv-row type="flex" style="flex-wrap: nowrap;">
+        <iv-col span="16" class="home-work-left">
+            <div class="home-work-tabs">
+                <a href="javascript:void(0);" :class="{'active': isBegin}" @click="toggleTasks(1)">已开始</a>
+                <a href="javascript:void(0);" :class="{'active': !isBegin}" @click="toggleTasks(2)">未开始</a>
+            </div>
+
+            <div style="background-color: #fff;padding: 20px;border-radius: 5px;text-align: center;" v-show="!hideEmptyTip && !isQuerying">没有任务</div>
+            <div v-show="isQuerying"  style="text-align: center;padding-top: 100px;">
+                <div class="bg-rotate-loader"></div>
+            </div>
+            <div class="home-work-tables">
+                <work-table
+                        :columns="columns.radomObser"
+                        :values="tasks.radomObser.list"
+                        :title="newTitles.radomObser"
+                        :route-url="routes.radomObser"
+                        type="radomObser"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.checkTask"
+                        :values="tasks.checkTask.list"
+                        :title="newTitles.checkTask"
+                        :route-url="routes.checkTask"
+                        type="checkTask"
+                        :state="qryModel.beginState"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                
+                <work-table
+                        :columns="columns.riCheckTask"
+                        :values="tasks.riCheckTask.list"
+                        :title="newTitles.riCheckTask"
+                        :route-url="routes.riCheckTask"
+                        type="riCheckTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                
+                <work-table
+                        :columns="columns.riTmpCheckTask"
+                        :values="tasks.riTmpCheckTask.list"
+                        :title="newTitles.riTmpCheckTask"
+                        :route-url="routes.riTmpCheckTask"
+                        type="riTmpCheckTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.opStdCard"
+                        :values="tasks.opStdCard.list"
+                        :title="newTitles.opStdCard"
+                        :route-url="routes.opStdCard"
+                        type="opStdCard"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                <work-table
+                        :columns="columns.opMaintCard"
+                        :values="tasks.opMaintCard.list"
+                        :title="newTitles.opMaintCard"
+                        :route-url="routes.opMaintCard"
+                        type="opMaintCard"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                <work-table
+                        :columns="columns.opEmerCard"
+                        :values="tasks.opEmerCard.list"
+                        :title="newTitles.opEmerCard"
+                        :route-url="routes.opEmerCard"
+                        type="opEmerCard"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                
+                <work-table
+                        :columns="columns.jsaMaster"
+                        :values="tasks.jsaMaster.list"
+                        :title="newTitles.jsaMaster"
+                        :route-url="routes.jsaMaster"
+                        type="jsaMaster"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.pool"
+                        :values="tasks.pool.list"
+                        :title="newTitles.pool"
+                        :route-url="routes.pool"
+                        type="pool"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.myTraining"
+                        :values="tasks.myTraining.list"
+                        :title="newTitles.myTraining"
+                        :route-url="routes.myTraining"
+                        type="myTraining"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.testCenter"
+                        :values="tasks.testCenter.list"
+                        :title="newTitles.testCenter"
+                        :route-url="routes.testCenter"
+                        type="testCenter"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.auditScore"
+                        :values="tasks.auditScore.list"
+                        :title="newTitles.auditScore"
+                        :route-url="routes.auditScore"
+                        type="auditScore"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.isaAuditScore"
+                        :values="tasks.isaAuditScore.list"
+                        :title="newTitles.isaAuditScore"
+                        :route-url="routes.isaAuditScore"
+                        type="isaAuditScore"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.asmtTask"
+                        :values="tasks.asmtTask.list"
+                        :title="newTitles.asmtTask"
+                        :route-url="routes.asmtTask"
+                        type="asmtTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                <work-table
+                        :columns="columns.secureMeetingTask"
+                        :values="tasks.secureMeetingTask.list"
+                        :title="newTitles.secureMeetingTask"
+                        :route-url="routes.secureMeetingTask"
+                        type="secureMeetingTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                <work-table
+                        :columns="columns.equipment"
+                        :values="tasks.equipment.list"
+                        :title="newTitles.equipment"
+                        :route-url="routes.equipment"
+                        type="equipment"
+                        @on-refresh="doRefresh"
+                ></work-table>
+                <work-table
+                        :columns="columns.riskJudgmentTask"
+                        :values="tasks.riskJudgmentTask.list"
+                        :title="newTitles.riskJudgmentTask"
+                        :route-url="routes.riskJudgmentTask"
+                        type="riskJudgmentTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.inspectionCheckTask"
+                        :values="tasks.inspectionCheckTask.list"
+                        :title="newTitles.inspectionCheckTask"
+                        :route-url="routes.inspectionCheckTask"
+                        type="inspectionCheckTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+
+                <work-table
+                        :columns="columns.jobCheckTask"
+                        :values="tasks.jobCheckTask.list"
+                        :title="newTitles.jobCheckTask"
+                        :route-url="routes.jobCheckTask"
+                        type="jobCheckTask"
+                        @on-refresh="doRefresh"
+                ></work-table>
+            </div>
+        </iv-col>
+        <iv-col span="8" class="home-work-right">
+            <div class="home-work-right-box">
+                <div class="home-work-tabs">
+                    <strong>日历</strong>
+                </div>
+                <full-calendar
+                        class="test-fc"
+                        :week-names="weekNames"
+                        :event-dates="monthEvents"
+                        first-day='0'
+                        @change-month="changeMonth"
+                        @day-click="doDayClick"
+                        v-ref:canendar
+                ></full-calendar>
+
+                <div class="home-work-tabs" style="margin-top: 10px;border-top:1px solid #f5f5f5;">
+                    <a href="javascript:void(0);" :class="{'active': isShowDeadline}" @click="toggleDateList(1)">当日截止任务</a>
+                    <a href="javascript:void(0);" :class="{'active': !isShowDeadline}" @click="toggleDateList(2)">当日其他任务</a>
+                </div>
+                <ul class="hw-tasks">
+                    <div v-show="isDateQuerying"  style="text-align: center;padding-top: 100px;">
+                        <div class="bg-rotate-loader"></div>
+                    </div>
+                    <li v-for="item in dateList">
+                        <span class="hw-task-type">{{showTypes(item)}}:</span>
+                        <span class="hw-task-content" :title="item.name">{{item.name}}</span>
+                        <a class="hw-task-action" href="javascript:void(0);" @click="doTaskClick(item)">{{showActions(item)}}</a>
+                    </li>
+                </ul>
+            </div>
+        </iv-col>
+    </iv-row>
+
+</div>

@@ -1,0 +1,68 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span='16'>
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span='8'>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        <!-- <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+			                   
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                    $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+      
+							</iv-dropdown-menu>
+						</iv-dropdown> -->
+                    </div>
+                    <div class="main-special-box-1" style="width: 170px;">
+                        <i-select style="width: 170px;position: relative;top:-4px" :model.sync="todoType"
+                            :list="typeList">
+                            <i-option v-for="qstType in typeList" :value="qstType.id">{{qstType.value}}({{qstType.num}})
+                            </i-option>
+                        </i-select>
+                    </div>
+
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+
+                    <vi-button v-if="hasAuth('edit') && tableModel.selectedDatas[0].status === '0'" type="text"
+                        class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn" @click="doDelete">
+                        {{$t("gb.common.del")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('deteal')" type="text" class="mp-header-item-btn" @click="doDeteal">处理
+                    </vi-button>
+                    
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- Legacy模式 -->
+<!--
+<iratmpwork-form-modal
+		:visible.sync="formModel.iraTmpWorkFormModel.show"
+		@do-save="doSaveIraTmpWork"
+		v-ref:iratmpwork-form-modal>
+</iratmpwork-form-modal>
+-->
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel @do-preview="doPreview"></detail-panel>
+</aside>
+<preview-modal :visible.sync="previewModel.visible" :preview-data='previewdata'></preview-modal>

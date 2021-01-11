@@ -1,0 +1,46 @@
+<div class="edit-pop-container" >
+	<div class="epc-content" style="background-color: #fff;">
+
+		<el-form :model="mainModel.vo" v-if="actionType === 'update'">
+			<el-form-item label="权限码">
+				<iv-input :value.sync = "authority.code"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.name')" prop="name" >
+				<iv-input  :value.sync = "authority.name"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.EnableDisable')">
+				<i-select :model.sync="authority.disable" :list="mainModel.disableList">
+					<i-option v-for="item in mainModel.disableList" :value="item.value">{{ item.name }}</i-option>
+				</i-select>
+			</el-form-item>
+
+		</el-form>
+
+		<div  v-if="actionType === 'add'">
+			<el-form style="width: 100%;">
+				<el-form-item label="权限码前缀">
+					<iv-input :value.sync="prefixCode" type="number" placeholder="权限码7位前缀"></iv-input>
+				</el-form-item>
+				<el-form-item label="自动生成">
+					<iv-checkbox :checked.sync="defaultRight.create">新增</iv-checkbox>
+					<iv-checkbox :checked.sync="defaultRight.update">编辑</iv-checkbox>
+					<iv-checkbox :checked.sync="defaultRight.delete">删除</iv-checkbox>
+					<iv-checkbox :checked.sync="defaultRight.import">导入</iv-checkbox>
+					<iv-checkbox :checked.sync="defaultRight.export">导出</iv-checkbox>
+				</el-form-item>
+			</el-form>
+			<ul style="margin-bottom: 10px;">
+				<li style="display: flex; font-size: 14px;align-items: center;margin-bottom: 8px;" v-for="item in codeItems">
+					<div style="min-width: 80px;text-align: center;">名称</div>
+					<iv-input :value.sync="item.name"></iv-input>
+					<div style="min-width: 80px;text-align: center;">3位编码</div>
+					<iv-input :value.sync="item.code" type="number"></iv-input>
+				</li>
+			</ul>
+			<iv-button type="dashed" long @click="appendCode">添加权限码</iv-button>
+		</div>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+	</div>
+</div>

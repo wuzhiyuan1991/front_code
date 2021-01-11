@@ -1,0 +1,23 @@
+<div>
+    <lite-box
+    shape="rect"
+    v-for="(index,pic) in data"
+    :show-close="!readonly"
+    @on-close="doDeleteFile(pic.fileId||pic.id,index)"
+>
+<a target="_blank" :href="convertFileUrl(pic)">
+    <span class="attachment-icon" :class="renderIcon(pic.fileExt)"></span>
+    {{pic.orginalName}}
+</a>
+</lite-box>
+
+<vue-file-upload
+    v-if="showAddFile"
+    @on-success-upload="referMater"
+    :params="params"
+    :filters="filters"
+    class="file_upload"
+></vue-file-upload>
+</div>
+      
+ 

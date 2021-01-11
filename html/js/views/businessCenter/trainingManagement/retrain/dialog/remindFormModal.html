@@ -1,0 +1,43 @@
+<Modal :visible.sync="visible" :title="title" width="570" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="width: 500px;">
+                <el-form-item  label="通知方式" prop="appNotice" label-width="130px">
+                    <iv-checkbox :checked.sync="mainModel.vo.smsNotice === '1'" @on-change="changeSms">手机短信</iv-checkbox>
+                    <iv-checkbox :checked.sync="mainModel.vo.appNotice === '1'" @on-change="changeApp">APP通知</iv-checkbox>
+                    <!--<iv-checkbox :checked.sync="mainModel.vo.webMessage">Web站内通知</iv-checkbox>-->
+                </el-form-item>
+
+                <el-form-item label="通知频率周期" prop="time" label-width="130px">
+                    <div style="display: flex;align-items: center;margin-bottom: 10px;">
+                        <i-select :list="timeTypes" :model.sync="mainModel.vo.timeType"></i-select>
+                        <iv-input :value.sync="mainModel.vo.time" type="number" style="margin: 0 5px;"></iv-input>
+                        <i-select :list="units" :model.sync="mainModel.vo.unit"></i-select>
+                    </div>
+                    <div style="display: flex;align-items: center;" v-if="mainModel.vo.timeType === '2'">
+                        <span>每</span>
+                        <iv-input :value.sync="mainModel.vo.cycle" type="number" style="margin: 0 5px;"></iv-input>
+                        <i-select :list="units" :model.sync="mainModel.vo.cycleUnit"></i-select>
+                    </div>
+                </el-form-item>
+
+                <el-form-item label="通知课程教师" label-width="130px">
+                    <iv-checkbox :checked.sync="mainModel.vo.toTeacher === '1'" @on-change="changeTeacher">通知</iv-checkbox>
+                </el-form-item>
+                <el-form-item label="通知课程管理员" label-width="130px" prop="users">
+                    <iv-checkbox :checked.sync="allAdminNotice" @on-change="changeAllAdminNotice">所有人（总共{{adminLength}}人）</iv-checkbox>
+                    <multiple-input-select
+                            :selected-multiple.sync="users"
+                            @on-click="doShowUserSelectModal"
+                            @on-remove="doRemoveUser"
+                    ></multiple-input-select>
+                </el-form-item>
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave(0)" class="pull-right">保存</vi-button>
+        </div>
+    </div>
+</Modal>
+<base-user-select-modal url="bizuserrel/list{/curPage}{/pageSize}?type=1" :visible.sync="adminSelectModel.visible" @do-save="doSaveUsers"></base-user-select-modal>

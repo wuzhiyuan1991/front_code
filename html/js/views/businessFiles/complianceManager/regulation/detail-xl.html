@@ -1,0 +1,178 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="批准人" prop="approver" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.approver" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="专业审核人" prop="audit" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.audit" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="文件作者" prop="author" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.author" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="废止信息" prop="annulment" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.annulment" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="废止日期" prop="annulmentDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.annulmentDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.annulmentDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="文件概述" prop="content" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="用来标识法律法规(方便记录修订信息)" prop="discernId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.discernId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="实施日期" prop="effectiveDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.effectiveDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.effectiveDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="文件级别" prop="fileLevel" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_file_level', mainModel.vo.fileLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.fileLevel" :list="getDataDicList('icm_regulation_file_level')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="文件类型" prop="fileType" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_file_type', mainModel.vo.fileType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.fileType" :list="getDataDicList('icm_regulation_file_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="是否是已修订" prop="isRevise" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_is_revise', mainModel.vo.isRevise) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isRevise" :list="getDataDicList('icm_regulation_is_revise')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="文件时效" prop="limitation" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_limitation', mainModel.vo.limitation) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.limitation" :list="getDataDicList('icm_regulation_limitation')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="管理要素" prop="manageElement" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_manage_element', mainModel.vo.manageElement) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.manageElement" :list="getDataDicList('icm_regulation_manage_element')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="管理范围" prop="manageScope" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_regulation_manage_scope', mainModel.vo.manageScope) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.manageScope" :list="getDataDicList('icm_regulation_manage_scope')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="管理部门" prop="managerOrg" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.managerOrg" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="文件编号" prop="number" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="发布日期" prop="publishDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.publishDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.publishDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="修订信息" prop="revise" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.revise" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="分类" prop="typeId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.typeId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="归口部门" prop="underOrg" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.underOrg" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.regulationChapterCardModel.showContent" filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>章节</span></p>
+				<a slot="extra" @click.prevent="cardModel.regulationChapterCardModel.showContent = !cardModel.regulationChapterCardModel.showContent;" >
+					<span v-if="cardModel.regulationChapterCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowRegulationChapterFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.regulationChapterTableModel"
+					@on-del-row="doRemoveRegulationChapter"
+					@on-edit-row="doShowRegulationChapterFormModal4Update"
+					@on-move-row="doMoveRegulationChapter"
+					v-ref:regulationchapter-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		</div>
+		-->
+		<!-- tab页签式 - 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>附件参考</span></p>
+				<div class="rel-info-panel-content-tabs">
+					<el-tabs active-key="relTab">
+						<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+							<file-list-simple-card  :data="fileModel.file.data" :config="fileModel.file.cfg"></file-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+							<image-list-simple-card  :data="fileModel.pic.data" :config="fileModel.pic.cfg"></image-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+							<video-list-simple-card  :data="fileModel.video.data" :config="fileModel.video.cfg"></video-list-simple-card>
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</simple-card>
+		</div>
+		-->
+	</div>
+
+
+</div>
+
+
+<regulationchapter-form-modal
+		:visible.sync="formModel.regulationChapterFormModel.show"
+		@do-save="doSaveRegulationChapter"
+		@do-update="doUpdateRegulationChapter"
+		:query-url="formModel.regulationChapterFormModel.queryUrl"
+		:hidden-fields="formModel.regulationChapterFormModel.hiddenFields"
+		v-ref:regulationchapter-form-modal>
+</regulationchapter-form-modal>
+
+

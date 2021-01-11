@@ -1,0 +1,77 @@
+<div class="detail-container">
+    <div class="few-info-panel pull-left">
+        <div class="fip-header"><Icon type="ios-photos"></Icon>
+            <span v-if="mainModel.addShow">{{$t("gb.common.add")}}</span>
+            <span v-else>{{$t("gb.common.detail")}}</span>
+        </div>
+        <div class="fip-content">
+            <simple-card class="fip-content-item">
+                <el-form :model="mainModel.vo" :rules="mainModel.isReadOnly ? emptyRules : rules"  label-width="160px" class="fip-content-item-form" v-ref:ruleform>
+                    <el-form-item prop="mailAccname" class="small-info-box" :label="$t('bs.bac.accountName')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailAccname" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailServer" class="small-info-box" :label="$t('bs.bac.server')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailServer" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailPort" class="small-info-box" :label="$t('bs.bac.port')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailPort" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailUsername" class="small-info-box" :label="$t('bs.bac.userName')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailUsername" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailAddress" class="small-info-box" :label="$t('bs.bac.mailAdress')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailAddress" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailSmtpServer" class="small-info-box" :label="'SMTP'+$t('bs.bac.server')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailSmtpServer" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailSmtpIden" class="small-info-box" :label="'SMTP'+$t('bs.bac.needRenz')" style="width:100%;">
+                        <iv-checkbox :checked.sync="mainModel.vo.mailSmtpIden"></iv-checkbox>
+                    </el-form-item>
+                    <el-form-item prop="mailSmtpName" class="small-info-box" :label="'SMTP'+$t('bs.bac.userName')" style="width:100%;">
+                            <iv-input :value.sync="mainModel.vo.mailSmtpName" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                        </el-form-item>
+                    <el-form-item prop="mailProt" class="small-info-box" :label="$t('bs.bac.mailProtocol')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailProt" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailSsl" class="small-info-box" :label="$t('bs.bac.secureConnect')+'（SSL）'" style="width:100%;">
+                        <iv-checkbox :checked.sync="mailSsl"></iv-checkbox>
+                    </el-form-item>
+                    <el-form-item prop="mailPwd" class="small-info-box" :label="$t('bs.bac.password')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailPwd" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailName" class="small-info-box" :label="$t('bs.bac.mailName')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailName" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailSmtpPort" class="small-info-box" :label="'SMTP'+$t('bs.bac.port')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailSmtpPort" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="mailSame" class="small-info-box" :label="'SMTP'+$t('bs.bac.useSameSetting')" style="width:100%;">
+                        <iv-checkbox :checked.sync="mailSame"></iv-checkbox>
+                    </el-form-item>
+                    <el-form-item prop="mailSmtpSsl" class="small-info-box" :label="'SMTP'+$t('bs.bac.secureConnect')+'('+'SSL'+')'" style="width:100%;">
+                        <iv-checkbox :checked.sync="mailSmtpSsl"></iv-checkbox>
+                    </el-form-item>
+                    <el-form-item prop="mailSmtpPwd" class="small-info-box" :label="'SMTP'+$t('bs.bac.password')" style="width:100%;">
+                        <iv-input :value.sync="mainModel.vo.mailSmtpPwd" :textonly="mainModel.isReadOnly" placeholder=" "></iv-input>
+                    </el-form-item>
+                </el-form>
+            </simple-card>
+
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" @click="doClose" icon="close-round">{{$t("gb.common.close")}}</iv-button>
+        <iv-button icon="android-document" v-if="mainModel.isReadOnly && hasPermission('1010004002')" @click.stop="mainModel.isReadOnly = false" type="ghost">{{$t('gb.common.edition')}}</iv-button>
+        <iv-button type="ghost" @click="doSave" v-if="!mainModel.isReadOnly" icon="android-document">{{$t("gb.comnon.save")}}</iv-button>
+        <iv-button type="ghost" v-if="mainModel.isReadOnly" @click="doTest" icon="android-bulb">{{$t("bd.trm.test")}}</iv-button>
+        <vi-button type="ghost" class="mp-header-item-btn" v-if="!mainModel.isReadOnly && isEditStatus"  @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+
+    </div>
+</div>
+
+
+<!-- 弹窗-->
+<Modal :visible.sync="testModel.show" :title="testModel.title" width="520" :footer-hide="true">
+        <testmailcomponent @do-test-canceled="doTestCanceled"></testmailcomponent>
+</Modal>

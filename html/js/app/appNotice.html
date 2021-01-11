@@ -1,0 +1,8 @@
+<div class="ivu-notice" style="top: 24px;right: 0;">
+    <custom-notice :title="notice.title" :key="notice.key" @on-remove="removeNotice" v-for="notice in notices">
+        <div style="line-height: 24px;display: flex;" v-for="item in notice.children">
+            <iv-checkbox :checked="item.done" @click.stop="done(item)"></iv-checkbox>
+            <span class="notice-link" :class="{'done': item.done}" @click="toAuditGrade(item)">{{item.name}}</span>
+        </div>
+    </custom-notice>
+</div>

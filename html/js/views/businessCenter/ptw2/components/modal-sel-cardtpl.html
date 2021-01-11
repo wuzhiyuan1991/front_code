@@ -1,0 +1,45 @@
+<Modal   :visible.sync="visible" :title="modalTitle" @on-cancel="doClose" class="userSelectModal" width="600" :footer-hide="true">
+    <div class="modal-box-default ivu-radio-wrapper-14">
+        <el-form class="fip-content-item width-auto-ipt">
+            <el-form-item label="作业类型">
+                <div class="flex-layout">
+                    <div class="flex-grow1" style="font-size:14px;">
+                        <i-select @on-change="doChangeWorkCatalog" :disabled="disabled" :model.sync="selWorkCatalogIndex" style="width:200px;font-size: 14px" :list="workCatalogList">
+                            <i-option v-for="(index,item) in workCatalogList" :value="index">{{item.name}}</i-option>
+                        </i-select>
+                    </div>
+                    <div class="flex-grow1" v-if="levelList&&levelList.length>0" style="font-size:14px;">
+                        <i-select  @on-change="doChangeWorkLevel" :disabled="disabled"  :model.sync="selLevelIndex" size="small" style="width:200px" :list="levelList">
+                            <i-option v-for="(index,item) in levelList" title="xx"  :value="index">{{item.name}}</i-option>
+                        </i-select>
+                    </div>
+                </div>
+            </el-form-item>
+            <el-form-item label="作业票模板"  :disabled="!enableSel">
+                <div style="font-size:14px;max-height: 350px;min-height: 100px;overflow: auto;padding-left:15px;" class="base-border">
+                    <iv-radio-group class="group-vertical" v-ref:radio-group  :model.sync="selTplIndex">
+                        <iv-radio style="margin-top:5px;" v-for="(index,item) of tplList" :value="index">{{item.name}}</iv-radio>
+                    </iv-radio-group>
+                </div>
+            </el-form-item>
+        </el-form>
+    </div>
+
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        <!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+    </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+<style>
+    .ivu-radio-wrapper-14 .ivu-radio-wrapper{
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>
+

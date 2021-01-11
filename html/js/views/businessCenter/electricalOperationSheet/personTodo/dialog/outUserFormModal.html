@@ -1,0 +1,16 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item  label="名称" prop="users">
+						<iv-input style="margin-bottom: 5px;" :value.sync="item.content"  v-for="item in mainModel.vo.users"  :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+						<a  style="color:#33adea;margin-left:3px" @click="doAddInputItem" >添加</a>
+						<!--<iv-button type="text" style="color:#33adea" @click="doAddInputItem" >添加</iv-button>-->
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

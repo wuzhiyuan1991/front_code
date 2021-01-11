@@ -1,0 +1,38 @@
+<Modal v-if="load" :visible.sync="visible"  :title="title" :footer-hide="true">
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <div >
+                <div style="font-size: 14px;color:#666;padding:5px;">
+                    按照输入的数字顺序排序，相同数字视为统一分组
+                </div>
+                <table style="background: #fff;" class="ptw-table-simple">
+                    <colgroup>
+                        <col style="width: 80px"/>
+                        <col/>
+                    </colgroup>
+                    <tr>
+                        <th style="border-right: 1px solid #000">签发顺序</th>
+                        <th class="text-center">签发人员</th>
+                    </tr>
+                    <tr v-for="item of roleList">
+                        <td>
+                            <div>
+                                <iv-input type="number" :value.sync="item.signStep"></iv-input>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span class="ptw-role-span">{{item.signCatalog.name}}</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+        <div class="epc-footer">
+<!--            <vi-button type="primary" @click="doCancel" class="pull-right">取消</vi-button>-->
+            <vi-button type="primary" @click="doSave" class="pull-right">确定</vi-button>
+        </div>
+    </div>
+</Modal>

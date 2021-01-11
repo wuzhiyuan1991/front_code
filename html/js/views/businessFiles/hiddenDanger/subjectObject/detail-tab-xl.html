@@ -1,0 +1,184 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button type="ghost" @click.stop="doShowCheckObjectFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+<!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+<!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="" prop="code" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="对象名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属公司" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属部门" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item  label="是否禁用，0启用，1禁用" prop="disable" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.disable" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="负责人Id" prop="firstSuperId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.firstSuperId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="排序" prop="orderNo" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.orderNo" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="上级对象ID" prop="parentId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.parentId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="备注" prop="remarks" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="第二负责人id" prop="secondSuperId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.secondSuperId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="类型" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.type" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+						<div class="rip-item">
+							<simple-card :show-content.sync="cardModel.checkTableCardModel.showContent">
+								<p slot="title"><i class="basicPng"></i><span>检查表</span></p>
+								<a slot="extra" @click.prevent="cardModel.checkTableCardModel.showContent = !cardModel.checkTableCardModel.showContent;" >
+									<span v-if="cardModel.checkTableCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+									<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+									</a>
+								<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="mainModel.showCheckTableSelectModal = true;" >
+									<span><Icon type="plus"></Icon>添加</span>
+								</a>
+								<vue-bootstrap-table
+									:url="tableModel.checkTableTableModel.url"
+									:columns="tableModel.checkTableTableModel.columns"
+									:show-empty-row="false"
+									:use-default-global-filter="false"
+									:lazy-load="true"
+									@on-del-row="doRemoveCheckTables"
+									v-ref:checktable-table
+									>
+								</vue-bootstrap-table>
+							</simple-card>
+						</div>
+
+
+				</el-tab-pane>
+				<el-tab-pane label="资料" key="basTab">
+					<div class="rip-item">
+						<el-form :model="mainModel.vo" class="rip-item-form">
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">基本信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('')">
+											<span>{{mainModel.vo.code}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('对象名称')">
+											<span>{{mainModel.vo.name}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('')">
+											<span>{{mainModel.vo.compId}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('组织id')">
+											<span>{{mainModel.vo.orgId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">详细信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('是否禁用，0启用，1禁用')">
+											<span>{{mainModel.vo.disable}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('负责人Id')">
+											<span>{{mainModel.vo.firstSuperId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('排序')">
+											<span>{{mainModel.vo.orderNo}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('上级对象ID')">
+											<span>{{mainModel.vo.parentId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('备注')">
+											<span>{{mainModel.vo.remarks}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('第二负责人id')">
+											<span>{{mainModel.vo.secondSuperId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('类型')">
+											<span>{{mainModel.vo.type}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>			
+						</el-form>
+					</div>	
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+	</div>
+		
+</div>
+
+<checktable-select-modal :visible.sync="mainModel.showCheckTableSelectModal"  @do-save="doSaveCheckTables"></checktable-select-modal>
+
+<checkobject-form-modal
+		:visible.sync="formModel.checkObjectFormModel.show"
+		@do-update="doUpdateCheckObject"
+		:query-url="formModel.checkObjectFormModel.queryUrl"
+		v-ref:checkobject-form-modal>
+</checkobject-form-modal>
+

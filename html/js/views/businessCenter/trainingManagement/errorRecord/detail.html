@@ -1,0 +1,92 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{$t('bd.trm.testQuestion')}}{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.testContent')" prop="disable">
+						<iv-input :value.sync="mainModel.vo.question.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.questInfo')" prop="paperId">
+						<!--<iv-input :value.sync="mainModel.vo.paperId" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<span>{{getDataDic('question_type', mainModel.vo.question.type)}}</span>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.questTime')" prop="paperRecordId">
+						<iv-input :value.sync="mainModel.vo.createDate"  :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.testCenter')" prop="qstId">
+						<iv-input :value.sync="mainModel.vo.examPoints"  :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="用户答案" prop="userAnswer">-->
+						<!--<iv-input :value.sync="mainModel.vo.userAnswer" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item  label="用户id" prop="userId">-->
+						<!--<iv-input :value.sync="mainModel.vo.userId" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+				</el-form>
+			</simple-card>
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('bd.trm.testQuestion')}}</span></p>
+
+				<div class="el-form-item" v-for="item in mainModel.vo.opts"  v-if="mainModel.vo.question.type !=3">
+					<label class="el-form-item__label" style="width: 110px;">{{$t('bd.trm.option')}}{{item.opt}}:</label>
+					<div class="el-form-item__content" style="margin-left: 110px;">
+						<div class="ivu-poptip-rel">
+							<div class="ivu-input-wrapper ivu-input-type"> <span>{{{item.content}}}</span></div>
+						</div>
+					</div>
+				</div>
+				<div  class="el-form-item" v-for="(index,opt) in mainModel.vo.opts"  v-if="mainModel.vo.question.type==3">
+					<label class="el-form-item__label" style="width: 110px;">{{$t('bd.trm.option')}}{{opt.opt}}:</label>
+					<div class="el-form-item__content" style="margin-left: 110px;">
+						<div class="ivu-poptip-rel">
+							<div class="ivu-input-wrapper ivu-input-type"> <span>{{index =='0'?"正确":"错误"}}</span></div>
+						</div>
+					</div>
+				</div>
+				<div class="el-form-item">
+					<label class="el-form-item__label" style="width: 110px;">{{$t('bd.trm.optionCheck')}}</label>
+					<div class="el-form-item__content" style="margin-left: 110px;">
+						<div class="ivu-poptip-rel">
+							<div class="ivu-input-wrapper ivu-input-type"> <span>{{mainModel.vo.question.answer}}</span></div>
+						</div>
+				</div>
+				</div>
+				<div class="el-form-item">
+					<label class="el-form-item__label" style="width: 110px;">{{$t('bd.trm.questionAnalysis')}}</label>
+					<div class="el-form-item__content" style="margin-left: 110px;">
+						<div class="ivu-poptip-rel">
+							<div class="ivu-input-wrapper ivu-input-type"> <span>{{mainModel.vo.question.analysis}}</span></div>
+						</div>
+					</div>
+				</div>
+
+			</simple-card>
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<!--<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>-->
+		<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<!--<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>
+
+<question-select-modal :visible.sync="selectModel.questionSelectModel.visible" :filter-data="selectModel.questionSelectModel.filterData"  @do-save="doSaveQuestion"></question-select-modal>
+<paperrecord-select-modal :visible.sync="selectModel.paperRecordSelectModel.visible" :filter-data="selectModel.paperRecordSelectModel.filterData"  @do-save="doSavePaperRecord"></paperrecord-select-modal>
+

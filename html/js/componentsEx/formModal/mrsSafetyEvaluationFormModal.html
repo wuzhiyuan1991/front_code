@@ -1,0 +1,64 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('evaluateUnit') == -1)" label="安全评价单位" prop="evaluateUnit">
+						<iv-input :value.sync="mainModel.vo.evaluateUnit" :disabled="(disabledFields.indexOf('evaluateUnit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('trusteeUnit') == -1)" label="委托单位" prop="trusteeUnit">
+						<iv-input :value.sync="mainModel.vo.trusteeUnit" :disabled="(disabledFields.indexOf('trusteeUnit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('evaluateDate') == -1)" label="评价时间" prop="evaluateDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.evaluateDate" :disabled="(disabledFields.indexOf('evaluateDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.evaluateDate)" :disabled="(disabledFields.indexOf('evaluateDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsId') == -1)" label="重大危险源" prop="mrs.id">
+						<input-select :value="mainModel.vo.majorRiskSource" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('majorRiskSource') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowMajorRiskSourceSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsName') == -1)" label="重大危险源名称" prop="mrsName">
+						<iv-input :value.sync="mainModel.vo.mrsName" :disabled="(disabledFields.indexOf('mrsName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compileDate') == -1)" label="编制日期" prop="compileDate">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.compileDate" :disabled="(disabledFields.indexOf('compileDate') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.compileDate)" :disabled="(disabledFields.indexOf('compileDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('controlProcedure') == -1)" label="危险源控制程序" prop="controlProcedure">
+						<iv-input :value.sync="mainModel.vo.controlProcedure" :disabled="(disabledFields.indexOf('controlProcedure') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('evaluateReason') == -1)" label="评价原因" prop="evaluateReason">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icpe_mrs_safety_evaluation_evaluate_reason', mainModel.vo.evaluateReason) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.evaluateReason" :list="getDataDicList('icpe_mrs_safety_evaluation_evaluate_reason')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mrsRiskLevel') == -1)" label="重大危险源级别" prop="mrsRiskLevel">
+						<iv-input :value.sync="mainModel.vo.mrsRiskLevel" :disabled="(disabledFields.indexOf('mrsRiskLevel') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reportNumber') == -1)" label="安全评价报告编号" prop="reportNumber">
+						<iv-input :value.sync="mainModel.vo.reportNumber" :disabled="(disabledFields.indexOf('reportNumber') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('trusteeCorp') == -1)" label="委托单位法人" prop="trusteeCorp">
+						<iv-input :value.sync="mainModel.vo.trusteeCorp" :disabled="(disabledFields.indexOf('trusteeCorp') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('trusteeCorpMobile') == -1)" label="委托单位法人电话" prop="trusteeCorpMobile">
+						<iv-input :value.sync="mainModel.vo.trusteeCorpMobile" :disabled="(disabledFields.indexOf('trusteeCorpMobile') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('trusteeLinkman') == -1)" label="委托单位联系人" prop="trusteeLinkman">
+						<iv-input :value.sync="mainModel.vo.trusteeLinkman" :disabled="(disabledFields.indexOf('trusteeLinkman') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('trusteeLinkmanMobile') == -1)" label="委托单位联系人电话" prop="trusteeLinkmanMobile">
+						<iv-input :value.sync="mainModel.vo.trusteeLinkmanMobile" :disabled="(disabledFields.indexOf('trusteeLinkmanMobile') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<majorrisksource-select-modal :visible.sync="selectModel.majorRiskSourceSelectModel.visible" :filter-data="selectModel.majorRiskSourceSelectModel.filterData" single-select @do-save="doSaveMajorRiskSource"></majorrisksource-select-modal>

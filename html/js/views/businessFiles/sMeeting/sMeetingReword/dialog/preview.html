@@ -1,0 +1,137 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+
+
+    <div class="preview-box" id="section-to-print">
+        <div style="font-size: 12px;"></div>
+        <h1 style="font-weight: bold;word-break: break-all;margin-bottom: 10px;margin-top: 50px;" class="text-center">{{getDataDic('org', previewData.vo.compId)['compName']}}</h1>
+        <h1 style="font-weight: bold;word-break: break-all;margin-bottom: 50px;" class="text-center">{{previewData.vo.meetingName}}</h1>
+        <div style="margin:20px;font-size: 24px;">
+            会议时间：    {{previewData.vo.startDate}} ~ {{previewData.vo.endDate}}
+        </div>
+        <div style="margin:20px;font-size: 24px;">
+            会议地点：    {{previewData.vo.site}} 
+        </div>
+        <div style="margin:20px;font-size: 24px;">
+            会议主持：    {{previewData.vo.compere.name}}
+        </div>
+        <div style="margin:20px;font-size: 24px;">
+            会议类型：    {{getDataDic('aqhy_type',previewData.vo.type)}} 
+        </div>
+        <div style="margin:20px;font-size: 24px;">
+            记录人:    &nbsp;&nbsp; &nbsp;&nbsp;   {{previewData.vo.registrar.name}}
+        </div>
+        <div style="margin:20px;font-size: 24px;">
+            会议内容：  <br> <div style="text-indent: 50px;margin-top: 10px;">
+                {{previewData.vo.content}}
+            </div> 
+        </div>
+        <div style="margin:20px;font-size: 24px;margin-top: 40px;">
+            会议签到： 
+        </div>
+        <!-- font-bold -->
+        <table class="preview-box-table" style="font-size: 24px;margin-bottom: 80px;">
+            <colgroup>
+                <col style="width: 200px;">
+                <col>
+                <col>
+                <col style="width: 200px;">
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>参会部门</td>
+                    <td>参会人员</td>
+                    <td>签到</td>
+                    <td>参会部门</td>
+                    <td>参会人员</td>
+                    <td>签到</td>
+                </tr>
+                <tr v-for="item in tableData ">
+                    <td>{{getDataDic('org',item[0].user.orgId)['deptName']}}</td>
+                    <td>{{item[0].user.name}}</td>
+                    <td> <img v-if="item[0].cloudFiles" style="width: 100px;height: 40px;object-fit: contain;"
+                            :src="imgUrl(item[0].cloudFiles)" alt="">
+                        
+                    </td>
+                    <td>{{getDataDic('org',item[1].user.orgId)['deptName']}}</td>
+                    <td>{{item[1].user.name}}</td>
+                    <td><img v-if="item[1].cloudFiles" style="width: 100px;height: 40px;object-fit: contain;"
+                        :src="imgUrl(item[1].cloudFiles)" alt="">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+       
+        
+    </div>
+>
+</Modal>
+<style>
+    .selectCheckTable {
+        width: 600px;
+        margin: 0 auto;
+
+    }
+
+    .selectCheckTable .checked {
+        color: #3c8dbc;
+        border-bottom: 1px solid #3c8dbc;
+    }
+
+    .selectCheckTable span {
+        margin: 0 30px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #preview-box-table-tr .ivu-icon-android-checkbox-outline {
+        margin-left: 10px;
+        position: relative;
+        top: 1px
+    }
+
+    #preview-box-table-tr .ivu-icon-android-checkbox-outline-blank {
+        margin-left: 10px;
+        position: relative;
+        top: 1px
+    }
+
+    .preview-box-table tr,
+    .preview-box-table td {
+        height: 40px;
+        font-size: 24px;
+        text-align: center;
+    }
+    @media print {
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .preview-box {
+            width: 100%;
+        }
+
+        table {
+            /* width: 1060px !important; */
+            margin-left: 0;
+        }
+
+        /* .preview-box-sub-title {
+            margin-top: 50px;
+            margin-bottom: 15px;
+        } */
+    }
+
+    @page {
+        margin-bottom: 0mm;
+        margin-top: 0mm;
+        /*margin-left:10mm;*/
+        /*margin-right:10mm;*/
+    }
+</style>

@@ -1,0 +1,22 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<vue-bootstrap-table
+				  :url="tableModel.url"
+				  :columns="tableModel.columns"
+				  :filter-column="filterColumn"
+				  show-filter
+				  :show-pager="true"
+				  :selected-datas.sync="mainModel.selectedDatas"
+				  :default-filter-value="defaultFilterValue"
+				  @on-dbclick-cell="doSave"
+				  lazy-load
+				  v-ref:table
+			  >
+			  </vue-bootstrap-table>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

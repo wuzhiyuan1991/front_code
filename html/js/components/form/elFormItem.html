@@ -1,0 +1,9 @@
+<div :class="{'is-error': error !== '','is-validating': validating,'is-required': isRequired || required}">
+	<label v-if="label" :class="labelClass">
+	{{label + form.labelSuffix}}
+	</label>
+	<slot v-if="!label" name="label"></slot>
+	<form-error :content="error" :placement="placement" :is-error="error !== ''">
+		<slot></slot>
+	</form-error>
+</div>

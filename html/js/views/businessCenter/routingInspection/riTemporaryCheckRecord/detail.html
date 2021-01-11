@@ -1,0 +1,113 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item  :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="巡检表" prop="checkTableId">
+						<input-select :value="mainModel.vo.riCheckTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowRiCheckTableSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="检查人" prop="checkerId">
+						<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="检查结果详情" prop="checkResultDetail">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_record_check_result_detail', mainModel.vo.checkResultDetail) }}</span>
+						<i-select :model.sync="mainModel.vo.checkResultDetail" :list="getDataDicList('iri_check_record_check_result_detail')" v-else></i-select>
+					</el-form-item>
+					<el-form-item  label="检查结果" prop="checkResult">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_record_check_result', mainModel.vo.checkResult) }}</span>
+						<i-select :model.sync="mainModel.vo.checkResult" :list="getDataDicList('iri_check_record_check_result')" v-else></i-select>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.state')" prop="disable">
+						<span v-if="mainModel.isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+						<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else></i-select>
+					</el-form-item>
+					<el-form-item  label="检查时间" prop="checkDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="检查开始时间" prop="checkBeginDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkBeginDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkBeginDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="检查结束时间" prop="checkEndDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkEndDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkEndDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="巡检计划" prop="checkPlanId">
+						<input-select :value="mainModel.vo.riCheckPlan" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowRiCheckPlanSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="来源" prop="checkSource">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_record_check_source', mainModel.vo.checkSource) }}</span>
+						<i-select :model.sync="mainModel.vo.checkSource" :list="getDataDicList('iri_check_record_check_source')" v-else></i-select>
+					</el-form-item>
+					<el-form-item  label="巡检任务" prop="checkTaskId">
+						<input-select :value="mainModel.vo.riCheckTask" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowRiCheckTaskSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="备注" prop="remarks">
+						<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>巡检记录明细</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowRiCheckRecordDetailFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.riCheckRecordDetailTableModel"
+					@on-del-row="doRemoveRiCheckRecordDetails"
+					@on-edit-row="doShowRiCheckRecordDetailFormModal4Update"
+					v-ref:richeckrecorddetail-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>
+<richecktable-select-modal :visible.sync="selectModel.riCheckTableSelectModel.visible" :filter-data="selectModel.riCheckTableSelectModel.filterData" single-select @do-save="doSaveRiCheckTable"></richecktable-select-modal>
+<richecktask-select-modal :visible.sync="selectModel.riCheckTaskSelectModel.visible" :filter-data="selectModel.riCheckTaskSelectModel.filterData" single-select @do-save="doSaveRiCheckTask"></richecktask-select-modal>
+<richeckplan-select-modal :visible.sync="selectModel.riCheckPlanSelectModel.visible" :filter-data="selectModel.riCheckPlanSelectModel.filterData" single-select @do-save="doSaveRiCheckPlan"></richeckplan-select-modal>
+
+<riCheckRecordDetail-form-modal
+		:visible.sync="formModel.riCheckRecordDetailFormModel.show"
+		@do-save="doSaveRiCheckRecordDetail"
+		@do-update="doUpdateRiCheckRecordDetail"
+		:query-url="formModel.riCheckRecordDetailFormModel.queryUrl"
+		:hidden-fields="formModel.riCheckRecordDetailFormModel.hiddenFields"
+		v-ref:richeckrecorddetail-form-modal>
+</riCheckRecordDetail-form-modal>

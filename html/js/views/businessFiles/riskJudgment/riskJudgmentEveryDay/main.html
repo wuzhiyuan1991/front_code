@@ -1,0 +1,310 @@
+<div class="tab-container" style="background: #fff;">
+    <div class="main-panel"  style="overflow-y: auto;">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default :showdept="true"  @on-org-change="doOrgCategoryChange"></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="timePick" >
+            <!--- @click="addDate(1)"--->
+            <!--<date-picker format="yyyy-MM-dd 00:00:00" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate" :end.sync="mainModel.vo.endDate" clearable></date-picker>-->
+
+            <date-picker style="overflow: visible" format="yyyy-MM-dd" @on-change='doChangeDate' :selected-date.sync="selectDate"   placeholder="选择日期范围" :end.sync="endTime"  ></date-picker>
+            <!--<vi-date-picker format="yyyy-MM-dd" @on-change='doChangeDate' :selected-date="selectDate" placeholder="选择日期范围" :end.sync="endTime"  ></vi-date-picker>-->
+            <vi-button @click="doSearchTask" >查询</vi-button>
+
+            <div class="dateBtnGroup1">
+                <div class="dateBtnGroupBtn1" style="margin-right: 15px;" @click="addDate(-1)" ><Icon type="chevron-left" style="margin-right:10px;"></Icon> 前一天 </div>
+                <div class="dateBtnGroupBtn1" @click="addDate(1)" >后一天 <Icon type="chevron-right" style="margin-left:10px;" ></Icon></div>
+            </div>
+        </div>
+
+        <div class="everyDateBody">
+            <div class="el-tabs__content"  style='display:flex;padding-left:5px;margin:0 auto;'>
+                <div class="lr-layout" style="padding: 0;width:100%;background-color: #fff;">
+                    <div class="lr-layout-l" style="display: block;margin-right: 0;margin-left:10px;border-right: 1px solid #ddd;width:150px;" >
+                        <ul  style="border:1px solid #ddd;">
+                            <li v-for="(index, item) in levelList"
+                                class="lr-layout-li"
+                                :class="{'checked': index === levelIndex}"
+                                style="display: flex;"
+                                @click="doSelectLevelIndex(index)">
+                                <span class="overEplic" :title="area.name">{{item.name}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="lr-layout-r" style='overflow: hidden;width: 100%;height:100%;padding:0;'>
+                        <div class="everyDateTable">
+                            <!---- v-show="unintList && unintList.length>1"    v-show="users && users.length>1"---->
+                            <div v-show="unintList && unintList.length>1"  class="everyDateTableUnit el-tabs__header" style="margin:10px 0; !important;">
+                                <div
+                                        @click="doSelectUnint(index)"
+                                        class="el-tabs__item_1"
+                                        :class="{'is-active1': index === unintIndex}"
+                                        v-for="(index, tab) in unintList">
+                                    <span class="overEplic">{{tab.unitName}}</span>
+                                </div>
+                            </div>
+                            <div class="everyDateMainTabel">
+                                <div class="everyDateMainTabelTab" v-show="users && users.length>1" >
+                                    <ul  style="border:1px solid #ddd;width:150px;">
+                                        <li v-for="(index, item) in users"
+                                            class="lr-layout-li"
+                                            :class="{'checked': index === userIndex}"
+                                            style="display: flex;"
+                                            @click="doSelectUser(index)">
+                                            <span class="overEplic" :title="item.username">{{item.username}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="everyDateMainTabelDetail">
+                                    <iv-row>
+                                        <!--<iv-col span="12">-->
+                                            <!--<div style="padding-top: 10px;padding-bottom: 10px;">-->
+                                                <!--<iv-input :maxlength="50" icon="ios-search" cleanable @on-remove="doFilter"  placeholder="请输入查询内容" :value.sync="filterKey" @on-enter="doFilter" @on-click="doFilter"></iv-input>-->
+                                            <!--</div>-->
+                                        <!--</iv-col>-->
+                                        <iv-col span="24">
+                                            <div  v-show="taskDetail.isComplete && taskDetail.isComplete!=1"  style="text-align: right;line-height: 50px;padding-right:15px;">
+                                                完成时间：{{taskDetail.completeDate}}
+                                            </div>
+                                            <div  class="redTime"  v-show="!taskDetail.completeDate"> 未完成 </div>
+                                        </iv-col>
+                                    </iv-row>
+
+                                    <div class="everyDateMainTabelDetailBorder">
+                                        <div class="borderRow">
+                                            <!--<h5> {{companyTitle}}  {{levelList[levelIndex].name}}  {{unintList[unintIndex].unitName}} 单位</h5>-->
+                                            <h5> {{companySelect}}  <br> {{companyName}} </h5>
+                                        </div>
+                                        <div class="borderRow">
+                                            <div class="borderRowhead ">
+                                                <div>{{levelList[levelIndex].name}}状态</div>
+                                            </div>
+                                            <div style="width:calc(100% - 120px);">
+                                                <div class="editionContent rowDetails"   :class="{'bordernone':taskDetail.riskJudgmentRecordDetailVos.length-1 == index}" :style="taskDetail.riskJudgmentRecordDetailVos.length==1?'height:100%;':''"  v-for="(index, item) in taskDetail.riskJudgmentRecordDetailVos">
+                                                    <div class="borderRowhead" >
+                                                        <div style="width:120px;">{{item.groupName}}</div>
+                                                    </div>
+                                                    <div  class="editItemContain" :style="taskDetail.riskJudgmentRecordDetailVos.length==1?'height:100%;':''" >
+                                                        <div v-html="item.itemContent" class="editionContent1"   ></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="borderRow">
+
+                                            <div class="borderRowhead"  style="border-right:1px solid #ddd;width:121px;">
+                                                <div>{{levelList[levelIndex].name}}承诺</div>
+                                            </div>
+                                            <div v-html="taskDetail.promiseContent"  style="width:calc(100% - 120px);padding:15px;">
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!--<div class="mp-content">-->
+            <!--<vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>-->
+        <!--</div>-->
+    </div>
+</div>
+
+<style>
+    .leftTitle{
+        float:left;
+    }
+    .redTime{
+        color: red;
+        text-align: right;
+        padding-right: 50px;
+        height: 53px;
+        line-height: 53px;
+    }
+    .overEplic{
+        width:100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+        font-weight:normal;
+    }
+    .editionContent{
+        display: inline-block;
+        font-size: 14px;
+        /*padding:10px;*/
+        border-left:1px solid #ddd;
+    }
+    .border-left{
+        height: 100%;
+        border-left:1px solid #ddd;
+    }
+    .editItemContain{
+       padding-left:10px;border-left: 1px solid #ddd;
+
+        width: 84%;
+        word-spacing: normal;
+        word-break: break-all;
+    }
+    .editionContent1{
+        display: inline-block;
+        font-size: 14px;
+        padding-top:10px;
+        padding-bottom:10px;
+    }
+    .borderRowhead{
+        display: inline-flex;
+        width:120px;
+        line-height: 100%;
+        /*border-right: 1px solid #ddd;*/
+        align-items: center;
+        justify-content: center;
+        padding:10px;
+    }
+    .borderRowhead div{
+        width:20px;
+        line-height: 20px;
+    }
+    .timePick{
+        width:430px;
+        padding:15px;
+        display: flex;
+        align-items: center;
+    }
+    .timePick button{
+        margin-left: 15px;
+        color: #fff;
+        background: #19A3E7;
+        font-size: 14px;
+        height: 28px;
+        line-height: 20px;
+    }
+    .borderRow h5{
+        font-size: 18px;
+        text-align: center;
+        padding: 10px;
+        margin: 0 auto;
+    }
+    .borderRow{
+        border-bottom: 1px solid #ddd;
+        width: 100%;
+        display: flex;
+        border-left: 1px solid #ddd
+    }
+    .everyDateMainTabelDetailBorder{
+        /* border: 1px solid #ddd; */
+        border-right: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+        width: 100%;
+        height: calc(100% - 82px);
+        overflow: auto;
+    }
+    .everyDateMainTabelDetail{
+        width:100%;
+        height: 100%;
+        /*border:1px solid #ddd;*/
+        padding-left:15px;
+    }
+    .everyDateMainTabelTab{
+        width:150px;
+        border-right: 1px solid #ddd;
+    }
+    .everyDateMainTabel{
+        display: flex;
+        height: 100%;
+        width:100%;
+    }
+    .is-active{
+        border-top: 2px solid #14a2e0;
+        /* border-bottom: 1px solid #fff; */
+        /* border-right: 1px solid #f2f2f2; */
+        /* border-left: 1px solid #f2f2f2; */
+        /* line-height: 38px; */
+        background-color: #f2f2f2
+    }
+    .everyDateTable{
+        width: 92%;
+        height: 100%;
+        border: 1px solid #ddd;
+        margin-left: 10px;
+        /* padding-left: 12px; */
+        padding: 10px;
+    }
+    .everyDateBody{
+        width:100%;
+        height: 800px;
+        /*border:1px solid #ddd;*/
+        margin:0px auto;
+    }
+    .dateBtnGroup1{
+        display: flex;
+        align-items: center;
+        width: 400px;
+        justify-content: space-between;
+        margin-left:15px;
+    }
+    .dateBtnGroupBtn1{
+        width: 100px;
+        border: 1px solid #19a3e7;
+        border-radius: 5px;
+        text-align: center;
+        background: #19a3e7;
+        color: #fff;
+        height: 28px;
+        line-height: 26px;
+    }
+    .dateBtnGroupBtn1:hover{
+        cursor: pointer;
+        background: #fff;
+        color:#19a3e7;
+    }
+    .dateBtnGroupBtn i{
+        display: inline-block;
+    }
+    .rowDetails{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        /* border: 1px solid #ddd; */
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+    .bordernone{
+        border-bottom: none !important;
+    }
+    .el-tabs__item_1{
+        background: #fff;
+        display: inline-block;
+        color: #666;
+        padding: 5px 10px;
+        cursor: pointer;
+        width: 100px;
+        text-align: center;
+        height:32px;
+    }
+    .is-active1{
+        background-color: #19a3e7 !important;
+        color:#fff  !important;
+    }
+    .el-tabs__item_1:hover{
+        background: #f2f2f2;
+        color: #666;
+    }
+</style>
+

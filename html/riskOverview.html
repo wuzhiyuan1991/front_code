@@ -1,0 +1,221 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>赛为</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="css/vue_iview_main.css">
+    <script data-baseurl="./" data-main="js/riskOverview" src="js/libs/require.js"></script>
+    <style type="text/css">
+    	#overview {
+    		font-family: 黑体;
+			font-size: 14pt;
+    	}
+    	.qry{
+    		width: 50%;
+    		margin: 15px auto;
+    	}
+    	.table{
+    		position: relative;
+    		width: 2391px;
+    		padding-top: 114px; 
+    		border: gray 1px solid;
+    		margin: 0 5px;
+    	}
+    	.fixed-table-header{
+    		position: absolute;
+    		top: 0;
+    		left: 0;
+    		right: 0;
+    		height: 114px;
+    		background-color: rgb(52, 83, 145);
+    		border-bottom: gray 1px solid;
+    	}
+    	.fixed-table-body{
+    		max-height: 720px;
+    		overflow-x:hidden;
+    		overflow-y:scroll; 
+    	}
+    	/************************清除表格默认划线样式BEGIN********************************/
+    	.fixed-table-body table{
+			border-collapse:collapse;
+			border:none;
+    	}
+    	/************************清除表格默认划线样式END********************************/
+    	/************************表头处理BEGIN********************************/
+    	.fixed-table-body table thead tr th{
+    		width: 100px;
+    	}
+    	.fixed-table-body table thead tr th div{
+    		position: absolute;
+    		width: 100px;
+    		height: 20px;
+    		color: white;
+    		border-left: rgb(172, 172, 172) 1px solid;
+    		border-top: rgb(172, 172, 172) 1px solid;
+    	}
+    	.fixed-table-body table thead tr th:first-child div{
+    		border-left: none;
+    	}
+    	.fixed-table-body table thead tr th[colspan="2"],.fixed-table-body table thead tr th[colspan="2"] div{
+    		width: 200px;
+    	}
+    	.fixed-table-body table thead tr th[colspan="3"],.fixed-table-body table thead tr th[colspan="3"] div{
+    		width: 300px;
+    	}
+    	.fixed-table-body table thead tr th[rowspan="2"] div{
+    		height: 40px;
+   		    line-height: 40px;
+    	}
+    	.fixed-table-body table thead tr:first-child th div{
+    		top:0;
+    		width: 100%;
+    		height: 74px;
+    		line-height: 74px;
+    	}
+    	.fixed-table-body table thead tr:nth-child(2) th div{
+    		top:74px;
+    	}
+    	.fixed-table-body table thead tr:nth-child(3) th div{
+    		top:94px;
+    	}
+    	.fixed-table-body table thead tr:first-child th,.fixed-table-body table thead tr:first-child th div{
+    		font-weight: lighter;
+		    font-size: 25px;
+		    color: #ff0000;
+		    border-top: none;
+    	}
+    	/************************表头处理END********************************/
+    	/************************表格划线BEGIN********************************/
+/*     	.fixed-table-body table tbody tr:hover td{ */
+/*     		background-color:#f5f5f5 */
+/*     	} */
+    	.fixed-table-body table tbody tr td{
+    		text-align: center;
+    		padding: 1px;
+    		width: 100px;
+    		border-left: gray 1px solid;
+    		border-top: gray 1px solid;
+    	}
+    	.fixed-table-body table tbody tr td:first-child{
+    		border-left: none;
+    	}
+    	.fixed-table-body table tbody tr:first-child td{
+    		border-top: none;
+    	}
+    	/************************表格划线END********************************/
+    	.textCell{
+    		overflow: hidden;
+		    text-overflow: ellipsis;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 3;
+		    -webkit-box-orient: vertical;
+		    width: 100%;
+		 	word-break:break-all;
+			word-wrap:break-word;
+			white-space:pre-wrap;
+    	}
+	</style>
+</head>
+<body>
+	<div id="overview">
+		<div class="qry">
+			<iv-row>
+		        <iv-col span="8" style="text-align: right;padding: 8px 4px 0 4px">
+		        	<span>所属机构:</span>
+		        </iv-col>
+		        <iv-col span="8" style="padding: 4px;">
+		        	<iv-tree-select :model.sync="qryModel.orgId" 
+					  :list="qryModel.orgList"
+					  id-attr="id"
+					  display-attr="name" >
+				          <iv-tree :model="qryModel.orgList" 
+							id-attr="id"
+							pid-attr="parentId"
+							display-attr="name"
+							:single-select="true"
+							:allow-parent-checked="true"
+						  ></iv-tree>
+				  	</iv-tree-select>
+		        </iv-col>
+		        <iv-col span="8" style="padding: 4px;">
+		        	<iv-button :disabled="!qryModel.qryed" @click="doQry">查询</iv-button>
+		        </iv-col>
+		    </iv-row>
+		</div>
+		<div class="table">
+			<div class="fixed-table-header">
+			</div>
+			<div class="fixed-table-body">
+				<table>
+					<!-- header BEGIN -->
+					<thead>
+						<tr>
+							<th colspan="17">
+								<div>
+									HSE危害辨识和风险评估登记表
+								</div>
+							</th>
+						</tr>
+						<tr>
+							<!-- 危害分类 BEGIN -->
+							<th colspan="2"><div>大类</div></th>
+							<th colspan="2"><div>中类</div></th>
+							<th colspan="2"><div>小类</div></th>
+							<!-- 危害分类 END -->
+							<!-- 危害辨识 BEGIN-->
+							<th rowspan="2" style="width: 135px;"><div style="width: 135px;padding-top: 2px;"><span style="line-height: 1;">风险特征描述<br/>（潜在事故场景）</span></div></th>
+							<!--<th colspan="2"><div>HSE危害因素</div></th>-->
+							<th colspan="2" style="width: 335px;"><div style="width: 335px;">{{$t("gb.common.riskLevel")}}</div></th>
+							<th rowspan="2"><div>控制措施</div></th>
+							<!--<th rowspan="2"><div>排查频次</div></th>-->
+							<!--<th rowspan="2"><div>管控责任人</div></th>-->
+							<!--<th rowspan="2"><div>管控层级</div></th>-->
+							<!-- 危害辨识END -->
+							<!-- 检查项 BEGIN -->
+							<th colspan="3"><div>检查项</div></th>
+							<!-- 检查项 END -->
+							<!-- 专家支持 BEGIN -->
+							<th rowspan="2" style="width: 300px;"><div style="width: 300px;">检测方法</div></th>
+							<th rowspan="2" style="width: 300px;"><div style="width: 300px;">检查依据</div></th>
+							<th rowspan="2" style="width: 300px;"><div style="width: 320px;">事故案例</div></th>
+							<!-- 专家支持 END -->
+						</tr>
+						<tr>
+							<!-- 危害分类 BEGIN -->
+							<th><div>代码</div></th>
+							<th><div>内容</div></th>
+							<th><div>代码</div></th>
+							<th><div>内容</div></th>
+							<th><div>代码</div></th>
+							<th><div>内容</div></th>
+							<!-- 危害分类 END -->
+							<!-- 危害因素 BEGIN-->
+							<!--<th><div>代码</div></th>-->
+							<!--<th><div>内容</div></th>-->
+							<!-- 危害因素END -->
+							<!-- 风险等级 BEGIN -->
+							<th style="width: 235px;"><div style="width: 235px;">详情</div></th>
+							<th><div>结果</div></th>
+							<!-- 风险等级 END -->
+							<!-- 检查项 BEGIN -->
+							<th><div>代码</div></th>
+							<th><div>检查项类型</div></th>
+							<th><div>内容</div></th>
+							<!-- 检查项 END -->
+						</tr>
+					</thead>
+					<!-- header END -->
+					<tbody>
+						<tr v-for="(rowIndex,entry) in tableData">
+							<td v-for="(cellIndex,cell) in entry" :rowspan="getRowspan(rowIndex,cellIndex)">
+								<p class="textCell" :style="tdContentStyle(cell)" v-text="cell.value" :title="cell.value"></p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

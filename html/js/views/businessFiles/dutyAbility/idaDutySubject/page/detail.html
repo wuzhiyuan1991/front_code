@@ -1,0 +1,93 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="父" prop="parentId">
+						<iv-input :value.sync="mainModel.vo.parentId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+			<simple-card class="fip-content-item"  filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>履职能力清单</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowDutyAbilityFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.dutyAbilityTableModel"
+					@on-del-row="doRemoveDutyAbility"
+					@on-edit-row="doShowDutyAbilityFormModal4Update"
+					v-ref:dutyability-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+
+			<simple-card class="fip-content-item"  filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>人员</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowUserSelectModal()" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.userTableModel"
+					@on-del-row="doRemoveUser"
+					v-ref:user-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<file-list-simple-card title="附件列表" class="fip-content-item" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		-->
+			</div>
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<member-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></member-select-modal>
+
+<idadutyability-form-modal
+		:visible.sync="formModel.dutyAbilityFormModel.show"
+		@do-save="doSaveDutyAbility"
+		@do-update="doUpdateDutyAbility"
+		:query-url="formModel.dutyAbilityFormModel.queryUrl"
+		:hidden-fields="formModel.dutyAbilityFormModel.hiddenFields"
+		v-ref:dutyability-form-modal>
+</idadutyability-form-modal>

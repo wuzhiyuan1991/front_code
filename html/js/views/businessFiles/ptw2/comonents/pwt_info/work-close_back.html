@@ -1,0 +1,118 @@
+<simple-card >
+    <div slot="title">
+        <p>作业关闭</p>
+    </div>
+    <div class="mb20 mt10 ml10">
+        <p>作业进行过程中，作业申请人根据作业现场实际情况发起相关操作:</p>
+        <p>
+            <iv-radio-group :model.sync="currentWorkResult">
+                <iv-radio :value="key" v-for="(key,value) of workResultType">{{value}}</iv-radio>
+            </iv-radio-group>
+        </p>
+    </div>
+    <div class="mb20 mt10 ml10" v-show="currentWorkResult==='success'">
+        <div class="mb10 base-border-bottom">作业完成</div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">作业完成声明</div><!---->
+            <div class="form-disabled flex-grow1">{{model.promiseList['9']}}
+            </div>
+            <div style="flex-basis: 100px"><span class="link-ele" @click="gotoDic" >定制内容</span></div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">作业申请人意见</div>
+            <div class="form-disabled flex-grow1">手动填写意见</div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">作业申请人签名</div>
+            <div class=" flex-grow1 flex-layout">
+                <span class="mr20">
+                    <span class="form-disabled">人员签名</span>
+                </span>
+                <span>
+                    <span class="form-disabled">签名日期时间</span>
+                </span>
+            </div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">相关负责人签名</div>
+            <div class=" flex-grow1 flex-layout">
+                <span class="mr20">
+                    <span class="form-disabled">人员签名</span>
+                </span>
+                <span>
+                    <span class="form-disabled">签名日期时间</span>
+                </span>
+            </div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">作业批准签名</div>
+            <div class="flex-grow1 flex-layout">
+                <span class="mr20">
+                    <span class="form-disabled">人员签名</span>
+                </span>
+                <span>
+                    <span class="form-disabled">签名日期时间</span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="mb20"  v-show="currentWorkResult==='cancel'">
+        <div class="mb10 base-border-bottom">作业取消</div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">用户取消原因</div>
+            <div class="form-disabled flex-grow1">
+                <iv-checkbox-group class="group-vertical">
+                    <iv-checkbox disabled v-for="item of cancelReasonList">{{item.name}}</iv-checkbox>
+                </iv-checkbox-group>
+            </div>
+            <div style="flex-basis: 100px"><span class="link-ele"  @click="doCustomContent">定制内容</span></div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">用户取消声明</div>
+            <div class="form-disabled flex-grow1">{{model.promiseList['10']}}</div>
+            <div style="flex-basis: 100px"><span @click="gotoDic" class="link-ele">定制内容</span></div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">作业申请人签名</div>
+            <div class="flex-grow1 flex-layout">
+                <span class="mr20">
+                    <span class="form-disabled">人员签名</span>
+                </span>
+                <span>
+                    <span class="form-disabled">签名日期时间</span>
+                </span>
+            </div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">相关负责人签名</div>
+            <div class=" flex-grow1 flex-layout">
+                <span class="mr20">
+                    <span class="form-disabled">人员签名</span>
+                </span>
+                <span>
+                    <span class="form-disabled">签名日期时间</span>
+                </span>
+            </div>
+        </div>
+        <div class="flex-layout mb10">
+            <div class="form-item-label">作业批准签名</div>
+            <div class="flex-grow1 flex-layout">
+                <span class="mr20">
+                    <span class="form-disabled">人员签名</span>
+                </span>
+                <span>
+                    <span class="form-disabled">签名日期时间</span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div v-show="currentWorkResult==='postpone'">
+        <div class="mb10">作业续签</div>
+        <div class="flex-layout">
+            <div class="form-item-label">作业续签期限</div>
+            <div class="form-disabled flex-grow1 flex-layout">
+                自___年___月___日___时___分始， 至___年___月___日___时___分止
+            </div>
+        </div>
+    </div>
+</simple-card>

@@ -1,0 +1,54 @@
+<div class="flex-layout" style="height: 100%">
+   <div class="mr10">
+       <base-according class="mr10"
+                       :width="130"
+                       :values="tab.data"
+                       :current-index.sync="tab.currentIndex"></base-according>
+   </div>
+    <div  v-show="currentTab.phase!='info'">
+        <div class="flex-layout-between">
+            <span style="font-size: 14px;font-weight: 700"></span>
+            <span class="link-ele"><icon class="mr5" type="plus"  @click="doAdd">添加</icon></span>
+        </div>
+        <div>
+            <vue-bootstrap-table
+                    :setting="tableModel.maintain"
+                    :lazy-load="false"
+                    v-show="currentTab.phase==2"
+                    :show-filter="false"
+                    @on-del-row="doDel"
+                    @on-edit-row="doEdit"
+                    v-ref:main-table-maintain
+            >
+            </vue-bootstrap-table>
+            <vue-bootstrap-table
+                    :setting="tableModel.rushRepair"
+                    :lazy-load="false"
+                    v-show="currentTab.phase==1"
+                    :show-filter="false"
+                    @on-del-row="doDel"
+                    @on-edit-row="doEdit"
+                    v-ref:main-table-rush-repair
+            >
+            </vue-bootstrap-table>
+            <vue-bootstrap-table
+                    :setting="tableModel.check"
+                    :lazy-load="false"
+                    v-show="currentTab.phase==3"
+                    :show-filter="false"
+                    @on-del-row="doDel"
+                    @on-edit-row="doEdit"
+                    v-ref:main-table-check
+            >
+            </vue-bootstrap-table>
+
+
+        </div>
+    </div>
+    <div v-show="currentTab.phase=='info'">
+        <slot>
+
+        </slot>
+    </div>
+</div>
+<dialog-form v-ref:dialog-form  @on-success="saveAfter" :is-safety-monitor="isSafetyMonitor"></dialog-form>

@@ -1,0 +1,189 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="作业开始时间" prop="workStartTime" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.workStartTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.workStartTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="预约评审人" prop="auditor.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.auditor" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowAuditorSelectModal())" ></input-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="作业类型" prop="workCatalog.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.workCatalog" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowWorkCatalogSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="作业地点" prop="workPlace" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workPlace" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业结束时间" prop="workEndTime" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.workEndTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.workEndTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否启用预约机制" prop="enableReservation" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_work_card_enable_reservation', mainModel.vo.enableReservation) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.enableReservation" :list="getDataDicList('iptw_work_card_enable_reservation')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="作业内容" prop="workContent" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workContent" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="评审意见" prop="auditOpinion" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.auditOpinion" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="评审结果" prop="auditResult" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_work_card_audit_result', mainModel.vo.auditResult) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.auditResult" :list="getDataDicList('iptw_work_card_audit_result')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="评审时间" prop="auditTime" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.auditTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.auditTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="最新作业许可" prop="lastPermitId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.lastPermitId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业状态" prop="status" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_work_card_status', mainModel.vo.status) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('iptw_work_card_status')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="作业所在设备" prop="workEquipment" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workEquipment" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="作业分级" prop="workLevelId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workLevelId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.workPermitCardModel.showContent" filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>作业许可</span></p>
+				<a slot="extra" @click.prevent="cardModel.workPermitCardModel.showContent = !cardModel.workPermitCardModel.showContent;" >
+					<span v-if="cardModel.workPermitCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowWorkPermitFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.workPermitTableModel"
+					@on-del-row="doRemoveWorkPermit"
+					@on-edit-row="doShowWorkPermitFormModal4Update"
+					v-ref:workpermit-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.workHistoryCardModel.showContent" filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>作业许可历史</span></p>
+				<a slot="extra" @click.prevent="cardModel.workHistoryCardModel.showContent = !cardModel.workHistoryCardModel.showContent;" >
+					<span v-if="cardModel.workHistoryCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowWorkHistoryFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.workHistoryTableModel"
+					@on-del-row="doRemoveWorkHistory"
+					@on-edit-row="doShowWorkHistoryFormModal4Update"
+					v-ref:workhistory-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		</div>
+		-->
+		<!-- tab页签式 - 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>附件参考</span></p>
+				<div class="rel-info-panel-content-tabs">
+					<el-tabs active-key="relTab">
+						<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+							<file-list-simple-card  :data="fileModel.file.data" :config="fileModel.file.cfg"></file-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+							<image-list-simple-card  :data="fileModel.pic.data" :config="fileModel.pic.cfg"></image-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+							<video-list-simple-card  :data="fileModel.video.data" :config="fileModel.video.cfg"></video-list-simple-card>
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</simple-card>
+		</div>
+		-->
+	</div>
+
+
+</div>
+
+<ptwcatalog-select-modal :visible.sync="selectModel.workCatalogSelectModel.visible" :filter-data="selectModel.workCatalogSelectModel.filterData" single-select @do-save="doSaveWorkCatalog"></ptwcatalog-select-modal>
+<member-select-modal :visible.sync="selectModel.auditorSelectModel.visible" :filter-data="selectModel.auditorSelectModel.filterData" single-select @do-save="doSaveAuditor"></member-select-modal>
+
+<ptwworkpermit-form-modal
+		:visible.sync="formModel.workPermitFormModel.show"
+		@do-save="doSaveWorkPermit"
+		@do-update="doUpdateWorkPermit"
+		:query-url="formModel.workPermitFormModel.queryUrl"
+		:hidden-fields="formModel.workPermitFormModel.hiddenFields"
+		v-ref:workpermit-form-modal>
+</ptwworkpermit-form-modal>
+<ptwworkhistory-form-modal
+		:visible.sync="formModel.workHistoryFormModel.show"
+		@do-save="doSaveWorkHistory"
+		@do-update="doUpdateWorkHistory"
+		:query-url="formModel.workHistoryFormModel.queryUrl"
+		:hidden-fields="formModel.workHistoryFormModel.hiddenFields"
+		v-ref:workhistory-form-modal>
+</ptwworkhistory-form-modal>
+
+

@@ -1,0 +1,34 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('workPermitId') == -1)" label="作业许可" prop="workPermit.id">
+						<input-select :value="mainModel.vo.workPermit" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('workPermit') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowWorkPermitSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('workCardId') == -1)" label="作业票" prop="workCardId">
+						<iv-input :value.sync="mainModel.vo.workCardId" :disabled="(disabledFields.indexOf('workCardId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('detectSite') == -1)" label="检测地点" prop="detectSite">
+						<iv-input :value.sync="mainModel.vo.detectSite" :disabled="(disabledFields.indexOf('detectSite') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('detectTime') == -1)" label="检测时间" prop="detectTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.detectTime" :disabled="(disabledFields.indexOf('detectTime') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.detectTime)" :disabled="(disabledFields.indexOf('detectTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="检测类型" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_gas_detection_record_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('iptw_gas_detection_record_type')" clearable></i-select>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<cloudfile-select-modal :visible.sync="selectModel.cloudFileSelectModel.visible" :filter-data="selectModel.cloudFileSelectModel.filterData" single-select @do-save="doSaveCloudFile"></cloudfile-select-modal>
+<ptwworkpermit-select-modal :visible.sync="selectModel.workPermitSelectModel.visible" :filter-data="selectModel.workPermitSelectModel.filterData" single-select @do-save="doSaveWorkPermit"></ptwworkpermit-select-modal>

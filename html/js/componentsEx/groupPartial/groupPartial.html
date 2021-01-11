@@ -1,0 +1,44 @@
+<simple-card class="rip-item-sub">
+    <div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+        <div class="left" style="width: 300px;"><span v-if="showGroupIndex">{{index + 1}} </span>{{group.name}}</div>
+
+        <div class="right" v-show="editable">
+
+            <vi-button type="text" icon="plus" @click="doShowItemFormModal4Create(group, index)">{{$t('bc.ria.append')}}</vi-button>
+
+            <iv-dropdown trigger="click" placement="top-end" v-show="showMoreButton">
+                <vi-button type="text" icon="more">更多</vi-button>
+                <iv-dropdown-menu slot="list">
+                    <iv-dropdown-item @click="doShowGroupFormModal4Update(group, index)">
+                        <a href="javascript:void(0);">
+                            <Icon type="edit"></Icon>
+                            <span>编辑分组名称</span>
+                        </a>
+                    </iv-dropdown-item>
+
+                    <iv-dropdown-item  @click="doMove(-1, group, index)">
+                        <a href="javascript:void(0);">
+                            <Icon type="arrow-up-a"></Icon>
+                            <span>上移</span>
+                        </a>
+                    </iv-dropdown-item>
+
+                    <iv-dropdown-item  @click="doMove(1, group, index)">
+                        <a href="javascript:void(0);">
+                            <Icon type="arrow-down-a"></Icon>
+                            <span>下移</span>
+                        </a>
+                    </iv-dropdown-item>
+
+                    <iv-dropdown-item @click="doRemove(group, index)">
+                        <a href="javascript:void(0);">
+                            <Icon type="trash-a"></Icon>
+                            <span>{{$t("gb.common.del")}}</span>
+                        </a>
+                    </iv-dropdown-item>
+                </iv-dropdown-menu>
+            </iv-dropdown>
+        </div>
+    </div>
+    <slot></slot>
+</simple-card>

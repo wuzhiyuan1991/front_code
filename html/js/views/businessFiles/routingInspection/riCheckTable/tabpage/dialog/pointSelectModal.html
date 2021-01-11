@@ -1,0 +1,71 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container">
+
+        <div class="epc-content" style="max-height: 612px;">
+            <div style="display: flex;justify-content: space-between;align-items: center;">
+                <div style="display: flex;align-items: center;">
+                    <iv-checkbox :checked.sync="mainModel.isEquipment" @on-change="doChangeType">选择设备设施作为巡检点</iv-checkbox>
+                    <iv-button @click="doBack" v-show="mainModel.isEquipment && mainModel.refType === 3" style="margin-left: 20px;">返回</iv-button>
+                </div>
+                <iv-button @click="doAddArea">新增</iv-button>
+            </div>
+            <vue-bootstrap-table
+                    v-if="!mainModel.isEquipment"
+                    :url="tableModel.url"
+                    :columns="tableModel.columns"
+                    :filter-column="tableModel.filterColumn"
+                    show-pager
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :reset-trigger-flag="tableModel.resetTriggerFlag"
+                    :default-filter-value="tableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    :is-cache-selected-data="isCacheSelectedData"
+                    lazy-load
+                    show-filter
+                    resizeable
+                    v-ref:table
+            >
+            </vue-bootstrap-table>
+
+            <vue-bootstrap-table
+                    v-if="mainModel.isEquipment && mainModel.refType === 2"
+                    :url="eqTableModel.url"
+                    :columns="eqTableModel.columns"
+                    :filter-column="eqTableModel.filterColumn"
+                    show-pager
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :reset-trigger-flag="eqTableModel.resetTriggerFlag"
+                    :default-filter-value="eqTableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    @on-click-cell="doEquipmentClick"
+                    :is-cache-selected-data="isCacheSelectedData"
+                    lazy-load
+                    show-filter
+                    resizeable
+                    v-ref:table
+            >
+            </vue-bootstrap-table>
+
+            <vue-bootstrap-table
+                    v-if="mainModel.isEquipment && mainModel.refType === 3"
+                    :url="eqiTableModel.url"
+                    :columns="eqiTableModel.columns"
+                    :filter-column="eqiTableModel.filterColumn"
+                    show-pager
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :reset-trigger-flag="eqiTableModel.resetTriggerFlag"
+                    :default-filter-value="eqiTableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    :is-cache-selected-data="isCacheSelectedData"
+                    lazy-load
+                    show-filter
+                    resizeable
+                    v-ref:table
+            >
+            </vue-bootstrap-table>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

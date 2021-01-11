@@ -1,0 +1,9 @@
+<div :class="formItemClass">
+	<label v-if="label" :class="labelClass" v-bind:style="labelStyle">
+	{{label + form.labelSuffix}}
+	</label>
+	<slot v-if="!label" name="label"></slot>
+	<form-error :content="error" :readonly="form.readonly" :placement="placement" :is-error="error !== ''" :class="contentClass" v-bind:style="contentStyle">
+		<slot></slot>
+	</form-error>
+</div>

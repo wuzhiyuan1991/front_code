@@ -1,0 +1,177 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+  <div class="edit-pop-container">
+    <div class="epc-content">
+      <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+        <el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+          <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+        </el-form-item>
+
+        <el-form-item label="所属部门" prop="orgId">
+          <department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync="mainModel.vo.compId" clearable>
+          </department-tree-select>
+        </el-form-item>
+
+        <el-form-item v-if="(hiddenFields.indexOf('number') == -1)" label="编号" prop="number">
+          <iv-input :value.sync="mainModel.vo.number"
+            :disabled="(disabledFields.indexOf('number') != -1) || mainModel.vo.bizType === '2'"
+            :textonly="mainModel.isReadOnly"></iv-input>
+        </el-form-item>
+        <el-form-item label="设备分类" prop="equipmentType.id">
+          <!--					<div v-if="mainModel.isReadOnly">{{displayTypeName}}</div>-->
+          <!--					<iv-tree-select-->
+          <!--							:model.sync="mainModel.vo.equipmentType.id"-->
+          <!--							:list="typeList"-->
+          <!--							id-attr="id"-->
+          <!--							display-attr="name"-->
+          <!--							v-else-->
+          <!--					>-->
+          <!--						<iv-tree-->
+          <!--								:model="typeList"-->
+          <!--								:selected-datas.sync="selectedDatas4Tree"-->
+          <!--								serch-filterable-->
+          <!--								id-attr="id"-->
+          <!--								pid-attr="parentId"-->
+          <!--								display-attr="name"-->
+          <!--								single-select-->
+          <!--								show-checkbox-->
+          <!--								allow-parent-checked>-->
+          <!--						</iv-tree>-->
+          <!--					</iv-tree-select>-->
+          <span style="display: inline-block;white-space: normal;word-break: break-all;font-size: 12px;padding-top: 3px"
+            v-if="mainModel.vo.equipmentType.id">{{displayTypeName}}</span>
+          <input-select :value.sync="mainModel.vo.equipmentType" :clearable="true" id-field="id"
+            @do-clear-input="doClearLeader" display-field="name" :textonly="mainModel.isReadOnly"
+            @click="(!mainModel.isReadOnly) && (doShowEquipmentTypeModal())"></input-select>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('region') == -1)" label="区域" prop="region">
+          <iv-textarea :value.sync="mainModel.vo.region" :disabled="(disabledFields.indexOf('region') != -1)"
+            :textonly="mainModel.isReadOnly"></iv-textarea>
+          <Icon type="plus" @click="(doShowDominationAreaSelectModal())" title="区域" style="cursor: pointer;top: 0px; width: 32px; height: 32px; line-height: 32px; font-size: 16px; text-align: center; color: #9ea7b4; position: absolute; right: 0; z-index: 1"></Icon>
+
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('position') == -1)" label="涉及岗位" prop="position">
+          <iv-input :value.sync="mainModel.vo.position" :disabled="(disabledFields.indexOf('position') != -1)"
+            :textonly="mainModel.isReadOnly"></iv-input>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('activeProductService') == -1)" label="活动产品服务"
+          prop="activeProductService">
+          <i-select :model.sync="mainModel.vo.activeProductService" :list="activeProductServiceList" as-input filterable
+            :query.sync="newActiveProductServiceName">
+            <i-option v-for="item in activeProductServiceList" :value="item.id">{{item.value}}</i-option>
+          </i-select>
+          <!--<iv-input type="text" v-if="!selectRight" :placeholder="请输入巡检结果名称" :value.sync="newRightResultName"></iv-input>-->
+          <!--<Icon :type="selectRight ? 'edit' : 'ios-undo'" :title="selectRight ? '新增' : '返回选择'" @click="toggleSelectWay('1')" style="position: absolute;top: 2px;right: 3px;font-size:16px;height: 28px; width: 22px;line-height: 28px;background-color: #fff;text-align: center;cursor: pointer;"></Icon>-->
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('changeManage') == -1)" label="变更管理" prop="changeManage">
+          <!--					<iv-input :value.sync="mainModel.vo.changeManage" :disabled="(disabledFields.indexOf('changeManage') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+          <iv-textarea :rows="3" :value.sync="mainModel.vo.changeManage" :readonly="mainModel.isReadOnly"></iv-textarea>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('eventLearn') == -1)" label="事件学习" prop="eventLearn">
+          <!--					<iv-input :value.sync="mainModel.vo.eventLearn" :disabled="(disabledFields.indexOf('eventLearn') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+          <iv-textarea :rows="3" :value.sync="mainModel.vo.eventLearn" :readonly="mainModel.isReadOnly"></iv-textarea>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('otherActive') == -1)" label="其他活动" prop="otherActive">
+          <iv-textarea :rows="3" :value.sync="mainModel.vo.otherActive" :readonly="mainModel.isReadOnly"></iv-textarea>
+          <!--					<iv-input :value.sync="mainModel.vo.otherActive" :disabled="(disabledFields.indexOf('otherActive') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('aftermathAnalyze') == -1)" label="后果分析" prop="aftermathAnalyze">
+          <i-select :model.sync="mainModel.vo.aftermathAnalyze" :list="aftermathAnalyzeList" as-input filterable
+            :query.sync="newAftermathAnalyzeName">
+            <i-option v-for="item in aftermathAnalyzeList" :value="item.id">{{item.value}}</i-option>
+          </i-select>
+        </el-form-item>
+        <el-form-item label="评估方法" prop="evaluMethod">
+          <i-select :model.sync="mainModel.vo.evaluMethod"
+            :list="getCascadeDataDicList('risk_biz_source_type',mainModel.vo.bizType)">
+            <i-option v-for="item in getCascadeDataDicList('risk_biz_source_type',mainModel.vo.bizType)"
+              :value="item.id">{{ item.value }}</i-option>
+          </i-select>
+        </el-form-item>
+        <el-form-item v-if="mainModel.vo.bizType == 1" label="HSE类型" prop="hseType">
+          <span
+            v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_hse_type', mainModel.vo.hseType) }}</span>
+          <i-select v-else :model.sync="mainModel.vo.hseType"
+            :list="getDataDicList('ira_risk_identification_hse_type')"></i-select>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('hazardType') == -1)" label="危害因素种类" prop="hazardType">
+          <i-select :model.sync="mainModel.vo.hazardType" :list="hazardTypeList" as-input filterable
+            :query.sync="newHazardTypeName">
+            <i-option v-for="item in hazardTypeList" :value="item.id">{{item.value}}</i-option>
+          </i-select>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('hazardCause') == -1)" label="危害因素成因" prop="hazardCause">
+          <iv-textarea :rows="3" :value.sync="mainModel.vo.hazardCause" :readonly="mainModel.isReadOnly"></iv-textarea>
+          <!--					<iv-input :value.sync="mainModel.vo.hazardCause" :disabled="(disabledFields.indexOf('hazardCause') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('existenceState') == -1)" label="存在状态" prop="existenceState">
+          <span
+            v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_existence_state', mainModel.vo.existenceState) }}</span>
+          <i-select v-else :model.sync="mainModel.vo.existenceState"
+            :list="getDataDicList('ira_risk_identification_existence_state')"></i-select>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('existenceTense') == -1)" label="存在时态" prop="existenceTense">
+          <span
+            v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_existence_tense', mainModel.vo.existenceTense) }}</span>
+          <i-select v-else :model.sync="mainModel.vo.existenceTense"
+            :list="getDataDicList('ira_risk_identification_existence_tense')"></i-select>
+        </el-form-item>
+
+        <!-- 评估模型 -->
+        <el-form-item label="风险评价" prop="riskLevel">
+          <risk-model :model.sync="riskModel"></risk-model>
+        </el-form-item>
+
+        <!-- 剩余评估模型 -->
+        <el-form-item label="剩余风险评价" prop="residualRiskLevel">
+          <risk-model is-customize :model.sync="residualRiskModel" @do-clear-risk-model="doClearRiskModel"></risk-model>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('isImportantDanger') == -1)" label="是否重要危险" prop="isImportantDanger">
+          <iv-radio-group :model.sync="mainModel.vo.isImportantDanger">
+            <iv-radio value="0">否</iv-radio>
+            <iv-radio value="1">是</iv-radio>
+          </iv-radio-group>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('controlUnit') == -1)" label="风险管控单位" prop="controlUnit">
+          <i-select v-if="!mainModel.isReadOnly" multiple :model.sync="mainModel.controlUnit"
+            :list="getDataDicList('ira_risk_identification_control_unit')">
+            <i-option v-for="controlunit in getDataDicList('ira_risk_identification_control_unit')"
+              :value="controlunit.id">{{controlunit.value}}</i-option>
+          </i-select>
+          <div v-if="mainModel.isReadOnly">
+            <span
+              v-for="(index,item) in  mainModel.controlUnit">{{getDataDic('ira_risk_identification_control_unit', item)}}
+              <span v-if="index<mainModel.controlUnit.length-1">,</span></span>
+          </div>
+        </el-form-item>
+        <el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark"
+          full-width>
+          <iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+        </el-form-item>
+        <div v-if="pool.id">
+          <el-form-item label="控制措施类型" prop="contMeasures.type">
+            <i-select :model.sync="mainModel.vo.contMeasures.type" :list="getDataDicList('contro_type')">
+              <i-option v-for="s in getDataDicList('contro_type')" :value="s.id">{{s.value}}</i-option>
+            </i-select>
+          </el-form-item>
+          <el-form-item label="控制措施内容" prop="contMeasures.name">
+            <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.contMeasures.name"></iv-input>
+          </el-form-item>
+        </div>
+      </el-form>
+    </div>
+    <div class="epc-footer">
+      <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+  </div>
+</Modal>
+<equipment-type-select-modal v-if="!type" :visible.sync="selectModel.equipmentTypeSelectModel.visible"
+  @do-save="doSaveEquipmentType"></equipment-type-select-modal>
+<equipment-type-select-modal-mix v-else :visible.sync="selectModel.equipmentTypeSelectModel.visible"
+  @do-save="doSaveEquipmentType"></equipment-type-select-modal-mix>
+
+
+<dominationarea-select-modal
+        :visible.sync="selectModel.dominationAreaSelectModel.visible"
+        :filter-data="selectModel.dominationAreaSelectModel.filterData"
+        @do-save="doSaveDominationArea"
+></dominationarea-select-modal>

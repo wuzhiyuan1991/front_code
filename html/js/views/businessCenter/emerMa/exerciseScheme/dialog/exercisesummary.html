@@ -1,0 +1,113 @@
+<div class="bip-content exercisesummaryFormTable simple-card-head-padding-0">
+    <simple-card >
+        <p slot="title"><i class="basicPng"></i><span style="color:#666;font-size:16px;">基本信息</span></p>
+    <el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="!mainModel.isReadOnly && mainModel.rules"  v-ref:ruleform>
+        <iv-row class="bip-content-item width1100" style="padding-top:0;">
+            <el-form-item label="演习前的准备" prop="preparation" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.preparation" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+                <iv-textarea  v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.preparation" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.preparation}}</span>
+
+            </el-form-item>
+        </iv-row>
+        <iv-row class="bip-content-item width1100">
+            <el-form-item label="演习经过简述" prop="processDesc" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.processDesc" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+                <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.processDesc" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.processDesc}}</span>
+
+            </el-form-item>
+        </iv-row>
+        <iv-row class="bip-content-item width1100">
+            <Icon type="document" class="copy-icon" @click="copyShortComings" title="存在的问题" v-if="!mainModel.isReadOnly && isShowIcon" style="position: absolute;left: 142px;top: 18px;"></Icon>
+            <el-form-item label="演习的不足之处" prop="shortcomings" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.shortcomings" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+                <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.shortcomings" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.shortcomings}}</span>
+
+            </el-form-item>
+        </iv-row>
+        <iv-row class="bip-content-item width1100">
+            <el-form-item label="演习的启示" prop="revelation" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.revelation" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+
+                <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.revelation" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.revelation}}</span>
+
+            </el-form-item>
+        </iv-row>
+        <iv-row class="bip-content-item width1100">
+            <el-form-item label="演习的评估情况" prop="estimateSummary" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.estimateSummary" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+                <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.estimateSummary" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.estimateSummary}}</span>
+
+            </el-form-item>
+        </iv-row>
+        <iv-row class="bip-content-item width1100">
+            <el-form-item label="演习的改进建议" prop="suggestionSummary" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.suggestionSummary" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+                <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.suggestionSummary" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.suggestionSummary}}</span>
+
+            </el-form-item>
+        </iv-row>
+        <iv-row class="bip-content-item width1100">
+            <el-form-item label="备注" prop="remarks" class="small-info-box" >
+                <!--<iv-input :value.sync="mainModel.vo.remarks" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                          <!--type="textarea" :rows="6"></iv-input>-->
+                <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly" ></iv-textarea>
+                <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.remarks}}</span>
+            </el-form-item>
+        </iv-row>
+
+    </el-form>
+    </simple-card>
+</div>
+
+
+<style>
+    .width1100 .small-info-box{
+        width:1140px !important;
+    }
+    .width1100 .ivu-textarea-wrapper{
+        width:100% !important;
+    }
+    /*.exercisesummaryFormTable .bip-content-item{*/
+        /*border:none;*/
+    /*}*/
+    /*.exercisesummaryFormTable  .small-info-box{*/
+        /*width:550px !important;*/
+    /*}*/
+    .exercisesummaryFormTable .el-form-item__vertical_label{
+        width: 100px !important;
+        display: inline-block;
+        /*font-size: 16px;*/
+        /*margin-bottom: -5px;*/
+        /*color: #666;*/
+        /*padding: 5px;*/
+        /*background: #F2F2F2;*/
+        border-bottom:1px solid #ddd;
+    }
+    .copy-icon:hover{
+        cursor: pointer;
+        color:#19a3e7;
+    }
+    /*.exercisesummaryFormTable .ivu-input{*/
+        /*border-radius: 0 !important;*/
+    /*}*/
+    /*.exercisesummaryFormTable .ivu-poptip-rel{*/
+        /*position: relative;*/
+        /*width: 100%;*/
+        /*vertical-align: middle;*/
+        /*min-height: 136px;*/
+        /*border: 1px solid #ddd;*/
+    /*}*/
+</style>
+

@@ -1,0 +1,140 @@
+/*右滑窗样式*/
+.h40{
+    height:40px;
+}
+.pr0{
+    padding-right: 0;
+}
+.pl0{
+    padding-left: 0;
+}
+.pl10{
+    padding-left: 10px;
+}
+.mt10{
+    margin-top: 10px;
+}
+.mb10{
+    margin-bottom: 10px;
+}
+.ml10{
+    margin-left: 10px;
+}
+.mr10{
+    margin-right: 10px;
+}
+.ml20{
+    margin-left: 20px;
+}
+.aside.right {
+    right: 0;
+    left: auto;
+}
+.w100{
+    width: 100%;
+}
+.h100{
+    height:100%;
+}
+
+/**********************窄滑窗*********************************/
+
+/*头部基本信息等样式*/
+.titleTan {
+    margin-left: 10px;
+    font-size: 18px;
+    height: 45px;
+    font-weight: bold;
+}
+.titAdd {
+    height: 40px;
+    margin: 0 20px 0 0;
+    position: relative;
+    border-bottom: 1px solid #c8c8c8;
+    padding: 10px 0;
+}
+.titAdd .addTil {
+    font-size: 14px;
+    margin-left: 8px;
+    font-weight: bold;
+}
+/*头部基本信息等样式 over*/
+
+
+/*操作 按钮样式*/
+.operation{
+    width: 200px;
+    position: absolute;
+    float: right;
+    right: 2%;
+    z-index: 11111;
+    margin-top: 3px;
+}
+.operation h5{
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+.operationBtn {
+    height: 40px;
+    /* width: 83%; */
+    border: 1px solid #b9b2b2;
+    border-radius: 3px;
+    margin: 8px 0 12px 0;
+    padding: 10px 20px;
+}
+.operationBtn span {
+    font-size: 14px;
+    color: #585555;
+    margin-left: 20px;
+}
+/*操作 按钮样式 over*/
+
+.aside .aside-dialog .aside-header {
+    /* border-bottom: 1px solid #e5e5e5; */
+    background: #fff;
+    min-height: 16.43px;
+    padding: 6px 40px;
+    color: #333333;
+}
+.aside .aside-dialog .aside-body {
+    position: relative;
+    /* padding: 15px; */
+    background: #ebf0f5;
+    height: 100%;
+    overflow: hidden;
+    /*min-height: 556px;*/
+    width: 100%;
+}
+/*.checkMethodDetail 背景白色的类的样式*/
+.aside .aside-dialog .bigBack{
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+}
+
+/*************************************宽滑窗********************************************/
+/*上部分白的背景色/*overflow: hidden;解决头部背景色问题*/
+.riskTitle {
+    width: 100%;
+    background: #fff;
+    height: auto;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+/*操作按钮*/
+.btnAll {
+    position: relative;
+    right: 20px;
+    top: 10px;
+    float: right;
+    margin-right: 12px;
+}
+.btnAll .btnSo {
+    height: 30px;
+    width: 62px;
+    border-radius: 5px;
+    border: 1px solid #aacd03;
+    background: #fff;
+    padding: 4px 16px;
+}
+

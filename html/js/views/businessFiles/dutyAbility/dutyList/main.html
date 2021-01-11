@@ -1,0 +1,193 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default on-change="changeOrgComp"
+                    @on-org-change="changeOrgComp"></all-classification>
+                    <!-- <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group> -->
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <!-- <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button> -->
+
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                $main-header-dropdown-item-tag-common-display
+                                <!--<iv-dropdown-item>-->
+                                <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <!-- <iv-dropdown-item v-if="hasAuth('export')">
+                                    $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+{header-dropdown-items-html} -->
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    <!-- $main-header-refresh-button -->
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <!-- <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"
+                               @click="doAdd4Copy">复制
+                    </vi-button>
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+{header-buttons-html} -->
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content ">
+            <div class="lr-layout" style="padding: 0;">
+                <div class="lr-layout-l " style="width: 300px;">
+                    <div style="display:flex;justify-content:left">
+                        <Icon title="编辑" v-if="hasAuth('editType')" type="edit" @click="doUpdateType"
+                            style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                        <Icon title="创建" v-if="hasAuth('createType')" type="plus-round" @click="doCreateType"
+                            style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                        <Icon title='删除' v-if="hasAuth('deleteType')" type="trash-a" @click="doDeleteType"
+                            style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+
+                    </div>
+                    <iv-tree style="overflow-y: auto;" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :model="legalTypes" :selected-datas.sync="treeSelectData" :show-checkbox="false"
+                        :single-select="true" :trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick"
+                        :show-icon-plus="true"></iv-tree>
+                </div>
+                <div class="lr-layout-r" style="padding: 0">
+
+                    <div class="rel-info-panel-content-tabs simple-card-new-style" id="dutylist">
+                        <el-tabs :active-key.sync="mainModel.vo.activeKey" >
+                            <el-tab-pane label="职责清单" key="kpoint" id="dutytable">
+                                <simple-card>
+                                    <p slot="title" class="a-color"></p>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            设置
+                                        </span>
+                                    </a>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            {{$t("bc.ria.append")}}
+                                        </span>
+                                    </a>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            导入
+                                        </span>
+                                    </a>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            导出
+                                        </span>
+                                    </a>
+                                 
+                                 
+                                    <vue-bootstrap-table :values="tableModel.values"
+                                        :selected-datas.sync="tableModel.selectedDatas" :columns="tableModel.columns"
+                                        :show-empty-row="false" :page-size-opts="[999]" :code="moduleCode"
+                                        :resizeable="true" :lazy-load='true' :show-scroll="true"
+                                        @on-click-cell="doTableCellClick" :show-pager='false' show-loading
+                                        v-ref:main-table>
+                                    </vue-bootstrap-table>
+                                </simple-card>
+                            </el-tab-pane>
+                            <el-tab-pane label="相关人员" key="file">
+                                <simple-card filter @do-filter="doKPointFilter" custom-filter filter-when>
+                                    <p slot="title" class="a-color"></p>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            导出
+                                        </span>
+                                    </a>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            导入
+                                        </span>
+                                    </a>
+                                    <a class="a-color" href="#" slot="extra" @click.prevent="doAddKpoint">
+                                        <span>
+                                            {{$t("bc.ria.append")}}
+                                        </span>
+                                    </a>
+                                    <vue-bootstrap-table :url="userModel.url"
+                                        :selected-datas.sync="userModel.selectedDatas" :columns="userModel.columns"
+                                        :show-empty-row="false" :page-size-opts="[20,50,100]" 
+                                        :resizeable="true" :lazy-load='true' :show-scroll="true"
+                                        :show-seq="true"
+                                        @on-click-cell="doTableCellClick"  show-loading
+                                        v-ref:user-table>
+                                    </vue-bootstrap-table>
+                                </simple-card>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<style>
+    #dutylist .is-active {
+        border: none !important;
+    }
+    #dutylist .simple-card-extra{
+        padding: 0;
+        height: 25px;
+    }
+    #dutylist .simple-card-head {
+        
+        padding:5px 0 5px 0;
+    }
+    #dutylist .selected-row {
+        background-color: #fff !important;
+    }
+
+    #dutytable table.vue-table thead>tr>th {
+        border: 1px solid #ccc;
+        padding-left: 5px;
+    }
+    #dutytable .table-head-cell-text{
+        text-align: center;
+    }
+    #dutytable .table-scroll-main-body {
+        background-color: #fff;
+    }
+
+    #dutytable tbody td {
+        border: 1px solid #ccc
+    }
+</style>
+
+<!-- Legacy模式 -->
+<!--
+<idadutyability-form-modal
+		:visible.sync="formModel.idaDutyAbilityFormModel.show"
+		@do-save="doSaveIdaDutyAbility"
+		v-ref:idadutyability-form-modal>
+</idadutyability-form-modal>
+-->
+
+
+<!--<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>-->
+
+<type-form-modal :visible.sync="typeForm.visible" :list="legalTypes" :spare-id="'main'" @do-tree-save="doSaveType">
+</type-form-modal>

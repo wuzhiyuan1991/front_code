@@ -1,0 +1,55 @@
+<Modal :visible.sync='visible' :title='"回退节点设置"' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.info2Rules" v-ref:info2ruleform>
+                <el-form-item label="回退节点" >
+                    <i-select v-else :model.sync="mainModel.vo.rollbackStep" :list="getList" ></i-select>
+                    <!--<i-select :model.sync="mainModel.vo.rollbackStep" :list="getList"  @on-select="natureChange">-->
+                        <!--<i-option v-for="item in getList" :value="item.id">{{ item.name }}</i-option>-->
+                    <!--</i-select>-->
+                </el-form-item>
+                <el-form-item label="回退操作理由"  prop="remark" full-width>
+                    <iv-textarea :rows="4" :value.sync="mainModel.vo.remark" readonly=false :width="260"></iv-textarea>
+                </el-form-item>
+                <el-form-item label="操作人" prop="user" full-width>
+                    <span >{{ mainModel.vo.user.name }}</span>
+                    <!--<iv-input :value.sync="mainModel.vo.user"  readonly=true></iv-input>-->
+                </el-form-item>
+                <el-form-item label="审核日期"  full-width>
+                    <span >{{ mainModel.vo.editDate }}</span>
+                    <!--<iv-input :value.sync="mainModel.vo.user"  readonly=true></iv-input>-->
+                </el-form-item>
+                <el-form-item label="操作时间" full-width>
+                    <!--<date-picker  format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.effectiveDate"></date-picker>-->
+                    <div v-else>{{getOperateTime(mainModel.vo.effectiveDate)}}</div>
+                </el-form-item>
+                <el-form-item label="附件资料"  full-width>
+                    <ul>
+                        <li v-for="(index, file) in mainModel.vo.fileList" class="cert-file-item" @click="doClickFile(index)">
+                            <div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+                            <Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <iv-button type="text" style="padding:0;color:#33A6FF" @click="uploadClicked" >上传</iv-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveSelectPoint" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+<!-----   文件相关  ----->
+<vue-file-upload
+        v-ref:uploader
+        style="display: none;"
+        :multi-selection="true"
+        :params="uploadModel.params"
+        @on-before-upload="doUploadBefore"
+        @on-success-upload="doUploadSuccess"
+        @on-upload-complete="onUploadComplete"
+        :filters="uploadModel.filters">
+</vue-file-upload>
+
+

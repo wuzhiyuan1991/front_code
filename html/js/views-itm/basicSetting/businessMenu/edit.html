@@ -1,0 +1,23 @@
+<div class="edit-pop-container" >
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item label="编码" prop="code">
+				<iv-input :value.sync="mainModel.vo.code"></iv-input>
+				<!--<input type="text" v-model="mainModel.vo.code" maxlength="50">-->
+			</el-form-item>
+			<el-form-item label="名称" prop="name">
+				<iv-input :value.sync="mainModel.vo.name"></iv-input>
+				<!--<input type="text" v-model = "mainModel.vo.name" maxlength="50">-->
+			</el-form-item>
+			<el-form-item label="排序" prop="orderNo">
+				<!--<iv-input-number :value.sync="mainModel.vo.orderNo" :min="1" :step="1" style="width: 100%;height: 32px;border-radius: 8px;"></iv-input-number>-->
+				<iv-input :value.sync="mainModel.vo.orderNo"></iv-input>
+				<!--<input type="number" min="0" v-model = "mainModel.vo.orderNo" maxlength="50">-->
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+		<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>

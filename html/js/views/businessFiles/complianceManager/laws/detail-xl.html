@@ -1,0 +1,155 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="废止信息" prop="annulment" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.annulment" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="废止日期" prop="annulmentDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.annulmentDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.annulmentDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="用来标识法律法规(方便记录修订信息)" prop="discernId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.discernId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="实施日期" prop="effectiveDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.effectiveDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.effectiveDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="效力级别" prop="effectiveLevel" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_laws_effective_level', mainModel.vo.effectiveLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.effectiveLevel" :list="getDataDicList('icm_laws_effective_level')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="是否是已修订" prop="isRevise" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_laws_is_revise', mainModel.vo.isRevise) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isRevise" :list="getDataDicList('icm_laws_is_revise')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="发文字号" prop="issuedNumber" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.issuedNumber" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="时效性" prop="limitation" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_laws_limitation', mainModel.vo.limitation) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.limitation" :list="getDataDicList('icm_laws_limitation')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="发布机关" prop="publishAuthority" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.publishAuthority" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="发布日期" prop="publishDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.publishDate" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.publishDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="法规简述" prop="resume" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.resume" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="修订信息" prop="revise" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.revise" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="分类" prop="typeId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.typeId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.lawsChapterCardModel.showContent" filter filter-when>
+				<p slot="title"><i class="basicPng"></i><span>章节</span></p>
+				<a slot="extra" @click.prevent="cardModel.lawsChapterCardModel.showContent = !cardModel.lawsChapterCardModel.showContent;" >
+					<span v-if="cardModel.lawsChapterCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowLawsChapterFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.lawsChapterTableModel"
+					@on-del-row="doRemoveLawsChapter"
+					@on-edit-row="doShowLawsChapterFormModal4Update"
+					@on-move-row="doMoveLawsChapter"
+					v-ref:lawschapter-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		</div>
+		-->
+		<!-- tab页签式 - 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>附件参考</span></p>
+				<div class="rel-info-panel-content-tabs">
+					<el-tabs active-key="relTab">
+						<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+							<file-list-simple-card  :data="fileModel.file.data" :config="fileModel.file.cfg"></file-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+							<image-list-simple-card  :data="fileModel.pic.data" :config="fileModel.pic.cfg"></image-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+							<video-list-simple-card  :data="fileModel.video.data" :config="fileModel.video.cfg"></video-list-simple-card>
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</simple-card>
+		</div>
+		-->
+	</div>
+
+
+</div>
+
+
+<lawschapter-form-modal
+		:visible.sync="formModel.lawsChapterFormModel.show"
+		@do-save="doSaveLawsChapter"
+		@do-update="doUpdateLawsChapter"
+		:query-url="formModel.lawsChapterFormModel.queryUrl"
+		:hidden-fields="formModel.lawsChapterFormModel.hiddenFields"
+		v-ref:lawschapter-form-modal>
+</lawschapter-form-modal>
+
+

@@ -1,0 +1,67 @@
+<Modal  :title="'详情'" :visible.sync='visible' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content disheadNone"  >
+            <simple-card  class="fip-content-item">
+                <!--<div class="clearfix"></div>-->
+                <div v-for="(index,tir) in mainModel.vo.riskJudgmentGroups" style='padding:0 0 10px 10px;margin-bottom: 20px;'>
+                    <div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+                        <div class="left" style="display: inline-block;border-bottom: 1px solid #ddd;padding-right: 50px;" >{{tir.name}}</div>
+                        <!--<div class="right" style="display: flex;align-items: center;">-->
+                        <!--<input type="checkbox" v-model="tir.select">研判时整组内容可排除</Checkbox>-->
+                        <!--<vi-button type="text" icon="plus" @click="isShowEdition(tir, index)" >编辑</vi-button>-->
+                        <!--</div>-->
+                    </div>
+                    <!--<div class='riskItemContent' style='width:440px' >研判项内容</div>-->
+
+                    <div style='display: flex;justify-content: space-between;'>
+                        <div class="myContent editContent" :class="{'riskJudgTaskMask': tir.allExclude==1}" style="background: #fff;" v-if='tir.content!=""' v-html="tir.content" name="myContent">
+
+                        </div>
+                        <!--<div >附件</div>-->
+                    </div>
+
+                </div>
+            </simple-card>
+            <simple-card>
+                <div   style='padding:0 0 10px 10px;margin-bottom: 20px;'>
+                    <div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+                        <div class="left" style="border-bottom:1px solid #ddd;padding-right:50px;" >研判承诺</div>
+                    </div>
+                    <div style='display: flex;justify-content: space-between;'>
+                        <div class="myContent editContent" style="background:#fff;" v-if='promiseContent!=""' v-html="promiseContent" name="myContent">
+
+                        </div>
+                    </div>
+
+                </div>
+            </simple-card>
+        </div>
+        <!--<div class="epc-footer">-->
+            <!--<vi-button type="primary" @click="doCloseGroupName" class="pull-right">关闭</vi-button>-->
+        <!--</div>-->
+    </div>
+</Modal>
+<style>
+    .disheadNone .simple-card-head{
+        display: none !important;
+    }
+    .disheadNone .fip-content-item{
+        padding-top:15px
+    }
+    .check{
+        /*rdisplay: inline-flex !important;*/
+        display: inline !important;
+        align-items: center;
+        flex-wrap: wrap
+    }
+    .check input{
+        margin-left:5px;
+        margin-right:10px ;
+    }
+    .check span{
+        display: inline-flex;
+        align-items: center;
+    }
+</style>
+
+

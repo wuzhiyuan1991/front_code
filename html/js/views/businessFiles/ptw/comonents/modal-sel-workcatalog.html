@@ -1,0 +1,58 @@
+<Modal  :visible.sync="visible"  width='800' :title="modalTitle" @on-cancel="doClose" :footer-hide="true">
+    <div class="modal-box-default" style="background: #fff;">
+
+        <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px;">
+            <div class="form-item-label required-before">所属公司</div>
+            <div style="width:280px;font-size:12px;" class="ivu-select-dropdown-width280">
+                <company-tree-select style="width:250px;" :id.sync="compId" placeholder="请选择公司"></company-tree-select>
+            </div>
+        </div>
+
+        <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px;">
+            <div class="form-item-label required-before">{{title}}</div>
+            <div>
+                <iv-radio-group class="group-vertical" :model.sync="selectedWorkCatalogId">
+                    <iv-radio  class="mb10 flex-h-start" :value="item.id" v-for="item of workCatalogList" style="word-break: break-all;white-space: normal;width:500px;">
+                        <div class="flex-layout">
+                            <span style="cursor: pointer;min-width: 75px;margin-right:5px;flex-grow:1;flex-shrink:0">
+                                {{item.name}}
+                            </span>
+                            <span v-if="item.levelList&&item.levelList.length>0&&selectedWorkCatalogId==item.id">
+                                <iv-radio-group  :model.sync="selectedWorLevelId">
+                                    (  <iv-radio :value="level.id" v-for="(index,level) of item.levelList">
+                                    <span style="cursor: pointer;">{{level.name}}</span>
+                                    <span v-if="index==item.levelList.length-1">）</span>
+                                </iv-radio>
+                                </iv-radio-group>
+                            </span>
+                        </div>
+
+                    </iv-radio>
+                </iv-radio-group>
+              <div @click="doWorkCataLogMore" style="width:100px;" class="link-ele">自定义更多...</div>
+          </div>
+        </div>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+
+<style>
+    .ivu-radio-cursor .ivu-radio{
+        cursor: pointer;
+    }
+    .ivu-select-dropdown-width280 .ivu-select-dropdown{
+        width:280px;
+    }
+</style>
+
+

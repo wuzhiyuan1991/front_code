@@ -1,0 +1,152 @@
+
+<ul class="ivu-timeline">
+
+    <!--节点: 整改-->
+    <li class="ivu-timeline-item hidden-danger-timeline-item">
+        <div class="ivu-timeline-item-tail"></div>
+        <div class="ivu-timeline-item-head ivu-timeline-item-head-blue"></div>
+        <div class="ivu-timeline-item-content">
+            <div class="brief-info" @click="toggleOpen(item)">
+                <span class="time">{{reform.date || '处理中'}}</span>
+                <div class="info" :class="briefBackground()">
+                    <span class="name">{{reform.dealName}}</span>
+                    <span class="action">立即整改</span>
+                    <Icon :type="reform.open ? 'chevron-up' : 'chevron-down'"></Icon>
+                </div>
+            </div>
+
+            <div class="detail-info" v-show="reform.open"  :class="calcBackground(item)">
+                <ul>
+                    <li class="detail-item">
+                        <div class="tit">整改人</div>
+                        <div class="con">{{reform.dealName}}</div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">整改时间</div>
+                        <div class="con">{{reform.date}}</div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">整改验证结果</div>
+                        <div class="con">{{reform.result}}</div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">整改验证结果</div>
+                        <div class="con">{{reform.result}}</div>
+                    </li>
+                    <li class="detail-item" v-if="mainModel.enableRespOrgId">
+                        <div class="tit"></div>
+                        <div class="con">{{reform.respOrgId}}</div>
+                    </li>
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">整改方案</div>-->
+                        <!--<div class="con">{{reform.dealStep}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">补救方案</div>-->
+                        <!--<div class="con">{{reform.emergencyStep}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item" :class="{'hidden-schedule': reform.schedule.length > 0}">-->
+                        <!--<div class="tit">进度详情</div>-->
+                        <!--<div class="con schedule-info">-->
+                            <!--<div v-for="s in reform.schedule" class="schedule-item">-->
+                                <!--<span>{{s.date}}</span>-->
+                                <!--<span>{{s.operatorName}}</span>-->
+                                <!--<span>{{s.detail}}</span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</li>-->
+                    <li class="detail-item">
+                        <div class="tit">图片</div>
+                        <div class="con">
+                            <div class="image_b" v-for="img in reform.images"
+                                 @click="doPic(img,img.ext)"
+                                 :style='{ backgroundImage: backgroundStyle(img)}'>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">视频</div>
+                        <div class="con">
+                            <div class="image_b" v-for="video in reform.videos"
+                                 @click="doPic(video,video.ext)" :style='{ backgroundImage: videoBackgroundStyle()}'></div>
+                        </div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">附件</div>
+                        <div class="con">
+                            <div v-for="doc in reform.docs">
+                                <span>{{doc.orginalName}}</span>
+                                <a :href="convertFilePath(doc)" target="_blank">
+                                    <Icon type="android-download" size="18"></Icon>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </li>
+
+    <!--验证 节点-->
+    <li class="ivu-timeline-item hidden-danger-timeline-item" v-if="verify.dealName && verify.date">
+        <div class="ivu-timeline-item-tail"></div>
+        <div class="ivu-timeline-item-head ivu-timeline-item-head-blue"></div>
+        <div class="ivu-timeline-item-content">
+            <div class="brief-info" @click="toggleVerifyOpen(item)">
+                <span class="time">{{verify.date}}</span>
+                <div class="info" :class="briefVerifyBackground()">
+                    <span class="name">{{verify.dealName}}</span>
+                    <span class="action">验证</span>
+                    <Icon :type="verify.open ? 'chevron-up' : 'chevron-down'"></Icon>
+                </div>
+            </div>
+            <div class="detail-info" v-show="verify.open">
+                <ul>
+                    <li class="detail-item">
+                        <div class="tit">验证人</div>
+                        <div class="con">{{verify.dealName}}</div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">验证时间</div>
+                        <div class="con">{{verify.date}}</div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">图片</div>
+                        <div class="con">
+                            <div class="image_b" v-for="img in verify.images"
+                                 @click="doPic(img,img.ext)"
+                                 :style='{ backgroundImage: backgroundStyle(img)}'>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+
+    <!--节点: 结束-->
+    <li class="ivu-timeline-item hidden-danger-timeline-item">
+        <div class="ivu-timeline-item-tail"></div>
+        <div class="ivu-timeline-item-head ivu-timeline-item-head-blue"></div>
+        <div class="ivu-timeline-item-content">
+            <div class="brief-info">
+                <span class="time">{{reform.date}}</span>
+                <div class="info hidden-done">
+                    <!--<span class="name">{{reform.dealName}}</span>-->
+                    <span class="action">结束</span>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.file,'original')">
+</Modal>
+<audio-player
+        :visible.sync="audioModel.visible"
+        :path="audioModel.path"
+></audio-player>

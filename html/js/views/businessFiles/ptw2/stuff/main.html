@@ -1,0 +1,46 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <div class="lr-layout pd0-imp" style="background: #fff;width:950px;">
+                <div class="lr-layout-l legal-regulation-type-box pd10" style="padding:0;width:170px;border-right:1px solid #ddd;">
+                    <div style="background: #b5afb159">
+                        <div  @click='gotoDic' class="link-btn-color base-title flex-center base-block-title">作业类型</div>
+                    </div>
+                    <base-according v-ref:catlog class="mt10" @on-selected="onAccordingSelected" :values="workCatalogs"></base-according>
+                </div>
+                <div class="lr-layout-r" style="overflow: hidden">
+                    <div class="base-title flex-center flex-h-start">配置适用于【{{currentWorkCatalog.name}}】</div>
+                    <div class="mt10">
+                        <div class="mb10" style="border-bottom: 1px solid #e8e8e8;">
+                            <ul style="display: inline-flex;">
+                                <li v-for="(index,item) of stuffTypes"
+                                    class="lr-layout-li"
+                                    :class="{'checked': index === stuffTypeSelectedIndex}"
+                                    @click="onTabsSwitch(index)">
+                                    <span>{{item.value}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-show="stuffTypes[stuffTypeSelectedIndex].id == '5'" class="font-size14 pb5">工艺隔离-方法中设置的隔离方法通用性比较强，各作业都可能比较适用。所以，可以 <span class="link-btn-color" @click="gotoCopy" >复制新增</span> 到其他作业中。</div>
+                        <div v-show="stuffTypes[stuffTypeSelectedIndex].id == '6'" class="font-size14 pb5">个人防护设备中设置的防护设备通用性比较强，各作业都可能比较适用。所以，可以 <span class="link-btn-color" @click="gotoCopy" >复制新增</span> 到其他作业中。</div>
+
+                        <div style="width:680px;">
+                            <work-content v-ref:work-content :values.sync="stuffTypes[stuffTypeSelectedIndex].values" :type="stuffTypes[stuffTypeSelectedIndex].id"></work-content>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<copy-select-model v-ref:copy-model @on-do-save="doSaveCopy"></copy-select-model>
+

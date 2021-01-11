@@ -1,0 +1,541 @@
+
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.disable === '0' && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="hasAuth('publish') && mainModel.vo.disable === '0' && mainModel.isReadOnly"  type="ghost" @click="doPublish">{{$t('gb.common.release')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete') && mainModel.vo.disable === '0'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content bip-content1">
+			<el-form class="bip-content-form" style="height:auto;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+
+					<el-form-item class="small-info-box" label="工作计划名称" prop="name">
+						<iv-input placeholder="请输入名称" :value.sync="mainModel.vo.name" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId" :disabled="isOwnDeptDataAuth('ritmpcheckplan')"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" :disabled="isOwnDeptDataAuth('ritmpcheckplan')"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  :label="$t('gb.common.startTime')" prop="startDate" class="small-info-box" >
+						<date-picker  format="yyyy-MM-dd 00:00:00"  v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate" :end.sync="mainModel.vo.endDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+					</el-form-item>
+
+					<el-form-item  :label="$t('gb.common.endTime')" prop="endDate" class="small-info-box" >
+						<date-picker format="yyyy-MM-dd 23:59:59" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate" :begin.sync="mainModel.vo.startDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+					</el-form-item>
+
+					<el-form-item  :label="$t('gb.common.remarks')" prop="remarks" class="small-info-box" >
+						<iv-input placeholder="请输入备注" v-else :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="类型" prop="checkType" class="small-info-box" >-->
+					<!--<iv-input :value.sync="mainModel.vo.checkType" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<!--<el-form-item v-if="mainModel.isReadOnly" :label="$t('gb.common.founder')"  class="small-info-box" >-->
+						<!--<iv-input   :value="mainModel.vo.creater.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item  :label="$t('gb.common.frequencyType')"  class="small-info-box" prop="checkType">
+						<i-select  v-if="!mainModel.isReadOnly"  @on-change="dochangeCheckType" :model.sync="mainModel.vo.checkType"  :list="getDataDicList('check_type')" >
+							<i-option  v-for = "type in getDataDicList('check_type')" :value="type.id">{{type.value}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly">{{getDataDic('check_type', mainModel.vo.checkType)}}</span>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.profession')" prop="specialty" class="small-info-box" v-if = "showSpecialty">
+						<i-select v-if="!mainModel.isReadOnly"  :model.sync="mainModel.vo.specialty"  :list="mainModel.specialtyList" >
+							<i-option  v-for = "specialty in mainModel.specialtyList" :value="specialty.id">{{specialty.name}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly" >{{getDataDic('plan_specialty', mainModel.vo.specialty)}}</span>
+					</el-form-item>
+					<el-form-item  label="计划类型" prop="planType" class="small-info-box" v-if = "showPlanType">
+						<i-select  v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.planType"  :list="getDataDicList('plan_type')" >
+							<i-option  v-for = "type in getDataDicList('plan_type')" :value="type.id">{{type.value}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly">{{getDataDic('plan_type', mainModel.vo.planType)}}</span>
+					</el-form-item>
+					<el-form-item class="small-info-box" :label="$t('gb.common.state')" prop="disable">
+						<span>{{getDataDic('isPublished', mainModel.vo.disable)}}</span>
+					</el-form-item>
+				</iv-row>
+				<div v-if="showFrequencyText">
+					<iv-row class="bip-content-item" style="border-top:1px solid  #e9e9e9" >
+						<span class="spanTips" style="padding-left: 40px">执行频率</span>
+						<span class="spanCon">{{frequencyModel.detail.frequencyTypeName}}</span>
+						<span class="spanTips" v-if="frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">包含周六日</span>
+						<span class="spanTips" v-if="!frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">不包含周六日</span>
+					</iv-row>
+					<iv-row class="bip-content-item" v-if="frequencyModel.common.isNoRepeat">
+						<span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
+						<span class="spanCon">执行一次</span>
+					</iv-row>
+					<iv-row class="bip-content-item" v-if="frequencyModel.common.isRepeat && !frequencyModel.detail.definedTime">
+						<span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
+						<span class="spanCon">执行多次</span>
+						<span class="spanTips">间隔</span>
+						<span class="spanCon">{{frequencyModel.planSetting.period}}</span>
+						<span class="spanCon">{{frequencyModel.detail.unitName}}</span>
+						<span class="spanTips">开始时间</span>
+						<span class="spanCon">{{frequencyModel.planSetting.startTime}}</span>
+						<span class="spanTips">结束时间</span>
+						<span class="spanCon">{{frequencyModel.planSetting.endTime}}</span>
+					</iv-row>
+					<iv-row class="bip-content-item" v-if="frequencyModel.detail.definedTime">
+						<span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
+						<span class="spanTips">间隔</span>
+						<span class="spanCon">{{frequencyModel.planSetting.period}}</span>
+						<span class="spanCon">{{frequencyModel.detail.unitName}}</span>
+					</iv-row>
+				</div>
+				<div v-if="showFrequencyInput">
+					<iv-row class="bip-content-item" style="border-top:1px solid  #e9e9e9" >
+						<span style="float: left;line-height: 80px;padding-left: 40px;">执行频率</span>
+						<el-form-item label="&nbsp;" class="small-info-box" style="width: 150px;margin-top: 6px;">
+							<i-select :disabled="mainModel.isReadOnly" style="width:100px" @on-change="dochangefrequencyType" :model.sync="frequencyModel.planSetting.frequencyType"  :list="mainModel.frequencyTypeList" >
+								<i-option  v-for = "type in mainModel.frequencyTypeList" :value="type.id">{{type.name}}</i-option>
+							</i-select>
+						</el-form-item>
+						<el-form-item  label="&nbsp;" class="small-info-box" style="padding: 0 20px;padding-top: 10px" >
+							<iv-checkbox class="radios" v-if="frequencyModel.planSetting.frequencyType == 1" :checked.sync="frequencyModel.add.isWeekendInculedFlag" :disabled = "mainModel.isReadOnly">包含周六日</iv-checkbox>
+						</el-form-item>
+					</iv-row>
+					<iv-row class="bip-content-item" >
+						<div style="width:100%;" v-if="frequencyModel.add.isShowCommon">
+							<span style="float: left;padding-left: 40px;line-height: 40px;">{{frequencyModel.common.frequencyName}}</span>
+							<div style="padding-left: 40px;float: left;" v-if="frequencyModel.planSetting.frequencyType == 1">
+								<div v-for="(index, timeSetting) in frequencyModel.planSetting.timeSettings">
+									<div style="line-height: 28px;width:30px;text-align: center;float: left;background: #ddd;clear: both">{{index + 1}}</div>
+									<el-form-item  style="width:180px;padding-left:5px;">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												@before-change="beforeSetTime('startTime', index)"
+												@on-change = "doTimeSetting"
+												:clearable = "false"
+												:value="timeSetting.startTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div style="line-height: 28px;padding: 0px 10px;float: left;">~</div>
+									<el-form-item style="width:180px;padding-left:5px">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												@before-change="beforeSetTime('endTime', index)"
+												@on-change = "doTimeSetting"
+												:clearable = "false"
+												:value="timeSetting.endTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div v-if="!mainModel.isReadOnly" @click="removeTimeSetting(index)" style="cursor: pointer;line-height: 36px;float: left;padding-left: 5px;">
+										<Icon type="android-remove-circle" class="" style="cursor: pointer;color: red;" ></Icon>
+									</div>
+								</div>
+								<vi-button v-if="!mainModel.isReadOnly" type="dashed" long  @click="doAddTimeSetting" class="add-more" style="width:392px;margin-top:5px">添加</vi-button>
+							</div>
+							<div style="padding-left: 40px;float: left;" v-if="frequencyModel.planSetting.frequencyType == 2">
+								<div v-for="(index, timeSetting) in frequencyModel.planSetting.timeSettings">
+									<div style="line-height: 28px;width:30px;text-align: center;float: left;background: #ddd;clear: both">{{index + 1}}</div>
+									<el-form-item  style="width: 105px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:100px" :model.sync="timeSetting.startDay"  :list="mainModel.dayList.week" >
+											<i-option  v-for = "type in mainModel.dayList.week" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item  style="width:180px;padding-left:5px;">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												@before-change="beforeSetTime('startTime', index)"
+												@on-change = "doTimeSetting"
+												:clearable = "false"
+												:value="timeSetting.startTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div style="line-height: 28px;padding: 0px 10px;float: left;margin-top:5px">~</div>
+									<el-form-item   style="width: 105px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:100px"  :model.sync="timeSetting.endDay"  :list="mainModel.dayList.week" >
+											<i-option  v-for = "type in mainModel.dayList.week" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item style="width:180px;padding-left:5px">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('endTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.endTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div v-if="!mainModel.isReadOnly" @click="removeTimeSetting(index)" style="cursor: pointer;line-height: 36px;float: left;padding-left: 5px;">
+										<Icon type="android-remove-circle" class="" style="cursor: pointer;color: red;" ></Icon>
+									</div>
+								</div>
+								<vi-button v-if="!mainModel.isReadOnly" type="dashed" long  @click="doAddTimeSetting" class="add-more" style="width:602px;margin-top:5px">添加</vi-button>
+							</div>
+							<div style="padding-left: 40px;float: left;" v-if="frequencyModel.planSetting.frequencyType == 3">
+								<div v-for="(index, timeSetting) in frequencyModel.planSetting.timeSettings">
+									<div style="line-height: 28px;width:30px;text-align: center;float: left;background: #ddd;clear: both">{{index + 1}}</div>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.startDay"  :list="mainModel.dayList.common" >
+											<i-option  v-for = "type in mainModel.dayList.common" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item  style="width:180px;padding-left:5px;">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('startTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.startTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div style="line-height: 28px;padding: 0px 10px;float: left;margin-top:5px">~</div>
+									<el-form-item   style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.endDay"  :list="mainModel.dayList.common" >
+											<i-option  v-for = "type in mainModel.dayList.common" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item style="width:180px;padding-left:5px">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('endTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.endTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div v-if="!mainModel.isReadOnly" @click="removeTimeSetting(index)" style="cursor: pointer;line-height: 36px;float: left;padding-left: 5px;">
+										<Icon type="android-remove-circle" class="" style="cursor: pointer;color: red;" ></Icon>
+									</div>
+								</div>
+								<vi-button v-if="!mainModel.isReadOnly" type="dashed" long  @click="doAddTimeSetting" class="add-more" style="width:613px;margin-top:5px">添加</vi-button>
+							</div>
+							<div style="padding-left: 40px;float: left;" v-if="frequencyModel.planSetting.frequencyType == 4">
+								<div v-for="(index, timeSetting) in frequencyModel.planSetting.timeSettings">
+									<div style="line-height: 28px;width:30px;text-align: center;float: left;background: #ddd;clear: both">{{index + 1}}</div>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.startMonth"  @on-change="doChangeMonth(1, index)" :list="mainModel.monthList.quarter" >
+											<i-option  v-for = "type in mainModel.monthList.quarter" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.startDay"  :list="mainModel.dayList.common">
+											<i-option  v-for = "type in mainModel.dayList.common" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item  style="width:180px;padding-left:5px;">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('startTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.startTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div style="line-height: 28px;padding: 0px 10px;float: left;margin-top:5px">~</div>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.endMonth"  @on-change="doChangeMonth(2, index)" :list="mainModel.monthList.quarter" >
+											<i-option  v-for = "type in mainModel.monthList.quarter" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item   style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.endDay"  :list="mainModel.dayList.common">
+											<i-option  v-for = "type in mainModel.dayList.common" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item style="width:180px;padding-left:5px">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('endTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.endTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div  v-if="!mainModel.isReadOnly" @click="removeTimeSetting(index)" style="cursor: pointer;line-height: 36px;float: left;padding-left: 5px;">
+										<Icon type="android-remove-circle" class="" style="cursor: pointer;color: red;" ></Icon>
+									</div>
+								</div>
+								<vi-button v-if="!mainModel.isReadOnly" type="dashed" long  @click="doAddTimeSetting" class="add-more" style="width:832px;margin-top:5px">添加</vi-button>
+							</div>
+							<div style="padding-left: 40px;float: left;" v-if="frequencyModel.planSetting.frequencyType == 6">
+								<div v-for="(index, timeSetting) in frequencyModel.planSetting.timeSettings">
+									<div style="line-height: 28px;width:30px;text-align: center;float: left;background: #ddd;clear: both">{{index + 1}}</div>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.startMonth"  @on-change="doChangeMonth(1, index)" :list="mainModel.monthList.year" >
+											<i-option  v-for = "type in mainModel.monthList.year" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.startDay"  :list="mainModel.dayList.month" :disabled="!timeSetting.startMonth">
+											<i-option  v-for = "type in mainModel.dayList.month" :value="type.id" v-if="showMonthDay(timeSetting.startMonth, type.id)">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item  style="width:180px;padding-left:5px;">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('startTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.startTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div style="line-height: 28px;padding: 0px 10px;float: left;margin-top:5px">~</div>
+									<el-form-item  style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.endMonth"  @on-change="doChangeMonth(2, index)" :list="mainModel.monthList.year" >
+											<i-option  v-for = "type in mainModel.monthList.year" :value="type.id">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item   style="width: 110px;padding-left: 5px;">
+										<i-select :disabled="mainModel.isReadOnly" style="width:105px"  :model.sync="timeSetting.endDay"  :list="mainModel.dayList.month" :disabled="!timeSetting.endMonth">
+											<i-option  v-for = "type in mainModel.dayList.month" :value="type.id" v-if="showMonthDay(timeSetting.endMonth, type.id)">{{type.name}}</i-option>
+										</i-select>
+									</el-form-item>
+									<el-form-item style="width:180px;padding-left:5px">
+										<vi-time-picker
+												:readonly="mainModel.isReadOnly"
+												:editable ="false"
+												:clearable = "false"
+												@before-change="beforeSetTime('endTime', index)"
+												@on-change = "doTimeSetting"
+												:value="timeSetting.endTime">
+										</vi-time-picker>
+									</el-form-item>
+									<div v-if="!mainModel.isReadOnly" @click="removeTimeSetting(index)" style="cursor: pointer;line-height: 36px;float: left;padding-left: 5px;">
+										<Icon type="android-remove-circle" class="" style="cursor: pointer;color: red;" ></Icon>
+									</div>
+								</div>
+								<vi-button v-if="!mainModel.isReadOnly" type="dashed" long  @click="doAddTimeSetting" class="add-more" style="width:832px;margin-top:5px">添加</vi-button>
+							</div>
+						</div >
+						<div class="peroidCon" v-if="frequencyModel.add.isShowMy  && !frequencyModel.add.isShowCommon">
+							<span style="position:absolute;left:0;top:0;padding-left: 40px;line-height: 63px;">{{frequencyModel.common.frequencyName}}</span>
+							<el-form-item   class="doMuchStyle" style="width:244px" >
+								<span class="requireTip" style="float: left;">间隔</span>
+								<span  style="float: left">
+									<iv-input v-if="!mainModel.isReadOnly" style="width:70px;margin: 0 10px;" placeholder="请输入" :value.sync="frequencyModel.planSetting.period"></iv-input>
+									<i-select v-if="!mainModel.isReadOnly" style="width:100px;" :model.sync="frequencyModel.planSetting.unit"  :list="mainModel.unitList" >
+										<i-option  v-for = "type in mainModel.unitList" :value="type.id">{{type.name}}</i-option>
+									</i-select>
+								</span>
+							</el-form-item>
+						</div>
+					</iv-row>
+				</div>
+			</el-form>
+		</div>
+	</div>
+
+
+
+	<div class="rel-info-panel">
+		<div class="rip-item rip-tableFirst" style="padding-bottom: 80px;">
+			<simple-card :show-content.sync="cardModel.taskDetailModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>任务明细</span></p>
+				<a slot="extra" @click.prevent="cardModel.taskDetailModel.showContent = !cardModel.taskDetailModel.showContent;">
+					<span v-if="cardModel.taskDetailModel.showContent"> <Icon type="arrow-up-b"></Icon>{{$t('bc.ria.packUp')}}</span>
+					<span v-else> <Icon type="arrow-down-b"></Icon>{{$t('bd.ria.open')}}</span>
+				</a>
+				<a slot="extra" @click="doAddGroup" v-show="this.mainModel.opType !== 'create' && mainModel.vo.disable == '0' && hasAuth('edit')"><Icon type="plus"></Icon>{{$t('bd.hal.grouping')}}</a>
+
+				<simple-card class="rip-item-sub" v-for="(index,tir) in groups">
+					<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+						<div class="left" style="width: 300px;">
+							<iv-input
+									@on-blur="doSaveGroupName(tir.checkTableId,tir.groupName,tir.groupOrderNo)"
+									:value.sync="tir.groupName"
+									:textonly="index!=isGroupNum">
+							</iv-input>
+						</div>
+
+						<div class="right" v-show="this.mainModel.opType !== 'create' && mainModel.vo.disable == '0' && hasAuth('edit')">
+
+							<iv-input
+									class="simple-card-input-box"
+									icon="ios-search"
+									@on-click="setFilterValue(tir._keyWord, index)"
+									@on-enter="setFilterValue(tir._keyWord, index)"
+									:value.sync="tir._keyWord"
+									style="width:200px;height: 27px;line-height: 28px;"
+									placeholder="请输入"
+									v-show="tir.showInput"
+							></iv-input>
+
+							<vi-button type="text" icon="ios-search" @click="toggleItemInput(tir, true)" v-show="!tir.showInput">搜索</vi-button>
+							<vi-button type="text" icon="power" @click="toggleItemInput(tir, false)" v-show="tir.showInput">折叠</vi-button>
+							<vi-button type="text" icon="plus" @click="doNewCheckItem(tir)">新增</vi-button>
+
+							<iv-dropdown trigger="click" placement="bottom-end">
+								<vi-button type="text" icon="more">更多</vi-button>
+								<iv-dropdown-menu slot="list">
+									<iv-dropdown-item  @click="doUpdateGroupName(index,tir.groupName, $event)">
+										<a href="javascript:;"  style="margin-right:5px;"><Icon type="edit"></Icon>编辑分组名称</a>
+									</iv-dropdown-item>
+
+									<iv-dropdown-item  @click="doMoveGroup('up',index)">
+										<a href="javascript:;"  style="margin-right:5px;"><Icon type="arrow-up-a"></Icon>上移</a>
+									</iv-dropdown-item>
+
+									<iv-dropdown-item  @click="doMoveGroup('down',index)">
+										<a href="javascript:;" ><Icon type="arrow-down-a"></Icon>下移</a>
+									</iv-dropdown-item>
+
+									<iv-dropdown-item  @click="doDeleteGroup(tir.checkTableId,tir.groupName,index)">
+										<a href="javascript:;" ><Icon type="trash-a"></Icon>{{$t("gb.common.del")}}</a>
+									</iv-dropdown-item>
+								</iv-dropdown-menu>
+							</iv-dropdown>
+						</div>
+					</div>
+
+					<vue-bootstrap-table
+							:columns="checkItemColumns"
+							:show-filter="false"
+							:show-column-picker="false"
+							:show-pager="true"
+							:values="tir.itemList | item-filter tir.keyWord"
+							@on-click-cell="doClickCell"
+							:show-empty-row="false"
+							:show-seq="true"
+					>
+					</vue-bootstrap-table>
+				</simple-card>
+			</simple-card>
+		</div>
+	</div>
+
+
+
+	<!--检查人-->
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.userCardModel.showContent">
+				<p slot="title"><i class="personPng"></i><span>{{$t('gb.common.inspectPerson')}}</span></p>
+				<a slot="extra" @click.prevent="cardModel.userCardModel.showContent = !cardModel.userCardModel.showContent;" >
+					<span v-if="cardModel.userCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t('bc.ria.packUp')}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t('bd.ria.open')}}</span>
+				</a>
+				<a slot="extra" v-show="mainModel.opType !== 'create'&& mainModel.vo.disable == 0 && hasAuth('edit')" @click.prevent="doAppend">
+					<span><Icon type="plus"></Icon>{{$t('bc.ria.append')}}</span>
+				</a>
+				<vue-bootstrap-table
+						:url="tableModel.userTableModel.url"
+						:columns="tableModel.userTableModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:lazy-load="true"
+						@on-del-row="doRemoveUsers"
+						v-ref:user-table
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+
+	<!--检查任务-->
+	<div class="rel-info-panel">
+		<div class="rip-item" style="padding-bottom: 50px;">
+			<simple-card :show-content.sync="cardModel.checkTaskCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.inspectTask')}}</span></p>
+				<a slot="extra" @click.prevent="cardModel.checkTaskCardModel.showContent = !cardModel.checkTaskCardModel.showContent;" >
+					<span v-if="cardModel.checkTaskCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t('bc.ria.packUp')}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t('bd.ria.open')}}</span>
+				</a>
+				<div class="taskContent">
+					<el-form v-if="inspectTaskModel.isShow && mainModel.isReadOnly" :model="mainModel" class="fip-content-item-form" >
+						<el-form-item :label="$t('gb.common.inspectPerson')" >
+							<i-select @on-change="doChooseUser" :list="inspectTaskModel.taskUsers" :model.sync="inspectTaskModel.taskUser" style="width: 211px;margin-bottom: 20px;line-height: 28px;font-size: 12px;">
+								<i-option   v-for="item in inspectTaskModel.taskUsers" :value="item.id">{{ item.name }}</i-option>
+							</i-select>
+						</el-form-item>
+						<!--<el-form-item :label="$t('gb.common.taskStatus')" >-->
+						<!--<i-select @on-change="doChangeStatus" :list="mainModel.typeList" :model.sync="inspectTaskModel.selectType" style="width: 211px;margin-bottom: 20px;line-height: 28px;font-size: 12px;">-->
+						<!--<i-option   v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>-->
+						<!--</i-select>-->
+						<!--</el-form-item>-->
+					</el-form>
+				</div>
+
+				<div class="rel-info-panel-content-tabs">
+					<div class="el-tabs" active-key="relTab" style="padding-bottom: 20px;">
+						<div class="el-tabs__header">
+							<div
+									@click="doTabClick(tab.id)"
+									class="el-tabs__item"
+									:class="{'is-active': tab.id === inspectTaskModel.selectType}"
+									v-for="tab in tabs">
+								<b>{{tab.name}}</b>
+							</div>
+						</div>
+						<div class="el-tabs__content" style="margin-top: 15px;">
+							<vue-bootstrap-table
+									v-show="inspectTaskModel.taskShow"
+									:url="tableModel.checkTaskTableModel.url"
+									:columns="tableModel.checkTaskTableModel.columns"
+									:show-empty-row="false"
+									:use-default-global-filter="false"
+									:lazy-load="true"
+									v-ref:checktask-table
+							>
+							</vue-bootstrap-table>
+							<vue-bootstrap-table
+									v-show="!inspectTaskModel.taskShow"
+									:url="tableModel.preCheckTaskTableModel.url"
+									:columns="tableModel.preCheckTaskTableModel.columns"
+									:show-empty-row="false"
+									:use-default-global-filter="false"
+									:lazy-load="true"
+									v-ref:pre-checktask-table
+							>
+							</vue-bootstrap-table>
+						</div>
+					</div>
+
+				</div>
+
+			</simple-card>
+		</div>
+	</div>
+</div>
+
+<!--检查人-->
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible"  @do-save="doSaveUsers"></user-select-modal>
+
+<!--查看委托记录-->
+<delegate-record-view
+		:visible.sync="delegateRecordModel.visible"
+		:group-id="delegateRecordModel.checkTaskGroupId"
+></delegate-record-view>
+
+<!--新建、修改检查项-->
+<check-item-form-modal
+		:visible.sync="formModel.checkItemFormModel.show"
+		@do-save="doSaveCheckItem"
+		@do-update="doUpdateCheckItem"
+		:query-url="formModel.checkItemFormModel.queryUrl"
+		v-ref:check-item-form-modal
+></check-item-form-modal>

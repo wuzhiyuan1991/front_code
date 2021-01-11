@@ -1,0 +1,90 @@
+
+<div class="detail-container">
+    <div class="few-info-panel pull-left">
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{$t("gb.common.detail")}}</span>
+        </div>
+        <div class="fip-content">
+            <el-tabs v-if="mainModel.showTabs" @tab-click="doTabs">
+                <el-tab-pane :label="$t('gb.common.detail')">
+                    <base-component :base-data="mainModel.vo"></base-component>
+                </el-tab-pane>
+                <!--<el-tab-pane v-for="(index,reform) in mainModel.vo.reforms" :label="'整改'+(index+1)">-->
+                    <!--<reforminfo-component :reform-id="reform.id"></reforminfo-component>-->
+                <!--</el-tab-pane>-->
+
+                <!--立即整改的整改详情-->
+                <el-tab-pane :label="$t('hat.hazt.detail')" v-if="'0' == mainModel.vo.reformType && reformModel.show">
+                    <reforminfo-component :reforms="mainModel.vo.reforms" :reform-type="mainModel.vo.reformType" :verify-date="mainModel.vo.verifyDate" :verifier-name="mainModel.vo.verifierName"></reforminfo-component>
+                </el-tab-pane>
+
+                <!--正常整改的整改详情-->
+                <el-tab-pane :label="$t('hat.hazt.detail')" v-if="'1' == mainModel.vo.reformType">
+                    <history-component :pool-id="mainModel.vo.id"></history-component>
+                </el-tab-pane>
+
+                <!--流程图-->
+                <el-tab-pane :label="$t('bc.hal.flowChart')" v-if="'1' == mainModel.vo.reformType">
+                    <pic-component :pool-id="mainModel.vo.id"></pic-component>
+                </el-tab-pane>
+                <el-tab-pane label="重大隐患档案" v-if="showMajorDangerTab">
+                    <simple-card class="fip-content-item">
+                        <p slot="title"><i class="basicPng"></i><span>评估报告书</span></p>
+                        <file-list-simple-card :remark="$t('gb.common.ReferenceMatery')" class="fip-content-sub-item" :data="fileModel.evaluationReport.data" :config="fileModel.evaluationReport.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-card>
+                    </simple-card>
+                    <simple-card class="fip-content-item">
+                        <p slot="title"><i class="basicPng"></i><span>整改方案</span></p>
+                        <file-list-simple-card :remark="$t('gb.common.ReferenceMatery')" class="fip-content-sub-item" :data="fileModel.reformProgram.data" :config="fileModel.reformProgram.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-card>
+                    </simple-card>
+                    <simple-card class="fip-content-item">
+                        <p slot="title"><i class="basicPng"></i><span>复查验收记录</span></p>
+                        <file-list-simple-card :remark="$t('gb.common.ReferenceMatery')" class="fip-content-sub-item" :data="fileModel.reviewAcceptanceRecords.data" :config="fileModel.reviewAcceptanceRecords.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-card>
+                    </simple-card>
+                    <simple-card class="fip-content-item">
+                        <p slot="title"><i class="basicPng"></i><span>事故隐患评估报告书</span></p>
+                        <file-list-simple-card :remark="$t('gb.common.ReferenceMatery')" class="fip-content-sub-item" :data="fileModel.riskAssessmenReport.data" :config="fileModel.riskAssessmenReport.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-card>
+                    </simple-card>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" @click="doClose" icon="close-round"  v-if="buttonShow.closeButton">{{$t("gb.common.close")}}</iv-button>
+        <iv-button type="ghost" @click="doEditPool" class="mp-header-item-btn" v-if="buttonShow.editButton && fromMyRecords==0" icon="edit">{{$t("gb.common.edition")}}</iv-button>
+        <iv-button type="ghost" @click="doSubmitData" icon="android-document" v-if="buttonShow.submitButton&& fromMyRecords==0">{{$t("gb.common.submit")}}</iv-button>
+
+        <iv-button type="ghost" @click="doProcessReform" icon="android-document" v-if="buttonShow.auditButton&& fromMyRecords==0">{{$t("gb.common.troubleDealing")}}</iv-button>
+
+        <iv-button type="ghost" @click="doReform" icon="android-document" v-if="buttonShow.reformButton && fromMyRecords==0">{{$t("hag.hazc.rectification")}}</iv-button>
+        <iv-button type="ghost" @click="doReformFail" icon="android-document" v-if="buttonShow.reformFailButton && fromMyRecords==0">{{$t("hag.hazc.recblocked")}}</iv-button>
+
+        <iv-button type="ghost" @click="doVerify" icon="android-document" v-if="buttonShow.verifyButton && fromMyRecords==0">验证</iv-button>
+
+        <iv-button type="ghost" @click="doDelegate" icon="android-document" v-if="buttonShow.delegateButton && fromMyRecords==0">委托</iv-button>
+
+        <iv-button type="ghost" @click="doEditInfo" icon="android-document" v-if="showDetailButton && hasAuth('editInfo')">编辑</iv-button>
+
+        <iv-button type="ghost" @click="doDelete" icon="trash-a" v-if="buttonShow.cancelButton && fromMyRecords==0">{{$t("gb.common.del")}}</iv-button>
+
+
+    </div>
+</div>
+
+<edit-info :visible.sync="mainModel.editInfoModel.show" v-ref:edit-info></edit-info>
+<!--
+<Modal :visible.sync="processReform.show" :title="processReform.title" @on-cancel="doCloseProcessReform" footer-hide>
+    <pool-treatment-component :form-type="processReform.formType" :pool-id="processReform.poolId"></pool-treatment-component>
+</Modal>
+<Modal :visible.sync="reformSuccess.show" :title="reformSuccess.title" @on-cancel="doCloseReform" footer-hide>
+    <reform-success></reform-success>
+</Modal>
+<Modal :visible.sync="reformFail.show" :title="reformFail.title" footer-hide>
+    <reform-failure :pool-id="reformFail.id" @on-success="doReformFailed"></reform-failure>
+</Modal>
+<Modal :visible.sync="verifyModel.show" :title="verifyModel.title" @on-cancel="doClose" footer-hide>
+    <verify-component></verify-component>
+</Modal>
+<Modal :visible.sync="delegateModel.show" :title="delegateModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+    <pool-delegate-component :pool-id="delegateModel.poolId"></pool-delegate-component>
+</Modal>-->

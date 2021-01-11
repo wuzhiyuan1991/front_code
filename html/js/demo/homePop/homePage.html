@@ -1,0 +1,18 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<ul class="pageList">
+			<iv-radio-group :model.sync="animal">
+			<li><img src="images/contacts.png"><p>通讯录</p><span class="radio"><iv-radio value=""></iv-radio></span></li>
+			<li><img src="images/noise.png"><p>噪音检测</p><span class="radio"><iv-radio value=""></iv-radio></span></li>
+			<li><img src="images/contacts.png"><p>通讯录</p><span class="radio"><iv-radio value=""></iv-radio></span></li>
+			<li><img src="images/noise.png"><p>噪音检测</p><span class="radio"><iv-radio value=""></iv-radio></span></li>
+			<li><img src="images/contacts.png"><p>通讯录</p><span class="radio"><iv-radio value=""></iv-radio></span></li>
+			<li><img src="images/noise.png"><p>噪音检测</p><span class="radio"><iv-radio value=""></iv-radio></span></li>
+			</iv-radio-group>
+		</ul>
+	</div>
+	<div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">确定</vi-button>
+        <vi-button type="primary" @click="doCancel" class="pull-right">取消</vi-button>
+	</div>
+</div>

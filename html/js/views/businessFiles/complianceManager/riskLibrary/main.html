@@ -1,0 +1,229 @@
+<div class="tab-container">
+    <div class="lr-layout" style="padding: 0;margin-right:10px ;">
+        <div class="lr-layout-l legal-regulation-type-box" class="lr-layout-l legal-regulation-type-box"
+            style="width: 170px;">
+            <div style="display:flex;justify-content:left;border-bottom: rgb(51, 166, 255) solid 2px;">
+                <Icon title="编辑" type="edit" @click="doUpdateType" style="margin:20px;font-size: 18px;cursor: pointer;">
+                </Icon>
+                <Icon title="创建" type="plus-round" @click="doCreateType"
+                    style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                <Icon title='删除' type="trash-a" @click="doDeleteType"
+                    style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                <!-- <Icon title='导出' type="android-download"  @click="doExportType"
+                    style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                <Icon title='导入' type="android-upload" @click="doImportType"
+                    style="margin:20px;font-size: 18px;cursor: pointer;"></Icon> -->
+            </div>
+            <iv-tree style="overflow-y: auto;" id-attr="id" pid-attr="parentId" display-attr="name" :model="legalTypes"
+                :selected-datas.sync="treeSelectData" :show-checkbox="false" :single-select="true"
+                :trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick" :show-icon-plus="true"></iv-tree>
+        </div>
+        <div class="lr-layout-r" style="padding: 0">
+            <div class="main-panel">
+                <div class="mp-header formTitle">
+                    <iv-row $main-header-row-attr-default-display>
+
+                        <iv-col span="23" style="display: flex;line-height: 30px;">
+                            <span class="libraryspan">风险点</span>
+                            <div style="width:160px;margin-right:15px;margin-left:10px;">
+                                <iv-input :value.sync="riskPoint"></iv-input>
+
+                            </div>
+                            <span class="libraryspan">危害因素</span>
+                            <div style="width:160px;margin-right:15px;margin-left:10px;">
+                                <iv-input :value.sync="hazardFactorType"></iv-input>
+                            </div>
+                            <span class="libraryspan">风险场景</span>
+                            <div style="width:160px;margin-right:15px;margin-left:10px;">
+                                <iv-input :value.sync="scene"></iv-input>
+                            </div>
+                            <span class="libraryspan">风险等级</span>
+                            <div style="width:160px;margin-right:15px;margin-left:10px;">
+                                <iv-input :value.sync="riskLevelScene"></iv-input>
+                            </div>
+                            <iv-col span="5">
+                                <iv-button @click="doSearch">查询</iv-button>
+                                <iv-button @click="doClean">
+                                    <Icon title="清空查询条件" style="font-size: 15px;vertical-align: middle;"
+                                        type="close"></Icon></Icon>
+                                </iv-button>
+                            </iv-col>
+                            <!-- <all-classification $main-header-classification-attr-default></all-classification>
+                            <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group> -->
+                        </iv-col>
+                        <iv-col span="1">
+                            <div class="prelative addButton pull-right">
+                                <!-- <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button> -->
+
+                                <iv-dropdown trigger="click" placement="bottom-end">
+                                    <vi-button type="ghost" icon="chevron-down"></vi-button>
+                                    <iv-dropdown-menu slot="list">
+                                        <!--<iv-dropdown-item>-->
+                                        <!--$main-header-fileupload-tag-excel-->
+                                        <!--</iv-dropdown-item>-->
+
+                                        <iv-dropdown-item>
+                                            <div v-if="hasAuth('import')" class="uploadAport" @click="doImport">
+                                                <a>{{$t("gb.common.import")}}</a></div>
+                                        </iv-dropdown-item>
+                                        <iv-dropdown-item v-if="hasAuth('export')">
+                                            $main-header-div-tag-download-excel
+                                        </iv-dropdown-item>
+                                        <iv-dropdown-item>
+                                            <div v-if="hasAuth('deleteType')" class="uploadAport" @click="doDelete">
+                                                <a>删除</a></div>
+                                        </iv-dropdown-item>
+                                        <!-- $main-header-dropdown-item-tag-common-display -->
+                                    </iv-dropdown-menu>
+                                </iv-dropdown>
+                            </div>
+                            <!-- $main-header-refresh-button -->
+                        </iv-col>
+                    </iv-row>
+                    <!-- <iv-row $main-header-row-attr-default-hidden>
+                        <iv-col span="24">
+                            <vi-button type="text" class="mp-header-item-btn">
+                                {{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                            </vi-button>
+                            <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doUpdate">
+                                {{$t("gb.common.edition")}}
+                            </vi-button>
+                            <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn" @click="doAdd4Copy">复制
+                            </vi-button>
+                            <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn" @click="doEnableDisable">
+                                {{$t("gb.common.EnableDisable")}}
+                            </vi-button>
+                            <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn" @click="doDelete">
+                                {{$t("gb.common.del")}}
+                            </vi-button>
+                        </iv-col>
+                    </iv-row> -->
+                </div>
+                <div class="mp-content ">
+                    <div class="lr-layout" style="padding: 10px 0 0 0 ;">
+                        <div class="lr-layout-l" style="width: 150px;margin-right: 10px;">
+                            <div class="leftPointTitle">风险点</div>
+                            <ul class="leftPointUl">
+
+                                <li class="leftPointLi" :class="{'leftPointLi-active': index === checkedPointIndex}"
+                                    v-for="(index, item) in pointlist" @click="doPointSelect(item, index)"
+                                    :title="item.riskPoint">{{item.riskPoint}}</li>
+                            </ul>
+                        </div>
+                        <div class="lr-layout-r" style="padding: 0px;background-color: #fff;" id="riskLibrary">
+                            <vue-bootstrap-table :values="tableModel.values"
+                                :selected-datas.sync="tableModel.selectedDatas" :columns="tableModel.columns"
+                                :show-empty-row="false" :page-size-opts="[999]" :code="moduleCode" :resizeable="true"
+                                :lazy-load='true' :show-scroll="true" @on-click-cell="doTableCellClick"
+                                :show-pager='false' show-loading v-ref:main-table></vue-bootstrap-table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<type-form-modal :visible.sync="typeForm.visible" :list="legalTypes" :spare-id="'main'" @do-tree-save="doSaveType">
+</type-form-modal>
+<!-- Legacy模式 -->
+<!--
+<icmriskassessment-form-modal
+		:visible.sync="formModel.icmRiskAssessmentFormModel.show"
+		@do-save="doSaveIcmRiskAssessment"
+		v-ref:icmriskassessment-form-modal>
+</icmriskassessment-form-modal>
+-->
+
+<style>
+    .riskPointType,.severity,.possibility,.riskLevelScene{
+            word-break: normal;
+    white-space: normal; 
+    }
+    #riskLibrary .selected-row {
+        background-color: #fff !important;
+    }
+
+    #riskLibrary table.vue-table thead>tr>th {
+        border: 1px solid #ccc;
+    }
+
+    #riskLibrary .table-scroll-main-body {
+        background-color: #fff;
+    }
+
+    #riskLibrary tbody td {
+        border: 1px solid #ccc
+    }
+
+    .libraryspan {
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .leftPointTitle {
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+        font-weight: 600;
+        /* padding-bottom: 10px; */
+        /* margin-bottom: 10px; */
+        /* margin-top: 10px; */
+        border-bottom: 1px solid #ddd;
+        padding: 5px;
+        /* height: 80px;
+        /* line-height: 80px; */
+        background: #ddd;
+    }
+
+    .leftPointLi-active {
+        background: #56b5ff !important;
+        color: #fff;
+        text-align: center;
+        display: block;
+        /* width: 160px; */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 5px;
+    }
+
+    .leftPointLi {
+        text-align: center;
+        display: block;
+        /* width: 160px; */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 5px;
+        text-align: left;
+        padding-left: 10px;
+    }
+
+    .leftPointLi:hover {
+        cursor: pointer;
+        /*color:#fff;*/
+        background: #EEEEEE;
+    }
+
+    .leftPoint {
+        position: absolute;
+        left: 0;
+        top: 0;
+        border: 1px solid #ddd;
+        width: 180px;
+        max-height: 700px;
+        text-align: center;
+        height: 700px;
+        background: #fff;
+        z-index: 5;
+    }
+</style>
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+<import-progress max-file-size='30mb' :update-drection="'依据Excel文件中的分类来更新系统中存在的数据'" @do-export-excel="doExportExcel" :url="uploadModel.url"
+    :templete-url="templete.url" :is-show-import-mode="true" :import-model.sync="importProgress.show"></import-progress>

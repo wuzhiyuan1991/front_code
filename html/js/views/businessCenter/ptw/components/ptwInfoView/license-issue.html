@@ -1,0 +1,290 @@
+<simple-card style="width:750px;">
+    <!--<p slot="title">许可签发{{licenseList.length}}</p>-->
+    <p slot="title" class="ptw-title">许可签发 </p>
+    <div >
+        <div class="ml10 my-ivu-timeline-item-content">
+            <div style="display: flex;justify-content: flex-end;">
+                <div style="text-align: right;color:#33a6ff;cursor: pointer;padding-right: 10px;" @click='showAuthodModel'>委托明细</div>
+                <div style="text-align: right;color:#33a6ff;cursor: pointer;padding-right: 10px;" @click='changeAllStatus'>{{open?'全部展开':"全部折叠"}}</div>
+            </div>
+               <div style="padding:14px 0 0 14px;">
+                <timeline v-if="signRolesHistories.length>0">
+                    <div  style="position: relative;top:-10px;">历史签发记录</div>
+                    <timeline-item v-for="(index,items) of signRolesHistories">
+                        <span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{items.signStep}}</span>
+                        <!--<span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{(index + 1)}}</span>-->
+
+                        <div  @click="changeStatus(items)" style="cursor: pointer;" class="flex-layout-between ptwfill-license-rolebox">
+                            <div>
+                                <div style="display: flex;align-items: center;">
+                                    <div class="flex-noshrink" :title="items.signCatalog.name" style="white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                word-break: break-all;
+                                width:160px;
+                                ">{{items.signCatalog.name}}</div>
+                                    <Icon style="font-size: 14px;" v-if="items.attr3 == '1'" type="android-checkbox-outline">需要会签</Icon>
+                                    <Icon style="font-size: 14px;" v-else type="android-checkbox-outline-blank">需要会签</Icon>
+                                </div>
+                                <div style="width:250px;">
+                                    <!--<span v-if="items.signFile && items.signFile.length>0">{{items.signFile[0].createDate}}</span>-->
+                                    <!--{{items.attr1}}-->
+                                </div>
+                            </div>
+                            <div>
+                                <Icon style="cursor: pointer;width:auto;margin-right:10px;line-height: 22px;float:right;" :type="items.isShow ? 'chevron-up' : 'chevron-down'" ></Icon>
+                                <div style="width:auto;margin-right:15px;float:right;">
+                                    <span class="link-ele" v-if="item.videoCallRecords" @click.stop="showVedioTable(items)" style="margin-right: 10px;"><Icon type="android-checkbox-outline"></Icon>已发起视频核验</span>
+                                    <span  v-show="items.signResult=='1' || items.signResult=='2'"  style="margin-right:10px">{{ items.attr1 }}</span>
+                                    <span v-html="getStatus(items.signResult)"></span></div>
+                            </div>
+                        </div>
+                        <template v-if="items.isShow">
+                            <div class="flex-h-end" v-for="item in getRoleLists(items)">
+                                <div class="detail-timeline-item">
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <!--<div class="form-item-label color-item-999" style="align-items: baseline;">{{item.signCatalog.name}}</div>-->
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">人员</div>
+                                        <div  class="el-form-item mr20" style="width:100%;">
+                                            <span v-for="(index,user) of item.users">{{user.name}} <span v-show="index<item.users.length-1">，</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none" v-show="item.signCatalog.enableCommitment == '1'">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">承诺</div>
+                                        <div  class="el-form-item mr20"  style="width:100%;">
+                                        <span v-if="item.signCatalog">
+                                            {{item.signCatalog.content}}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">意见</div>
+                                        <div  class="el-form-item mr20" style="width:100%;">
+                                            {{item.signOpinion}}
+                                        </div>
+                                    </div>
+
+                                    <!--------  控制措施  ------->
+                                    <div v-if="item.enableCtrlMeasureVerification=='1'" class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">控制措施</div>
+                                        <div  class="el-form-item mr20" style="width:100%;">
+                                            <div class="ptw-border ul-style-none">
+                                                <ul class="ul-inside">
+                                                    <li v-for="opt of item.workStuffs" style="display: flex;align-items: center;" class="lite-box-21" >
+                                                        <!--<input style="margin-top:3px;margin-right:2px;" type="checkbox" disabled :checked="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" class="width-auto" />-->
+                                                        <Icon v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" type="android-checkbox-outline"></Icon>
+                                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                                        <span style="margin-left:5px;">{{getItemName(opt)}}</span>
+                                                        <image-view image-style="height:20px;width:auto;margin-left:5px;margin-bottom:0;" :images="getFiles(opt.cloudFiles, 'PTW18')" show-close=false></image-view>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">图片</div>
+                                        <div  class="el-form-item mr20">
+                                            <image-view :images="getFiles(item.cloudFiles,'PTW26')" :show-close="false"></image-view>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">视频</div>
+                                        <div  class="el-form-item mr20" >
+                                            <lite-box  v-for="video in getFiles(item.cloudFiles, 'PTW28')" :show-close="false" @click="doPlay(video)">
+                                                <img :src="convertPath(video.id)">
+                                            </lite-box>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">签名</div>
+                                        <div  class="el-form-item mr20 lite-box-21" style="width:100%;height: 30px;">
+                                            <image-view image-style="width:auto;height:20px;" :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false"></image-view>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                    </timeline-item>
+                </timeline>
+                <br v-if="signRolesHistories.length>0">
+                <timeline>
+                    <div style="position: relative;top:-10px;">当前签发记录</div>
+                    <timeline-item v-for="(index,items) of signRoles">
+                        <span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{items.signStep}}</span>
+                        <!--<span class="ptw-timeline-serialnumber" style="width:1.8em;height:1.8em;" slot="dot">{{(index + 1)}}</span>-->
+
+                        <div  @click="changeStatus(items)" style="cursor: pointer;" class="flex-layout-between ptwfill-license-rolebox">
+                            <div>
+                                <div style="display: flex;align-items: center;">
+                                    <div class="flex-noshrink" :title="items.signCatalog.name" style="white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                                word-break: break-all;
+                                width:160px;
+                                ">{{items.signCatalog.name}}</div>
+                                    <Icon style="font-size: 14px;" v-if="items.attr3 == '1'" type="android-checkbox-outline">需要会签</Icon>
+                                    <Icon style="font-size: 14px;" v-else type="android-checkbox-outline-blank">需要会签</Icon>
+                                </div>
+                                <div style="width:250px;">
+                                    <!--<span v-if="items.signFile && items.signFile.length>0">{{items.signFile[0].createDate}}</span>-->
+                                    <!--{{items.attr1}}-->
+                                </div>
+                            </div>
+                            <div>
+                                <Icon style="cursor: pointer;width:auto;margin-right:10px;line-height: 22px;float:right;" :type="items.isShow ? 'chevron-up' : 'chevron-down'" ></Icon>
+                                <div style="width:auto;margin-right:15px;float:right;">
+                                    <span class="link-ele" v-if="item.videoCallRecords" @click.stop="showVedioTable(items)" style="margin-right: 10px;"><Icon type="android-checkbox-outline"></Icon>已发起视频核验</span>
+                                    <span  v-show="items.signResult=='1' || items.signResult=='2'"  style="margin-right:10px">{{items.attr1 }}</span>
+                                    <span v-html="getStatus(items.signResult)"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <template v-if="items.isShow">
+                            <div class="flex-h-end" v-for="item in getRoleLists(items)">
+                                <div class="detail-timeline-item">
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <!--<div class="form-item-label color-item-999" style="align-items: baseline;">{{item.signCatalog.name}}</div>-->
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">人员</div>
+                                        <div  class="el-form-item mr20" style="width:100%;">
+                                            <span v-for="(index,user) of item.users">{{user.name}} <span v-show="index<item.users.length-1">，</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none" v-show="item.signCatalog.enableCommitment == '1'">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">承诺</div>
+                                        <div  class="el-form-item mr20"  style="width:100%;">
+                                        <span v-if="item.signCatalog">
+                                            {{item.signCatalog.content}}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">意见</div>
+                                        <div  class="el-form-item mr20" style="width:100%;">
+                                            {{item.signOpinion}}
+                                        </div>
+                                    </div>
+
+                                    <!--------  控制措施  ------->
+                                    <div v-if="item.enableCtrlMeasureVerification=='1'" class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">控制措施</div>
+                                        <div  class="el-form-item mr20" style="width:100%;">
+                                            <div class="ptw-border ul-style-none">
+                                                <ul class="ul-inside">
+                                                    <li v-for="opt of item.workStuffs" style="display: flex;align-items: center;" class="lite-box-21" >
+                                                        <!--<input style="margin-top:3px;margin-right:2px;" type="checkbox" disabled :checked="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" class="width-auto" />-->
+                                                        <Icon v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" type="android-checkbox-outline"></Icon>
+                                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                                        <span style="margin-left:5px;">{{getItemName(opt)}}</span>
+                                                        <image-view image-style="height:20px;width:auto;margin-left:5px;margin-bottom:0;" :images="getFiles(opt.cloudFiles, 'PTW18')" show-close=false></image-view>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">图片</div>
+                                        <div  class="el-form-item mr20">
+                                            <image-view :images="getFiles(item.cloudFiles,'PTW26')" :show-close="false"></image-view>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">视频</div>
+                                        <div  class="el-form-item mr20" >
+                                            <lite-box  v-for="video in getFiles(item.cloudFiles, 'PTW28')" :show-close="false" @click="doPlay(video)">
+                                                <img :src="convertPath(video.id)">
+                                            </lite-box>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout  mb15 ul-style-none">
+                                        <div class="form-item-label color-item-999 form-item-label-min-60" style="align-items: baseline;">签名</div>
+                                        <div  class="el-form-item mr20 lite-box-21" style="width:100%;height: 30px;">
+                                            <image-view image-style="width:auto;height:20px;" :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false"></image-view>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                    </timeline-item>
+                </timeline>
+            </div>
+        </div>
+    </div>
+</simple-card>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal  title="视频核验记录" v-if="vedioModel.show" id="modalV"  :visible.sync="vedioModel.show" width="700" footer-hide>
+    <vue-bootstrap-table
+    style="background-color: white;padding:10px;max-height: 500px;"
+    :columns="vedioModel.columns"
+    :show-pager="true"
+    :reset-trigger-flag="vedioModel.resetTriggerFlag"
+    :values="vedioModel.data"
+    lazy-load
+    :resizeable="true"
+    :show-seq='true'
+    :show-scroll='true'
+    v-ref:table
+    >
+    </vue-bootstrap-table>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="vedioModel.show=false" class="pull-right">退出</vi-button>
+    </div>
+</Modal>
+
+
+<Modal  title="委托明细" :visible.sync="authodModel.show" width="900" footer-hide>
+    <vue-bootstrap-table
+            style="background-color: white;padding:10px;max-height: 500px;"
+            :columns="authodModel.columns"
+            :show-pager="true"
+            :values="vo.ptwDelegateRecords || []"
+            lazy-load
+            show-empty-row=false
+            :resizeable="true"
+            :show-seq='true'
+            :show-scroll='true'
+            v-ref:table
+    >
+    </vue-bootstrap-table>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="authodModel.show=false" class="pull-right">关闭</vi-button>
+    </div>
+</Modal>
+
+<style>
+    .detail-timeline-item{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+        margin-bottom: 10px;
+        min-height: 100px;
+        background-color: #fff;
+        padding: 10px 20px 0px 10px;
+        background-size: 80px 60px;
+        background-repeat: no-repeat;
+        background-position: 95% 5px;
+        border: 1px solid #eee;
+        border-radius: 3px;
+
+        width:80%;margin-right:5px;
+    }
+   #modalV  table.vue-table thead > tr > th:first-child{
+        max-width: 30px !important;
+        padding: 0;
+        text-align: center;
+    }
+    #modalV  .table tbody tr td:first-child{
+        max-width: 30px !important;
+        padding: 0;
+        text-align: center;
+    }
+    .my-ivu-timeline-item-content .ivu-timeline-item-content{
+        padding: 1px 1px 0px 24px;
+        font-size: 14px;
+        position: relative;
+         top: 0px;
+    }
+</style>
+

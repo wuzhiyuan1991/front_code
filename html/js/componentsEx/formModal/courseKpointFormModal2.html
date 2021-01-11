@@ -1,0 +1,253 @@
+<style>
+	.uploadify{
+		position: absolute;
+		right:0;
+		top:0;
+		margin-bottom: 0;
+		width: 55px !important;
+	}
+	object {
+		position: absolute;
+		left: 0;
+	}
+	.uploadify-button {
+		background: #fff none repeat scroll 0 0;
+		cursor: pointer;
+		border: 1px solid #d7dde4;
+		border-radius: 0;
+		color: #666;
+		height: 30px;
+		line-height: 30px;
+		margin-top: 1px;
+		width: 55px !important;
+		text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+	}
+	.uploadify:hover .uploadify-button{
+		color:#000;
+		background: #e2e2e2;
+	}
+	.uploadify-queue {
+		margin-bottom: 0;
+		margin-top: 5px;
+		display: flex;
+	}
+	.uploadify-queue.border {
+		border: 1px solid #ddd;
+	}
+	.uploadify-queue-item {
+		margin-top: 0;
+		flex: 1;
+	}
+	.video-upload-button {
+		background: #fff;
+		border: none;
+		width: 60px;
+	}
+	.video-upload-button:hover {
+		/*background-color: #e2e2e2;*/
+	}
+	.video-text {
+		width: 200px;
+		background-color: #fff;
+		padding: 0 5px;
+		overflow: hidden;
+		white-space: nowrap;
+		font-size: 12px;
+		margin-right: 5px;
+	 	text-overflow: ellipsis;
+	}
+	.video-text .f-name-input {
+		cursor: pointer;
+		border: 1px dashed #cfcfcf;
+		flex: 1;
+		padding: 0 20px 0 5px;
+	}
+	.is-error .video-text .f-name-input {
+		border: solid 1px #D90000;
+	}
+	.video-preview-box {
+		display: flex;
+		margin-top: 5px;
+	}
+	.video-preview-button {
+		background-color: #fff;
+		border-radius: 0;
+	}
+	.video-preview-button span{
+		font-weight: bold;
+	}
+	.video-preview-button:hover {
+		color:#000;
+		background: #e2e2e2;
+		border-color: #e1e1e1;
+	}
+	.doc-upload-box {
+		width: 200px;
+		height: 32px;
+		background-color: #fff;
+		padding: 0 5px;
+		font-size: 12px;
+		margin-right: 4px;
+		display: flex;
+		flex-direction: column;
+	}
+	.doc-upload-box .f-text-n {
+		height: 24px;
+		line-height: 24px;
+		display: flex;
+		align-items: center;
+	}
+	.doc-upload-box .sw-upload-progress-outer {
+		height:4px;
+		position: relative;
+		background-color: #ddd;
+	}
+</style>
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<poptip placement="right" v-show="mainModel.vo.videoModel.showVideoUploader">
+				<div style="color: blue;margin-bottom: 8px;cursor: pointer;">
+					<Icon type="help-circled" style="font-size: 18px;color: #f00;position: relative;top: 2px;"></Icon>
+					<span style="margin-left: 5px;">课件上传说明</span>
+				</div>
+				<div slot="content">
+					<p>1，视频文件支持MP4，AVI，MWV，MOV，FLV，MKV，RMVB格式，限制文件大小为500MB；</p>
+					<p>2，音频文件支持MP3，限制文件大小为20MB；</p>
+					<p>3，图片文件支持PNG，JPG，BMP，限制文件大小为20MB；</p>
+					<p>4，Word文件支持DOCX，WORD，限制文件大小为20MB；</p>
+					<p>5，Excel文件支持XLS，XLSX，限制文件大小为20MB；</p>
+					<p>6，PPT文件支持PPT，PPTX，限制文件大小为20MB；</p>
+					<p>7，PDF文件支持PDF，限制文件大小为20MB；</p>
+					<p>上传后文件需审核完才能播放；</p>
+					<p>仅供参考：上传500M视频，审核时间大约为10分钟；</p>
+				</div>
+			</poptip>
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="position: relative;">
+				<el-form-item v-if="mainModel.opType == 'update'" label="编码" prop="code">
+					<iv-input :value.sync="mainModel.vo.code"  textonly></iv-input>
+				</el-form-item>
+				<el-form-item v-if="!mainModel.vo.videoModel.showVideoUploader" label="目录名称" prop="name">
+					<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="mainModel.vo.videoModel.showVideoUploader" label="章节名称" prop="chapterName">
+					<iv-input :value.sync="mainModel.vo.chapterName" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<div v-show="mainModel.vo.videoModel.showVideoUploader">
+					<el-form-item  label="课件类型" prop="type"  class="small-info-box">
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.fileType" :list="getDataDicList('courseware_type')" @on-select="doFileTypeChange">
+							<i-option v-for="item in getDataDicList('courseware_type')" :value="item.id">{{item.value}}</i-option>
+						</i-select>
+						<span v-else>{{getDataDic('paper_type', mainModel.vo.type)}}</span>
+					</el-form-item>
+					<!--word、excel、ppt、pdf、图片上传-->
+                    <el-form-item v-if="mainModel.vo.fileType != 1" label="课件" prop="cloudFile.id">
+						<!--<iv-input v-show="courseIdUrl" :value.sync="courseIdUrl" disabled style="margin-bottom: 10px;"></iv-input>-->
+						<!--<a href="javascript:void(0);" v-show="courseIdUrl" @click="doPreview">{{courseIdUrl}}</a>-->
+						<div class="video-preview-box">
+							<div class="video-text" style="border-radius: 6px;padding: 0;line-height: 28px;color: blue;position: relative;">
+								<!--<div @click="doPreview" style="cursor:pointer;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;flex: 1;">{{courseIdUrl}}</div>-->
+								<input type="text" @click="doPreview" v-model="courseIdUrl" readonly class="f-name-input">
+								<Icon v-show="courseIdUrl" type="close-circled" @click.stop="doClearFile" style="padding-top: 7px;font-size: 16px;color: red;cursor: pointer;position: absolute;top: 0;right: 0;height: 100%;width: 20px;text-align: center;"></Icon>
+							</div>
+							<vue-file-upload
+									custom-style
+									:events="coursewareModel.events"
+									:params="coursewareModel.params"
+									:filters="coursewareModel.filters"
+									:file-ext.sync="coursewareModel.fileExt"
+									@on-error-upload="onUploadError"
+									@on-success-upload="doUploadCourseware"
+									@on-before-upload="onUploadBefore"
+									@on-upload-complete="onUploadComplete"
+									@on-file-removed="onFileRemoved"
+									@on-upload="onFileAdded"
+									:auto-upload="false"
+									style="height: 100%; width: 55px;"
+									v-ref:uploader
+							>
+								<div class="sw-upload-progress">
+									<span>添加</span>
+								</div>
+							</vue-file-upload>
+						</div>
+						<div v-show="addedFileName" class="video-preview-box" style="margin-top: 10px;">
+							<div class="doc-upload-box">
+								<div class="f-text-n">
+									<div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;flex: 1;">{{addedFileName}}</div>
+									<Icon type="close" @click="doRemoveFileFromQueue" style="cursor: pointer;"></Icon>
+								</div>
+								<div class="sw-upload-progress-outer">
+									<div class="sw-upload-progress-inner" v-show="isUploading" :style="progressStyle"></div>
+								</div>
+							</div>
+							<iv-button @click="doStartUpload">上传</iv-button>
+						</div>
+                    </el-form-item>
+
+					<!--视频上传-->
+					<el-form-item id="video-upload-box" v-show="mainModel.vo.fileType == 1" label="课件" prop="videoModel">
+						<div>
+							<i-select :model.sync="videoType" :list="videoTypeList" :style="selectStyle">
+								<i-option v-for="item in videoTypeList" :value="item.id">{{item.label}}</i-option>
+							</i-select>
+							<div v-show="videoType === '1'">
+								<input type="button" id="polyvFileUpLoad" value="上传" />
+							</div>
+							<div id="videoInfo" v-show="videoType === '1'"></div>
+
+							<!--本地上传-->
+							<div v-show="mainModel.vo.videoUrl && videoType === '1'" class="video-preview-box">
+								<div class="video-text" style="line-height: 28px;color: blue;display: flex;align-items: center;">
+									<div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;flex: 1;">{{mainModel.vo.videoUrl}}</div>
+									<Icon v-show="mainModel.vo.videoUrl" type="close-circled" @click="doClearFile" style="font-size: 16px;color: red;cursor: pointer;"></Icon>
+								</div>
+								<iv-button @click="doPreview" class="video-preview-button">预览</iv-button>
+							</div>
+
+							<!--保利威视频引用-->
+							<div v-show="videoType === '2'" class="video-preview-box">
+								<div class="video-text" style="border:1px solid #d7dde4;line-height: 28px;color: blue;display: flex;align-items: center;">
+									<input type="text" style="border:none; width: 200px;margin-right: 4px;border-radius: 0;" class="ivu-input" placeholder="请上传视频或输入保利威视视频vid" v-model="mainModel.vo.videoUrl">
+									<Icon v-show="mainModel.vo.videoUrl" type="close-circled" @click="doClearFile" style="font-size: 16px;color: red;cursor: pointer;"></Icon>
+								</div>
+								<iv-button @click="doPreview" class="video-preview-button">预览</iv-button>
+							</div>
+						</div>
+					</el-form-item>
+
+					<!--视频上传-->
+					<!--<el-form-item v-show="mainModel.vo.fileType == 1" label="课件" prop="videoModel">-->
+						<!--<div  v-if="isCanPlayFlash">-->
+							<!--<input type="text" style="background-color: #fff;padding: 0 7px;border: 1px solid #d7dde4;border-radius: 6px;cursor: text;" placeholder="请上传视频或输入保利威视视频vid" v-model="mainModel.vo.videoUrl" >-->
+							<!--<input type="file"  value="Filedata" id="polyvFileUpLoad">-->
+							<!--<input type="button" @click="doUpload()" value="{{$t('gb.comnon.upload')}}" style="background: #fff;border: 1px solid #d7dde4;border-radius: 6px;">-->
+							<!--</div>-->
+						<!--<object v-if="!isCanPlayFlash" id="auto_gen_2" style="outline:none;width: 260px;height:160px;" data="none.swf"></object>-->
+					<!--</el-form-item>-->
+
+				</div>
+				<!--视频预览按钮-->
+				<!--<iv-button  v-show="mainModel.vo.fileType == 1 && mainModel.vo.videoUrl" style="position: absolute;top: 132px;right: -60px;">预览</iv-button>-->
+
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+
+	<vue-file-upload
+			:filters="videoUploadModel.filters"
+			:multi-selection="false"
+			:params="videoUploadModel.params"
+			:auto-upload="false"
+			@on-upload="initUploader"
+			@on-before-upload="doUploadBefore"
+			@on-success-upload="doUploadSuccess"
+			@on-upload-complete="onUploadComplete"
+			style="display: none;"
+			v-ref:uploader>
+	</vue-file-upload>
+
+</Modal>

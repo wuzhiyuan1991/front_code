@@ -1,0 +1,146 @@
+<div class="bip-content simple-card-head-padding-0" >
+<!--<div style="height: 40px;">-->
+    <!--&lt;!&ndash;<div style="margin-top: 10px;margin-left: 38px;float:none;" class="bip-header-btn-group">&ndash;&gt;-->
+        <!--&lt;!&ndash;<iv-button v-if=" mainModel.isReadOnly" type="ghost" @click="doItemEdit" style="border: 1px solid #aacd03;" >编辑</iv-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;<iv-button v-if=" !mainModel.isReadOnly" type="ghost" @click="doSave" style="border: 1px solid #aacd03;" >保存</iv-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;<iv-button v-if=" !mainModel.isReadOnly" type="ghost" @click="doCancelEdit" style="border: 1px solid #aacd03;" >取消</iv-button>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+<!--</div>-->
+    <simple-card >
+        <p slot="title"><i class="basicPng"></i><span style="color:#666;font-size:16px;">基本信息</span></p>
+<el-form class="bip-content-form exerAssementTask" :model="mainModel.vo" is-label-vertical
+         :rules="!mainModel.isReadOnly && mainModel.rules" v-ref:ruleform>
+    <iv-row class="bip-content-item " style="padding-top:0;">
+        <el-form-item label="演练时间" prop="exerciseDate" class="small-info-box" >
+            <date-picker v-if="!mainModel.isReadOnly"  format="yyyy-MM-dd HH:mm:ss" type="datetime" style="width:260px;" :selected-date.sync="mainModel.vo.exerciseDate" clearable></date-picker>
+            <!--<span v-else>{{getTime(mainModel.vo.exerciseDate)}}</span>-->
+            <span style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;" v-if="mainModel.isReadOnly">{{mainModel.vo.exerciseDate}}</span>
+        </el-form-item>
+
+        <el-form-item label="评估人" prop="estimator" class="small-info-box" >
+            <iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.estimator"  :textonly="mainModel.isReadOnly"></iv-input>
+            <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;" v-if="mainModel.isReadOnly">{{mainModel.vo.estimator}}</span>
+        </el-form-item>
+    </iv-row>
+
+    <iv-row class="bip-content-item width1100">
+        <el-form-item label="评价项目" prop="subjects" class="small-info-box">
+            <!--<span style=";display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{mainModel.vo.subjects}}</span>-->
+            <!--<iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.subjects" class="display-all-line"  :textonly="mainModel.isReadOnly"-->
+                      <!--type="textarea" :rows="6"></iv-input>-->
+            <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.subjects" :readonly="mainModel.isReadOnly" ></iv-textarea>
+            <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.subjects}}</span>
+        </el-form-item>
+    </iv-row>
+
+    <iv-row class="bip-content-item width1100">
+        <el-form-item label="预案或方案要求" prop="demand" class="small-info-box">
+            <!--<iv-textarea :rows="6" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly" :width="420" :height="300"></iv-textarea>-->
+            <!--<span style=";display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{mainModel.vo.demand}}</span>-->
+            <!--<iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.demand" class="display-all-line" :textonly="mainModel.isReadOnly"-->
+                      <!--type="textarea" :rows="6"></iv-input>-->
+            <iv-textarea v-if="!mainModel.isReadOnly" style="min-height: 175px;width:100%;" :rows="8" :value.sync="mainModel.vo.demand" :readonly="mainModel.isReadOnly" ></iv-textarea>
+            <span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.demand}}</span>
+        </el-form-item>
+    </iv-row>
+
+</el-form>
+    </simple-card>
+</div>
+<div class="exerAssementTaskForm">
+    <div class="exerAssementTaskFormRow" style="background:#eef3f5; color:#666;" >
+        <div class="exerAssementTaskFormBoxHead">评价内容</div>
+        <div class="exerAssementTaskFormBoxHead">客观记录</div>
+        <div class="exerAssementTaskFormBoxHead">存在问题</div>
+        <div class="exerAssementTaskFormBoxHead">改进建议</div>
+    </div>
+
+    <div class="exerAssementTaskFormRow" v-for="(index,item) in mainModel.vo.exerciseEstimateDetails">
+        <div style="width: 250px;margin-right: 5px;margin-top: 5px" :class="!isCheck && !item.content || item.suggestion.length>2000?'borderColor':'exerAssementTaskFormBox'">
+            <span style=";display:block;word-break: break-all;word-wrap: break-word;font-size: 14px;" v-if="mainModel.isReadOnly">{{item.content}}</span>
+
+            <iv-input v-else :value.sync="item.content" class="display-all-line" :textonly="mainModel.isReadOnly"
+                      type="textarea" :rows="6"></iv-input>
+        </div>
+        <div style="width: 250px;margin-right: 5px;margin-top: 5px" :class="!isCheck && !item.objectiveRecord || item.suggestion.length>2000?'borderColor':'exerAssementTaskFormBox'">
+            <span style="font-size: 14px;display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{item.objectiveRecord}}</span>
+
+            <iv-input v-else :value.sync="item.objectiveRecord" class="display-all-line" :textonly="mainModel.isReadOnly"
+                      type="textarea" :rows="6"></iv-input>
+        </div>
+        <div style="width: 250px;margin-right: 5px;margin-top: 5px" :class="!isCheck && !item.problem || item.suggestion.length>2000?'borderColor':'exerAssementTaskFormBox'">
+            <span style="font-size: 14px;display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{item.problem}}</span>
+            <iv-input v-else :value.sync="item.problem" class="display-all-line" :textonly="mainModel.isReadOnly"
+                      type="textarea" :rows="6"></iv-input>
+        </div>
+        <div style="width: 250px;margin-right: 5px;margin-top: 5px" :class="!isCheck && !item.suggestion || item.suggestion.length>2000?'borderColor':'exerAssementTaskFormBox'" >
+            <span style="font-size: 14px;display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{item.suggestion}}</span>
+
+            <iv-input v-else :value.sync="item.suggestion" class="display-all-line" :textonly="mainModel.isReadOnly"
+                      type="textarea" :rows="6"></iv-input>
+        </div>
+        <iv-button type="text"  @click="doDelRow(index)" v-show="!mainModel.isReadOnly" style="color:blue">删除</iv-button>
+    </div>
+    <div class="bottomBtn exerAssementTaskFormRow"  >
+        <div style="margin-top: 10px;float:none;" class="bip-header-btn-group">
+            <button v-if="!mainModel.isReadOnly" type="ghost" @click="doAddRow" class="btnDashedWidth" >添加</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btnDashedWidth{
+        border: 1px dashed  #ddd;width:1100px;height: 100%;margin-left:0;background: none;
+    }
+    .btnDashedWidth:hover{
+       border-color: #aacd03
+    }
+    .exerAssementTaskForm .borderColor{
+        width: 250px;
+        /* margin: 5px; */
+        /* border: 1px solid #ddd; */
+        margin-right: 5px;
+        margin-top: 5px;
+    }
+    .exerAssementTaskForm .borderColor textarea{
+        border-color:red;
+    }
+    .exerAssementTaskForm .bottomBtn{
+        display: flex;
+        border: 1px solid #ddd;
+        margin-top: 5px;
+        border-radius: 6px;
+        color: #666;
+        border: none;
+        width: 1140px;
+        margin-left: 0;
+    }
+    .width1100 .small-info-box{
+        width:1140px !important;
+    }
+    .exerAssementTaskForm{
+        width:1100px;
+        height: auto;
+        margin-top:15px;
+        margin-left: 38px;
+        padding-bottom: 100px;
+    }
+    .exerAssementTaskFormRow {
+        width:1100px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+    .exerAssementTaskFormBox{
+        width: 250px;
+        /* margin: 5px; */
+        /* border: 1px solid #ddd; */
+        margin-right: 5px;
+        margin-top: 5px;
+    }
+    .exerAssementTaskFormBoxHead{
+        padding:5px;
+        width:250px;
+        text-align: center;
+    }
+</style>

@@ -1,0 +1,188 @@
+<div class="detail-large-container">
+
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button v-if="mainModel.vo.status != 1 && mainModel.isReadOnly && hasAuth('edit')" type="ghost"
+                    @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>
+                <iv-button type="ghost" v-if="mainModel.vo.status == 0 && mainModel.isReadOnly && hasAuth('publish')"
+                    @click="doPublish">{{$t("gb.common.release")}}</iv-button>
+                <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}
+                </iv-button>
+                <iv-button
+                    v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')"
+                    type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+                <vi-button v-if="!mainModel.isReadOnly && mainModel.opType !== 'create'" type="ghost" @click="doCancel">
+                    {{$t("gb.common.cancel")}}</vi-button>
+                <iv-button v-if="mainModel.vo.status == 1 && mainModel.isReadOnly && hasAuth('cancelPublish')"
+                    type="ghost" @click="doCancelPublish">取消发布</iv-button>
+                <iv-button type="ghost" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+                :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="所属公司" prop="compId" class="small-info-box">
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId">
+                        </company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly>
+                        </iv-input>
+                    </el-form-item>
+                    <el-form-item label="课程" prop="course.id" class="small-info-box">
+                        <input-select :value="mainModel.vo.course" id-field="id" display-field="name"
+                            :textonly="mainModel.isReadOnly"
+                            @click="(!mainModel.isReadOnly) && (doShowCourseSelectModal())"></input-select>
+                    </el-form-item>
+                    <el-form-item label="培训开始时间" prop="startTime" class="small-info-box">
+                        <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd 00:00:00"
+                            :selected-date.sync="mainModel.vo.startTime" :begin="mainModel.now"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.startTime" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="培训结束时间" prop="endTime" class="small-info-box">
+                        <date-picker v-if="!mainModel.isReadOnly && !hasExam" format="yyyy-MM-dd 23:59:59"
+                            :selected-date.sync="mainModel.vo.endTime" :begin="mainModel.now"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.endTime" textonly class="inp"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="考试试题" class="small-info-box">
+                        <input-select :value="mainModel.vo.exam.examPaper" id-field="id" display-field="name"
+                            @do-clear-input="doClearInput" :clearable="true" :textonly="mainModel.isReadOnly"
+                            @click="(!mainModel.isReadOnly) && (doShowExamPaperSelectModal())"
+                            :disabled="!hasCourseSelected"></input-select>
+                    </el-form-item>
+                    <el-form-item label="允许考试时间（开始）" prop="exam.examDate" class="small-info-box">
+                        <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd HH:mm:ss" :begin="beginDate"
+                            :selected-date.sync="mainModel.vo.exam.examDate" time-zero type="datetime"
+                            :disabled="!hasExam"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.exam.examDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="允许考试时间（结束）" prop="exam.entryDeadline" class="small-info-box">
+                        <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd HH:mm:ss" :begin="beginDate"
+                            :selected-date.sync="mainModel.vo.exam.entryDeadline" time-zero type="datetime"
+                            :disabled="!hasExam"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.exam.entryDeadline" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="scoreLabel" prop="exam.passLine">
+                        <iv-input type="number" :value.sync="mainModel.vo.exam.passLine" placeholder="请输入分数"
+                            :textonly="mainModel.isReadOnly" :disabled="!hasExam"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item v-if="mainModel.isReadOnly" :label="$t('gb.common.state')" class="small-info-box">
+                        <span>{{getDataDic('train_plan_status', mainModel.vo.status+"")}}</span>
+                    </el-form-item>
+                    <el-form-item label="发布人" v-if="mainModel.isReadOnly" class="small-info-box">
+                        <span>{{mainModel.vo.publisher.username}}</span>
+                    </el-form-item>
+                    <el-form-item label="备注" prop="remarks" class="small-info-box-2span">
+                        <iv-input :value.sync="mainModel.vo.remarks" type="textarea" :textonly="mainModel.isReadOnly">
+                        </iv-input>
+                    </el-form-item>
+
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.userCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>培训人员</span></p>
+
+
+
+                <a slot="extra" v-show="mainModel.opType !== 'create' && mainModel.vo.status != 1 && hasAuth('edit')"
+                    @click.prevent="doShowUserSelectModal()">
+                    <span>
+                        <Icon type="plus"></Icon>添加
+                    </span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create' ">
+                    <span class="leave-worker-select ">
+                        <iv-checkbox :checked.sync="leaveWorkerSwitch">包含离职人员</iv-checkbox>
+                    </span>
+                </a>
+                <a slot="extra"
+                    @click.prevent="cardModel.userCardModel.showContent = !cardModel.userCardModel.showContent;">
+                    <span v-if="cardModel.userCardModel.showContent">
+                        <Icon type="arrow-up-b"></Icon>收起
+                    </span>
+                    <span v-else>
+                        <Icon type="arrow-down-b"></Icon>展开
+                    </span>
+                </a>
+                <div class="rel-info-panel-content-tabs">
+                    <div class="el-tabs" active-key="relTab" style="padding-bottom: 20px;">
+                        <div class="el-tabs__header" v-show="mainModel.vo.status === '1'">
+                            <div @click="doTabClick(tab.id)" class="el-tabs__item"
+                                :class="{'is-active': tab.id === currentTabId}" v-for="tab in tabs">
+                                <b>{{tab.name}}</b>
+                            </div>
+                            <a @click="setMultipleResult" href="javascript:void(0);" v-if="hasAuth('setResultBatch')"
+                                style="position: absolute;right: 0;bottom: 5px;">批量上报培训结果</a>
+                        </div>
+                        <div class="el-tabs__content" style="margin-top: 15px;">
+                            <vue-bootstrap-table :url="tableModel.userTableModel.url"
+                                :columns="tableModel.userTableModel.columns" :show-empty-row="false"
+                                :default-filter-value="tableModel.userTableModel.defaultFilterValue"
+                                :use-default-global-filter="false" :lazy-load="true" @on-click-cell="clickedTableRow"
+                                v-ref:user-table>
+                            </vue-bootstrap-table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </simple-card>
+        </div>
+
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <div
+                style="display: flex;align-items: center;border-bottom: 1px solid #ddd;padding-bottom: 5px;margin-bottom: 15px;">
+                <i class="basicPng"></i>
+                <strong style="font-size: 16px;">附件</strong>
+                <span style="font-weight: normal;font-size: 12px;color: #999;">（文件支持word excel pdf jpg jpeg png 格式;
+                    单个文件大小最大支持10MB; 最多上传9个文件）</span>
+            </div>
+
+            <lite-box shape="rect" :show-close="hasAuth('deleteFile')" v-for="(index,pic) in proofMaterialData"
+                @on-close="doConfirmCallback('doDeleteFile', '确定删除文件?', pic.fileId,index,proofMaterialData)">
+                <a v-if="pic.isImage" href="javascript:void(0);" @click="showImage(pic.fileId)">{{pic.name}}</a>
+                <a v-else target="_blank" :href="convertFilePath(pic)">{{pic.name}}</a>
+            </lite-box>
+
+            <vue-file-upload
+                v-if="mainModel.opType !== 'create' && proofMaterialData.length < 9 && hasAuth('uploadFile')"
+                @on-success-upload="onUploadSuccess" :params="proofMaterial.params" :filters="proofMaterial.filters"
+                class="file_upload"></vue-file-upload>
+
+            <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+        </div>
+    </div>
+</div>
+
+<!--选择课程-->
+<course-select-modal single-select :visible.sync="selectModel.courseSelectModel.visible"
+    :filter-data="selectModel.courseSelectModel.filterData" @do-save="doSaveCourse"></course-select-modal>
+
+<!--选择试卷-->
+<exam-paper-select-modal single-select :visible.sync="selectModel.examPaperSelectModel.visible"
+    :filter-data="selectModel.examPaperSelectModel.filterData" @do-preview="doPreview" @do-save="doSaveExamPaper">
+</exam-paper-select-modal>
+
+<!--选择培训人员-->
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible"
+    :course-id="selectModel.userSelectModel.filterData.courseId" :org-id="selectModel.userSelectModel.filterData.orgId"
+    @do-save="doSaveTrainTasks"></user-select-modal>
+
+<multiple-result :visible.sync="multipleResult.visible" :id="mainModel.vo.id" @pass-batch="doPassedSingle">
+</multiple-result>
+<single-result :visible.sync="singleResult.visible" v-ref:single-result @pass-single="doPassedSingle"></single-result>

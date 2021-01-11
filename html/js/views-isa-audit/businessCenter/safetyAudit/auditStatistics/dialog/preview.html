@@ -1,0 +1,116 @@
+<style>
+    .preview-audit-table {
+        table-layout: fixed;
+        width: 100%;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .preview-audit-table td {
+        border: 1px solid;
+        padding: 0 8px;
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    .slash_left{
+        font-style: normal;
+        display: block;
+        position: relative;
+        top: 25px;
+        left: -5px;
+        width: 70px;
+    }
+
+    .slash_right{
+        font-style: normal;
+        display: block;
+        position: relative;
+        top: -20px;
+        left: 60px;
+        width: 60px;
+    }
+
+
+    .slash :before{
+        content: "";
+        position: absolute;
+        width: 1px;
+        height: 145px;
+        top: -36px;
+        left: -4px;
+        background-color: black;
+        display: block;
+        transform: rotate(-64deg);
+        transform-origin: top;
+    }
+    .preview-isa-desc{
+        font-weight: normal;padding: 10px 0;text-indent: 10px
+    }
+    .preview-isa-sign{
+        font-size: 16px; font-weight: bold;padding: 10px 0;float: left;text-indent: 10px
+    }
+
+</style>
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;"  class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div class="preview-box" id="section-to-print" style="height: 580px">
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center"><span style="border-bottom: 2px solid;">{{compName}}</span>公司（盖章）安全生产考核得分汇总表</h4>
+        <div class="preview-box-sub-title" style="float: right;font-weight: normal;">
+            <span style="margin-right: 10px;">考核日期：</span>
+            <span>{{vo.attr1}}</span>
+        </div>
+
+        <table class="preview-audit-table font-bold">
+            <tr height="65px">
+                <td  width="130px" :colspan="tableClass.firstColspan">
+                    <div class="slash">
+                        <em class="slash_left">分数及权重</em>
+                    </div>
+                    <div class="slash_right">项目</div>
+
+                </td>
+                <td :colspan="tableClass.itemColspan" v-for="(index, item) in items">{{item.name}}</td>
+            </tr>
+            <tr height="40px">
+                <td :colspan="tableClass.firstColspan">考核单项满分分数</td>
+                <td :colspan="tableClass.itemColspan" v-for="(index, item) in items">{{item.totalScore}}</td>
+            </tr>
+            <tr height="40px">
+                <td :colspan="tableClass.firstColspan">单项权重</td>
+                <td :colspan="tableClass.itemColspan" v-for="(index, item) in items">{{item.weight}}%</td>
+            </tr>
+            <tr height="40px">
+                <td :colspan="tableClass.firstColspan">单项考核得分</td>
+                <td :colspan="tableClass.itemColspan" v-for="(index, item) in items">{{item.actScore}}</td>
+            </tr>
+            <tr height="40px">
+                <td :colspan="tableClass.firstColspan">单项标准得分</td>
+                <td :colspan="tableClass.itemColspan" v-for="(index, item) in items">{{item.stdScore}}</td>
+            </tr>
+            <tr height="40px">
+                <td :colspan="tableClass.bonusTitleColspan">加分</td>
+                <td :colspan="tableClass.bonusScoreColspan">{{addition.bonus}}</td>
+                <td :colspan="tableClass.deductionTitleColspan">减分</td>
+                <td :colspan="tableClass.deductionScoreColspan">{{addition.deduction}}</td>
+            </tr>
+            <tr height="40px">
+                <td :colspan="tableClass.totalTitleColspan">总分</td>
+                <td :colspan="tableClass.totalScoreColspan">{{vo.actScore}}</td>
+            </tr>
+        </table>
+        <div class="preview-isa-desc">
+            <div >注：下属企业安全考核结果采取标准分形式，各被考核企业项目权重分配表见附件，被考核单位实际单位折算为标准得分的公式如下：</div>
+            <div style="text-align: center"><img src="/html/images/isa_score_expr.png" alt=""></div>
+        </div>
+
+        <div class="preview-isa-sign">
+            <div><span style="letter-spacing: 24px">考核人</span>（签字）：</div>
+            <div style="margin-top: 20px;"><span style="padding-right: 24px">被考核人代表</span>（签字）：</div>
+        </div>
+
+    </div>
+</Modal>

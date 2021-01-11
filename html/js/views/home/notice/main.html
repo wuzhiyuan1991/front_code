@@ -1,0 +1,63 @@
+<div class="tab-container-wrap home-work">
+    <iv-row type="flex" style="flex-wrap: nowrap;">
+        <iv-col span="16" class="home-notice-left" @scroll="onScroll($event)">
+            <div class="home-notice-masonry">
+                <div class="home-notice-item" v-for="item in notices">
+                    <notice-item
+                            :item="item"
+                            @do-delete="doDelete"
+                    ></notice-item>
+                </div>
+            </div>
+            <div style="background-color: #fff;padding: 20px;border-radius: 5px;text-align: center;" v-show="notices.length < 1">没有通知</div>
+        </iv-col>
+        <iv-col span="8" class="home-notice-right">
+            <div class="home-notice-publish" v-if="hasAuth('create')">
+                <div class="home-notice-title">发布</div>
+                <div @click="addNotice" v-show="!mainModel.showForm" class="form-placeholder"></div>
+                <el-form style="width: 100%;" v-show="mainModel.showForm" :model="mainModel.vo" :rules="mainModel.rules"  v-ref:ruleform>
+                    <el-form-item label-width="0" prop="title" placement="left" style="overflow: inherit;">
+                        <iv-input placeholder="标题" :value.sync="mainModel.vo.title"></iv-input>
+                    </el-form-item>
+                    <el-form-item label-width="0" prop="content" placement="left" style="overflow: inherit;">
+                        <iv-input placeholder="内容" :rows="5" type="textarea" :value.sync="mainModel.vo.content"></iv-input>
+                    </el-form-item>
+                    <el-form-item  :label="$t('gb.common.ownedComp')" placement="left" prop="compId" style="overflow: inherit;" class="clearfix">
+                        <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+                    </el-form-item>
+                    <el-form-item  label="保留时间" prop="day" placement="left" style="overflow: inherit;">
+                        <iv-input type="number" :value.sync="mainModel.vo.day">
+                            <span slot="append">天</span>
+                        </iv-input>
+                    </el-form-item>
+                    <vue-file-upload
+                            @on-success-upload="doUploadSuccess"
+                            :params="fileModel.params"
+                            :filters="fileModel.filters"
+                            custom-style
+                            v-show="!mainModel.file.id"
+                    >
+                        <vi-button type="ghost" icon="android-attach">上传附件</vi-button>
+                    </vue-file-upload>
+                    <div class="home-notice-form-file" v-show="mainModel.file.id">
+                        <icon type="document-text"></icon>
+                        <span>{{mainModel.file.name}}</span>
+                        <a href="javascript:void(0);" @click="doDeleteFile">
+                            <icon type="trash-a"></icon>
+                        </a>
+                    </div>
+                    <div style="margin-top:15px;border-top:1px solid #f5f5f5;text-align: right;padding-top: 10px;">
+                        <vi-button type="ghost" @click="hideForm">取消</vi-button>
+                        <vi-button type="ghost" @click="doSave">发布</vi-button>
+                    </div>
+                </el-form>
+            </div>
+            <div class="home-notice-actions">
+                <div class="home-notice-title">动态</div>
+                <ul class="home-notice-actions-ul">
+                    <li v-for="log in logs"><span>{{log.createDate}}</span> <span>{{log.user.username}}</span> <span>{{log.msg}}</span></li>
+                </ul>
+            </div>
+        </iv-col>
+    </iv-row>
+</div>

@@ -1,0 +1,30 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('value') == -1)" label="数值" prop="value">
+						<iv-input :value.sync="mainModel.vo.value" :disabled="(disabledFields.indexOf('value') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('gasType') == -1)" label="气体检测指标类型" prop="gasType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_gas_detection_detail_gas_type', mainModel.vo.gasType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.gasType" :list="getDataDicList('iptw_gas_detection_detail_gas_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('recordId') == -1)" label="气体检测记录" prop="record.id">
+						<input-select :value="mainModel.vo.gasDetectionRecord" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('gasDetectionRecord') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowGasDetectionRecordSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('gasCatalogId') == -1)" label="对应气体检测指标类型" prop="gasCatalog.id">
+						<input-select :value="mainModel.vo.gasCatalog" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('gasCatalog') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowGasCatalogSelectModal())" ></input-select>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<ptwcatalog-select-modal :visible.sync="selectModel.gasCatalogSelectModel.visible" :filter-data="selectModel.gasCatalogSelectModel.filterData" single-select @do-save="doSaveGasCatalog"></ptwcatalog-select-modal>
+<gasdetectionrecord-select-modal :visible.sync="selectModel.gasDetectionRecordSelectModel.visible" :filter-data="selectModel.gasDetectionRecordSelectModel.filterData" single-select @do-save="doSaveGasDetectionRecord"></gasdetectionrecord-select-modal>

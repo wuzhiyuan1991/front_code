@@ -1,0 +1,19 @@
+
+<simple-card>
+    <p slot="title">安全措施</p>
+    <el-form class="ptw-base-info" style="width:680px;padding-left:9px;" label-width="0px;" >
+        <el-form-item label="" >
+            <form-item-row>
+                <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex" style="width:640px">
+                    <div class="ele-disabled-mask"></div>
+                    <iv-checkbox-group class="group-vertical">
+                        <iv-checkbox disabled v-for="item of kongzhicsList">
+                            <span class="checked-box-span" >{{item.name}}</span>
+                        </iv-checkbox>
+                    </iv-checkbox-group>
+                </div>
+                <div class="link-ele pdl5" slot="after" @click="doCustomContent(4)">定制内容</div>
+            </form-item-row>
+        </el-form-item>
+    </el-form>
+</simple-card>

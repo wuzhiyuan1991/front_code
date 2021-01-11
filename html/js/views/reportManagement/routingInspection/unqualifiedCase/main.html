@@ -1,0 +1,124 @@
+<style>
+.ivu-select-selection:hover {
+    /*overflow: auto;*/
+    /*max-height: 50px;*/
+    overflow-x: hidden;
+    height: auto !important;
+    z-index: 3;
+    max-height: 110px;
+}
+</style>
+<div class="report train-chart">
+
+    <!--左侧-->
+    <div class="train-content">
+        <div class="train-tit">巡检不合格统计</div>
+
+        <div class="train-filter">
+        
+        	<div class="train-select">
+                <i-select :model.sync="qryParam.typeOfGroup" :list="typeOfGroups" @on-change="changeGroupOfRange">
+                    <i-option v-for="item in typeOfGroups" :value="item.value" >{{ item.label }}</i-option>
+                </i-select>
+            </div>
+            
+            <div class="train-date-range">
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange" placeholder="选择日期范围"></vi-date-picker>
+            </div>
+
+            <div class="train-select">
+                <i-select :model.sync="qryParam.typeOfRange" v-ref:select :list="typeOfRanges" @on-change="changeTypeOfRange">
+                    <i-option v-for="item in typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                </i-select>
+            </div>
+
+            <div class="train-obj-select">
+                <obj-select :type="qryParam.typeOfRange" :values.sync="qryParam.objRange"></obj-select>
+            </div>
+            
+            <div class="train-obj-select">
+	            <div class="select-tree">
+	            	<div  class="ivu-select-top ivu-select ivu-select-multiple">
+		                <div class="ivu-select-selection">
+		                    <div class="ivu-tag" v-for="(index, tag) in qryParam.checkTables">
+		                        <span class="ivu-tag-text">{{tag.name}}</span>
+		                        <i class="ivu-icon ivu-icon-ios-close-empty" @click="doRemoveTable(index)"></i>
+		                    </div>
+                            <span class="ivu-select-placeholder" v-show="qryParam.checkTables.length === 0">请选择巡检表，可多选</span>
+                        </div>
+		                <span style="font-size: 16px;" class="select-ico-add" @click.prevent="doShowTableModal()">
+		                    <i class="ivu-icon ivu-icon-plus-round"></i>
+		                </span>
+	            	</div>
+	            </div>
+            </div>
+            
+            <div class="train-obj-select" style="top: 0;">
+	            <i-select :model.sync="qryParam.checkTypes" multiple :list="checkTypes" placeholder="请选择巡检类型">
+	                <i-option v-for="item in checkTypes" :value="item.id">{{item.name}}</i-option>
+	            </i-select>
+            </div>
+            
+            <div class="train-select">
+                <i-select :model.sync="qryParam.typeOfPlan" v-ref:select :list="typeOfPlans">
+                    <i-option v-for="item in typeOfPlans" :value="item.value" >{{ item.label }}</i-option>
+                </i-select>
+            </div>
+
+            <iv-button type="primary" @click="doQuery">查询</iv-button>
+        </div>
+
+        <iv-row type="flex" justify="end" style="padding: 0;">
+            <iv-col>
+
+                <poptip placement="bottom-end" trigger="hover">
+                    <iv-button type="text">排序</iv-button>
+                    <div slot="content">
+                        <div class="chart-sort-content-3" style="border-bottom: 1px solid #e8e8e8;padding-bottom: 8px;">
+                            <div style="min-width: 65px;">不符合项数</div>
+                            <div class="chart-sort-content-3-item" :class="{'checked': qryParam.typeOfSort === 0}" @click="changeSort(0)"><Icon type="arrow-graph-down-right"></Icon></div>
+                            <div class="chart-sort-content-3-item" :class="{'checked': qryParam.typeOfSort === 1}" @click="changeSort(1)"><Icon type="arrow-graph-up-right"></Icon></div>
+                        </div>
+                        <div class="chart-sort-content-3" style="padding-top: 8px;">
+                            <div style="min-width: 65px;">不符合率</div>
+                            <div class="chart-sort-content-3-item" :class="{'checked': qryParam.typeOfSort === 2}"  @click="changeSort(2)"><Icon type="arrow-graph-down-right"></Icon></div>
+                            <div class="chart-sort-content-3-item" :class="{'checked': qryParam.typeOfSort === 3}"  @click="changeSort(3)"><Icon type="arrow-graph-up-right"></Icon></div>
+                        </div>
+                    </div>
+                </poptip>
+                <span>|</span>
+                <iv-button type="text" @click="showMore" style="margin-right: 20px;">更多...</iv-button>
+            </iv-col>
+        </iv-row>
+
+        <vuecharts :options="charts.opt" style="height: calc(100% - 160px);" @chartclick="chartClick" v-ref:echarts></vuecharts>
+    </div>
+
+</div>
+
+
+<Modal :visible.sync="selectModel.tableSelectModel.visible" :title="selectModel.tableSelectModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <table-select-modal></table-select-modal>
+</Modal>
+<!-- 更多 -->
+<Modal v-if="detailModel.show" class="userSelectModal" :visible.sync="detailModel.show" mask-closable :title="detailModel.title" width="1000" :footer-hide="true">
+    <div class="edit-pop-container" style="width: 1000px">
+        <div class="epc-header" style="background-color: #eaf0f5;text-align: right;padding: 10px 20px 0;">
+            <iv-button @click="doExport">导出</iv-button>
+        </div>
+        <div class="epc-content integral-table" style="padding-top: 10px;">
+            <vue-bootstrap-table
+                 :columns="detailModel.table.columns"
+                 :url="detailModel.table.url"
+                 :default-filter-value="detailModel.table.qryParam"
+                 :show-filter="false"
+                 :filter-column="detailModel.table.filterColumns"
+                 :show-column-picker="false"
+                 :show-pager="true"
+                 show-loading
+                 resizeable
+                 v-ref:rpt-details-table>
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</Modal>

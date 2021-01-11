@@ -1,0 +1,23 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+			<el-form-item  label="审批结果" prop="auditResult">
+				<i-select :model.sync="mainModel.vo.auditResult" :list="getDataDicList('random_observe_audit_result')">
+					<i-option v-for="item in getDataDicList('random_observe_audit_result')" :value="item.id">
+						{{item.value}}
+					</i-option>
+				</i-select>
+			</el-form-item>
+			<el-form-item label="审批意见" prop="remarks">
+				<iv-input type="textarea" :value.sync="mainModel.vo.remarks"></iv-input>
+			</el-form-item>
+
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" v-if="hasPoolAuditAccess && mainModel.vo.operationType == 2 && mainModel.vo.auditResult == 1" @click="doSave('1')" class="pull-right">确定并处理隐患</vi-button>
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>

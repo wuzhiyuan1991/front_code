@@ -1,0 +1,48 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item label="事故发生可能性" prop="possibility">
+						<iv-input :value.sync="mainModel.vo.possibility" :textonly="true"></iv-input>
+					</el-form-item>
+					<el-form-item label="严重程度" prop="severity">
+						<iv-input :value.sync="mainModel.vo.severity" :textonly="true"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险等级" prop="riskLevel">
+						<iv-input :value.sync="mainModel.vo.riskLevel" :textonly="true"></iv-input>
+					</el-form-item>
+					<el-form-item label="巡检频率" prop="frequency">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_check_principle_frequency', mainModel.vo.frequency) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.frequency" :list="getDataDicList('ira_check_principle_frequency')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="巡检类型" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_check_principle_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('ira_check_principle_type')" clearable></i-select>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+<!--		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>-->
+<!--		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>-->
+<!--		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+<!--		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>-->
+<!--		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+

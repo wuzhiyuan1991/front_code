@@ -1,0 +1,60 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly || !mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+<!--					<el-form-item label="是否为默认配置" prop="isDefault">-->
+<!--						<iv-input :value.sync="mainModel.vo.isDefault" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">-->
+<!--						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+<!--						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">-->
+<!--						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>-->
+<!--						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+<!--					</el-form-item>-->
+					<el-form-item label="描述" prop="description">
+						<iv-input :value.sync="mainModel.vo.description" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="父级配置" prop="systemBusinessSet.id">
+						<input-select :value="mainModel.vo.systemBusinessSet" id-field="id" display-field="description" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowSystemBusinessSetSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="配置值" prop="result">
+						<iv-input :value.sync="mainModel.vo.result" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+<!--					<el-form-item label="是否可以修改" prop="unmodified">-->
+<!--						<iv-input :value.sync="mainModel.vo.unmodified" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--					</el-form-item>-->
+				</el-form>
+			</simple-card>
+
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+<!--		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>-->
+<!--		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<systembusinessset-select-modal :visible.sync="selectModel.systemBusinessSetSelectModel.visible" :filter-data="selectModel.systemBusinessSetSelectModel.filterData" single-select @do-save="doSaveSystemBusinessSet"></systembusinessset-select-modal>
+

@@ -1,0 +1,277 @@
+
+<div class="edit-pop-container">
+    <div class="epc-content riskAddCon">
+        <p class="title titleInfo"><span>{{$t('gb.common.basicInfo')}}</span></p>
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform >
+            <el-form-item :label="$t('gb.common.ownedComp')" prop="orgId">
+                <company-tree-select   v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"></company-tree-select>
+            </el-form-item>
+            <el-form-item label="场景" prop="scene">
+            <iv-input :value.sync="mainModel.vo.scene"></iv-input>
+            <!--<input type="text" class="form-control" name="name"  placeholder="" v-model="mainModel.vo.scene" >-->
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.riskClass')"  prop="riskTypeId">
+                <iv-tree-select :model.sync="mainModel.vo.riskTypeId"
+                                :list="riskTypeList"
+                                id-attr="id"
+                                display-attr="name" >
+                    <iv-tree :model="riskTypeList"
+                             :serch-filterable="true"
+                             :selected-datas.sync="selectedDataRisk"
+                             id-attr="id"
+                             pid-attr="parentId"
+                             display-attr="name"
+                             :single-select="true"
+                             :allow-parent-checked="true"
+                    ></iv-tree>
+                </iv-tree-select>
+            </el-form-item>
+            <!--<el-form-item :label="$t('gb.common.introducer')" prop="introducer">-->
+                <!--<i-select  :list="mainModel.introducerList" :model.sync="mainModel.vo.introducer" >-->
+                    <!--<i-option   v-for="item in mainModel.introducerList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.subIntroducer')" prop="subIntroducer">-->
+                <!--<i-select  :list="mainModel.subIntroducerList" :model.sync="mainModel.vo.subIntroducer" >-->
+                    <!--<i-option   v-for="item in mainModel.subIntroducerList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.areas')" prop="areas">-->
+                <!--<iv-input :value.sync="mainModel.vo.areas"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.areaType')" prop="areaType">-->
+                <!--<iv-input :value.sync="mainModel.vo.areaType"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<p class="title"><span>{{$t('gb.common.hazardFactor')}}</span></p>-->
+            <!--<el-form-item :label="$t('gb.common.hazardousElementsSenior')" prop="hazardousElementsSenior">-->
+                <!--<i-select  :list="mainModel.hazardousElementsSeniorList" :model.sync="mainModel.vo.hazardousElementsSenior" >-->
+                    <!--<i-option   v-for="item in mainModel.hazardousElementsSeniorList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.hazardousElementsJunior')" prop="hazardousElementsJunior">-->
+                <!--<i-select  :list="mainModel.hazardousElementsJuniorList" :model.sync="mainModel.vo.hazardousElementsJunior" >-->
+                    <!--<i-option   v-for="item in mainModel.hazardousElementsJuniorList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.hazard')" prop="hazard">-->
+                <!--<i-select  :list="mainModel.hazardList" :model.sync="mainModel.vo.hazard" >-->
+                    <!--<i-option   v-for="item in mainModel.hazardList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.content')" prop="hazardousElementsContent">-->
+                <!--<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.hazardousElementsContent"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<p class="title"><span>{{$t('gb.common.equipmentAndFacilities')}}</span></p>-->
+            <!--<el-form-item :label="$t('gb.common.name')" prop="deviceName">-->
+                <!--<iv-input :value.sync="mainModel.vo.deviceName"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.devicePart')" prop="devicePart">-->
+                <!--<iv-input :value.sync="mainModel.vo.devicePart"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<p class="title"><span>{{$t('gb.common.activiteOperatOrJobOrTask')}}</span></p>-->
+            <!--<el-form-item :label="$t('bd.hal.classInfo')" prop="activityType">-->
+                <!--<iv-input :value.sync="mainModel.vo.activityType"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.name')" prop="activityName">-->
+                <!--<iv-input :value.sync="mainModel.vo.activityName"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.content')" prop="activityContent">-->
+                <!--<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.activityContent"></iv-input>-->
+            <!--</el-form-item>-->
+            <!--<p class="title"><span>{{$t('gb.common.riskAssessment')}}</span></p>-->
+            <!--<el-form-item :label="$t('gb.common.riskAnalysis')" prop="riskAnalysis">-->
+                <!--<iv-input :value.sync="mainModel.vo.riskAnalysis"></iv-input>-->
+            <!--</el-form-item>-->
+            <el-form-item :label="$t('gb.common.riskGrade')" prop="riskLevel">
+                <risk-model  :model.sync="riskModel"></risk-model>
+            </el-form-item>
+            <!--<p class="title"><span>{{$t('gb.common.controlRequire')}}</span></p>-->
+           <!-- <div v-show="isCreated" style="margin-top:20px;">
+                <el-form-item :label="$t('gb.common.chioceCheck')" >
+                    <iv-tree-select :model.sync="mainModel.vo.checkItem.id"
+                                    :list="checkItemRiskTypeList"
+                                    id-attr="id"
+                                    display-attr="name" style="width: 211px;float: left">
+                        <iv-tree :model="checkItemRiskTypeList"
+                                 :serch-filterable="true"
+                                 :selected-datas.sync="selectedCheckItem"
+                                 id-attr="id"
+                                 pid-attr="parentId"
+                                 display-attr="name"
+                                 :single-select="true"
+                                 :allow-parent-checked="false"
+                        ></iv-tree>
+                    </iv-tree-select>
+                    &lt;!&ndash;<span class="h30" @click="doCreate">新增</span>&ndash;&gt;
+                    <iv-button @click="doCreate" style="float: left;margin-left: 5px;font-size: 13px"><Icon type="edit"></Icon></iv-button>
+                </el-form-item>
+
+            </div>-->
+            <div v-show="isCreated" style="margin-top:4px;" class="select-style">
+                <el-form-item :label="$t('gb.common.chioceCheck')" >
+                    <!--<iv-tree-select :model.sync="mainModel.vo.checkItem.id"
+                                    :list="checkItemRiskTypeList"
+                                    id-attr="id"
+                                    display-attr="name" style="width: 211px;float: left">
+                        <iv-tree :model="checkItemRiskTypeList"
+                                 :serch-filterable="true"
+                                 :selected-datas.sync="selectedCheckItem"
+                                 id-attr="id"
+                                 pid-attr="parentId"
+                                 display-attr="name"
+                                 :single-select="true"
+                                 :allow-parent-checked="false"
+                        ></iv-tree>
+                    </iv-tree-select>-->
+                    <input-select   :value="mainModel.checkItem"  display-field="name"  @click="(mainModel.showItemSelectModal= true)" ></input-select>
+                    <!--<span class="h30" @click="doCreate">新增</span>-->
+                    <iv-button @click="doCreate" style="margin-top:2px;float: left;margin-left: 5px;font-size: 13px"><Icon type="edit"></Icon></iv-button>
+                </el-form-item>
+
+            </div>
+            <div v-show="!isCreated" style="margin-top:4px;">
+                <el-form-item :label="$t('gb.common.checkItemName')" prop="checkItem.name" >
+                    <iv-input :value.sync="mainModel.vo.checkItem.name"></iv-input>
+                    <!--<input type="text" class="form-control" name="name" placeholder="" v-model="mainModel.vo.checkItem.name" >-->
+                    <span for="checkbox1" class="error"></span>
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.checkType')" prop="checkItem.type" >
+                    <i-select :model.sync="mainModel.vo.checkItem.type" :list="mainModel.typeList" style="width: 211px;float: left">
+                        <i-option v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>
+                    </i-select>
+                    <!--<span  @click="doSelect" >切换</span>-->
+                    <iv-button @click="doSelect" style="float: left;margin-left: 5px;font-size: 13px"><Icon type="reply"></Icon></iv-button>
+                </el-form-item>
+            </div>
+            <!--<el-form-item :label="$t('gb.common.checkFrequency')" prop="checkFrequency">-->
+                <!--<i-select  :list="mainModel.checkFrequencyList" :model.sync="mainModel.vo.checkFrequency" >-->
+                    <!--<i-option   v-for="item in mainModel.checkFrequencyList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.preventionDepartment')" prop="preventionDepartment">-->
+                <!--<i-select  :list="mainModel.preventionDepartmentList" :model.sync="mainModel.vo.preventionDepartment" >-->
+                    <!--<i-option   v-for="item in mainModel.preventionDepartmentList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.preventionPerson')" prop="preventionPerson">-->
+                <!--<i-select  :list="mainModel.preventionPersonList" :model.sync="mainModel.vo.preventionPerson" >-->
+                    <!--<i-option   v-for="item in mainModel.preventionPersonList" :value="item.id">{{ item.value }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <el-form-item :label="$t('gb.common.controlMeasures')" prop="controlMeasures">
+                <iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.controlMeasures"></iv-input>
+            </el-form-item>
+            <!--<p class="title"><span>{{$t('gb.common.residualRiskAssessment')}}</span></p>-->
+            <!--<el-form-item :label="$t('gb.common.riskGrade')" prop="residualRiskEvaluationRank">-->
+                <!--<risk-model  :model.sync="residualRiskModel"></risk-model>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.residualRiskEvaluationRank')" prop="emergencyPlan">-->
+                <!--<iv-radio  :checked="mainModel.vo.emergencyPlanYes" @change="doYes" style="min-width:90px;">&nbsp;是</iv-radio>-->
+                <!--<iv-radio  :checked="mainModel.vo.emergencyPlanNo" @change="doNo" style="min-width:90px;">&nbsp;否</iv-radio>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item :label="$t('gb.common.riskClass')" prop="riskTypeId">-->
+                <!--<iv-tree-select :model.sync="mainModel.vo.riskTypeId"-->
+                                <!--:list="riskTypeList"-->
+                                <!--id-attr="id"-->
+                                <!--display-attr="name" >-->
+                    <!--<iv-tree :model="riskTypeList"-->
+                             <!--:selected-datas.sync="selectedDataRisk"-->
+                             <!--:serch-filterable="true"-->
+                             <!--id-attr="id"-->
+                             <!--pid-attr="parentId"-->
+                             <!--display-attr="name"-->
+                             <!--:single-select="true"-->
+                             <!--:allow-parent-checked="true"-->
+                    <!--&gt;</iv-tree>-->
+                <!--</iv-tree-select>-->
+            <!--</el-form-item>-->
+           <!-- <el-form-item label="危害因素" prop="hazardFactorId">
+                <iv-tree-select :model.sync="mainModel.vo.hazardFactorId"
+                                :list="hazardFactorList"
+                                id-attr="id"
+                                display-attr="name" >
+                    <iv-tree :model="hazardFactorList"
+                             :selected-datas.sync="selectedDataHazard"
+                             id-attr="id"
+                             pid-attr="parentId"
+                             display-attr="name"
+                             :single-select="true"
+                             :allow-parent-checked="true"
+                    ></iv-tree>
+                </iv-tree-select>
+            </el-form-item>-->
+            <!--<el-form-item label="场景" prop="scene">-->
+                <!--<iv-input :value.sync="mainModel.vo.scene"></iv-input>-->
+                <!--&lt;!&ndash;<input type="text" class="form-control" name="name"  placeholder="" v-model="mainModel.vo.scene" >&ndash;&gt;-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="风险等级" prop="riskLevel">-->
+                <!--<risk-model  :model.sync="riskModel"></risk-model>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="控制措施" prop="controlMeasures" class="h80">-->
+                <!--<iv-input tyep="textarea" :value.sync="mainModel.vo.controlMeasures"></iv-input>-->
+                <!--&lt;!&ndash;<textarea class="form-control" rows="3" required v-model="mainModel.vo.controlMeasures"></textarea>&ndash;&gt;-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="排查频次" prop="checkFrequency">-->
+                <!--<iv-input :value.sync="mainModel.vo.checkFrequency"></iv-input>-->
+                <!--&lt;!&ndash;<input type="text" class="form-control" placeholder="" v-model="mainModel.vo.checkFrequency" >&ndash;&gt;-->
+            <!--</el-form-item>-->
+            <!--</iv-tree-select>-->
+            <!--<el-form-item label="岗位" prop="positionId">-->
+                <!--<i-select :model.sync="mainModel.vo.positionId" :list="positionList">-->
+                    <!--<i-option v-for="item in positionList" :value="item.id">{{ item.name }}</i-option>-->
+                <!--</i-select>-->
+            <!--</el-form-item>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="管控层级" prop="controlHierarchy">-->
+                <!--<iv-input :value.sync="mainModel.vo.controlHierarchy"></iv-input>-->
+                <!--&lt;!&ndash;<input type="text" class="form-control" placeholder="" v-model="mainModel.vo.controlHierarchy" >&ndash;&gt;-->
+            <!--</el-form-item>-->
+            <!--<div v-if="isCreated" style="margin-top:20px;">-->
+                <!--<el-form-item label="选择检查项">-->
+                    <!--<iv-tree-select :model.sync="mainModel.vo.checkItem.id"-->
+                                    <!--:list="checkItemRiskTypeList"-->
+                                    <!--id-attr="id"-->
+                                    <!--display-attr="name" style="width: 211px;float: left">-->
+                        <!--<iv-tree :model="checkItemRiskTypeList"-->
+                                 <!--:selected-datas.sync="selectedCheckItem"-->
+                                 <!--:serch-filterable="true"-->
+                                 <!--id-attr="id"-->
+                                 <!--pid-attr="parentId"-->
+                                 <!--display-attr="name"-->
+                                 <!--:single-select="true"-->
+                                 <!--:allow-parent-checked="false"-->
+                        <!--&gt;</iv-tree>-->
+                    <!--</iv-tree-select>-->
+                    <!--<iv-button @click="doCreate" style="float: left;margin-left: 5px;font-size: 13px"><Icon type="edit"></Icon></iv-button>-->
+                <!--</el-form-item>-->
+
+            <!--</div>-->
+            <!--<div v-if="!isCreated" style="margin-top:20px;">-->
+
+                <!--<el-form-item label="检查项名称" prop="checkItem.name" :rules="rules.checkItem">-->
+                    <!--<iv-input :value.sync="mainModel.vo.checkItem.name"></iv-input>-->
+                    <!--&lt;!&ndash;<input type="text" class="form-control" name="name" placeholder="" v-model="mainModel.vo.checkItem.name" >&ndash;&gt;-->
+                    <!--<span for="checkbox1" class="error"></span>-->
+                <!--</el-form-item>-->
+
+                <!--<el-form-item label="检查项类型" prop="checkItem.type" :rules="rules.checkItem">-->
+                    <!--<i-select :model.sync="mainModel.vo.checkItem.type" :list="mainModel.typeList" style="width: 211px;float: left">-->
+                        <!--<i-option v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>-->
+                    <!--</i-select>-->
+                    <!--<iv-button @click="doSelect" style="float: left;margin-left: 5px;font-size: 13px"><Icon type="reply"></Icon></iv-button>-->
+                <!--</el-form-item>-->
+
+            <!--</div>-->
+            $hook
+            <div class="form-group h30"></div>
+        </el-form>
+
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<checkitem-select-modal single-select :visible.sync="mainModel.showItemSelectModal"  @do-save="doSaveItemTable" ></checkitem-select-modal>
+<!--<Modal :visible.sync="itemModel.show" :title="itemModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <item-component></item-component>
+</Modal>-->

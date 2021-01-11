@@ -1,0 +1,39 @@
+<Modal :visible.sync="visible" :title="title" @on-cancel="onClose" width="1050" :footer-hide="true" class="userSelectModal" >
+    <iv-row type="flex" class="risk-control-layer">
+        <iv-col span="6" style="overflow-y:auto;height: 100%">
+            <div class="risk-control-layer-header">
+                <p>检查次数：{{times}}次</p>
+                <p>合格率： {{percent}}%</p>
+            </div>
+            <div class="risk-control-layer-body">
+                <table>
+                    <colgroup>
+                        <col style="width: 50%;">
+                        <col style="width: 50%;">
+                    </colgroup>
+                    <thead>
+                    <tr style="line-height: 24px;">
+                        <th>检查表名</th>
+                        <th>公司简称</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(index, ct) in checkTables" :class="{'active': index === activeIndex}" @click="doClick(index, ct.id)">
+                        <td>{{ct.name}}</td>
+                        <td>{{ct.compName}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </iv-col>
+
+
+        <iv-col span="18">
+            <div class="reportChart" v-el:chart-box style="height: 100%; margin: 0;">
+                <vuecharts :options="barChartOpt" v-ref:chart></vuecharts>
+            </div>
+        </iv-col>
+
+    </iv-row>
+</Modal>

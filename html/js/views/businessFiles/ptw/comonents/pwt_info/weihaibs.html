@@ -1,0 +1,23 @@
+
+<simple-card>
+    <p slot="title">危害辨识</p>
+      <div  style="margin: 10px  10px ; ">
+        <iv-checkbox   true-value="1" false-value="0"   :checked.sync="model.attr1" ><span class="checked-box-span">作业票填报需要填写危害辨识</span></iv-checkbox>
+        <!-- {{model.attr1}} -->
+      </div>
+     
+
+    <el-form  class="ptw-base-info" style="width:680px;padding-left:9px;" label-width="0px;"     v-if='model.attr1==1'    >
+        <el-form-item label="" >
+            <form-item-row>
+                <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex" style="width:640px">
+                    <div class="ele-disabled-mask"></div>
+                    <iv-checkbox-group class="group-vertical">
+                        <iv-checkbox disabled v-for="item of weihaibsList"><span class="checked-box-span">{{item.name}}</span></iv-checkbox>
+                    </iv-checkbox-group>
+                </div>
+                <div class="link-ele pdl5" slot="after" @click="doCustomContent(3)">定制内容</div>
+            </form-item-row>
+        </el-form-item>
+    </el-form>
+</simple-card>

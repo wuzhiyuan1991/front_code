@@ -1,0 +1,8 @@
+<div>
+    <i-select :model.sync="value" :disabled="disabled" :list="disableList" v-if="showInput">
+        <i-option v-for="item in disableList" :value="item.id">{{ item.name }}</i-option>
+    </i-select>
+    <div v-else>
+        <span :style="styleObj">{{text}}</span>
+    </div>
+</div>

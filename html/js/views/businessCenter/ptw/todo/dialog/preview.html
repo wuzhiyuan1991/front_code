@@ -1,0 +1,1308 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="1000">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <!--<iv-button @click="printTable">打印2</iv-button>-->
+        <!--<iv-button @click="preview(9)">打印3</iv-button>-->
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div class="preview-box newImgStyle " id="section-to-print">
+        <div class="preview-box-sub-title" style="display: block;position:relative;text-align:
+            center;padding: 0px;font-size: 18px;">
+            <span v-if="vo.workCatalog">
+                {{vo.workCatalog.name}}
+                <span v-if="vo.workLevel && vo.workLevel.name">（{{model.workLevel.name}}）</span>
+            </span>
+        </div>
+        <!--<h4 style="font-weight: bold;word-break: break-all;" class="text-center">{{vo.name}}</h4>-->
+        <div class="preview-box-sub-title"
+            style="display: block;padding: 7px 0px;position: relative;font-size: 16px;font-weight: 500;height: 34px;clear: both;overflow: hidden;">
+            <div class="pwt-tab-item" v-if="isShowPwtRealTime()"
+                style="float: right;padding-top: 1px;margin-right: 5px;">
+                <span>实际作业：</span>
+                <span>
+                    <i style="font-style: normal;">{{ vo.realStartTime | sliceInvalidDate }}</i>&nbsp;至&nbsp;
+                    <i style="font-style: normal;">{{ vo.realEndTime | isCompleteWork  }}</i>
+                </span>
+            </div>
+            <span style="position: absolute;left: 10px;font-weight: 500;">作业票编号：{{vo.code}}</span>
+        </div>
+
+        <table id="tablexx" class="preview-box-table tablexx">
+            <!--<colgroup>-->
+            <!--<col style="width: 140px;">-->
+            <!--<col style="width: 140px;">-->
+            <!--<col style="width: 140px;">-->
+            <!--<col style="width: 140px;">-->
+            <!--<col style="width: 140px;">-->
+            <!--<col style="width: 140px;">-->
+            <!--</colgroup>-->
+            <tbody>
+                <tr v-for="(index, row) in jsonList">
+                    <template v-for="(num, col) in row">
+                        <template v-if="num==0 && parseInt(col.config.y)>0">
+                            <td v-for="item in parseInt(col.config.y)"></td>
+                        </template>
+                        <td class="table-col-title ">{{col.name}}</td>
+                        <!---------- 作业方式 --------->
+                        <td v-if="col.code=='operatingType'" :colspan="col.config.rowspan"
+                            v-show="col.config.rowspan>0">
+                            <div class="el-form-item">
+                                <ul class="ul-inside flex-layout flex-warp" style="list-style: none;">
+                                    <li v-for="item in operateList" style="margin-right: 10px;display: inline-block;">
+                                        <!-- <input style="width:auto;" type="checkbox" :checked="item.attr1 == '1'"
+                                            disabled /> -->
+                                        <Icon v-if="item.attr1 == '1'" type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        {{getItemName(item)}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                        <!-----------  作业中所使用的工具或者设备  ---------------->
+                        <td v-if="col.code=='mainEquipment'" :colspan="col.config.rowspan"
+                            v-show="col.config.rowspan>0">
+                            <div class="el-form-item">
+                                <ul class="ul-inside flex-layout flex-warp" style="list-style: none;">
+                                    <li v-for="item in equipmentList" style="margin-right: 10px;display: inline-block;">
+                                        <!-- <input style="width:auto;" type="checkbox" :checked="item.attr1 == '1'"
+                                            disabled /> -->
+                                        <Icon v-if="item.attr1 == '1'" type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        {{getItemName(item)}}
+                                    </li>
+                                    <span v-if="item.person">(
+                                        {{item.person.user.name}}
+                                        )</span>
+                                </ul>
+                            </div>
+                        </td>
+
+                        <!-----------  特种作业人员/特种设备操作人员资格证  ---------------->
+                        <td v-if="col.code=='specialWorker'" :colspan="col.config.rowspan"
+                            v-show="col.config.rowspan>0">
+                            <div>
+                                <div class="el-form-item">
+                                    <ul class="ul-inside flex-layout flex-warp" style="list-style: none;">
+                                        <li v-for="item of certificateList"
+                                            style="margin-right: 10px;display:inline-block;">
+                                            <!-- <input style="width:auto;" type="checkbox" :checked="item.attr1=='1'"
+                                                disabled /> -->
+                                            <Icon v-if="item.attr1 == '1'" type="android-checkbox-outline"></Icon>
+                                            <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                            {{getItemName(item)}}
+                                            <span class="lite-box-21"
+                                                v-if="item.person && certificatePerson(item.person)"
+                                                style="display: inline-flex;flex-wrap: wrap;padding-left:15px">
+                                                (
+                                                <span v-for='(index,person) in item.person'>
+                                                    <span
+                                                        v-if="person.contractorEmp">{{person.contractorEmp.name}}</span>
+                                                    <span v-else>
+                                                        {{person.user.name}}
+                                                    </span>
+                                                    <span v-show='index<item.person.length-1'>，</span>
+                                                </span>
+                                                )
+                                                <!--<span v-for="p in item.person.users"></span>-->
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td v-if="col.dataType == '10'" :colspan="col.config.rowspan" v-show="col.config.rowspan>0">
+                            <div class="el-form-item">
+                                <ul class="ul-inside" style="list-style: none">
+                                    <li v-for="opt of col.value">
+                                        <!-- <input type="checkbox" disabled :checked="opt.result == '2'"
+                                            class="width-auto" /> -->
+                                        <Icon v-if="opt.result == '2'" type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        {{opt.content}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td v-if="col.dataType == '11'" :colspan="col.config.rowspan" v-show="col.config.rowspan>0">
+                            <div class="el-form-item">
+                                <ul class="ul-inside flex-layout" style="list-style: none">
+                                    <li>
+                                        <!-- <input type="checkbox" disabled :checked="col.value == '2'"
+                                            class="width-auto" /> -->
+                                        <Icon v-if="col.value == '2'" type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        是
+                                    </li>
+                                    <li style="margin-left:10px;">
+                                        <!-- <input type="checkbox" disabled :checked="col.value == '1'"
+                                            class="width-auto" /> -->
+                                        <Icon v-if="col.value == '1'" type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        否
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+
+                        <!----------  自定义字段显示  --------->
+                        <td v-if="statusOf(col)" :colspan="col.config.rowspan" v-show="col.config.rowspan>0">
+                            {{getColValue(col)}}
+                        </td>
+                    </template>
+                </tr>
+
+                <template v-if="weihaibsList && weihaibsList.length>0 && model.workTpl.attr1 == '1'">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">危害辨识</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div>
+                                <ul class="ul-inside flex-layout flex-warp" style="list-style: none;">
+                                    <li v-for="item of weihaibsList" style="display: inline-block;margin-right:10px;">
+                                        <!-- <input type="checkbox"
+                                            :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')"
+                                            disabled /> -->
+                                        <Icon
+                                            v-if="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')"
+                                            type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        <!--{{item.isExtra==1?item.content:item.name}}-->
+                                        {{getItemName(item)}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+
+                <!--</tbody>-->
+                <!--</table>-->
+
+                <!--<table class="preview-box-table tablexx">-->
+                <!--<tbody>-->
+                <!-- 安全措施 --->
+                <template v-if="kongzhicsList && kongzhicsList.list.length>0">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">安全措施</td>
+                    </tr>
+                    <tr>
+                        <td v-show="kongzhicsList.showGroup" class="table-col-title ">分组</td>
+                        <td :colspan="kongzhicsList.colspan" class="table-col-title ">措施内容</td>
+                        <td v-show="kongzhicsList.showVer" class="table-col-title ">核对人</td>
+                        <td v-show="kongzhicsList.showSign" class="table-col-title ">签名</td>
+                    </tr>
+                    <template v-for="group in kongzhicsList.groupArr">
+                        <tr v-for="(index, item) in group.children">
+                            <td class="table-col-title" :rowspan="group.rowspan"
+                                v-show="index==0 && kongzhicsList.showGroup">{{group.content}}</td>
+                            <td :colspan="kongzhicsList.colspan" class="ul-style-none">
+                                <div>
+                                    <!--<ul class="ul-inside">-->
+                                    <!--<li >-->
+                                    <!--<input type="checkbox" disabled :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')" />-->
+                                    <!--&lt;!&ndash;{{item.content||item.name}}&ndash;&gt;-->
+                                    <!--{{getItemName(item ,"kongzhi")}}-->
+                                    <!--</li>-->
+                                    <!--</ul>-->
+                                    <!-- <input type="checkbox" disabled
+                                        :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')" /> -->
+                                    <Icon v-if="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')"
+                                        type="android-checkbox-outline"></Icon>
+                                    <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                    {{item.content}}
+                                </div>
+                            </td>
+                            <td v-show="kongzhicsList.showVer">
+                                <span v-for="(optIndex, opt) in item.ptwWorkVerifiers">{{opt.name}} <span
+                                        v-show="optIndex<item.ptwWorkVerifiers.length-1">,</span></span>
+                            </td>
+                            <td v-show="kongzhicsList.showSign">
+                                <div>
+                                    <image-view new-view :image-style="imgStyle" :images="getFileLists(item)" show-close=false>
+                                    </image-view>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </template>
+                <!-- 安全措施 --->
+                <!--</tbody>-->
+                <!--</table>-->
+
+                <!--<table class="preview-box-table tablexx">-->
+                <!--<tbody>-->
+                <!-- 个人防护  v-if="isShowList"--->
+                <template v-if="isShowList">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">个人防护</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div>
+                                <template v-if="true">
+                                    <span v-for="ppeitem in ppeList"
+                                        style="padding-right:10px;display: inline-block;">
+                                        <Icon
+                                            v-if="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')"
+                                            type="android-checkbox-outline"></Icon>
+                                        <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                        {{getItemName(ppeitem)}}
+                                    </span>
+                                </template>
+
+                                <!--<template v-for="item of ppeList">-->
+                                    <!--<span v-for="ppeitem in item.lists"-->
+                                          <!--style="padding-right:10px;display: inline-block;">-->
+                                        <!--<Icon-->
+                                                <!--v-if="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')"-->
+                                                <!--type="android-checkbox-outline"></Icon>-->
+                                        <!--<Icon v-else type="android-checkbox-outline-blank"></Icon>-->
+                                        <!--{{getItemName(ppeitem)}}-->
+                                    <!--</span>-->
+                                <!--</template>-->
+
+                                <!--<div class="flex-layout  mb20" v-for="item of ppeList"  v-if="item.lists.length>0">-->
+                                <!--<div class="form-item-label" style="align-items: baseline">{{item.name}}</div>-->
+                                <!--<div  class="el-form-item">-->
+                                <!--<ul class="ul-inside flex-layout flex-warp" style="list-style: none;">-->
+                                <!--<li v-for="ppeitem in item.lists" style="margin-right: 10px;display:inline-block;">-->
+                                <!--<input type="checkbox" disabled :checked="(ppeitem.attr1=='1' && ppeitem.checkResult=='0') || (ppeitem.checkResult=='2')"  style="width:auto;"/>-->
+                                <!--&lt;!&ndash;{{ppeitem.isExtra==1?ppeitem.content:ppeitem.name}}&ndash;&gt;-->
+                                <!--{{getItemName(ppeitem)}}-->
+                                <!--</li>-->
+                                <!--</ul>-->
+                                <!--</div>-->
+                                <!--</div>-->
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+
+                <!-- 个人防护 --->
+
+                <!-- 工艺隔离 --->
+                <template v-if="model.enableProcessIsolation==1">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">工艺隔离</td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">工艺管道</td>
+                        <td colspan="2">
+                            <div>{{process.facility}}</div>
+                        </td>
+                        <td class="table-col-title">隔离点</td>
+                        <td colspan="2">
+                            <div>{{process.position}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">挂牌上锁</td>
+                        <td colspan="5">
+                            <div>
+                                <!-- <input type="checkbox" value="Car" disabled :checked="process.enableLoto==1" /> -->
+                                <Icon v-if="process.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                是
+                                <Icon v-if="process.enableLoto=='0'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                否
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">隔离方法</td>
+                        <td colspan="5">
+                            <div>
+                                <span style="padding-right:15px;align-items: center;flex-wrap: wrap;" disabled
+                                    v-for="item of geliffList">
+                                    <!-- <input disabled type="checkbox" :checked="item.checkResult=='2'" /> -->
+                                    <Icon v-if="item.checkResult=='2'" type="android-checkbox-outline"></Icon>
+                                    <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                    {{item.name}}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" class="table-col-title">隔离人</td>
+                        <td rowspan="1">
+                            <div>{{getName(process.isolators)}}</div>
+                        </td>
+                        <td class="table-col-title">隔离时间</td>
+                        <td>
+                            <div>{{process.isolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(process.cloudFiles,dataTypeGelifh.isolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> {{getName(process.disisolators)}} </td>
+                        <td class="table-col-title">解除隔离时间</td>
+                        <td>
+                            <div>{{process.disisolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(process.cloudFiles,dataTypeGelifh.disisolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 工艺隔离 --->
+
+                <!-- 机械隔离 --->
+                <template v-if="model.enableMechanicalIsolation==1">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">机械隔离</td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">设备设施</td>
+                        <td colspan="2">
+                            <div>{{mechanical.facility}}</div>
+                        </td>
+                        <td class="table-col-title">机械隔离部位</td>
+                        <td colspan="2">
+                            <div>{{mechanical.position}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">挂牌上锁</td>
+                        <td colspan="5">
+                            <div>
+                                <!-- <input type="checkbox" value="Car" disabled :checked="mechanical.enableLoto==1" /> -->
+                                <Icon v-if="mechanical.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                是
+                                <!-- <input type="checkbox" value="Car" disabled :checked="mechanical.enableLoto==0" /> -->
+                                <Icon v-if="mechanical.enableLoto=='0'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                否
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" class="table-col-title">隔离人</td>
+                        <td rowspan="1">
+                            <div>
+                                {{getName(mechanical.isolators)}}
+                            </div>
+                        </td>
+                        <td class="table-col-title">隔离时间</td>
+                        <td>
+                            <div>{{mechanical.isolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(mechanical.cloudFiles,dataTypeGelifh.isolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> {{getName(mechanical.disisolators)}} </td>
+                        <td class="table-col-title">解除隔离时间</td>
+                        <td>
+                            <div>{{mechanical.disisolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(mechanical.cloudFiles,dataTypeGelifh.disisolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 机械隔离 --->
+
+                <!-- 电气隔离 --->
+                <template v-if="model.enableElectricIsolation==1">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">电气隔离</td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">电气设备设施</td>
+                        <td colspan="2">
+                            <div>{{electric.facility}}</div>
+                        </td>
+                        <td class="table-col-title">电气隔离部位</td>
+                        <td colspan="2">
+                            <div>{{electric.position}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">挂牌上锁</td>
+                        <td colspan="5">
+                            <div>
+                                <!-- <input type="checkbox" value="Car" disabled :checked="electric.enableLoto==1" /> -->
+                                <Icon v-if="electric.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                是
+                                <Icon v-if="electric.enableLoto=='0'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                <!-- <input type="checkbox" value="Car" disabled :checked="electric.enableLoto==0" /> -->
+                                否
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" class="table-col-title">隔离人</td>
+                        <td>
+                            <div>{{getName(electric.isolators)}}</div>
+                        </td>
+                        <td class="table-col-title">隔离时间</td>
+                        <td>
+                            <div>{{electric.isolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(electric.cloudFiles,dataTypeGelifh.isolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>{{getName(electric.disisolators)}}</div>
+                        </td>
+                        <td class="table-col-title">解除隔离时间</td>
+                        <td>
+                            <div>{{electric.disisolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(electric.cloudFiles,dataTypeGelifh.disisolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 电气隔离 --->
+
+                <!-- 系统屏蔽 --->
+                <template v-if="model.enableSystemMask==1">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">系统屏蔽</td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">保护系统名称</td>
+                        <td colspan="2">
+                            <div>{{systemMask.facility}}</div>
+                        </td>
+                        <td class="table-col-title">保护系统子件名称</td>
+                        <td colspan="2">
+                            <div>{{systemMask.position}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">挂牌上锁</td>
+                        <td colspan="5">
+                            <div>
+                                <!-- <input type="checkbox" disabled value="Car" :checked="systemMask.enableLoto==1" /> -->
+                                <Icon v-if="systemMask.enableLoto=='1'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                是
+                                <Icon v-if="systemMask.enableLoto=='0'" type="android-checkbox-outline"></Icon>
+                                <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                <!-- <input type="checkbox" disabled value="Car" :checked="systemMask.enableLoto==0" /> -->
+                                否
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" class="table-col-title">隔离人</td>
+                        <td>
+                            <div>{{getName(systemMask.isolators)}}</div>
+                        </td>
+                        <td class="table-col-title">隔离时间</td>
+                        <td>
+                            <div>{{systemMask.isolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(systemMask.cloudFiles,dataTypeGelifh.isolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>{{getName(systemMask.disisolators)}}</div>
+                        </td>
+                        <td class="table-col-title">解除隔离时间</td>
+                        <td>
+                            <div>{{systemMask.disisolateTime}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle"
+                                    :images="getFilesGelifh(systemMask.cloudFiles,dataTypeGelifh.disisolate)"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 电气隔离 --->
+
+            </tbody>
+        </table>
+        <!---->
+        <table v-if="model.enableBlindPlate==1" class="preview-box-table tablexx">
+            <tbody>
+                <tr>
+                    <td colspan="13" class="table-col-title ">盲板抽堵</td>
+                </tr>
+                <tr>
+                    <td class="table-col-title " rowspan="2">设备管道名称</td>
+                    <td class="table-col-title " rowspan="2">介质</td>
+                    <td class="table-col-title " rowspan="2">温度</td>
+                    <td class="table-col-title " rowspan="2">压力</td>
+                    <td class="table-col-title" colspan="3">盲板</td>
+                    <td class="table-col-title" colspan="2">实施时间</td>
+                    <td class="table-col-title" colspan="2">作业人</td>
+                    <td class="table-col-title" colspan="2">监护人</td>
+                </tr>
+                <tr>
+                    <td class="table-col-title">材质</td>
+                    <td class="table-col-title">规格</td>
+                    <td class="table-col-title">编号</td>
+                    <td class="table-col-title">堵</td>
+                    <td class="table-col-title">抽</td>
+                    <td class="table-col-title">堵</td>
+                    <td class="table-col-title">抽</td>
+                    <td class="table-col-title">堵</td>
+                    <td class="table-col-title">抽</td>
+                </tr>
+                <tr v-for="item in tableList">
+                    <td>{{item.pipeName}}</td>
+                    <td>{{item.medium}}</td>
+                    <td>{{item.temperature}}</td>
+                    <td>{{item.pressure}}</td>
+                    <td>{{item.texture}}</td>
+                    <td>{{item.specification}}</td>
+                    <td>{{item.number}}</td>
+                    <td>{{getOptionTime(item.blindPlateOperations1, '1')}}</td>
+                    <td>{{getOptionTime(item.blindPlateOperations1, '2')}}</td>
+                    <td>
+                        <div>
+                            <image-view new-view image-style="height:24px;width:auto;max-width:60px"
+                                        :images="getBlindPlatePic(item.blindPlateOperations1, '1', '11', 'PTW36')"
+                                        :show-close="false"></image-view>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <image-view new-view image-style="height:24px;width:auto;max-width:60px"
+                                        :images="getBlindPlatePic(item.blindPlateOperations1, '2', '13', 'PTW36')"
+                                        :show-close="false"></image-view>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <image-view new-view image-style="height:24px;width:auto;max-width:60px"
+                                        :images="getBlindPlatePic(item.blindPlateOperations1, '1', '12', 'PTW36')"
+                                        :show-close="false"></image-view>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <image-view new-view image-style="height:24px;width:auto;max-width:60px"
+                                        :images="getBlindPlatePic(item.blindPlateOperations1, '2', '14', 'PTW36')"
+                                        :show-close="false"></image-view>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table  class="preview-box-table tablexx">
+            <tbody>
+                <!-- 气体检测 --->
+                <template v-if="model.enableGasDetection>0">
+                    <tr>
+                        <td colspan="7" class="table-col-title ">气体检测</td>
+                    </tr>
+                    <tr>
+                        <td :rowspan="workclosespan(!!model.promiseList['9']?2:2,previewCheckBefore, 1)"  class="table-col-title">作业前</td>
+                        <td v-if="model.promiseList['9']" class="table-col-title">作业前气体检测承诺</td>
+                        <td v-if="model.promiseList['9']" colspan="5">
+                            <div v-if="model.promiseList['9']">{{model.promiseList['9']}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-col-title">检验地点</td>
+                        <td class="table-col-title">检验时间</td>
+                        <td class="table-col-title">有毒有害气体或<br>蒸汽浓度（PPM）</td>
+                        <td class="table-col-title">可燃气体或<br>蒸汽浓度（PPM）</td>
+                        <!--<td style="padding:0;background: #F2F2F2;font-weight: bold;"><span-->
+                                <!--class="table-col-title-border">氧气（%）</span><span-->
+                                <!--style="background: #F2F2F2;padding-left:5px">签名</span></td>-->
+                        <td class="table-col-title">氧气（%）</td>
+                        <td class="table-col-title">签名</td>
+                    </tr>
+                    <tr v-for="item in previewCheckBefore">
+                        <td>
+                            <div>{{item.detectSite}}</div>
+                        </td>
+                        <td>
+                            <div>{{item.detectTime}}</div>
+                        </td>
+                        <td>
+                            <div>{{item.harmfulGas}}</div>
+                        </td>
+                        <td>
+                            <div>{{item.combustibleGas}}</div>
+                        </td>
+                        <!--<td style="padding:0;height:0;">-->
+                            <!--<div style="height: 100%;">-->
+                                <!--<span class="table-col-title-border"-->
+                                    <!--style="height:100%;background: none;display: inline-block;vertical-align: top;font-weight: normal">-->
+                                    <!--<div style="height: 100%;display: flex;align-items: center;">{{item.oxygenGas}}-->
+                                    <!--</div>-->
+                                <!--</span>-->
+                                <!--<span class="img-center-style">-->
+                                    <!--<image-view new-view :image-style="imgStyle" v-if="item&&item.signFiles"-->
+                                        <!--:images="item.signFiles" :show-close="false"></image-view>-->
+                                <!--</span>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                        <td>
+                            <div>{{item.oxygenGas}}</div>
+                        </td>
+                        <td >
+                            <div style="height: 100%;">
+                                <image-view new-view :image-style="imgStyle" v-if="item&&item.signFiles"
+                                            :images="item.signFiles" :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="previewCheckBefore.length==0">
+                        <td><div></div></td>
+                        <td><div></div></td>
+                        <td><div></div></td>
+                        <td><div></div></td>
+                        <td><div></div></td>
+                        <td><div></div></td>
+                        <!--<td style="padding:0;">-->
+                            <!--<div style="height: 100%;">-->
+                                <!--<span class="table-col-title-border"-->
+                                    <!--style="height:100%;background: none;display: inline-block;vertical-align: top;font-weight: normal">-->
+                                    <!--<div style="height: 100%;display: flex;align-items: center;"> </div>-->
+                                <!--</span>-->
+                                <!--<span class="img-center-style"></span>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                    </tr>
+                    <tr v-show="previewCheckIngLists.length>0">
+                        <td :rowspan="getSpan()" class="table-col-title">作业中</td>
+                        <td class="table-col-title">检验地点</td>
+                        <td class="table-col-title">检验时间</td>
+                        <td class="table-col-title">有毒有害气体或<br>蒸汽浓度（PPM）</td>
+                        <td class="table-col-title">可燃气体或<br>蒸汽浓度（PPM）</td>
+                        <!--<td style="padding:0;background: #F2F2F2;font-weight: bold;"><span-->
+                                <!--class="table-col-title-border">氧气（%）</span><span-->
+                                <!--style="background: #F2F2F2;padding-left:5px">签名</span></td>-->
+                        <td class="table-col-title">氧气（%）</td>
+                        <td class="table-col-title">签名</td>
+                    </tr>
+                    <tr  v-for="item in previewCheckIngLists">
+                        <td>
+                            <div>{{item.detectSite}}</div>
+                        </td>
+                        <td>
+                            <div>{{item.detectTime}}</div>
+                        </td>
+                        <td>
+                            <div>{{item.harmfulGas}}</div>
+                        </td>
+                        <td>
+                            <div>{{item.combustibleGas}}</div>
+                        </td>
+                        <td><div>{{item.oxygenGas}}</div></td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle" v-if="item&&item.signFiles"
+                                    :images="item.signFiles" :show-close="false"></image-view>
+                            </div>
+                        </td>
+                <!--<td style="padding:0;">-->
+                            <!--<div style="height: 100%;">-->
+                                <!--<span class="table-col-title-border"-->
+                                    <!--style="height:100%;background: none;display: inline-block;vertical-align: top;font-weight: normal">-->
+                                    <!--<div style="height: 100%;display: flex;align-items: center;">{{item.oxygenGas}}-->
+                                    <!--</div>-->
+                                <!--</span>-->
+                                <!--<span class="img-center-style">-->
+                                    <!--<div>-->
+                                        <!--<image-view new-view :image-style="imgStyle" v-if="item&&item.signFiles"-->
+                                            <!--:images="item.signFiles" :show-close="false"></image-view>-->
+                                    <!--</div>-->
+                                <!--</span>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                    </tr>
+                    <!-- <tr v-if="previewCheckIngLists.length==0">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td> -->
+                        <!--<td style="padding:0;">-->
+                            <!--<div style="height: 100%;">-->
+                                <!--<span class="table-col-title-border"-->
+                                    <!--style="height:100%;background: none;display: inline-block;vertical-align: top;font-weight: normal">-->
+                                    <!--<div style="height: 100%;display: flex;align-items: center;"> </div>-->
+                                <!--</span>-->
+                                <!--<span class="img-center-style"></span>-->
+                            <!--</div>-->
+                        <!--</td>-->
+                    <!-- </tr> -->
+                </template>
+            </tbody>
+        </table>
+                <!-- 气体检测 --->
+        <table  class="preview-box-table tablexx">
+            <tbody>
+                <!-- 特种作业人员/特种设备操作人员确认 --->
+                <template v-if="specialPersonList.length>0">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">{{findName('特种作业人员/特种设备操作人员资格证')}}确认</td>
+                    </tr>
+                    <tr v-for="item in specialPersonList">
+                        <td class="table-col-title">人员</td>
+                        <td>
+                            <div v-if="item.user">{{item.user.name}}</div>
+                            <div v-if="!item.user && item.contractorEmp">{{item.contractorEmp.name}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle" :images="getFiles(item.cloudFiles,'PTW9')"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                        <td class="table-col-title">签名时间</td>
+                        <td>
+                            <div v-if="item.cloudFiles.length>0">{{item.cloudFiles[0].createDate}}</div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 特种作业人员/特种设备操作人员确认 --->
+
+                <!-- 维修人员确认 --->
+                <template v-if="repairPersonList.length>0 && isShowRepair">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">{{findName('检维修人员')}}确认</td>
+                    </tr>
+                    <tr v-for="item in repairPersonList">
+                        <td class="table-col-title">人员</td>
+                        <td>
+                            <div v-if="item.user">{{item.user.name}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle" :images="getFiles(item.cloudFiles,'PTW9')"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                        <td class="table-col-title">签名时间</td>
+                        <td>
+                            <div v-if="item.cloudFiles.length>0">
+                                {{item.cloudFiles[0].createDate}}
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 维修人员确认 --->
+
+                <!-- 安全教育实施人员确认 --->
+                <template v-if="securityEducationPersonList.length>0">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">{{findName('实施安全教育人')}}确认</td>
+                    </tr>
+                    <tr v-if="model.promiseList['10']">
+                        <td colspan="1" class="table-col-title ">承诺</td>
+                        <td colspan="5">{{model.promiseList['10']}}</td>
+                    </tr>
+
+                    <tr v-for="item in securityEducationPersonList">
+                        <td class="table-col-title">人员</td>
+                        <td>
+                            <div v-if="item.users">{{getName(item.users)}}</div>
+                        </td>
+                        <td class="table-col-title">签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle" :images="getFiles(item.cloudFiles,'PTW9')"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                        <td class="table-col-title">签名时间</td>
+                        <td>
+                            <div v-if="item.cloudFiles.length>0">
+                                {{item.cloudFiles[0].createDate}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="table-col-title ">受教育人签名</td>
+                        <td colspan="5">
+                            <div >
+                                <image-view new-view v-for="item in securityEducationPersonList" image-style="height:20px;width: 80px;
+                                object-fit: contain;" :images="getFiles(item.cloudFiles,'PTW31')"
+                                            :show-close="false"></image-view>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+
+                <!-- 安全教育实施人员确认 --->
+
+                <!-- 作业签发 --->
+                <tr v-if="personList && personList.length>0">
+                    <td colspan="6" class="table-col-title ">作业签发</td>
+                </tr>
+
+                <template v-for="items in personList">
+                    <template v-if="true  ||  items.signCatalog.enableCommitment == '1'">
+                        <tr v-for="(index,item) in personListItems(items)" >
+                            <td v-if="index==0" :rowspan="personListItemsLength(items)" class="table-col-title">{{items.signCatalog.name}}</td>
+                            <!--<td  class="table-col-title">承诺</td>-->
+                            <td colspan="5">
+                                <div >
+                                    <div style="margin-bottom:10px;" v-if="item.signCatalog.enableCommitment == '1'">
+                                        {{item.signCatalog.content}}</div>
+                                    <div v-if="item.enableCtrlMeasureVerification == '1'">
+                                        <div v-for="opt of item.workStuffs">
+                                            <!--<div v-for="opt of getStuffList(item.id)">-->
+                                            <Icon
+                                                v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')"
+                                                type="android-checkbox-outline"></Icon>
+                                            <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                            {{getItemName(opt)}}
+                                        </div>
+                                    </div>
+                                    <div style="height: 20px;display: flex;">
+                                        <div style="width:160px;">
+                                            <image-view new-view :image-style="imgStyle"
+                                                :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false">
+                                            </image-view>
+                                        </div>
+                                        <div>{{getFiles(item.cloudFiles,'PTW9')[0].createDate}}</div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!--<tr>-->
+                        <!--<td  class="table-col-title">签名</td><td ><div>-->
+                        <!--<image-view new-view :image-style="imgStyle" :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false"></image-view>-->
+                        <!--</div></td>-->
+                        <!--<td  class="table-col-title">签名时间</td><td colspan="2"><div>{{getFiles(item.cloudFiles,'PTW9')[0].createDate}}</div></td>-->
+                        <!--</tr>-->
+                    </template>
+
+                    <template v-else>
+                        <tr v-show="item.signCatalog.enableCommitment != '1'">
+                            <td colspan="1" class="table-col-title">{{item.signCatalog.name}}</td>
+                            <td class="table-col-title">签名</td>
+                            <td>
+                                <div>
+                                    <image-view new-view :image-style="imgStyle" :images="getFiles(item.cloudFiles,'PTW9')"
+                                        :show-close="false"></image-view>
+                                </div>
+                            </td>
+                            <td class="table-col-title">签名时间</td>
+                            <td colspan="2">
+                                <div>{{getFiles(item.cloudFiles,'PTW9')[0].createDate}}</div>
+                            </td>
+                        </tr>
+                    </template>
+
+                </template>
+                <!-- 作业签发 --->
+
+                <!-- 作业监控 --->
+                <template v-if="custodyPersonRecordList && custodyPersonRecordList.length>0">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">作业监控</td>
+                    </tr>
+                    <tr v-for="item in custodyPersonRecordList">
+                        <td class="table-col-title">监护时间</td>
+                        <td>
+                            <div>{{item.superviseTime}}</div>
+                        </td>
+                        <td class="table-col-title">监护签名</td>
+                        <td>
+                            <div>
+                                <image-view new-view :image-style="imgStyle" :images="getFiles(item.cloudFiles,'PTW11')"
+                                    :show-close="false"></image-view>
+                            </div>
+                        </td>
+                        <td class="table-col-title">监护内容</td>
+                        <td>
+                            <div>{{item.superviseContent}}</div>
+                        </td>
+                    </tr>
+                </template>
+                <!-- 作业监控 --->
+
+                <!-- 作业关闭 --->
+                <template v-if="true">
+                    <tr>
+                        <td colspan="6" class="table-col-title ">作业关闭</td>
+                    </tr>
+                    <template v-for="(index, items) in workClosePersonList">
+                        <!--- 作业完成 --->
+                        <template v-if="items.type === 'success'">
+                            <tr>
+                                <td :rowspan="workclosespan(1, items.list)" class="table-col-title">作业完成</td>
+                                <td class="table-col-title">声明</td>
+                                <td colspan="4">
+                                    <div>{{model.promiseList['7']}}</div>
+                                </td>
+                            </tr>
+
+                            <template v-for="item in items.list">
+                                <tr v-if="item.signCatalog && item.signCatalog.enableCommitment=='1'">
+                                    <td class="table-col-title">承诺</td>
+                                    <td colspan="4">
+                                        <div>{{item.signCatalog.content}}</div>
+                                    </td>
+                                </tr>
+                                <tr v-if="item.enableCtrlMeasureVerification=='1'">
+                                    <td class="table-col-title">控制措施</td>
+                                    <td colspan="4" >
+                                        <ul class="ul-inside">
+                                            <li v-for="opt of item.workStuffs" style="display: flex;align-items: center;" class="lite-box-21" >
+                                                <!--<input style="margin-top:3px;margin-right:2px;" type="checkbox" disabled :checked="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" class="width-auto" />-->
+                                                <Icon style="margin-bottom:5px;" v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" type="android-checkbox-outline"></Icon>
+                                                <Icon style="margin-bottom:5px;" v-else type="android-checkbox-outline-blank"></Icon>
+                                                <span style="margin-left:5px;">{{opt.content}}</span>
+                                                <image-view new-view image-style="height:20px;max-width: 140px;
+                                                object-fit: contain;margin-left:5px;margin-bottom:0;" :images="getFiles(opt.cloudFiles, 'PTW18')" show-close=false></image-view>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-col-title"><span
+                                            v-if="item.signCatalog">{{item.signCatalog.name}}</span></td>
+                                    <td>
+                                        <div>
+                                            <image-view new-view v-show="isWorkClose" :image-style="imgStyle"
+                                                :images="item.cloudFiles" :show-close="false"></image-view>
+                                        </div>
+                                    </td>
+                                    <td class="table-col-title">签名时间</td>
+                                    <td colspan="2">
+                                        <div v-show="isWorkClose">{{item.cloudFiles[0].createDate}}</div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+
+                        <template v-if="items.type === 'cancel'">
+                            <tr>
+                                <td :rowspan="workclosespan(2, items.list)" class="table-col-title">作业取消</td>
+                                <td class="table-col-title">取消原因</td>
+                                <td colspan="4">
+                                    <div>
+                                        <div v-for="ritem in reasonList">
+                                            <!-- <input type="checkbox" disabled :checked="ritem.checkResult == '2'" /> -->
+                                            <Icon v-if="ritem.checkResult == '2'" type="android-checkbox-outline">
+                                            </Icon>
+                                            <Icon v-else type="android-checkbox-outline-blank"></Icon>
+                                            {{ritem.name || ritem.content}}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-col-title">声明</td>
+                                <td colspan="4">
+                                    <div>{{model.promiseList['6']}}</div>
+                                </td>
+                            </tr>
+                            <template v-for="item in items.list">
+                                <tr v-if="item.signCatalog && item.signCatalog.enableCommitment=='1'">
+                                    <td class="table-col-title">承诺</td>
+                                    <td colspan="4">
+                                        <div>{{item.signCatalog.content}}</div>
+                                    </td>
+                                </tr>
+                                <tr v-if="item.enableCtrlMeasureVerification=='1'">
+                                    <td class="table-col-title">控制措施</td>
+                                    <td colspan="4" >
+                                        <ul class="ul-inside">
+                                            <li v-for="opt of item.workStuffs" style="display: flex;align-items: center;" class="lite-box-21" >
+                                                <!--<input style="margin-top:3px;margin-right:2px;" type="checkbox" disabled :checked="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" class="width-auto" />-->
+                                                <Icon style="margin-bottom:5px;" v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" type="android-checkbox-outline"></Icon>
+                                                <Icon style="margin-bottom:5px;" v-else type="android-checkbox-outline-blank"></Icon>
+                                                <span style="margin-left:5px;">{{getItemName(opt)}}</span>
+                                                <image-view new-view image-style="height:20px;max-width: 100px;
+                                                object-fit: contain;margin-left:5px;margin-bottom:0;" :images="getFiles(opt.cloudFiles, 'PTW18')" show-close=false></image-view>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-col-title"><span v-if="item.signCatalog">{{item.signCatalog.name}}</span></td>
+                                    <td>
+                                        <div>
+                                            <image-view new-view v-show="isWorkClose" :image-style="imgStyle"
+                                                :images="item.cloudFiles" :show-close="false"></image-view>
+                                        </div>
+                                    </td>
+                                    <td class="table-col-title">签名时间</td>
+                                    <td colspan="2">
+                                        <div v-show="isWorkClose">{{item.cloudFiles[0].createDate}}</div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+
+                        <!---- 作业续签 ---->
+                        <template v-if="items.type === 'delay'">
+                            <tr>
+                                <td :rowspan="workclosespan(2, items.list)" rowspan="10" class="table-col-title">作业延期
+                                </td>
+                                <!--<td  class="table-col-title">延期理由</td><td colspan="4"><div>{{items.vo.attr2}}</div></td>-->
+                            </tr>
+                            <tr>
+                                <td class="table-col-title" v-if="model.firstUsedPermit.id != model.lastPermitId">延期时间
+                                </td>
+                                <td colspan="4">
+                                    <div>
+                                        <!--{{items.vo.permitStartTime}}到{{items.vo.permitEndTime}}-->
+                                        <span
+                                            v-if="items.vo.permitStartTime && items.vo.permitEndTime && items.vo.versionNum>1">
+                                            {{items.vo.permitStartTime}}到{{items.vo.permitEndTime}}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <template v-for="item in items.list">
+                                <tr v-if="item.signCatalog && item.signCatalog.enableCommitment=='1'">
+                                    <td class="table-col-title">承诺</td>
+                                    <td colspan="4">
+                                        <div>{{item.signCatalog.content}}</div>
+                                    </td>
+                                </tr>
+                                <tr v-if="item.enableCtrlMeasureVerification=='1'">
+                                    <td class="table-col-title">控制措施</td>
+                                    <td colspan="4" >
+                                        <ul class="ul-inside">
+                                            <li v-for="opt of item.workStuffs" style="display: flex;align-items: center;" class="lite-box-21" >
+                                                <!--<input style="margin-top:3px;margin-right:2px;" type="checkbox" disabled :checked="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" class="width-auto" />-->
+                                                <Icon style="margin-bottom:5px;" v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" type="android-checkbox-outline"></Icon>
+                                                <Icon style="margin-bottom:5px;" v-else type="android-checkbox-outline-blank"></Icon>
+                                                <span style="margin-left:5px;">{{getItemName(opt)}}</span>
+                                                <image-view new-view image-style="height:20px;max-width: 100px;
+                                                object-fit: contain;margin-left:5px;margin-bottom:0;" :images="getFiles(opt.cloudFiles, 'PTW18')" show-close=false></image-view>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-col-title"><span
+                                            v-if="item.signCatalog">{{item.signCatalog.name}}</span></td>
+                                    <td>
+                                        <div>
+                                            <image-view new-view v-show="isWorkClose" :image-style="imgStyle"
+                                                :images="item.cloudFiles" :show-close="false"></image-view>
+                                        </div>
+                                    </td>
+                                    <td class="table-col-title">签名时间</td>
+                                    <td colspan="2">
+                                        <div v-show="isWorkClose">{{item.cloudFiles[0].createDate}}</div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+
+                        <template v-if="items.type === 'postpone'">
+                            <tr>
+                                <td :rowspan="workclosespan(2, items.list)" class="table-col-title">作业延期</td>
+                                <!--<td  class="table-col-title">续签理由</td><td colspan="4"><div>{{items.vo.attr2}}</div></td>-->
+                            </tr>
+
+                            <tr>
+                                <td class="table-col-title">延期时间</td>
+                                <td colspan="4">
+                                    <div>
+                                        <span
+                                            v-if="items.vo.permitStartTime && items.vo.permitEndTime && items.vo.versionNum>1">
+                                            <!--{{items.vo.workStartTime}} 到 {{items.vo.workEndTime}}-->
+                                            {{items.vo.permitStartTime}}到{{items.vo.permitEndTime}}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <template v-for="item in items.list">
+                                <tr v-if="item.signCatalog && item.signCatalog.enableCommitment=='1'">
+                                    <td class="table-col-title">承诺</td>
+                                    <td colspan="4">
+                                        <div>{{item.signCatalog.content}}</div>
+                                    </td>
+                                </tr>
+                                <tr v-if="item.enableCtrlMeasureVerification=='1'">
+                                    <td class="table-col-title">控制措施</td>
+                                    <td colspan="4" >
+                                        <ul class="ul-inside">
+                                            <li v-for="opt of item.workStuffs" style="display: flex;align-items: center;" class="lite-box-21" >
+                                                <!--<input style="margin-top:3px;margin-right:2px;" type="checkbox" disabled :checked="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" class="width-auto" />-->
+                                                <Icon style="margin-bottom:5px;" v-if="(opt.attr1=='1' && opt.checkResult=='0') || (opt.checkResult=='2')" type="android-checkbox-outline"></Icon>
+                                                <Icon style="margin-bottom:5px;" v-else type="android-checkbox-outline-blank"></Icon>
+                                                <span style="margin-left:5px;">{{getItemName(opt)}}</span>
+                                                <image-view new-view image-style="height:20px;max-width: 100px;
+                                                object-fit: contain;margin-left:5px;margin-bottom:0;" :images="getFiles(opt.cloudFiles, 'PTW18')" show-close=false></image-view>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-col-title"><span
+                                            v-if="item.signCatalog">{{item.signCatalog.name}}</span></td>
+                                    <td>
+                                        <div>
+                                            <image-view new-view v-show="isWorkClose" :image-style="imgStyle"
+                                                :images="item.cloudFiles" :show-close="false"></image-view>
+                                        </div>
+                                    </td>
+                                    <td class="table-col-title">签名时间</td>
+                                    <td colspan="2">
+                                        <div v-show="isWorkClose">{{item.cloudFiles[0].createDate}}</div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                    </template>
+
+                </template>
+
+                <!-- 作业关闭 --->
+
+            </tbody>
+        </table>
+
+    </div>
+</Modal>
+
+<style>
+    .table-col-title,
+    .table-col-title-border {
+        background: #F2F2F2;
+        padding: 0 8px;
+        height: 40px;
+        font-size: 14px;
+        word-break: break-all;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .table-col-content {}
+
+    .table-col-title-border {
+        width: 80px;
+        padding: 0;
+        border-right: 1px solid #000;
+        height: 100%;
+        min-height: 45px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media print {
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .preview-box {
+            width: 100%;
+        }
+
+        table {
+            width: 1060px !important;
+            margin-left: 0;
+        }
+
+        .preview-box-sub-title {
+            margin-top: 50px;
+            margin-bottom: 15px;
+        }
+    }
+
+    @page {
+        margin-bottom: 0mm;
+        margin-top: 0mm;
+        /*margin-left:10mm;*/
+        /*margin-right:10mm;*/
+    }
+
+    .newImgStyle img {
+        height: 45px;
+        width: auto;
+    }
+
+    .img-center-style {
+        height: 100%;
+        width: 70px;
+        padding-left: 5px;
+        flex-direction: column;
+        display: inline-flex;
+        justify-content: center;
+    }
+
+    .preview-box .ivu-icon {
+        font-size: 18px;
+        position: relative;
+        top: 2px;
+    }
+
+    .preview-box .ivu-icon-android-checkbox-outline {
+        color: #666
+    }
+
+    .preview-box .ivu-icon-android-checkbox-outline-blank {
+        color: #666
+    }
+
+    .img-center-style .lite-box,
+    .newImgStyle .lite-box {
+        width: auto;
+        height: auto;
+        margin: 0;
+        margin-right: 10px;
+    }
+
+    .tablexx td {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border: 1px solid;
+    }
+</style>

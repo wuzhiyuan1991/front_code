@@ -1,0 +1,53 @@
+
+<div class="tab-container" style="height: 100%; overflow: hidden">
+	<div class="main-panel">
+
+		<div class="mp-header formTitle">
+			<div class="basic">
+				<all-classification $main-header-classification-attr-default  @on-change="onCategoryChange" @on-org-change="onCategoryChange"></all-classification>
+			</div>
+		</div>
+
+		<div class="mp-content">
+			<iv-row type="flex" align="middle" class="menuList">
+				<iv-col span="24" class="menuTitle mp-header-item">
+					<vi-button type="text" class="mp-header-item-btn" @click="treeShowList">{{$t('bs.bac.expandAll')}}</vi-button>
+					<vi-button type="text" class="mp-header-item-btn" @click="treeHide">{{$t('bs.bac.collapseAll')}}</vi-button>
+					<vi-button type="text" class="mp-header-item-btn" @click="treeAdd()" v-if="hasPermission('4020004001')">添加</vi-button>
+					<vi-button type="text" class="mp-header-item-btn" @click="doExportExcel" v-if="hasPermission('4020004005')">{{$t("gb.common.export")}}</vi-button>
+					<vi-button type="text" class="mp-header-item-btn" @click="doImport" v-if="hasPermission('4020004004')">{{$t("gb.common.import")}}</vi-button>
+				</iv-col>
+			</iv-row>
+			<div style="overflow-y: auto;height: calc(100% - 50px);position: relative;">
+				<iv-tree-grid :model="exampoint.data"  v-ref:exampoint
+					:selected-datas.sync="selectedTreeDatas"
+					id-attr="id"
+					pid-attr="parentId"
+					display-attr="name"
+					:single-select="true"
+					:show-checkbox="false"
+					:allow-parent-checked="true"
+					:edit="true"
+					:has-add-permission="hasPermission('4020004001')"
+					:has-edit-permission="hasPermission('4020004002')"
+					:has-del-permission="hasPermission('4020004003')"
+					:open="exampoint.showHide"
+					:render-edit-excess="renderEditBtnStr"
+					@on-add-node="doAddNode"
+					@on-edit-node="doEditNode"
+					@on-del-node="doDelNode"
+					@on-click-edit="doEditClick"
+				></iv-tree-grid>
+			</div>
+		</div>
+	</div>
+</div>
+<Modal :visible.sync="addModel.show" :title="addModel.title" width="520" :footer-hide="true">
+	<editcomponent @doupdate="doUpdate"  :top-comp-id="topCompId"  @doeditadd="doEditAdd"></editcomponent>
+</Modal>
+<aside :show.sync="detailModel.show" :class="mainModel.detailXlPanelClass">
+	<detail-xl-panel></detail-xl-panel>
+</aside>
+
+<select-point-modal :visible.sync="selectPointModal.show" :move-point="movePoint" :data.sync="exampoint.data" @do-save="doChangePointParent"></select-point-modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>

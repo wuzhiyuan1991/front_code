@@ -1,0 +1,32 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<div style="width: 760px;background-color: #f5f5f5;border: 1px solid #c8c8c8;margin-bottom: 20px;">
+			<iv-row style="line-height: 30px;border-bottom: 1px solid #c8c8c8;padding: 3px 20px;">
+				<iv-col span="6">{{$t("bd.ria.dimensInfoItemName")}}</iv-col>
+			</iv-row>
+			<iv-row v-for="(index,lat) in gradeLats" style="line-height: 30px;background-color: #fff;padding: 3px 20px">
+				<iv-col span="6">{{lat.name}}</iv-col>
+				<iv-col span="6" style="text-align: right;">
+					<Icon type="plus" @click="doMove(index,lat)" style="font-size: 16px;"></Icon>
+				</iv-col>
+			</iv-row>
+		</div>
+		<div style="margin-bottom: 20px;" class="symbol">
+			<vi-button v-for="symbol in symbols" @click="add2CalcRule(symbol)">{{getSignRule(symbol)}}</vi-button>
+		</div>
+		<!--<div style="padding:0 7px;line-height: 30px;height: 100px;background-color: #fff;padding: 3px 7px;margin-bottom: 20px;">-->
+			<!--<label >{{calcRuleLable}}</label>-->
+		<!--</div>-->
+		<div class="ruleGradeLats">
+			<label class="lableRule">
+				<vi-button v-for="(index,label) in ruleLabels" track-by="$index">
+					<a class='removeThis'><Icon type="close-circled" @click="doRuleDel(index)"></Icon>{{label}}</a>
+				</vi-button>
+			</label>
+		</div>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("bd.ria.revoke")}}</vi-button>
+	</div>
+</div>

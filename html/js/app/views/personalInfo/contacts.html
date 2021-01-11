@@ -1,0 +1,23 @@
+<div class="contacts" style="padding:0">
+        <div class="home-header">
+            <Icon type="ios-photos" class="home-ico"></Icon>
+            <span>工作台</span>
+            <div class="homeSelect">
+            <i-select :model.sync="mainModel.vo.type" :list="typeList">
+                <i-option  v-for="qstType in typeList" :value="qstType.id">{{qstType.value}}</i-option>
+            </i-select>
+           </div>
+        </div>
+        <div class="home-content" style="padding: 0 10px;height: 100%" >
+            <el-tabs  @tab-click="doTabs" v-if="isShowTabs">
+                <el-tab-pane v-for="item in todoList" :label="item.name">
+                    <ul class="dealt homeScroll"  v-loadscroll="loadMore">
+                        <li v-for="info in tabsList">
+                            <div @click="doTodo(info.type,info.relId,info.isComplete)" style="cursor: pointer">{{info.name}}<span  v-if="completed" >{{getDataDic('todo_type',info.type)}}</span></div>
+                            <div >创建时间:{{info.createDate}}</div>
+                        </li>
+                    </ul>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+</div>

@@ -1,0 +1,79 @@
+<Modal :visible.sync="visible"  title="外部人员选择" width="1200" height="800" :footer-hide="true">
+    <div class="tab-container" style="background: #fff">
+        <div class="main-panel">
+            <div class="mp-content">
+                <div class="lr-layout" style="padding: 20px;background: #fff">
+                    <div class="lr-layout-l legal-regulation-type-box" style="width: 190px;overflow-y: auto;z-index:100;border: 1px solid #ddd;border-bottom: none">
+                        <div style="display: inline-block;margin-bottom:10px;">
+                            <iv-input :maxlength="50" icon="ios-search" cleanable @on-remove="searchLabel"  placeholder="请输入查询内容" :value.sync="mainModel.bannerKeyWord" @on-enter="searchLabel" @on-click="searchLabel"></iv-input>
+                        </div>
+                        <ul style="max-height: 450px;">
+                            <li
+                                    v-for="(index, group) in emerGroups"
+                                    class="lr-layout-li"
+                                    style="border-bottom: 1px solid #ddd;height:32px;position: relative;"
+                                    :class="{'checked': index === checkedGroupIndex}"
+                                    @click="doSelectGroup(index)"
+                                    :title="group.name"
+                            >
+                                <span style="margin-left: 17px;display: inline-block;width:126px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{group.name}}</span>
+                            </li>
+                            <li  class="lr-layout-li" v-show="!emerGroups || emerGroups.length==0"
+                                 style="border-bottom: 1px solid #ddd;height:332px;position: relative;"></li>
+                        </ul>
+                    </div>
+                    <div class="lr-layout-r" style="padding: 0;background: #fff;height:450px;">
+                        <div class=""  style="display: inline-block;margin-bottom:10px;">
+                            <iv-input :maxlength="50" icon="ios-search" cleanable @on-remove="doFilter"  placeholder="请输入查询内容" :value.sync="mainModel.filterKey" @on-enter="doFilter" @on-click="doFilter"></iv-input>
+                        </div>
+                        <div class="pull-left">
+                            <vue-bootstrap-table
+                                    :page-size-opts=[10]
+                                    :url="tableModel.url"
+                                    :selected-datas.sync="tableModel.selectedDatas"
+                                    :columns="tableModel.columns"
+                                    :show-empty-row="false"
+                                    :use-default-global-filter="false"
+                                    :lazy-load="true"
+                                    @on-del-row="doRemoveUsers"
+                                    v-ref:main-table
+                                    @on-data-loaded="onTableDataLoaded"></vue-bootstrap-table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+            <vi-button type="primary" @click="doClose" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<style>
+    .internalOrganizationMask{
+        width: 330px;
+        min-height: 160px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        paddding: 15px;
+        position: absolute;
+        left: 220px;
+        background: #fff;
+        font-size: 13px;
+    }
+    .internalOrganizationMaskTitle{
+        padding:5px;
+        border-bottom: 1px solid #ddd;
+        margin-left: 20px;
+        margin-right: 20px
+    }
+    .internalOrganizationMaskBody{
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top : 15px;
+        padding-bottom:25px;
+    }
+</style>
+

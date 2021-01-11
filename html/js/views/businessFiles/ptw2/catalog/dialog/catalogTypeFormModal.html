@@ -1,0 +1,28 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <!--<el-form-item  label="名称" prop="name">-->
+                    <!--&lt;!&ndash;<iv-input v-if="modify" :value.sync="mainModel.vo.name"  textonly></iv-input>&ndash;&gt;-->
+                    <!--<iv-input type="textarea" :rows="12" :value.sync="mainModel.vo.name"  :textonly="mainModel.isReadOnly || !modify"></iv-input>-->
+                <!--</el-form-item>-->
+
+                <el-form-item  label="级别名称" prop="level">
+                    <!--<iv-input v-if="modify" :value.sync="mainModel.vo.name"  textonly></iv-input>-->
+                    <iv-input type="textarea" :rows="12" :value.sync="mainModel.vo.name"  :textonly="mainModel.isReadOnly || !modify"></iv-input>
+                </el-form-item>
+                <el-form-item  label="分类依据" prop="content">
+                    <!--<iv-input v-if="modify" :value.sync="mainModel.vo.name"  textonly></iv-input>-->
+                    <iv-input type="textarea" :rows="12" :value.sync="mainModel.vo.name"  :textonly="mainModel.isReadOnly || !modify"></iv-input>
+                </el-form-item>
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveType" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<emerresource-select-modal :visible.sync="selectModel.emerResourceSelectModel.visible" :filter-data="selectModel.emerResourceSelectModel.filterData" single-select @do-save="doSaveEmerResource"></emerresource-select-modal>
+<exercisescheme-select-modal :visible.sync="selectModel.exerciseSchemeSelectModel.visible" :filter-data="selectModel.exerciseSchemeSelectModel.filterData" single-select @do-save="doSaveExerciseScheme"></exercisescheme-select-modal>

@@ -1,0 +1,39 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.opType != 'create'" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="人员id" prop="userId" class="small-info-box" >
+						<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="检查计划id" prop="asmtPlanId" class="small-info-box" >
+						<input-select :value="mainModel.vo.asmtPlan" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowAsmtPlanSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="状态" prop="status" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+	</div>
+	
+</div>
+
+<asmtplan-select-modal :visible.sync="selectModel.asmtPlanSelectModel.visible" :filter-data="selectModel.asmtPlanSelectModel.filterData"  @do-save="doSaveAsmtPlan"></asmtplan-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUser"></user-select-modal>
+
+
+

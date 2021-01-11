@@ -1,0 +1,531 @@
+<div style="min-height: 100%" v-if="showSelect">
+    <el-form label-width="130px" style="width: 590px;margin-bottom: 50px">
+        <el-form-item label="作业票编号" prop="permitCode" :required="true">
+            <code-input :value.sync="permitModel.permitCode"></code-input>
+        </el-form-item>
+        <!--<el-form-item  label="模板名称" >-->
+        <!--<div class="form-disabled">-->
+        <!--{{permitModel.name || model.name}}-->
+        <!--</div>-->
+        <!--</el-form-item>-->
+        <template class="el-form-item" v-for="(index, item) in jsonStrList">
+            <!------  新添加的字段 ------>
+            <!---------  单行文本 -------->
+            <div :class="{'is-required':item.isRequired=='1', 'el-form-item':true}">
+                <el-form-item v-if="item.isInherent!='1' && item.dataType=='1' && item.disable=='0'" :label="item.name"
+                    prop="permitCode" :required="true">
+                    <iv-input :value.sync="item.value"></iv-input>
+                </el-form-item>
+
+                <!---------  多行文本 -------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}" class="el-form-item"
+                    v-if="item.isInherent!='1' && item.dataType=='2' && item.disable=='0'" :label="item.name" prop="">
+                    <iv-input type="textarea" :rows="3" :value.sync="item.value"></iv-input>
+                </el-form-item>
+
+                <!---------  整数 -------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}" required
+                    v-if="item.isInherent!='1' && item.dataType=='3' && item.disable=='0'" :label="item.name" prop="">
+                    <iv-input-number is-integer :value.sync="item.value"></iv-input-number>
+                </el-form-item>
+
+                <!---------  小数 -------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='4' && item.disable=='0'" :label="item.name"
+                    prop="permitCode">
+                    <iv-input-number :value.sync="item.value"></iv-input-number>
+                </el-form-item>
+
+                <!---------  日期 -------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='5' && item.disable=='0'" :label="item.name"
+                    :label="item.name" prop="permitCode">
+                    <date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime" :selected-date.sync="item.value">
+                    </date-picker>
+                </el-form-item>
+
+                <!---------  日期区间 -------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='6' && item.disable=='0'" :label="item.name"
+                    prop="permitCode">
+                    <div class="flex-v-center">
+                        <date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                            :selected-date.sync="item.value.value1"></date-picker>
+                        <span style="width: 30px;" class="text-center">~</span>
+                        <date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                            :selected-date.sync="item.value.value2"></date-picker>
+                    </div>
+                </el-form-item>
+
+                <!------------- 人员选择 ------------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='7' && item.disable=='0'" :label="item.name"
+                    prop="permitCode">
+                    <multi-input-select v-else placeholder="请选择人员" : overflow-hover="false" :values="item.value"
+                        field-name="username" @click.stop.prevent="showSelUser('4',true, '', index)">
+                    </multi-input-select>
+                </el-form-item>
+
+                <!------------- 承包商人员选择 ------------->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='8' && item.disable=='0'" :label="item.name"
+                    prop="permitCode">
+                    <multi-input-select v-else placeholder="请选择承包商人员" : overflow-hover="false" :values="item.value"
+                        field-name="name" @click.stop.prevent="doShowContactEmp2(index)"></multi-input-select>
+                </el-form-item>
+
+                <!--------------  集值类型  ------------------------>
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='10' && item.disable=='0'" :label="item.name"
+                    prop="permitCode">
+                    <div class="border-form" style="min-height: 45px;">
+                        <div class="group-vertical ivu-checkbox-group">
+                            <iv-checkbox v-for="(index,opt) of item.value" :checked.sync="opt.result" true-value="2"
+                                false-value="1" style="display:flex;align-items: center"
+                                :class="{'flex-v-center':item.value==index+1}">
+                                <p>{{opt.content}}</p>
+                            </iv-checkbox>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!--------------  布尔类型  ------------------------>
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='11' && item.disable=='0'" :label="item.name"
+                    prop="permitCode">
+                    <div class="border-form" style="min-height: 32px;">
+                        <div class="flex-layout ivu-checkbox-group">
+                            <iv-checkbox :checked.sync="item.value" true-value="2" false-value="1"
+                                style="display:flex;align-items: center">
+                                <p>是</p>
+                            </iv-checkbox>
+                            <iv-checkbox :checked.sync="item.value" true-value="1" false-value="2"
+                                style="display:flex;align-items: center">
+                                <p>否</p>
+                            </iv-checkbox>
+                        </div>
+                    </div>
+                </el-form-item>
+
+
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.isInherent!='1' && item.dataType=='9' && item.disable=='0'" :label="item.name"
+                    prop="code">
+                    <div>
+                        <div class="flex-layout mb10">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">公司内部</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+                                <multi-input-select v-else placeholder="请选择公司内部人员" : overflow-hover="false"
+                                    :values="item.value.value1" field-name="username"
+                                    @click.stop.prevent="showSelUser('4',true, '', index)"></multi-input-select>
+                            </div>
+                        </div>
+                        <div class="flex-layout">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">承包商</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+                                <multi-input-select v-else placeholder="请选择承包商人员" : overflow-hover="false"
+                                    :values="item.value.value2" field-name="name"
+                                    @click.stop.prevent="doShowContactEmp2(index)"></multi-input-select>
+                            </div>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!------- 固话的字段 ------->
+                <!-- 作业类型 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='workCatalog' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <div class="form-disabled">{{model.workCatalog.name}}
+                        <template v-if="model.workLevel&&model.workLevel.name">({{model.workLevel.name}}）</template>
+                    </div>
+                </el-form-item>
+
+                <!-- 作业方式 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='operatingType' && item.disable=='0' && item.isInherent=='1' && permitModel.enableOperatingType=='1'"
+                    :label="item.name">
+                    <div class="border-form" style="min-height: 45px;">
+                        <div class="group-vertical ivu-checkbox-group">
+                            <iv-checkbox v-for="(index,item) of permitModel.tempWorkStuffs.operateList"
+                                :checked.sync="item.attr1" true-value="1" false-value="0"
+                                style="display:flex;align-items: center"
+                                :class="{'flex-v-center':equipmentList.length==index+1}">
+                                <p>{{item.name}}</p>
+                                <p v-if="item.isExtra==1" class="flex-grow1">
+                                    <iv-input class="ml5" :value.sync="item.content" size="small"></iv-input>
+                                </p>
+                            </iv-checkbox>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 申请单位 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='applUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    style="overflow: inherit">
+                    <!--<div class="width370">-->
+                    <!--<department-tree-select :popper-fixed="false" default-comp-id :id.sync="permitModel.applUnitId"></department-tree-select>-->
+                    <!--</div>-->
+
+                    <div>
+                        <div class="flex-layout mb10" style="min-height: 30px">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">公司内部</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+                                <div class="report repair-top">
+                                    <!--{{stringify(permitModel.applDepts)}}-->
+                                    <dept-select type="dep" :values.sync="applDepts"></dept-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-layout" style="min-height: 30px">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">承包商</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+
+                                <div class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point"
+                                    @click.prevent="doShowContactModel('apply')">
+                                    <div class="ivu-select-selection" style="line-height: 24px;">
+                                        <div class="ivu-tag" v-for="(index, tag) in permitModel.applContractors">
+                                            <span class="ivu-tag-text">{{tag.deptName ||tag.name}}</span>
+                                            <i class="ivu-icon ivu-icon-ios-close-empty"
+                                                @click.stop="doRemoveWorkContractors(tag,index,'apply')"></i>
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 16px;" class="select-ico-add">
+                                        <i class="ivu-icon ivu-icon-plus"></i>
+                                    </span>
+                                </div>
+                                <!--                        <input-select :clearable="true"  :value.sync="permitModel.workContractors" id-field="id" display-field="deptName"-->
+                                <!--                                                            @do-clear-input="doClearContact"   @click="showContactAll=true"></input-select>-->
+                            </div>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 作业单位 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='workUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="workDepts" style="overflow: inherit">
+                    <div>
+                        <div class="flex-layout mb10" style="min-height: 30px">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">公司内部</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+                                <div class="report repair-top">
+                                    <!--{{stringify(permitModel.workDepts)}}-->
+                                    <dept-select type="dep" :values.sync="permitModel.workDepts"></dept-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-layout" style="min-height: 30px">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">承包商</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+
+                                <div class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point"
+                                    @click.prevent="doShowContactModel('work')">
+                                    <div class="ivu-select-selection" style="line-height: 24px;">
+                                        <div class="ivu-tag" v-for="(index, tag) in permitModel.workContractors">
+                                            <span class="ivu-tag-text">{{tag.deptName}}</span>
+                                            <i class="ivu-icon ivu-icon-ios-close-empty"
+                                                @click.stop="doRemoveWorkContractors(tag,index,'work')"></i>
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 16px;" class="select-ico-add">
+                                        <i class="ivu-icon ivu-icon-plus"></i>
+                                    </span>
+                                </div>
+                                <!--                        <input-select :clearable="true"  :value.sync="permitModel.workContractors" id-field="id" display-field="deptName"-->
+                                <!--                                                            @do-clear-input="doClearContact"   @click="showContactAll=true"></input-select>-->
+                            </div>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 生产单位 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='prodUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="prodUnitId" style="overflow: inherit">
+                    <div class="width370">
+                        <department-tree-select :popper-fixed="false" default-comp-id :id.sync="permitModel.prodUnitId">
+                        </department-tree-select>
+                    </div>
+                </el-form-item>
+
+                <!-- 作业地点 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='workPlace' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="">
+                    <iv-input type="textarea" :rows="3" :value.sync="permitModel.workPlace"></iv-input>
+                </el-form-item>
+
+                <!-- 作业所在的设备 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='workEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <iv-input type="textarea" :rows="3" :value.sync="permitModel.workEquipment"></iv-input>
+                </el-form-item>
+
+                <!-- 作业内容 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='workContent' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <iv-input type="textarea" :rows="3" :value.sync="permitModel.workContent"></iv-input>
+                </el-form-item>
+
+                <!-- 作业人员 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='worker' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <div>
+                        <div class="flex-layout mb10">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">公司内部</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+                                <multi-input-select v-else placeholder="请选择人员" : overflow-hover="false"
+                                    :values="permitModel.selworkPersonnels['4']" field-name="user.name"
+                                    @click.stop.prevent="showSelUser('4',true)">
+                                </multi-input-select>
+                            </div>
+                        </div>
+                        <div class="flex-layout"
+                            v-show="permitModel.workContractors&&permitModel.workContractors.length">
+                            <div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+                                <span class="font-form-label flex-center-ipt">承包商</span>
+                            </div>
+                            <div class="flex-grow1 prepend-right">
+                                <multi-input-select v-else placeholder="请选择人员" : overflow-hover="false"
+                                    :values="permitModel.selworkPersonnels['5']" field-name="user.name"
+                                    @click.stop.prevent="doShowContactEmp"></multi-input-select>
+                            </div>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 检维修人员 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='maintainer' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <multi-input-select :overflow-hover="false" @click="showSelUser('6',true)" field-name="user.name"
+                        :values.sync="permitModel.selworkPersonnels['6']"></multi-input-select>
+                </el-form-item>
+
+                <!-- 作业中所使用的主要工具/设备 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='mainEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <div class="border-form" style="min-height: 45px;">
+                        <div class="group-vertical ivu-checkbox-group">
+                            <iv-checkbox v-for="(index,item) of permitModel.tempWorkStuffs.equipmentList"
+                                :checked.sync="item.attr1" true-value="1" false-value="0"
+                                style="display:flex;align-items: center"
+                                :class="{'flex-v-center':equipmentList.length==index+1}">
+                                <p>{{item.name}}</p>
+                                <p v-if="item.isExtra==1" class="flex-grow1">
+                                    <iv-input class="ml5" :value.sync="item.content" size="small"></iv-input>
+                                </p>
+                            </iv-checkbox>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 特种作业人员/特种设备操作人员资格证 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='specialWorker' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <div class="border-form" style="min-height: 45px;">
+                        <div class="group-vertical ivu-checkbox-group">
+                            <iv-checkbox v-for="(index,item) of certificateList" :checked.sync="item.attr1"
+                                true-value="1" false-value="0" style="display: flex;align-items: center"
+                                :class="{'flex-v-center':certificateList.length==index+1}">
+                                <div class="flex-v-center flex-grow1">
+                                    <div class="flex-v-center flex-noshrink" :class="{'flex-grow1':item.isExtra==1}">
+                                        <p class="flex-noshrink">{{item.name}}</p>
+                                        <p v-if="item.isExtra==1" class="flex-grow1">
+                                            <iv-input class="ml5" :value.sync="item.content" size="small"></iv-input>
+                                        </p>
+                                    </div>
+                                    <div class="flex-v-center ml5" v-if="enableSpecialWorker && item.attr1=='1'"
+                                        @click.stop.prevent=";">
+                                        <div style="min-width: 200px;">
+                                            <multi-input-select placeholder="请选择人员" :overflow-hover="false"
+                                                :values="item.ptwWorkPersonnels" field-name="user.name"
+                                                @click="doShowSelectWorker(index,item)"></multi-input-select>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </iv-checkbox>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 实施安全教育人 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='safetyEducator' && item.disable=='0' && item.isInherent=='1' " :label="item.name">
+                    <multi-input-select :overflow-hover="false" @click="showSelUser('2', true)" field-name="user.name"
+                        :values="permitModel.selworkPersonnels['2']"></multi-input-select>
+                </el-form-item>
+
+
+                <!-- 作业监护人 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='supervisior' && item.disable=='0' && item.isInherent=='1' " :label="item.name">
+                    <div class="flex-v-center">
+                        <multi-input-select :overflow-hover="false" @click="showSelUser('3', true)"
+                            field-name="user.name" :values.sync="permitModel.selworkPersonnels['3']">
+                        </multi-input-select>
+                        <div class="flex-noshrink ml5">
+                            <iv-checkbox disabled true-value="1" false-value="0"
+                                :checked.sync="model.enableSuperviseRecord">需要填写现场监护记录</iv-checkbox>
+                        </div>
+                    </div>
+
+                </el-form-item>
+                <!-- 属地负责人 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='areaSupervisior' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+                    <multi-input-select :overflow-hover="false" @click="showSelUser('15',true)" field-name="name"
+                        :values.sync="permitModel.selworkPersonnels['15'].users"></multi-input-select>
+                </el-form-item>
+                <!-- 作业时限 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='permitTime' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    style="overflow: inherit">
+                    <div class="flex-v-center">
+                        <date-picker :begin="addDate()" format="yyyy-MM-dd HH:mm:ss" type="datetime"
+                            :selected-date.sync="permitModel.permitStartTime"></date-picker>
+                        <span style="width: 30px;" class="text-center">~</span>
+                        <date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime" :begin="addDate()"
+                            :selected-date.sync="permitModel.permitEndTime"></date-picker>
+                    </div>
+                </el-form-item>
+                <!--<el-form-item class="is-required" label="作业许可有效期" prop="code"  style="overflow: inherit">-->
+                <!--<div class="flex-v-center child-width-auto-ipt">-->
+                <!--<date-picker  format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="permitModel.validityStartTime" ></date-picker>-->
+                <!--<span style="width: 30px;"  class="text-center">~</span>-->
+                <!--<date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="permitModel.validityEndTime" ></date-picker>-->
+                <!--</div>-->
+                <!--</el-form-item>-->
+
+                <!-- 工作安全分析 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='jsaMasterId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <input-select :clearable="item.isRequired!='1'" :value="permitModel.jsaMaster" id-field="id"
+                        display-field="name" @click="showJsaModal=true"></input-select>
+                </el-form-item>
+
+                <!-- 备注 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='remark' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <iv-input type="textarea" :rows="4" :value.sync="permitModel.remark" placeholder="作业申请人手动录入">
+                    </iv-input>
+                </el-form-item>
+
+                <!-- 应急救援预案 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='emerScheme' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <div class="divPara" style="margin-top: 4px">
+                        <div>
+                            <lite-box shape="rect" v-for="(index,pic) in permitModel.schemeFiles"
+                                @on-close="doDeleteFile(pic.fileId,index,permitModel.schemeFiles)">
+                                <a v-text="pic.orginalName" target="_blank" :href="convertFilePath(pic)"></a>
+                            </lite-box>
+                        </div>
+                        <div>
+                            <vue-file-upload v-if="permitModel.schemeFiles&&permitModel.schemeFiles.length<9"
+                                :events="schemeUpModel.events" @on-success-upload="doUploadScheme"
+                                :params="schemeUpModel.params" :filters="schemeUpModel.filters" custom-style>
+                                <span class="link-ele">上传文件</span>
+                            </vue-file-upload>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 作业计划书/方案 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='workPlan' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <div class="divPara" style="margin-top: 4px">
+                        <div>
+                            <lite-box shape="rect" v-for="(index,pic) in permitModel.planFiles"
+                                @on-close="doDeleteFile(pic.fileId,index,permitModel.planFiles)">
+                                <a v-text="pic.orginalName" target="_blank" :href="convertFilePath(pic)"></a>
+                            </lite-box>
+                        </div>
+                        <div>
+                            <vue-file-upload v-if="permitModel.planFiles&&permitModel.planFiles.length<9"
+                                :events="planUpModel.events" @on-success-upload="doUploadPlan"
+                                :params="planUpModel.params" :filters="planUpModel.filters" custom-style>
+                                <span class="link-ele">上传文件</span>
+                            </vue-file-upload>
+                        </div>
+                    </div>
+                </el-form-item>
+
+                <!-- 附     图 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='attachedPicture' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <div style="margin-top: 4px">
+                        <div class="parameter-image" v-show="permitModel.figureFiles.length>0">
+                            <image-view :images="permitModel.figureFiles" @on-close="doDeleteFile">
+                            </image-view>
+                        </div>
+                        <vue-file-upload :events="figureUpModel.events" :params="figureUpModel.params"
+                            :filters="figureUpModel.filters" @on-success-upload="doUploadFigure" custom-style
+                            style="clear: both">
+                            <span class="link-ele">上传图片</span>
+                        </vue-file-upload>
+                    </div>
+                </el-form-item>
+
+                <!-- 其它附件 -->
+                <el-form-item :class="{'is-required':item.isRequired=='1'}"
+                    v-if="item.code=='otherAttachment' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+                    prop="code">
+                    <div class="divPara" style="margin-top: 3px">
+                        <div>
+                            <lite-box shape="rect" v-for="(index,pic) in permitModel.otherFiles"
+                                @on-close="doDeleteFile(pic.fileId,index,permitModel.otherFiles)">
+                                <a v-text="pic.orginalName" target="_blank" :href="convertFilePath(pic)"></a>
+                            </lite-box>
+                        </div>
+                        <div>
+                            <vue-file-upload v-if="permitModel.otherFiles&&permitModel.otherFiles.length<9"
+                                :events="otherUpModel.events" @on-success-upload="doUploadOther"
+                                :params="otherUpModel.params" :filters="otherUpModel.filters" custom-style>
+                                <span class="link-ele">上传文件</span>
+                            </vue-file-upload>
+                        </div>
+                    </div>
+                </el-form-item>
+            </div>
+        </template>
+    </el-form>
+</div>
+<ptw-jsa-master-select-modal :visible.sync="showJsaModal" single-select @do-save="doSaveJsa">
+</ptw-jsa-master-select-modal>
+<contractor-emp-select-modal v-ref:contract-emp :visible.sync="contactEmpModel.show" @do-save="doSaveContractorEmp"
+    :filter-data="contactEmpModel.filterData"></contractor-emp-select-modal>
+<contractor-select-modal v-ref:contract :visible.sync="contactModel.show" @do-save="doSaveContactAll"
+    :remove-columns="['code']"></contractor-select-modal>
+<select-worker value-name="user.id" v-ref:select-worker field-name="user.name" @confirm="doSelectedWorker">
+</select-worker>
+<style>
+    /*.width370 .ivu-select{*/
+    /*    width: 370px !important;*/
+
+    /*}*/
+</style>

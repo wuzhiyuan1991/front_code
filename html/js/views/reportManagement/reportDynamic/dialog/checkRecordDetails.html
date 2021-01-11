@@ -1,0 +1,23 @@
+<Modal :visible.sync="show" mask-closable :title="title" width="900" :footer-hide="true" class="userSelectModal">
+	<div class="edit-pop-container" style="width: 900px">
+		<div class="epc-header">
+
+		</div>
+		<div class="epc-content" v-if="show">
+			<div style="padding:4px 0 0 4px;width: 225px;position: absolute; right: 0;top: 88px;z-index: 100;" v-if="groups && groups.length > 1">
+				<i-select :model.sync="customQryParam.xId" @on-change="onChangeGroup"
+							:list="groups" placeholder="请选择对象个体" style="width:200px;">
+					<i-option v-for="g in groups" :value="g.id">{{ g.name }}</i-option>
+				</i-select>
+			</div>
+			<vue-bootstrap-table :columns="tableColumns"
+								 :url="tableUrl"
+								 :default-filter-value="qryParam"
+								 :show-filter="true"
+								 :filter-column="tableFilterColumn"
+								 :show-column-picker="false"
+								 :show-pager="true" v-ref:rpt-details-table>
+			</vue-bootstrap-table>
+		</div>
+	</div>
+</Modal>

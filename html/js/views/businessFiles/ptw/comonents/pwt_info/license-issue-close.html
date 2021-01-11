@@ -1,0 +1,128 @@
+    <div class="ptw-tab-content flex-layout pdt5" style="align-items:flex-start">
+        <div class=" flex-grow1 flex-layout-vertical">
+            <div class="flex-grow1">
+                <div>
+                    <!--<p style="padding-left:1.2em;">-->
+                        <!--会签次序固化：<br>-->
+                        <!--[作业申请人] 是第一签名确认次序，[作业批准人]是最后一个签名确认次序，其他签名人员次序可以设置和调整。-->
+                    <!--</p>-->
+                    <!--流程图预留-->
+                    <div class=""></div>
+                    <div class="flex-h-end">
+                        <!--<iv-checkbox  @on-change="doChangeOrder" :checked.sync="model[orderKey]" false-value="0" true-value="1">签发需要按次序执行</iv-checkbox>-->
+                        <!--<label  v-show="model[orderKey]==1" class="ml20 link-ele" @click="doSetSignOrder">设置签发次序</label>-->
+                        <label class="ml20 link-ele" @click="doShowRoles">新增添加</label>
+
+                        <label class="ml20 link-ele" @click="doSetSignOrder">设置签发次序</label>
+                    </div>
+                </div>
+                <!--xxxxxxxxxxxx流程图xxxxxxxxxxxxx-->
+                <div>
+
+                </div>
+            </div>
+            <div class="ml10 mt20 my-ivu-timeline-item-content">
+                <timeline>
+                    <timeline-item v-for="(index,item) of tplRoleList">
+                        <span class="ptw-timeline-serialnumber" style="width:1.8em;height: 1.8em;" slot="dot">{{item.signStep}}</span>
+                        <div  style="margin-top:-7px;">
+                            <div style="cursor: pointer;" class="ptw-license-roleitemtitle" @click="item.show=!item.show">
+                                <span>{{item.signCatalog.name}}</span>
+                                <p style="font-size:14px;">
+                                    <icon  type="ios-close" style="margin-right: 5px;"
+                                          @click.stop="doRemoveRole(index)"
+                                    ></icon>
+                                    <icon style="font-size:14px;" type="chevron-up" v-show="item.show" @click.stop="item.show=false" class="mr10" ></icon>
+                                    <icon type="chevron-down" style="font-size:14px;" @click.stop="item.show=true" v-show="!item.show" class="mr10"
+                                    ></icon>
+                                </p>
+                            </div>
+                            <div style="margin-left:120px;" class="ptw-license-roleitemcontent child-mt5 xuke-liebiao" v-show="item.show">
+                                <div>
+                                    <iv-checkbox  true-value="1" false-value="0" :checked.sync="item.enableCtrlMeasureVerification" >需要核对控制措施</iv-checkbox>
+                                </div>
+                                <div class="flex-layout">
+                                    <!--<div class="form-item-label">{{item.signCatalog.name}}</div>-->
+                                    <div class="form-item-label bgw form-item-label-min-60">人员</div>
+
+                                    <div class="form-item-input disable-style" v-if="item.signCatalog.signerType==1">作业申请人固化（默认）</div>
+                                    <div class="flex-grow1" v-else>
+                                        <multi-input-select :overflow-hover="false" :values="item.users" @click="doAddUser(item.users)"></multi-input-select>
+                                    </div>
+                                    <div class="form-item-btn"></div>
+                                </div>
+                                <div class="flex-layout" v-if="item.enableCtrlMeasureVerification == '1'">
+                                    <!--<div class="form-item-label ptw-flex-start bgw">{{item.signCatalog.name}}承诺</div>-->
+                                    <div class="form-item-label ptw-flex-start bgw form-item-label-min-60">核对措施</div>
+                                    <div class="form-item-input disable-active-style" style="width:320px">
+                                        <!--<div class="ele-disabled-mask"></div>-->
+                                        <iv-checkbox-group class="group-vertical">
+                                            <!--<iv-checkbox disabled v-for="item of kongzhicsList">-->
+                                            <!--<span class="checked-box-span" >{{item.name}}</span>-->
+                                            <!--</iv-checkbox>-->
+
+                                            <iv-checkbox disabled  v-for="stuff in getStuffList(item.id)">
+                                                <span class="checked-box-span"  >{{stuff.name}}</span>
+                                            </iv-checkbox>
+                                        </iv-checkbox-group>
+                                    </div>
+                                    <div class="form-item-btn link-ele" @click="doCustomContent('11', item.id)">定制内容</div>
+                                </div>
+                                <template v-if="needInfo">
+<!--                                <div class="flex-layout" v-if="item.enableCommitment==1">-->
+                                    <div class="flex-layout">
+                                    <!--<div class="form-item-label ptw-flex-start">{{item.signCatalog.name}}承诺</div>-->
+                                        <div class="form-item-label ptw-flex-start bgw form-item-label-min-60">承诺</div>
+
+                                        <div class="form-item-input disable-active-style" style="width:320px">
+                                            {{item.signCatalog.content}}
+                                        </div>
+                                        <div class="form-item-btn link-ele" @click="gotoSign(item.signCatalog)">定制内容</div>
+                                    </div>
+                                    <div class="flex-layout">
+                                    <!--<div class="form-item-label">{{item.signCatalog.name}}意见</div>-->
+                                        <div class="form-item-label bgw form-item-label-min-60">意见</div>
+
+                                        <div class="form-item-input disable-style">手动填写意见</div>
+                                        <div class="form-item-btn link-ele"></div>
+                                    </div>
+                                </template>
+
+                                <div class="flex-layout"  v-if="item.signCatalog && item.signCatalog.enableCommitment=='1' ">
+                                    <div class="form-item-label ptw-flex-start bgw form-item-label-min-60">承诺</div>
+                                    <div class="form-item-input disable-active-style">
+                                        {{item.signCatalog.content}}
+                                    </div>
+                                    <div class="form-item-btn link-ele" @click="gotoSign(item.signCatalog)">定制内容</div>
+                                </div>
+
+                                <div class="flex-layout">
+                                    <!--<div class="form-item-label">{{item.signCatalog.name}}签名</div>-->
+                                    <div class="form-item-label bgw form-item-label-min-60">签名</div>
+
+                                    <div class="flex-grow1 flex-layout ">
+                                        <div class="form-item-input disable-style">人员签名</div>
+                                        <div class="form-item-input ml20 disable-style">签名日期时间</div>
+                                    </div>
+                                    <div class="form-item-btn"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </timeline-item>
+                </timeline>
+            </div>
+        </div>
+        <div   style="cursor: pointer;background: #fff;" class="ptw-license-rolebox  child-mt10" >
+            <div style="text-align: left;color:#33a6ff;cursor: pointer;width:50px;" @click="gotoSign">配置</div>
+            <div style="max-height: 550px;overflow: auto;">
+                <div class="ptw-roleitem-btn" style="cursor: pointer;margin-bottom:10px;" v-for="item of selRoleList" @click="doAddRole(item)">
+                    <icon  type="ios-person-outline" class="mr10 ptw-icon-ios"></icon><label style="cursor: pointer;">{{item.name}}</label>
+                    <icon style="cursor: pointer;position: absolute;right: 10px;" type="plus" class="link-ele" style="position: absolute;right: 5px"></icon>
+                </div>
+            </div>
+        </div>
+    </div>
+<modal-set-order v-ref:set-order></modal-set-order>
+<user-select-modal :single-select="false" :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>
+    <roles-model :visible.sync="showRolesModel" @do-save="doSaveRoles" ></roles-model>
+

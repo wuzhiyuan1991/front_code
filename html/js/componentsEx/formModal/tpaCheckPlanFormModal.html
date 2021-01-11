@@ -1,0 +1,69 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="编码" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="计划名" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('planType') == -1)" label="计划类型" prop="planType">
+						<iv-input :value.sync="mainModel.vo.planType" :disabled="(disabledFields.indexOf('planType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('endDate') == -1)" label="结束时间" prop="endDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate" :disabled="(disabledFields.indexOf('endDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" :disabled="(disabledFields.indexOf('endDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('startDate') == -1)" label="开始时间" prop="startDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate" :disabled="(disabledFields.indexOf('startDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startDate" :disabled="(disabledFields.indexOf('startDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('tpaBoatEquipment') == -1)" label="船舶设备设施id" prop="boatEquipmentId">
+						<input-select :value="mainModel.vo.tpaBoatEquipment" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('tpaBoatEquipment') != -1)" @click="(!mainModel.isReadOnly) && (doShowTpaBoatEquipmentSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('tpaCheckTable') == -1)" label="检查表id" prop="checkTableId">
+						<input-select :value="mainModel.vo.tpaCheckTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('tpaCheckTable') != -1)" @click="(!mainModel.isReadOnly) && (doShowTpaCheckTableSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkType') == -1)" label="频率类型" prop="checkType">
+						<iv-input :value.sync="mainModel.vo.checkType" :disabled="(disabledFields.indexOf('checkType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="是否禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('frequency') == -1)" label="检查频率" prop="frequency">
+						<iv-input :value.sync="mainModel.vo.frequency" :disabled="(disabledFields.indexOf('frequency') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('frequencyType') == -1)" label="检查频率类型" prop="frequencyType">
+						<iv-input :value.sync="mainModel.vo.frequencyType" :disabled="(disabledFields.indexOf('frequencyType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('planSettingId') == -1)" label="检查计划配置id" prop="planSettingId">
+						<iv-input :value.sync="mainModel.vo.planSettingId" :disabled="(disabledFields.indexOf('planSettingId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" label="备注" prop="remarks">
+						<iv-input :value.sync="mainModel.vo.remarks" :disabled="(disabledFields.indexOf('remarks') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('specialty') == -1)" label="专业" prop="specialty">
+						<iv-input :value.sync="mainModel.vo.specialty" :disabled="(disabledFields.indexOf('specialty') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="检查计划类型" prop="type">
+						<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<tpachecktable-select-modal :visible.sync="selectModel.tpaCheckTableSelectModel.visible" :filter-data="selectModel.tpaCheckTableSelectModel.filterData"  @do-save="doSaveTpaCheckTable"></tpachecktable-select-modal>
+<tpaboatequipment-select-modal :visible.sync="selectModel.tpaBoatEquipmentSelectModel.visible" :filter-data="selectModel.tpaBoatEquipmentSelectModel.filterData"  @do-save="doSaveTpaBoatEquipment"></tpaboatequipment-select-modal>

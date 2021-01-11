@@ -1,0 +1,137 @@
+
+<simple-card width="">
+    <p slot="title">安全措施</p>
+    <div class="flex-layout-between" style="width:800px;padding:9px;border-bottom: 1px;">
+        <div class="flex-layout">
+            <iv-checkbox true-value="1" false-value="0" :checked.sync="model.enableCtrlMeasureGroup">启用分组</iv-checkbox>
+            <iv-checkbox true-value="1" false-value="0" :checked.sync="model.enableCtrlMeasureVerifier">启用核对人</iv-checkbox>
+            <iv-checkbox true-value="1" false-value="0" :checked.sync="model.enableCtrlMeasureRemark">检查项可以详细备注</iv-checkbox>
+            <iv-checkbox true-value="1" false-value="0" :checked.sync="model.enableCtrlMeasureSign">检查项需要人员核对签名</iv-checkbox>
+
+            <span v-show="model.enableCtrlMeasureSign=='1'">(
+                {{{disTrue}}} &nbsp;勾选项
+                 <!--<iv-checkbox v-show="model.enableCtrlMeasureSign=='1'" disabled true-value="1" false-value="0" :checked.sync="model.enableCtrlMeasureSign">勾选项</iv-checkbox>-->
+            <iv-checkbox v-show="model.enableCtrlMeasureSign=='1'" true-value="1" false-value="0" :checked.sync="model.enableUncheckedMeasureSign">未勾选项</iv-checkbox>
+
+                )</span>
+
+        </div>
+        <div class="flex-layout" style="margin-left:8px;">
+            <iv-botton @click="doAddGroup" type="text" style="color:#33a6ff;margin-left:10px;cursor: pointer;">添加分组</iv-botton>
+        </div>
+    </div>
+
+    <div style="padding-left:9px;width:792px;" v-for="(index,item) in groupItemModel.list">
+        <div  class="flex-layout-between">
+            <div class="flex-layout mb10">
+                <div class="security-groups-itemIndex" >分组</div>
+                <div class="security-groups" @click="doUpdateGroupName(index)">{{item.name}}</div>
+            </div>
+            <div class="flex-layout" style="float:right">
+                <iv-botton @click="doDeleteGroup(index)" type="text" style="color:#33a6ff;margin-left:10px;cursor: pointer;">删除分组</iv-botton>
+                <iv-botton @click="doAddVerifierBatch(index)" type="text" v-show="model.enableCtrlMeasureVerifier=='1'" style="color:#33a6ff;margin-left:10px;cursor: pointer;">批量设置核对人</iv-botton>
+                <iv-botton @click="doCustomContent(4, item.id)" type="text" style="color:#33a6ff;margin-left:10px;cursor: pointer;">批量添加</iv-botton>
+                <iv-botton @click="doAddItem(null, index)" type="text" style="color:#33a6ff;margin-left:10px;cursor: pointer;">新增</iv-botton>
+            </div>
+        </div>
+        <div @click="doUpdateGroupItemModelIndex(index)">
+            <lite-table
+                :columns="tableModel.columns"
+                :values="item.children"
+                :tools="tableTools"
+                @on-move="onRowMove"
+                @on-click="onRowClicked"
+                @on-delete="deDeleteItem"
+                @on-update="doAddItem"
+                :is-show-page-box="false"
+                :page-size-opts="[1000]"
+            ></lite-table>
+        </div>
+    </div>
+
+    <!--<el-form class="ptw-base-info" style="width:680px;padding-left:9px;" label-width="0px;" >-->
+        <!--<el-form-item label="" >-->
+            <!--<form-item-row>-->
+                <!--<div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex" style="width:640px">-->
+                    <!--<div class="ele-disabled-mask"></div>-->
+                    <!--<iv-checkbox-group class="group-vertical">-->
+                        <!--<iv-checkbox disabled v-for="item of kongzhicsList">-->
+                            <!--<span class="checked-box-span" >{{item.name}}</span>-->
+                        <!--</iv-checkbox>-->
+                    <!--</iv-checkbox-group>-->
+                <!--</div>-->
+                <!--<div class="link-ele pdl5" slot="after" @click="doCustomContent(4)">定制内容</div>-->
+            <!--</form-item-row>-->
+        <!--</el-form-item>-->
+    <!--</el-form>-->
+</simple-card>
+
+
+<!--- 组名弹框 --->
+<Modal :visible.sync='groupItemModel.show' :title='groupItemModel.title' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="groupItemModel.vo" :rules="groupItemModel.rules" v-ref:groupitemform>
+                <el-form-item label="组名" prop="name">
+                    <iv-input :value.sync="groupItemModel.vo.name" type='text'></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveGroupName()" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doCloseGroupName" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<!--- 项编辑 --->
+<Modal :visible.sync='itemsModel.show' :title='itemsModel.title' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="itemsModel.vo" :rules="itemsModel.rules" v-ref:itemform>
+                <el-form-item label="条目" prop="name">
+                    <iv-input type="textarea" :rows="5" style="width:230px;" :value.sync="itemsModel.vo.name" type='text'></iv-input>
+                </el-form-item>
+                <el-form-item label="核对人" prop="ptwCardVerifiers" v-if="model.enableCtrlMeasureVerifier=='1'">
+                    <!--<multi-input-select :overflow-hover="false" :values="itemsModel.vo.verifier" @click="doAddUser"></multi-input-select>-->
+                    <div v-for="(index, item) in itemsModel.vo.ptwCardVerifiers" class="mb10">
+                        <iv-input style="width:230px;" :value.sync="item.name"></iv-input> <Icon style="cursor: pointer;" @click="addVerifier" v-if="index==0 && itemsModel.vo.ptwCardVerifiers.length<11" type="plus-round"></Icon>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="saveWorkStuff" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doCloseAddItem" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<Modal :visible.sync='verifierModel.show' title='批量添加审核人' :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="verifierModel.vo" :rules="verifierModel.rules" v-ref:verifierform>
+                <el-form-item label="核对人" prop="ptwCardVerifiers">
+                    <!--<multi-input-select :overflow-hover="false" :values="itemsModel.vo.verifier" @click="doAddUser"></multi-input-select>-->
+                    <iv-input style="width:230px;" :value.sync="verifierModel.vo.ptwCardVerifiers"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveBatchVerifier" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <vi-button type="primary" @click="doCloseVerifierBatch" class="pull-right">关闭</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<user-select-modal :single-select="false" :visible.sync="userModel.show" @do-save="doSaveUser"></user-select-modal>
+
+<style>
+    .btn-link-a{
+        font-size: 14px;margin-left:15px;color:#33a6ff;
+        padding-bottom:5px;
+    }
+</style>
+
+
+

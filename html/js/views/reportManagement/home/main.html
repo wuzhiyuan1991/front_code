@@ -1,0 +1,42 @@
+<style>
+    .reportDynamic .mp-header{
+        border-bottom: none;
+    }
+    .reportDynamic .mp-content{
+        height: 100%;
+        background: #ecf0f4;
+    }
+</style>
+<div class="tab-container reportDynamic">
+    <div class="main-panel">
+        <div class="mp-content">
+            <iv-row style="height:50%;">
+                <iv-col span="24" style="height:100%;margin-bottom: 10px;background: #fff;">
+                    <echart-component
+                            :echart-style="{'height':'100%'}"
+                            :show-header="false"
+                            :data-limit="20"
+                            v-ref:echart0
+                    ></echart-component>
+                    <!--<vuecharts v-if="chartsModel[0].show" style="height:100%;" :options="chartsModel[0].opt"></vuecharts>-->
+                </iv-col>
+            </iv-row>
+            <iv-row style="height:calc(50% - 10px);">
+                <iv-col span="12" style="height:100%;background: #fff;margin-right: 10px">
+                    <pie-echart-component style="height: 100%" :echart-style="{'height':'100%'}" :show-header="false" v-ref:pie-echart></pie-echart-component>
+                    <!--<echart-component :echart-style="{'height':'100%'}" :show-header="false" v-ref:echart1></echart-component>-->
+                    <!--<vuecharts v-if="chartsModel[1].show" style="height:100%;" :options="chartsModel[1].opt"></vuecharts>-->
+                </iv-col>
+                <iv-col span="12" style="height:100%;width:calc(50% - 10px);background: #fff">
+                    <echart-component
+                            :echart-style="{'height':'100%'}"
+                            :show-header="false"
+                            :data-limit="20"
+                            v-ref:echart1
+                    ></echart-component>
+                    <!--<vuecharts v-if="chartsModel[2].show" style="height:100%;" :options="chartsModel[2].opt"></vuecharts>-->
+                </iv-col>
+            </iv-row>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="h100 flex-layout-vertical">
+    <div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;" >
+        <ul style="display: inline-flex;">
+            <li v-for="(index, item) in tabs"
+                class="lr-layout-li"
+                :class="{'checked': index === checkedTabIndex}"
+                style="width: auto;text-align: center;min-width: 130px"
+                @click="doChangeTab(index)">
+                <span style="font-size: 14px;">{{item}}</span>
+            </li>
+        </ul>
+    </div>
+    <div class="flex-grow1 child-h100" style="height: 50px;">
+        <div  v-show="checkedTabIndex===0">
+            <tab-record  :data="data.record" :model="model" :mrs-equipment-type="['1']">
+                <tab-equipment :data="data.equipment"   :model="model"></tab-equipment>
+            </tab-record>
+        </div>
+        <div  v-show="checkedTabIndex===1">
+            <tab-record  :data="data.record" :model="model" :mrs-equipment-type="['2']" >
+                <tab-pipe :data="data.pipe" :model="model"></tab-pipe>
+            </tab-record>
+        </div>
+<!--         <div v-show="checkedTabIndex===2">-->
+<!--             <tab-record  :data="data.record" :model="model"></tab-record>-->
+<!--         </div>-->
+    </div>
+
+</div>

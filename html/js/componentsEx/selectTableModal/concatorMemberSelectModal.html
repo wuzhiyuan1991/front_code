@@ -1,0 +1,81 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" v-ref:tree :footer-hide="true" class="userSelectModal">
+    <iv-row type="flex">
+        <iv-col style="background-color: #eaf0f5;display: flex;padding-left: 3px;padding-right: 20px;padding-top: 10px;" span="24" v-show="filterTreeType">
+            <span class="selectBtnOrgStyle"  :class="searchTreeleft==0?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 0?'color:#33a6ff':''" @click="changeOrg(0)">本部门</span> |
+            <span class="selectBtnOrgStyle" :class="searchTreeleft==1?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 1?'color:#33a6ff':''" @click="changeOrg(1)">本公司</span> <span v-if="!emptyAll">|</span>
+            <span v-if="!emptyAll" class="selectBtnOrgStyle" :class="searchTreeleft==2?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 2?'color:#33a6ff':''" @click="changeOrg(2)">所有</span>
+        </iv-col>
+
+        <iv-col span="6" style="background-color: #eaf0f5;padding: 10px 0 0 10px">
+            <iv-input :value="treeModel.keyword" icon="ios-search" @on-click="doFilterLeft" @on-enter="doFilterLeft"></iv-input>
+            <div class="member-select-left-tree" v-el:mtree>
+                <!--<base-list-->
+                    <!--content-field='deptName'-->
+                    <!--:show-tool="false"-->
+                    <!--:auto-close="false"-->
+                    <!--:values.sync="leftList"-->
+                    <!--@on-selected='doSelectTaskIndex'-->
+                <!--&gt;-->
+                <!--</base-list>-->
+                <vue-bootstrap-table
+                        :columns="tableModel.columns"
+                        :filter-column="tableModel.filterColumn"
+                        :show-pager="true"
+                        :selected-datas.sync="tableModel.selectedDatas"
+                        :url="tableModel.url"
+                        :is-single-check="singleSelect"
+                        :default-filter-value="tableModel.defaultFilterValue"
+                        @on-dbclick-cell="onDbClickCell"
+                        :is-cache-selected-data="isCacheSelectedData"
+                        lazy-load
+                        resizeable
+                        v-ref:left-table>
+                </vue-bootstrap-table>
+            </div>
+        </iv-col>
+        <iv-col span="18" style="background-color: #eaf0f5;padding-top: 10px;">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModel.keyword" placeholder="姓名、公司、部门、岗位、安全角色" icon="ios-search" @on-click="doFilterRight"
+                          @on-enter="doFilterRight"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table
+                            :columns="tableModel.columns"
+                            :filter-column="tableModel.filterColumn"
+                            :show-pager="true"
+                            :selected-datas.sync="tableModel.selectedDatas"
+                            :url="tableModel.url"
+                            :is-single-check="singleSelect"
+                            :default-filter-value="tableModel.defaultFilterValue"
+                            @on-dbclick-cell="onDbClickCell"
+                            :is-cache-selected-data="isCacheSelectedData"
+                            lazy-load
+                            resizeable
+                            v-ref:table>
+                    </vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+    </iv-row>
+</Modal>
+
+
+<style>
+    .selectBtnOrgStyle{
+        font-size: 14px;
+        color:#000;
+        cursor:pointer;
+        margin-right: 10px;
+        margin-left:10px;
+    }
+    .selectBtnOrgStyle:hover{
+        color:#33a6ff;
+    }
+    .selectBtnOrgStyleColor:{
+        color:#33a6ff;
+    }
+</style>

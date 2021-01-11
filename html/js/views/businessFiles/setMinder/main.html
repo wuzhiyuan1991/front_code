@@ -1,0 +1,59 @@
+<div class="tab-container" style="height: calc(100vh - 100px );overflow-y: auto;">
+
+    <simple-card class="minder">
+        <p slot="title" class="checkRe">提醒人员</p>
+        <a style="position: absolute;top: 70px;left: 890px;" @click.prevent="doSelectUser">
+            <span>
+                <Icon type="plus"></Icon>添加人员
+            </span>
+        </a>
+        <div style="display: flex;margin-top: 20px;">
+            <div class="member-select-left-tree" style="width: 250px;margin: 0 10px;border: 1px #ddd solid;position: relative;">
+                <div class="loading-text" v-if="treeModel.showLoading">加载中...</div>
+                <iv-tree id-attr="id" pid-attr="parentId" display-attr="name" :model="treeModel.data"
+                    :selected-datas.sync="treeModel.selectedData" :show-checkbox="false" :single-select="true"
+                    :trigger-parent-event="true" :data-query="treeModel.keyword" @on-tree-node-click="doTreeNodeClick">
+                </iv-tree>
+            </div>
+            <div style="width: 700px;padding-left: 20px;">
+                <vue-bootstrap-table style="height: 489px;" @on-del-row="doRemoveUsers" lazy-load :columns="tableModel.columns"
+                    :show-pager="true" :url="tableModel.url" v-ref:item-table>
+                </vue-bootstrap-table>
+            </div>
+        </div>
+
+
+    </simple-card>
+    <simple-card class="minder">
+        <p slot="title" class="checkRe">提醒规则</p>
+        <p style="padding-left: 20px;">提醒日期：每月 <iv-input type='number' :value.sync="msgjson.attr2" style="width: 50px;">
+            </iv-input> 日发送消息提醒 , 提醒范围：近 <iv-input type='number' style="width: 50px;" :value.sync="msgjson.attr3"></iv-input>
+            个月即将到期、复培的证书</p>
+            <iv-button style="margin: 20px;"  type="primary" @click.stop="doSaveJson" >保存</iv-button>
+    </simple-card>
+
+
+</div>
+<style>
+
+    .minder .checkRe {
+        height: 60px;
+        line-height: 60px;
+        width: 100%;
+        padding-left: 20px !important;
+        /* cursor: pointer; */
+
+        /* background-color: #f2f2f2; */
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .minder .simple-card-head {
+        padding-top: 0px !important;
+    }
+
+    /* .parameter-el-form .checkRe-open .checkRe {
+        background-color: #f2f2f2;
+    } */
+</style>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false" @do-save="doSaveUsers"
+    :filter-data="selectModel.userSelectModel.filterData">

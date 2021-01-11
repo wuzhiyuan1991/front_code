@@ -1,0 +1,34 @@
+<div class="report train-chart">
+
+    <!--左侧-->
+    <div class="train-content">
+        <div class="train-tit">随机观察参与度统计</div>
+
+        <div class="train-filter">
+
+            <div class="train-date-range">
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange"
+                    placeholder="选择日期范围"></vi-date-picker>
+            </div>
+
+            <div class="train-obj-select" style="top: 0;">
+                <i-select :model.sync="qryParam.typeOfRange" v-ref:select :list="typeOfRanges"
+                    @on-change="changeTypeOfRange">
+                    <i-option v-for="item in typeOfRanges" :value="item.value">{{ item.label }}</i-option>
+                </i-select>
+            </div>
+
+            <div class="train-obj-select">
+                <obj-select :type="qryParam.typeOfRange" :values.sync="qryParam.objRange"></obj-select>
+            </div>
+            <div class="train-obj-text" style="margin-right: 15px;">
+                <span class="leave-worker-select">
+                    <iv-checkbox :checked.sync="leaveWorkerSwitch">包含离职人员</iv-checkbox>
+                </span>
+            </div>
+            <iv-button type="primary" @click="doQuery">查询</iv-button>
+        </div>
+        <vuecharts :options="charts.opt" style="height: calc(100% - 160px);" @chartclick="chartClick" v-ref:echarts>
+        </vuecharts>
+    </div>
+</div>

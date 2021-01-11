@@ -1,0 +1,21 @@
+<div class="tab-container mechanismSetting">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <div class="basic">
+                <all-classification $main-header-classification-attr-default :showdept="true" @on-org-change="doOrgCategoryChange">
+                </all-classification>
+            </div>
+        </div>
+
+        <div class="mechanism-box">
+            <!--<div class="mechanism-left">-->
+                <!--<div @click="doChangeType('danger')" class="mechanism-left-item" :class="{'checked': type === 'danger'}">风险隐患</div>-->
+                <!--<div @click="doChangeType('train')" class="mechanism-left-item" :class="{'checked': type === 'train'}">培训管理</div>-->
+            <!--</div>-->
+            <div class="mechanism-right">
+                <danger-component :comp-id="compId" v-if="type === 'danger'"></danger-component>
+                <train-component :comp-id="compId" v-if="type === 'train'"></train-component>
+            </div>
+        </div>
+    </div>
+</div>

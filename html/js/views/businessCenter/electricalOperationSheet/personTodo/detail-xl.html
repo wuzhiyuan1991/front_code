@@ -1,0 +1,863 @@
+<div class="detail-large-container" id="operation" v-el:container>
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="share-box-1" style="margin-left: 0;">
+				<span class="btn-green1" >{{getDataDic("iew_work_card_type", mainModel.vo.type)}}</span>
+			</div>
+			<div class="share-box-1" style="margin-left: 0;">
+				<span class="btn-green1" >{{getDataDic("iew_work_card_status", mainModel.vo.status)}}</span>
+				<!--<span class="btn-green1" v-if="mainModel.vo.status==0">待提交</span>-->
+				<!--<span class="btn-green1" v-if="mainModel.vo.status==1">待递交</span>-->
+				<!--<span class="btn-green1" v-if="mainModel.vo.status==2">待签发</span>-->
+				<!--<span class="btn-green1" v-if="mainModel.vo.status==3">待移交</span>-->
+				<!--<span class="btn-green1" v-if="mainModel.vo.status==4">已通知</span>-->
+				<a v-if="mainModel.vo.type=='1'" @click="require.show=true" style="margin-left: 20px;font-size: 14px;">关联的操作票（{{mainModel.vo.ewWorkCards.length}}）</a>
+				<a v-if="mainModel.vo.status=='0' && !isHistory " @click="userModel" style="margin-left: 20px;font-size: 14px;">引用模板</a>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click="doPreview">预览</iv-button>
+				<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy">复制
+				</iv-button> -->
+
+				<iv-button v-if="mainModel.isReadOnly && doShowOptBtn.val1 && !isHistory" type="ghost"
+					@click.stop="doEdit">{{$t('gb.common.edition')}}
+				</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && hasAuth('create') && !isHistory" type="ghost" @click="doSave">
+					{{$t('gb.comnon.save')}}</iv-button>
+
+				<!--<iv-button v-if="mainModel.isReadOnly && mainModel.vo.status<1 && mainModel.vo.type=='1' && doShowOptBtn.val1" type="ghost"-->
+						   <!--@click.stop="doSubmit">提交签发人-->
+				<!--</iv-button>-->
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.status<1  && doShowOptBtn.val1 && hasAuth('submit') && !isHistory && (mainModel.vo.type=='1' || mainModel.vo.type=='2')" type="ghost"
+						   @click.stop="doSubmit1">提交签发人
+				</iv-button>
+				<vi-button v-if="mainModel.vo.status==1 && (mainModel.vo.type=='1' || mainModel.vo.type=='2') && !isHistory" type="ghost" @click="approval.show=true">
+					审批签发</vi-button>
+				<vi-button v-if="mainModel.vo.status==2 && mainModel.vo.type=='1' && !isHistory" type="ghost" @click="transformShow">
+					通知移交</vi-button>
+				<!-- 
+				<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"
+					@click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">
+					{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</vi-button>
+
+				<!--<vi-button v-if="hasAuth('share') && mainModel.isReadOnly" type="ghost"  @click="doShare">分享/不分享</vi-button>-->
+
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+				:rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item ">
+					<el-form-item label="单位名称" v-if="mainModel.vo.type != '3'" prop="attr4" class="small-info-box">
+						<!--<iv-input :value.sync="" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<div style="width: 433px;" class="modal-valve-param">
+							<i-select @on-select="doChangeSelect('attr4')" v-if="!getShowBtn" class="ivu-select-dropdown-width56" style="width:70px;" :model.sync="mainModel.orgType">
+								<i-option v-for="item in getDataDicList('iew_work_card_out_inline')" :value="item.id">{{ item.value }}</i-option>
+							</i-select>
+							<department-tree-select style="width:190px;" v-if="!getShowBtn && mainModel.orgType=='1'" :id.sync="mainModel.vo.attr4" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+							<iv-input style="width:190px;" v-if="!getShowBtn && mainModel.orgType=='2'" :value.sync="mainModel.vo.attr4" ></iv-input>
+							<iv-input style="width:190px;" v-if="getShowBtn" :value="mainModel.orgType=='1'?getDataDic('org', mainModel.vo.attr4)['deptName'] : mainModel.vo.attr4" textonly></iv-input>
+						</div>
+					</el-form-item>
+					<template >
+						<el-form-item label="工作负责人(监护人)" v-if="mainModel.vo.type != '3'" prop="attr3" class="small-info-box">
+							<!--<iv-input :value.sync="mainModel.vo.user.name" textonly></iv-input>-->
+							<div style="width: 433px;" >
+								<i-select @on-select="doChangeSelect('attr3')" class="ivu-select-dropdown-width56" v-if="!getShowBtn" style="width:70px;" :model.sync="mainModel.attr3Type">
+									<i-option v-for="item in getDataDicList('iew_work_card_out_inline')" :value="item.id">{{ item.value }}</i-option>
+								</i-select>
+								<div style="width:190px;display: inline-block">
+									<input-select  v-if="!getShowBtn && mainModel.attr3Type=='1'" :value="mainModel.vo.supervisor" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowSelectUserModal('signal','supervisor'))" ></input-select>
+									<iv-input style="width:190px;" v-if="!getShowBtn && mainModel.attr3Type=='2'" :value.sync="mainModel.vo.attr3" ></iv-input>
+									<iv-input style="width:190px;" v-if="getShowBtn" :value="mainModel.attr3Type=='1'?mainModel.vo.supervisor.name:mainModel.vo.attr3" textonly></iv-input>
+								</div>
+							</div>
+							<!--<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowSelectUserModal('signal','user'))" ></input-select>-->
+						</el-form-item>
+						<el-form-item :label="mainModel.vo.type != '3'?'操作票作业地点':'单位'" prop="orgId" class="small-info-box" >
+							<department-tree-select v-if="!getShowBtn" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+							<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+						</el-form-item>
+						<el-form-item label="班组" v-if="mainModel.vo.type != '3'" prop="workTeam" class="small-info-box" >
+							<iv-input :value.sync="mainModel.vo.workTeam" :textonly="getShowBtn"></iv-input>
+						</el-form-item>
+					</template>
+					<template v-if="mainModel.vo.type == '3'">
+						<el-form-item label="操作任务" prop="attr1" class="small-info-box" style="width: 600px;">
+							<iv-input :value.sync="mainModel.vo.attr1" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+					</template>
+				</iv-row>
+				<template v-if="mainModel.vo.type != '3'">
+					<iv-row class="bip-content-item" style="border-top: none;">
+						<el-form-item  label="工作班成员（不包括工作负责人)" prop="ewWorkers1" :class="!mainModel.isReadOnly?'small-info-box is-required':'small-info-box'">
+							<!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+							<!--<multiple-input-select-->
+									<!--:textonly="mainModel.isReadOnly"-->
+									<!--:selected-multiple.sync="mainModel.vo.ewWorkers1"-->
+									<!--@on-click="doShowSelectUserModal('multiple', 'ewWorkers1')"-->
+							<!--&gt;</multiple-input-select>-->
+							<div class="flex-layout mb10" style="min-height: 30px" v-if="!getShowBtn">
+								<div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+									<span class="font-form-label flex-center-ipt">内部人员</span>
+								</div>
+								<div class="flex-grow1 prepend-right">
+									<div class="report repair-top">
+										<!--{{stringify(permitModel.workDepts)}}-->
+										<multiple-input-select
+												:textonly="mainModel.isReadOnly"
+												:selected-multiple.sync="mainModel.vo.ewWorkers1"
+												@on-click="doShowSelectUserModal('multiple', 'ewWorkers1')"
+										></multiple-input-select>
+									</div>
+								</div>
+							</div>
+							<multiple-input-select
+									v-else
+                                    textonly
+									:selected-multiple.sync="mainModel.vo.ewWorkers1"
+									@on-click="doShowSelectUserModal('multiple', 'ewWorkers1')"
+							></multiple-input-select>
+						</el-form-item>
+						<el-form-item label=" " prop="ewWorkers2" class="small-info-box" >
+							<!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+							<!--<multiple-input-select-->
+									<!--:textonly="mainModel.isReadOnly"-->
+									<!--:selected-multiple.sync="mainModel.vo.ewWorkers2"-->
+									<!--@on-click="doShowSelectUserFormModal('multiple', 'ewWorkers')"-->
+							<!--&gt;</multiple-input-select>-->
+							<div class="flex-layout mb10" v-if="!getShowBtn" style="min-height: 30px;margin-top:22px;">
+								<div style="width:6em;" class="ivu-input-group-prepend flex-center-ipt">
+									<span class="font-form-label flex-center-ipt">外部人员</span>
+								</div>
+								<div class="flex-grow1 prepend-right">
+									<div class="report repair-top">
+										<multiple-input-select
+										:textonly="mainModel.isReadOnly"
+										:selected-multiple.sync="mainModel.vo.ewWorkers2"
+										@on-click="doShowSelectUserFormModal('multiple', 'ewWorkers')"
+										></multiple-input-select>
+									</div>
+								</div>
+							</div>
+							<div style="margin-top:22px;" v-else>
+								<multiple-input-select
+										textonly
+										:selected-multiple.sync="mainModel.vo.ewWorkers2"
+										@on-click="doShowSelectUserFormModal('multiple', 'ewWorkers')"
+								></multiple-input-select>
+							</div>
+
+						</el-form-item>
+						<el-form-item label="工作的变、配电站名称及设备名称" prop="substation" class="small-info-box" style="width: 600px;">
+							<iv-input :value.sync="mainModel.vo.substation" :textonly="mainModel.isReadOnly || mainModel.vo.status=='2'"></iv-input>
+						</el-form-item>
+					</iv-row>
+					</iv-row>
+
+					<iv-row class="bip-content-item" style="border-top: none;">
+						<el-form-item :label="mainModel.vo.type=='1'?'工作任务-工作地点及设备双重名称':'工作任务-工作地点或地段'" prop="place" class="small-info-box"
+									  style="width: 600px;">
+							<iv-input :value.sync="mainModel.vo.place" :textonly="mainModel.isReadOnly || mainModel.vo.status=='2'"></iv-input>
+						</el-form-item>
+						<el-form-item label="工作任务 - 工作内容" prop="content" class="small-info-box" style="width: 600px;">
+							<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly || mainModel.vo.status=='2'"></iv-input>
+						</el-form-item>
+					</iv-row>
+					<iv-row class="bip-content-item" style="border-top: none;">
+						<el-form-item label="计划开始时间" prop="planStartTime" class="small-info-box">
+							<date-picker v-if="!getShowBtn"  format="yyyy-MM-dd HH:mm:ss" type="datetime" :selected-date.sync="mainModel.vo.planStartTime" clearable></date-picker>
+							<iv-input v-else :value="getNewTime(mainModel.vo.planStartTime)" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="计划结束时间" prop="planEndTime" class="small-info-box">
+							<date-picker v-if="!getShowBtn" format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="mainModel.vo.planEndTime" clearable></date-picker>
+							<iv-input v-else :value="getNewTime(mainModel.vo.planEndTime)" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="操作票任务（申请人）" prop="user" class="small-info-box">
+							<iv-input :value.sync="mainModel.vo.user.name" textonly ></iv-input>
+						</el-form-item>
+					</iv-row>
+				</template>
+				<template v-if="mainModel.vo.type == '3' && mainModel.vo.ewWorkCards && mainModel.vo.ewWorkCards.length>0">
+					<!--<iv-row class="bip-content-item">-->
+						<!--<el-form-item label="单位" prop="orgId" class="small-info-box">-->
+							<!--&lt;!&ndash;<iv-input :value.sync="" :textonly="mainModel.isReadOnly"></iv-input>&ndash;&gt;-->
+							<!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>-->
+							<!--<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+						<!--</el-form-item>-->
+						<!--<el-form-item label="操作任务" prop="attr1" class="small-info-box" style="width: 600px;">-->
+							<!--<iv-input :value.sync="mainModel.vo.attr1" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<!--</el-form-item>-->
+					<!--</iv-row>-->
+					<p style="font-size: 14px;font-weight: 700;"><i class="basicPng"></i><span>关联的第1类操作票</span>
+						<a @click="require.show=true" style="margin-left: 50px;font-size: 14px;font-weight: 400;">选择</a>
+					</p>
+					<template v-for="(index, item) in mainModel.vo.ewWorkCards">
+						<iv-row class="bip-content-item">
+							<el-form-item label="单位" class="small-info-box">
+								<iv-input :value="getDataDic('org', item.orgId)['deptName']" textonly></iv-input>
+							</el-form-item>
+							<el-form-item label="工作的变、配电站名称及设备名称" class="small-info-box">
+								<iv-input :value.sync="item.substation" textonly></iv-input>
+							</el-form-item>
+							<el-form-item label="工作任务 - 工作地点及设备双重名称" class="small-info-box">
+								<iv-input :value.sync="item.place" textonly></iv-input>
+							</el-form-item>
+							<el-form-item label="工作任务 - 工作内容" class="small-info-box">
+								<iv-input :value.sync="item.content" textonly></iv-input>
+							</el-form-item>
+						</iv-row>
+					</template>
+				</template>
+			</el-form>
+		</div>
+
+	</div>
+	<div class="rel-info-panel width870form" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rel-info-panel body-min-height" style="background: #fff">
+			<div class="el-tabs__header rel-info-panel-content-tabs">
+				<div class="el-tabs__item " @click="tableIndex='1'" :class="{'is-active' : tableIndex=='1' }"><b>{{mainModel.vo.type=='3'?'操作项目':'安全措施'}}</b></div>
+				<div class="el-tabs__item " v-if="(mainModel.vo.type!='3' && getLargeCount(2)) || mainModel.vo.signTime" @click="tableIndex='2'" :class="{'is-active' : tableIndex=='2' }"><b>签发记录</b></div>
+				<div class="el-tabs__item " v-if="mainModel.vo.type=='1' && getLargeCount(3)" @click="tableIndex='3'" :class="{'is-active' : tableIndex=='3' }"><b>移交通知</b></div>
+				<div class="el-tabs__item " v-if="mainModel.vo.type!='3' && getLargeCount(4)" @click="tableIndex='4'" :class="{'is-active' : tableIndex=='4' }"><b>作业情况</b></div>
+				<div class="el-tabs__item " v-if="mainModel.vo.type=='3' && getLargeCount(4)" @click="tableIndex='5'" :class="{'is-active' : tableIndex=='5' }"><b>审查及操作记录</b></div>
+			</div>
+			<div v-show="tableIndex=='1'" style="min-height:600px;">
+				<div v-show="mainModel.vo.type == 1">
+					<!-- :class="{'rel-info-panel-mask': showPanelMask}" -->
+					<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+						<!--<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>安全措施</span></p>-->
+						<div class="rel-info-panel-content-tabs">
+							<div>
+								<simple-card style="margin-top: 5px;">
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+										<span style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>应拉断路器、隔离开关
+									</p>
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('1')">
+											<span>
+												<Icon type="plus"></Icon>添加
+											</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.firstLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:first-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+										<span style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>应装接地线、应合接地刀闸(注明确实地点、名称及接地线编号)
+									</p>
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('2')">
+											<span>
+												<Icon type="plus"></Icon>添加
+											</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.secondLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:second-list
+
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+								<span
+										style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>应设遮栏、应挂标示牌及防止二次回路误碰等措施
+									</p>
+
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('3')">
+												<span>
+													<Icon type="plus"></Icon>添加
+												</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.thirdLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:third-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+								<span
+										style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>工作地点保留带电部分或注意事项（由工作票签发人填写）
+									</p>
+
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('7')">
+												<span>
+													<Icon type="plus"></Icon>添加
+												</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.seventhLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:seventh-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div v-show="mainModel.vo.type == 2">
+					<!-- :class="{'rel-info-panel-mask': showPanelMask}" -->
+					<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+						<!--<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>工作条件</span></p>-->
+						<div class="rel-info-panel-content-tabs">
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+										工作条件 <span style="color:#999">（停电或不停电,或邻近及保留带电设备名称）</span>
+										<br>
+										<iv-checkbox :disabled="!doShowOptBtn.val1 || !hasAuth('edit')" @on-change='checkboxClick' style="margin-top:6px;" :checked.sync="mainModel.vo.requireOutage" true-value="1" false-value="0" >停电</iv-checkbox>
+									</p>
+									<a slot="extra" style="position: relative;width: 30px;top: 28px;" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('4')">
+												<span>
+													<Icon type="plus"></Icon>添加
+												</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.forthLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:forth-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+										注意事项（安全措施）
+									</p>
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('5')">
+											<span>
+												<Icon type="plus"></Icon>添加
+											</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.fifthLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:fifth-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div v-show="tableLists.eighthLists.length>0 && (mainModel.vo.type == 2 || mainModel.vo.type == 1)">
+					<div style="padding:0 10px 10px 10px;margin-top:-10px;" class="fip-content-item simple-card simple-card-dis-hover">
+						<div class="rel-info-panel-content-tabs">
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+										<span style="border-left: 4px solid #33a6ff;display: inline-block;height: 16px;position: relative;top:3px;left: -5px;"></span>补充安全措施
+									</p>
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('4')">
+											<span>
+												<Icon type="plus"></Icon>添加
+											</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="secondColumns"
+											:values="tableLists.eighthLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:eighth-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<div v-show="mainModel.vo.type == 3">
+
+					<!-- :class="{'rel-info-panel-mask': showPanelMask}" -->
+					<div style="padding: 10px;" class="fip-content-item simple-card simple-card-dis-hover">
+						<!--<p style="font-size: 16px;font-weight: 700;"><i class="basicPng"></i><span>操作项目</span></p>-->
+						<div class="rel-info-panel-content-tabs">
+							<div>
+								<simple-card>
+									<p slot="title" style="font-size: 14px;padding-left: 10px;">
+									</p>
+									<a slot="extra" v-show="doShowOptBtn.val2" @click.prevent="doShowContent('6')">
+										<span>
+											<Icon type="plus"></Icon>添加
+										</span>
+									</a>
+									<vue-bootstrap-table
+											lazy-load
+											:columns="firstColumns"
+											:values="tableLists.sixthLists || []"
+											:show-empty-row="false"
+											:show-pager="false"
+											:show-filter="false"
+											:page-size-opts="[200]"
+											:show-column-picker="false"
+											@on-del-row="doRemoveContent"
+											@on-edit-row="doShowUpdateContent"
+											v-ref:sixth-list
+											@on-move-row="doMoveEwWorkItem">
+									</vue-bootstrap-table>
+
+								</simple-card>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div v-show="tableIndex=='2'"  style="min-height:600px;">
+				<div class="rip-item">
+					<el-form  class="fip-content-item-form">
+						<div class="rip-item-form-card">
+							<!--<p class="rip-item-form-card-title">基本信息</p>-->
+							<el-form-item label="审批结果">
+								<span>{{getDataDic("iew_work_card_sign_result", mainModel.vo.signResult)}}</span>
+							</el-form-item>
+							<el-form-item label="审批时间">
+								<span>{{getNewTime(mainModel.vo.signTime)}}</span>
+							</el-form-item>
+							<el-form-item label="签发意见">
+								<span>{{mainModel.vo.signOpinion}}</span>
+							</el-form-item>
+							<el-form-item label="签名">
+								<div style="display: flex;padding-top:3px">
+									<div v-show="getFileLists(fileList, 'EW1').length>0">
+										<my-image-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW1')" show-close=false>
+										</my-image-view>
+									</div>
+									<div v-show="getFileLists(fileList, 'EW1').length==0 && mainModel.vo.signer">{{(mainModel.vo.signer.name) || ''}}</div>
+									<!--<span>{{getFileLists(fileList, 'EW1').length>0 && formatYMD(getFileLists(fileList, 'EW1')[0].createDate)}}</span>-->
+								</div>
+							</el-form-item>
+						</div>
+					</el-form>
+				</div>
+			</div>
+			<div v-show="tableIndex=='3'"  style="min-height:600px;">
+				<div class="rip-item">
+					<el-form  class="fip-content-item-form">
+						<div class="rip-item-form-card">
+							<!--<p class="rip-item-form-card-title">基本信息</p>-->
+							<el-form-item label="通知人员">
+								<span>{{mainModel.vo.operator && mainModel.vo.operator.name}}</span>
+							</el-form-item>
+							<el-form-item label="通知时间">
+								<span>{{getNewTime(mainModel.vo.noticeTime)}}</span>
+							</el-form-item>
+							<el-form-item label="运行值班人员">
+								<div style="display: flex;padding-top:3px">
+									{{mainModel.vo.operator?mainModel.vo.operator.name:''}}
+									<!--<my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW3')" show-close=false></my-image-view>-->
+									<!--<span>{{getFileLists(fileList, 'EW1').length>0 && formatYMD(getFileLists(fileList, 'EW3')[0].createDate)}}</span>-->
+								</div>
+							</el-form-item>
+							<el-form-item label="工作负责人">
+								<div style="display: flex;padding-top:3px">
+									<my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW2')" show-close=false>
+									</my-image-view>
+									<!--<span>{{getFileLists(fileList, 'EW1').length>0 && formatYMD(getFileLists(fileList, 'EW2')[0].createDate)}}</span>-->
+								</div>
+							</el-form-item>
+						</div>
+					</el-form>
+				</div>
+			</div>
+			<div v-show="tableIndex=='4'"  style="min-height:600px;">
+				<div class="rip-item">
+					<el-form  class="fip-content-item-form">
+						<div class="rip-item-form-card">
+							<!--<p class="rip-item-form-card-title">基本信息</p>-->
+							<iv-row><div class="border-left-blue">作业前确认签名</div></iv-row>
+							<el-form-item label="工作许可人">
+								<div style="display: flex;padding-top:3px">
+                                    <div style="display: inline-block;width:300px">
+                                        <my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW4')" show-close=false>
+                                        </my-image-view>
+                                    </div>
+									<span v-if="getFileLists(fileList, 'EW4').length>0">{{ getNewTime(getFileLists(fileList, 'EW4')[0].createDate)}}</span>
+								</div>
+							</el-form-item>
+							<el-form-item label="工作负责人">
+								<div style="display: flex;padding-top:3px">
+                                    <div style="display: inline-block;width:300px">
+                                        <my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW5')" show-close=false>
+                                        </my-image-view>
+                                    </div>
+									<span v-if="getFileLists(fileList, 'EW5').length>0">{{ getNewTime(getFileLists(fileList, 'EW5')[0].createDate)}}</span>
+								</div>
+							</el-form-item>
+							<el-form-item label="工作班组人员">
+								<div><my-image-view new-view :image-style="imgStyle" :images="getArrayItemsLists(mainModel.vo.ewWorkers,'2','EW6')" show-close=false>
+								</my-image-view>
+								</div>
+							</el-form-item>
+
+							<template v-if="mainModel.vo.ewPrincipalChanges && mainModel.vo.ewPrincipalChanges.length>0">
+                                <template v-for="item in mainModel.vo.ewPrincipalChanges">
+                                    <iv-row>
+                                        <br>
+                                        <div class="border-left-blue">作业中 - 工作负责人变动情况</div>
+                                        <div>原工作负责人（ {{item.user && item.user.name || ''}} ）离去,变更（ {{item.newPrincipal && item.newPrincipal.name || ''}} ）为工作负责人</div>
+                                    </iv-row>
+									<el-form-item label="工作票签发人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                                <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW7')" show-close=false></my-image-view>
+                                            </div>
+                                            <span v-if="getItemFileLists(item, 'EW7').length>0">{{ getNewTime(getItemFileLists(item, 'EW7')[0].createDate) || ''}}</span>
+										</div>
+									</el-form-item>
+									<el-form-item label="工作许可人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                                <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW8')" show-close=false></my-image-view>
+                                            </div>
+                                                <span v-if="getItemFileLists(item, 'EW8').length>0">{{ getNewTime(getItemFileLists(item, 'EW8')[0].createDate) || ''}}</span>
+										</div>
+									</el-form-item>
+								</template>
+							</template>
+							<template v-if="mainModel.vo.ewWorkerChanges && mainModel.vo.ewWorkerChanges.length>0">
+								<iv-row>
+									<br>
+									<div class="border-left-blue">作业中 - 工作人员变动情况(变动人员姓名、日期及时间)</div>
+								</iv-row>
+								<template v-for="item in mainModel.vo.ewWorkerChanges">
+                                    <iv-row>
+                                        <div style="white-space: pre;">{{item.description || ''}}</div>
+                                    </iv-row>
+									<el-form-item label="工作负责人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                                <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW9')" show-close=false></my-image-view>
+                                            </div>
+                                                <span v-if="getItemFileLists(item, 'EW9').length>0">{{ getNewTime(getItemFileLists(item, 'EW9')[0].createDate) || ''}}</span>
+										</div>
+									</el-form-item>
+								</template>
+							</template>
+
+							<template v-if="mainModel.vo.ewWorkDelays && mainModel.vo.ewWorkDelays.length>0">
+								<iv-row>
+									<br>
+									<div class="border-left-blue">工作票延期</div>
+								</iv-row>
+								<template v-for="item in mainModel.vo.ewWorkDelays">
+									<el-form-item label="工作票延期到">
+										<span>{{ getNewTime(item.deadline) }}</span>
+									</el-form-item>
+									<el-form-item label="工作负责人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                            <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW10')" show-close=false></my-image-view>
+                                            </div>
+                                                <span>{{ (getItemFileLists(item, 'EW10').length>0 && getNewTime(getItemFileLists(item, 'EW10')[0].createDate)) || ''}}</span>
+										</div>
+									</el-form-item>
+									<el-form-item label="工作许可人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                                <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW11')" show-close=false></my-image-view>
+                                            </div>
+                                                <span>{{ (getItemFileLists(item, 'EW11').length>0 && getNewTime(getItemFileLists(item, 'EW11')[0].createDate)) || ''}}</span>
+										</div>
+									</el-form-item>
+								</template>
+							</template>
+
+							<template  v-if="mainModel.vo.ewWorkRecords && mainModel.vo.ewWorkRecords.length>0">
+								<iv-row>
+									<br>
+									<div class="border-left-blue">开工时间记录</div>
+								</iv-row>
+								<template v-for="item in mainModel.vo.ewWorkRecords">
+									<el-form-item :label="item.type=='2'?'收工时间':'开工时间'">
+										<span>{{item.workTime}}</span>
+									</el-form-item>
+									<el-form-item label="工作负责人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                                <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW12')" show-close=false></my-image-view>
+                                            </div>
+                                                <span>{{ (getItemFileLists(item, 'EW12').length>0 && getNewTime(getItemFileLists(item, 'EW12')[0].createDate)) || ''}}</span>
+										</div>
+									</el-form-item>
+									<el-form-item label="工作许可人">
+										<div style="display: flex;">
+                                            <div style="display: inline-block;width:300px">
+                                                <my-image-view new-view :image-style="imgStyle" :images="getItemFileLists(item, 'EW13')" show-close=false></my-image-view>
+                                            </div>
+                                                <span>{{ (getItemFileLists(item, 'EW13').length>0 && getNewTime(getItemFileLists(item, 'EW13')[0].createDate)) || ''}}</span>
+										</div>
+									</el-form-item>
+								</template>
+							</template>
+
+							<iv-row>
+								<br>
+								<div class="border-left-blue">工作票终结</div>
+								<div>1.全部工作于 （      {{mainModel.vo.realEndTime || ''}}         ）结束,设备及安全措施已恢复至开工前状态,工作人员已全部撤离,材料工具已清理完毕</div>
+								<div v-show="mainModel.vo.type=='1'">2.临时遮栏、标示牌已拆除,常设遮栏已恢复。未拆除或未拉开的接地线编号（  {{mainModel.vo.groundLeadNumber || ''}}      ）        等共（ {{mainModel.vo.groundLeadQuantity || ''}}        ）组、接地刀闸(小车）共（   {{mainModel.vo.groundSwitchQuantity || ''}}         ）副(台),已汇报调度值班员。</div>
+							</iv-row>
+							<el-form-item label="工作负责人">
+								<div style="display: flex;padding-top:3px">
+                                    <div style="display: inline-block;width:300px">
+                                        <my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW14')" show-close=false>
+                                        </my-image-view>
+                                    </div>
+									<span v-if="getFileLists(fileList, 'EW14').length>0">{{(getNewTime(getFileLists(fileList, 'EW14')[0].createDate)) || ''}}</span>
+								</div>
+							</el-form-item>
+							<el-form-item label="工作许可人">
+								<div style="display: flex;padding-top:3px">
+                                    <div style="display: inline-block;width:300px">
+                                        <my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW15')" show-close=false>
+                                        </my-image-view>
+                                    </div>
+									<span v-if="getFileLists(fileList, 'EW15').length>0">{{( getNewTime(getFileLists(fileList, 'EW15')[0].createDate)) || ''}}</span>
+								</div>
+							</el-form-item>
+
+							<iv-row>
+								<br>
+								<div class="border-left-blue">备注</div>
+								<div>（1）指定专责监护人（               ）负责监护（       地点及具体工作              ）</div>
+								<div>（2）其他事项：</div>
+							</iv-row>
+						</div>
+					</el-form>
+				</div>
+			</div>
+			<div v-show="tableIndex=='5'"  style="min-height:600px;">
+				<div class="rip-item">
+					<el-form  class="fip-content-item-form">
+						<div class="rip-item-form-card">
+							<iv-row><div class="border-left-blue">审查信息</div></iv-row>
+							<el-form-item label="审核人">
+								<div style="display: flex;padding-top:3px">
+									<my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW16')" show-close=false>
+									</my-image-view>
+									<span v-if="getFileLists(fileList, 'EW16').length>0">{{( getNewTime(getFileLists(fileList, 'EW16')[0].createDate)) || ''}}</span>
+								</div>
+							</el-form-item>
+
+							<iv-row><br><div class="border-left-blue">发令及操作信息</div><div>（ <Icon type="checkmark-round"></Icon>  ）监护下操作          （     ）单人操作        （    ）检修人员操作</div></iv-row>
+
+							<el-form-item label="发令人">
+								<div style="display: flex;padding-top:3px">
+									<my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW16')" show-close=false>
+									</my-image-view>
+								</div>
+							</el-form-item>
+							<el-form-item label="受令人">
+								<div style="display: flex;padding-top:3px">
+									<my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW18')" show-close=false>
+									</my-image-view>
+
+								</div>
+							</el-form-item>
+
+							<el-form-item label="发令时间">
+								<div style="display: flex;padding-top:3px">
+									<span >{{ getNewTime(mainModel.vo.attr2) }}</span>
+								</div>
+							</el-form-item>
+
+							<el-form-item label="操作开始时间">
+								<div style="display: flex;padding-top:3px">
+									<span v-if="mainModel.vo.realStartTime">{{getNewTime(mainModel.vo.realStartTime)}}</span>
+								</div>
+							</el-form-item>
+
+							<el-form-item label="操作结束时间">
+								<div style="display: flex;padding-top:3px">
+									<span v-if="mainModel.vo.realEndTime">{{getNewTime(mainModel.vo.realEndTime)}}</span>
+								</div>
+							</el-form-item>
+
+							<el-form-item label="监护人">
+								<div style="display: flex;padding-top:3px">
+									<my-image-view new-view :image-style="imgStyle" :images="getFileLists(fileList, 'EW17')" show-close=false>
+									</my-image-view>
+								</div>
+							</el-form-item>
+
+							<el-form-item label="操作人">
+								<div style="display: flex;padding-top:3px">
+									<my-image-view new-view  :images="getFileLists(fileList, 'EW18')" show-close=false>
+									</my-image-view>
+								</div>
+							</el-form-item>
+						</div>
+					</el-form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	.modal-valve-param .ivu-select-dropdown-width56 .ivu-select-dropdown {
+		width: 70px;
+	}
+	.modal-valve-param .ivu-select{
+		width:188px;
+	}
+	.width870form .el-form{
+		width:870px;
+	}
+	.body-min-height .simple-card-body{
+		min-height: 0px;
+		margin-bottom:20px;
+	}
+	.border-left-blue{
+		clear: both;
+		margin-top:10px;
+	}
+	.border-left-blue::before{
+		content: ' ';
+		display: inline-block;
+		height: 15px;
+		border-left:6px solid #0E5AB2;
+		float:left;
+		margin-top:2px;
+		margin-right:5px;
+	}
+	.btn-green1 {
+		padding: 4px 10px;
+		/* background: rgb(170, 205, 3); */
+		/* color: rgb(255, 255, 255); */
+		font-size: 14px !important;
+		margin-left: 16px;
+		border: 1px solid #ddd;
+		border-radius: 2px;
+	}
+
+	#operation .simple-card-head {
+		padding: 0 0 5px 0;
+	}
+</style>
+
+<user-form-modal :visible.sync="userFormModel.show" @do-save="doSaveOutUser"></user-form-modal>
+
+<content :visible.sync="contentModel.show" v-ref:content @do-save="doSaveContent" @do-update="doSaveContent"></content>
+<require :visible.sync="require.show" :vo="mainModel.vo"></require>
+<approval-step :visible.sync="approval.show" @do-save='signEwworkcard' :vo.sync='mainModel.vo'></approval-step>
+<Modal :visible.sync="selectType.show" footer-hide title="选择第1类操作票" width="1200">
+	<div class="epc-content" style="background-color: white;max-height: 600px;">
+		<vue-bootstrap-table
+			:setting="TypeTableModel"
+			:selected-datas.sync="TypeTableModel.selectedDatas"
+			:show-seq='true'>
+		</vue-bootstrap-table>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="selectType.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="doCheckCard" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>
+<Modal :visible.sync="transform.show" footer-hide title="移交通知" width="400">
+	<div class="epc-content" style="background-color: white;max-height: 600px;">
+		<el-form  :model="userDeptModel.users" :rules="userDeptModel.rules" v-ref:deptruleform>
+			<el-form-item label="通知站场人员" prop="id">
+				<!--<input-select :values="userDeptModel.users" @click="doShowDeptUserModal(item)"></input-select>-->
+				<input-select :value="userDeptModel.users" id-field="id" display-field="name" clearable @click="doShowDeptUserModal()" ></input-select>
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="transform.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="handoverEwworkcard" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</Modal>
+<user-select-modal :visible.sync="userDeptModel.show" single-select @do-save="doSaveDeptUser"></user-select-modal>
+<user-select-modal
+		:visible.sync="userSelectModel.show"
+	   :filter-data="filterData"
+	   :single-select="userSelectModel.signal"
+	   @do-save="doSaveSelect">
+</user-select-modal>

@@ -1,0 +1,151 @@
+<div class="detail-large-container">
+
+	<div class="base-info-panel">
+
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<Icon type="recordPng"></Icon>
+				<span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.vo.disable !== '0' && mainModel.isReadOnly && hasAuth('edit')" type="ghost"
+					@click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+
+
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">
+					{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button v-if="mainModel.vo.disable === '0' && mainModel.isReadOnly && hasAuth('cancelPublish')"
+					type="ghost" @click="doConfirmCallback('doCancelPublish', '取消发布选中数据')">取消发布
+				</iv-button>
+				<iv-button v-if="mainModel.vo.disable === '1' && mainModel.isReadOnly && hasAuth('publish')"
+					type="ghost" @click="doConfirmCallback('doPublish', '发布选中数据?')">
+					{{$t('gb.common.release')}}
+				</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete') " type="ghost" @click="doDelete">
+					{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+
+		<div class="bip-content">
+			<!-- 模型基础信息 -->
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+					:rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<iv-row class="bip-content-item">
+						<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+							<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId">
+							</company-tree-select>
+							<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly>
+							</iv-input>
+						</el-form-item>
+						<el-form-item label="考试试卷" prop="examPaper.id" class="small-info-box">
+							<input-select :value="mainModel.vo.examPaper" id-field="id" display-field="name"
+								:textonly="mainModel.isReadOnly"
+								@click="(!mainModel.isReadOnly) && (doShowExamPaperSelectModal())"></input-select>
+						</el-form-item>
+						<div v-if="!!mainModel.vo.examPaper.id">
+							<el-form-item label="考试时长" class="small-info-box">
+								<span>{{mainModel.vo.examPaper.replyTime}}分钟</span>
+							</el-form-item>
+							<el-form-item label="试卷总分" class="small-info-box">
+								<iv-input type="number" :value.sync="mainModel.vo.examPaper.score" textonly></iv-input>
+							</el-form-item>
+						</div>
+
+					</iv-row>
+					<iv-row class="bip-content-item">
+						<el-form-item label="允许考试时间（开始）" prop="examDate" class="small-info-box">
+							<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd HH:mm:ss" :begin="beginDate"
+								:selected-date.sync="mainModel.vo.examDate" type="datetime" time-zero></date-picker>
+							<iv-input v-else :value.sync="mainModel.vo.examDate" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="允许考试时间（结束）" prop="entryDeadline" class="small-info-box">
+							<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd HH:mm:ss" :begin="beginDate"
+								:selected-date.sync="mainModel.vo.entryDeadline" type="datetime" time-zero>
+							</date-picker>
+							<iv-input v-else :value.sync="mainModel.vo.entryDeadline" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="通过分数" prop="passLine" class="small-info-box">
+							<iv-input type="number" :value.sync="mainModel.vo.passLine" placeholder="请输入分数"
+								:textonly="mainModel.isReadOnly" :disabled="!hasPaperSelected"></iv-input>
+						</el-form-item>
+						<el-form-item label="是否填写评估人" prop="isRaterRequired" class="small-info-box"
+							v-if="showExamRater">
+							<i-select :model.sync="mainModel.vo.isRaterRequired"
+								:list="getDataDicList('is_rater_required')" v-if="!mainModel.isReadOnly">
+								<i-option v-for="item in getDataDicList('is_rater_required')" :value="item.id">
+									{{item.value}}
+								</i-option>
+							</i-select>
+							<span v-else>{{getDataDic('is_rater_required', mainModel.vo.isRaterRequired)}}</span>
+						</el-form-item>
+
+					</iv-row>
+					<iv-row class="bip-content-item">
+						<el-form-item :label="$t('gb.common.remarks')" class="small-info-box" style="width: 600px;">
+							<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+
+					</iv-row>
+
+
+				</el-form>
+			</simple-card>
+			<simple-card class="fip-content-item" style="position: relative;"  filter :filter-when="mainModel.opType !== 'create'"
+				v-if="mainModel.vo.disable== 1">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.personnelTest')}}</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create' " @click.prevent="doUserExport">
+					导出
+				</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'&& mainModel.vo.disable === '1' && hasAuth('edit')"
+					@click.prevent="doShowUserSelectModel">
+					<span>
+						<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+					</span>
+				</a>
+				<iv-checkbox style="position: absolute;top: 50px;left: 10px;" :checked.sync="includeDisableUser">是否包含离职人员</iv-checkbox>
+				<vue-bootstrap-table :url="tableModel.userTableModel.url" :columns="tableModel.userTableModel.column"
+					:show-empty-row="false" :use-default-global-filter="false" lazy-load :page-size-opts="[10,20,50]"
+					:default-filter-value="tableModel.userTableModel.defaultFilterValue" @on-del-row="doRemoveUsers"
+					v-ref:user-table>
+				</vue-bootstrap-table>
+			</simple-card>
+			<simple-card v-if='mainModel.vo.disable== 0' style="position: relative;" class="fip-content-item" filter id="examtable"
+				:filter-when="mainModel.opType !== 'create'">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.personnelTest')}}</span></p>
+
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doUserExport">
+					导出
+				</a>
+				<iv-checkbox style="position: absolute;top: 50px;left: 10px;" :checked.sync="includeDisableUser">是否包含离职人员</iv-checkbox>
+				<vue-bootstrap-table :url="tableModel.userTableModel1.url" :columns="tableModel.userTableModel1.columns"
+					:show-empty-row="false" :use-default-global-filter="false" lazy-load :page-size-opts="[10,20,50]"
+					:default-filter-value="tableModel.userTableModel1.defaultFilterValue" v-ref:user1-table>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+	<!-- <div class="few-info-sider pull-right">
+		
+	</div> -->
+</div>
+<style>
+	#examtable .table tbody tr td:last-child div {
+		line-height: 40px;
+		text-align: center;
+	}
+
+	#examtable .table tbody tr td:last-child {
+		padding: 0;
+	}
+</style>
+<exam-paper-select-modal single-select :visible.sync="selectModel.examPaperSelectModel.visible"
+	:filter-data="selectModel.examPaperSelectModel.filterData" @do-preview="doPreview" @do-save="doSaveExamPaper">
+</exam-paper-select-modal>
+
+<user-select-modal :visible.sync="selectModel.showUserSelectModel.visible"
+	:filter-data="selectModel.showUserSelectModel.filterData" @do-save="doSaveUsers"></user-select-modal>

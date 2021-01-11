@@ -1,0 +1,109 @@
+<div style="position: absolute;left:50%;transform: translateX(-50%);">
+    <div style="position: relative;background-color: white;height: 30px;font-size: 18px;padding:10px;">
+        <!-- <Icon type="ios-photos" style="margin-left: 20px;"></Icon>
+        <span>基本信息</span> -->
+        <div style="position: absolute;left: 100px;top:10px;z-index: 99;display: flex;width: 220px;height: 24px;">
+            <div  style="position: absolute;top: 3px;left: 10px;z-index: 5;font-size: 12px;">修订历史</div>
+
+            <i-select v-if="$route.query.lawsId" style="display: inline-block;height: 24px!important;" size='large' :popper-fixed="false"
+                :model.sync="revise" :single-select="true" @on-tree-node-click="doTreeNodeClick" :list="reviseList">
+
+                <i-option  v-for="upper in reviseList" :value="upper.lawsId">{{upper.reviseDate.substring(0,10)}}
+                </i-option>
+                
+            </i-select>
+            <i-select  v-if="$route.query.standardId" style="display: inline-block;height: 24px!important;" size='large' :popper-fixed="false"
+                :model.sync="revise" :single-select="true" @on-tree-node-click="doTreeNodeClick" :list="reviseList">
+
+                <i-option v-for="upper in reviseList" :value="upper.standardId">{{upper.reviseDate.substring(0,10)}}
+                </i-option>
+                
+            </i-select>
+            <i-select  v-if="$route.query.regulationId" style="display: inline-block;height: 24px!important;" size='large' :popper-fixed="false"
+                :model.sync="revise" :single-select="true" @on-tree-node-click="doTreeNodeClick" :list="reviseList">
+
+                <i-option v-for="upper in reviseList" :value="upper.regulationId">{{upper.reviseDate.substring(0,10)}}
+                </i-option>
+                
+            </i-select>
+        </div>
+    </div>
+    <div style="width: 1120px;height: calc(100vh - 50px);background-color: white;display: flex;padding: 20px 0px 10px 80px;">
+        <div style="width: 300px;background-color: white;height:  calc(100vh - 50px);overflow-y: auto;padding: 0 30px;">
+            <iv-tree style="height:  calc(100vh - 50px);font-size: 16px;font-size: 14px;" id-attr="id" pid-attr="parentId" display-attr="name"
+                :model="legalTypes" :default-open-layer='1' :trigger-parent-event="true" :selected-datas.sync="treeSelectData" :show-checkbox="false" :single-select="true"
+                @on-tree-node-click="doTreeNodeClick">
+            </iv-tree>
+        </div>
+        <div style="flex: 1;padding: 5px 20px;overflow-y: auto;height:  calc(100vh - 50px);background-color: #fff;" id="selectScroll">
+            <div v-for='(index,item) in contentData' class="getScroll" style="margin-right: 80px;" >
+                <div :class='item.parentId?"secondChaper":"firstChaper"' >{{item[0].name}}</div>
+                <div  class="normolContents" v-for='con in item'>
+                    <div style="text-indent: 24px;padding: 0 20px;">{{con.content}}</div>
+                    <div  v-for='img in con.cloudFiles' style="text-align: center;">
+                        <img :data-src="detailImg(img)" alt="加载失败" style="max-width:600px;min-height:200px;object-fit: contain;margin: 5px 0;">
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style scoped>
+    body{
+        background: #ecf0f4;
+    }
+    .ivu-select-selected-value{
+	margin-left: 90px;
+}
+    .custom-vi-tree-item-selected{
+        background-color: white!important;
+        
+    }
+    .custom-vi-tree-item-selected span{
+       
+        color: rgb(25, 163, 231)!important;
+    }
+     .custom-vi-tree-item-selected .align-text{
+		background-color: #fff;
+	}
+	 .custom-vi-tree-item-selected .align-text i{
+		color: #666!important;
+	}
+    .ivu-select-large.ivu-select-single .ivu-select-selection .ivu-select-selected-value,
+	.ivu-select-large.ivu-select-single .ivu-select-selection,
+	.ivu-select-single .ivu-select-selection .ivu-select-placeholder {
+		line-height: 24px !important;
+		height: 24px !important;
+	}
+    .bold{
+        font-weight: 400!important;
+    }
+    .firstChaper {
+        font-size: 20px;
+        font-weight: 700;
+        text-indent: 10px;
+
+    }
+
+    .secondChaper {
+        font-size: 18px;
+        font-weight: 700;
+        text-indent: 20px;
+    }
+
+    .thirdChaper {
+        font-size: 13px;
+        font-weight: 700;
+        text-indent: 30px;
+    }
+
+    .normolContents {
+        font-size: 12px;
+        /* text-indent: 40px; */
+    }
+</style>

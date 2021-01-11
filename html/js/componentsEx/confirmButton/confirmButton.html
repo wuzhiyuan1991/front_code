@@ -1,0 +1,15 @@
+<div class="confirm-button-box" @click="onClick">
+    <slot></slot>
+
+    <Modal :visible.sync="visible" :title="title" footer-hide v-if="input">
+        <div class="edit-pop-container">
+            <div class="epc-content">
+                <iv-input :value.sync="inputValue"></iv-input>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click.stop="onSure" class="pull-right" style="text-align: center;width: auto;padding: 0 16px 0 6px;height: 30px;">{{okText}}</vi-button>
+                <vi-button type="default" @click.stop="onCancel" class="pull-right" style="background-color: #fff; color: #444;border-color: #d9d9d9;text-align: center;width: auto;padding: 0 16px 0 6px;height: 31px;">{{cancelText}}</vi-button>
+            </div>
+        </div>
+    </Modal>
+</div>

@@ -1,0 +1,10 @@
+<Modal :visible.sync="show" mask-closable title="更多" width="900" :footer-hide="true" class="userSelectModal">
+	<div class="edit-pop-container report" style="width: 900px;">
+		<div class="epc-content" style="overflow-x: auto;">
+			<vue-bootstrap-table :columns="columns" :show-scroll="scroll"
+								 :show-column-picker="false"
+								 :values="tableData">
+			</vue-bootstrap-table>
+		</div>
+	</div>
+</Modal>

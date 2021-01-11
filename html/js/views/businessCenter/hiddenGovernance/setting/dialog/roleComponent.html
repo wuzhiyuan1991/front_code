@@ -1,0 +1,40 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+
+		<iv-row >
+			<iv-col span="24" class="remindM2">
+				<!--<div class="menuFor6 mr16">-->
+				<!--<div class="not">未分配<span>{{mainModel.roleList.length}}</span></div>-->
+				<!--<ul class="notUl" v-for="(i,p) in mainModel.roleList">-->
+				<!--<li class="">{{p.name}}<span @click="doAddPos(p.id,p.name,i)">+</span></li>-->
+				<!--</ul>-->
+				<!--</div>-->
+				<!---->
+				<!--<div class="menuFor6 ">-->
+				<!--<div class="not">已分配<span>{{mainModel.selectRoleList.length}}</span></div>-->
+				<!--<ul class="notUl" v-for="(i,p) in mainModel.selectRoleList">-->
+				<!--<li class="">{{p.name}}<span @click="doRemovePos(p.id,p.name,i)">-</span></li>-->
+				<!--</ul>-->
+				<!--</div>-->
+				<!--两个框 当这里是一个框时 注释 data1为数据源  targetKeys1为右边 filterable为搜索 filter-method为搜索函数-->
+				<transfer v-ref:transfer
+						  :data="data1"
+						  :target-keys="targetKeys1"
+						  :render-format="render1"
+						  @on-change="doHandleChange1"
+						  :titles="titles"
+						  :filterable="filterable"
+						  :filter-method="doFilterMethod"
+				>
+				</transfer>
+			</iv-col>
+		</iv-row>
+
+
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>
+
+

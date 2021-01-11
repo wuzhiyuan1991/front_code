@@ -1,0 +1,71 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<!--<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button>-->
+				<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>-->
+				<iv-button v-if="hasAuth('execute') && (mainModel.vo.status == 2 || mainModel.vo.status == 1 || mainModel.vo.status == 4)" type="ghost" @click="doMakeCheckRecord" style="margin-right: 5px">{{$t('gb.common.implement')}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  :label="$t('gb.common.inspectTask')" prop="num" class="small-info-box" >
+						<!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly" :show-tip="true"></iv-input>-->
+						<span>{{mainModel.vo.groupName}}#{{mainModel.vo.num}}</span>
+					</el-form-item>
+
+					<el-form-item  :label="$t('gb.common.startTime')" prop="startDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.endTime')" prop="endDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.Executor')" prop="checkUser.name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.checkUser.username" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<!--<el-form-item  label="所属公司" prop="compId" class="small-info-box" >-->
+						<!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+						<!--<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item  label="所属部门" prop="orgId" class="small-info-box" >-->
+						<!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>-->
+						<!--<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item  :label="$t('gb.common.checkPlanName')" prop="checkPlanId" class="small-info-box" >
+						<input-select :value="mainModel.vo.checkPlan" :show-tip="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (mainModel.showCheckPlanSelectModal = true)" ></input-select>
+					</el-form-item>
+
+					<!--<el-form-item  :label="$t('bd.hal.checkList')" prop="checkTable.name" class="small-info-box" >-->
+						<!--<iv-input :value.sync="mainModel.vo.checkTable.name" :textonly="mainModel.isReadOnly"  ></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item  :label="$t('gb.common.state')" prop="status" class="small-info-box" >
+						<span>{{getDataDic('check_status', mainModel.vo.status)}}</span>
+					</el-form-item>
+					<!--<el-form-item  label="实际完成时间" prop="checkDate" class="small-info-box" >-->
+						<!--<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkDate"></date-picker>-->
+						<!--<iv-input v-else :value.sync="mainModel.vo.checkDate" textonly class="inp"></iv-input>-->
+					<!--</el-form-item>-->
+
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+	</div>
+	
+</div>
+
+<checktable-select-modal single-select :visible.sync="mainModel.showCheckTableSelectModal"  @do-save="doSaveCheckTable"></checktable-select-modal>
+
+
+

@@ -1,0 +1,361 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost">提交审核</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost">审核</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost">提交验收</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost">验收</iv-button> -->
+				<!-- <iv-button v-if="mainModel.isReadOnly&&mainModel.vo.status==1&&isPG" type="ghost" @click="doOpinion">评估</iv-button> -->
+				<iv-button v-if="mainModel.isReadOnly&&mainModel.vo.status==0 " type="ghost" @click="dopass">提交评估</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')&&mainModel.vo.status==0" type="ghost" @click.stop="doEdit">
+					{{$t('gb.common.edition')}}</iv-button>
+				<!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制
+				</iv-button> -->
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}
+				</iv-button>
+				
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost"
+					@click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="min-height:400px;" :model="mainModel.vo" is-label-vertical
+				:rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="项目名称" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="变更性质" prop="nature" class="small-info-box">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('smoc_change_management_nature', mainModel.vo.nature) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.nature" :list="getDataDicList('smoc_change_management_nature')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="变更类型" prop="changeMode" class="small-info-box">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('smoc_change_management_change_mode', mainModel.vo.changeMode) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.changeMode" :list="getDataDicList('smoc_change_management_change_mode')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="变更范围" prop="deadLine" class="small-info-box">
+
+						<div style="display: flex;" v-if="!mainModel.isReadOnly">
+							<!--<iv-input :value.sync="mainModel.vo.mocRange" style="width: 110px; :textonly="mainModel.isReadOnly"></iv-input>-->
+
+							<div style="width: 110px;" >
+								<i-select style="width: 110px;" :model.sync="mainModel.vo.scope"
+									:list="getDataDicList('smoc_change_management_scope')"></i-select>
+							</div>
+							<div v-if="mainModel.vo.scope!='0'" style="width: 150px;" id='changeDeadline'>
+
+								<date-picker style="width: 150px;" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+									:selected-date.sync="mainModel.vo.deadLine" clearable></date-picker>
+							</div>
+						</div>
+
+						<iv-input v-if="mainModel.vo.scope!='0'&&mainModel.isReadOnly"
+							:value="formatYMD(mainModel.vo.deadLine)" textonly class="inp">
+						</iv-input>
+						<iv-input v-if="mainModel.vo.scope=='0'&& mainModel.isReadOnly" value="永久变更" textonly
+							class="inp">
+						</iv-input>
+
+
+					</el-form-item>
+					<el-form-item label="开始时间" prop="startTime" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" :end="mainModel.vo.endTime" type="datetime"
+							format="yyyy-MM-dd HH:mm:ss" :selected-date.sync="mainModel.vo.startTime" clearable>
+						</date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startTime" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="结束时间" prop="endTime" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" :begin="mainModel.vo.startTime" type="datetime"
+							format="yyyy-MM-dd HH:mm:ss" :selected-date.sync="mainModel.vo.endTime" clearable>
+						</date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endTime" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="申请人/负责人" prop="applicant.id" class="small-info-box">
+						<input-select :value.sync="mainModel.vo.applicant" id-field="id" display-field="name"
+							:textonly="mainModel.isReadOnly" clearable
+							@click="(!mainModel.isReadOnly) && (doSelectUser(1))"></input-select>
+					</el-form-item>
+				</iv-row>
+
+
+				<iv-row class="bip-content-item">
+
+					<el-form-item label="审批人" prop="approvers" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :overflow-hover="false" :values="mainModel.vo.approvers" @click="doSelectUser(2)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.approvers">{{item.name}}{{(index+1)==mainModel.vo.approvers.length?'':','}}</span>
+					</el-form-item>
+					<el-form-item label="评估人" prop="assessors" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :overflow-hover="false" :values="mainModel.vo.assessors" @click="doSelectUser(4)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.assessors">{{item.name}}{{(index+1)==mainModel.vo.assessors.length?'':','}}</span>
+					</el-form-item>
+					<el-form-item label="验收人" prop="acceptors" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :overflow-hover="false" :values="mainModel.vo.acceptors" @click="doSelectUser(5)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.acceptors">{{item.name}}{{(index+1)==mainModel.vo.acceptors.length?'':','}}</span>
+					</el-form-item>
+					<el-form-item label="培训负责人" prop="trainers" class="small-info-box">
+						<multi-input-select v-if="!mainModel.isReadOnly" :overflow-hover="false" :values="mainModel.vo.trainers" @click="doSelectUser(6)"></multi-input-select>
+						<span v-else v-for="(index , item) in mainModel.vo.trainers">{{item.name}}{{(index+1)==mainModel.vo.trainers.length?'':','}}</span>
+					</el-form-item>
+					
+				
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="状态" prop="status" class="small-info-box">
+						<span >{{ getDataDic('smoc_change_management_status', mainModel.vo.status) }}</span>
+						<!-- <i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('smoc_change_management_status')" clearable></i-select> -->
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId"  class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="模板" prop="smocTemplate" class="small-info-box">
+						
+						<input-select :value.sync="mainModel.vo.smocTemplate" id-field="id" display-field="name"
+							:textonly="mainModel.opType!='create'" clearable
+							@click="(mainModel.opType=='create') && (doSelectTemp())"></input-select>
+						
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="变更说明" prop="illustrate" class="small-info-box-2span">
+						<!--<iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<iv-input type="textarea" :rows="2" class="display-all-line" :value.sync="mainModel.vo.illustrate"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+			</el-form>
+		</div>
+	</div>
+
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs :active-name.sync="mainModel.activeTabName" @tab-click="changeTab">
+				<el-tab-pane label="申请/评估">
+
+					<div class="rip-item">
+						<simple-card :show-content.sync="cardModel.showContent">
+							<p slot="title"><i class="basicPng"></i><span>危害辨识</span></p>
+							<a slot="extra" @click.prevent="cardModel.showContent = !cardModel.showContent;">
+								<span v-if="cardModel.showContent">
+									<Icon type="arrow-up-b"></Icon>收起
+								</span>
+								<span v-else>
+									<Icon type="arrow-down-b"></Icon>展开
+								</span>
+							</a>
+							<a slot="extra" v-show="mainModel.opType != 'create'&&mainModel.vo.status==0"
+								@click.prevent="doShowCheckBasisSelectModal()">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a>
+
+
+							<simple-card class="rip-item-sub" v-for="(index, group) in groups1" v-ref:groupcrad>
+								<div class="clearfix" style="margin-bottom: 10px;font-weight: bold;line-height: 28px;">
+									<div class="left" style="width: 300px;">{{group.name}}</div>
+									<div class="right" v-show="mainModel.vo.status==0">
+										<vi-button type="text" icon="plus" @click="doSelectGroupUser(group, index)">
+											批量分配人员</vi-button>
+										<vi-button type="text" icon="plus"
+											@click="doShowItemFormModal4Create(group, index)">{{$t('bc.ria.append')}}
+										</vi-button>
+
+										<iv-dropdown trigger="click" placement="top-end">
+											<vi-button type="text" icon="more">更多</vi-button>
+											<iv-dropdown-menu slot="list">
+												<iv-dropdown-item @click="doShowGroupFormModal4Update(group, index)">
+													<a href="javascript:void(0);">
+														<Icon type="edit"></Icon>
+														<span>编辑分组名称</span>
+													</a>
+												</iv-dropdown-item>
+
+												<iv-dropdown-item @click="doMove(-1, group, index)">
+													<a href="javascript:void(0);">
+														<Icon type="arrow-up-a"></Icon>
+														<span>上移</span>
+													</a>
+												</iv-dropdown-item>
+
+												<iv-dropdown-item @click="doMove(1, group, index)">
+													<a href="javascript:void(0);">
+														<Icon type="arrow-down-a"></Icon>
+														<span>下移</span>
+													</a>
+												</iv-dropdown-item>
+
+												<iv-dropdown-item @click="doRemoveGroup(group, index)">
+													<a href="javascript:void(0);">
+														<Icon type="trash-a"></Icon>
+														<span>{{$t("gb.common.del")}}</span>
+													</a>
+												</iv-dropdown-item>
+											</iv-dropdown-menu>
+										</iv-dropdown>
+									</div>
+								</div>
+
+								<vue-bootstrap-table :setting="tableModel.checkBasisTableModel"	@on-click-cell="doTableCellClick"
+									@on-edit-row="doEidtGroup" @on-del-row="doRemoveCheckBasis" :page-size-opts='[2000]' :values="group.riskItems"
+									show-pager="false">
+
+								</vue-bootstrap-table>
+
+							</simple-card>
+							<!--</group-partial>-->
+						</simple-card>
+					</div>
+
+					<div class="rip-item">
+						<simple-card>
+							<p slot="title"><i class="basicPng"></i><span>评估意见</span></p>
+							<!-- <a slot="extra" @click.prevent="cardModel.checkBasisCardModel.showContent = !cardModel.checkBasisCardModel.showContent;" > -->
+							<!--<span v-if="cardModel.checkBasisCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>-->
+							<!--<span v-else><Icon type="arrow-down-b"></Icon>展开</span>-->
+							<!-- </a> -->
+							<!-- <a slot="extra" v-show="mainModel.opType != 'create'&&mainModel.vo.status==0" @click.prevent="doSelectUser(4)">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a> -->
+							<vue-bootstrap-table :setting="tableModel.pgyjModel" 
+								:values="mainModel.pgyjValues"  @on-data-loaded="doLoadTableData" :page-size-opts='[2000]' show-pager="false" v-ref:pgyj>
+							</vue-bootstrap-table>
+						</simple-card>
+					</div>
+
+					<div class="rip-item">
+
+						<simple-card>
+							<p slot="title"><i class="basicPng"></i><span>审批意见</span></p>
+							<!-- <a slot="extra" v-show="mainModel.opType != 'create'&&mainModel.vo.status==0" @click.prevent="doSelectUser(5)">
+								<span>
+									<Icon type="plus"></Icon>添加
+								</span>
+							</a> -->
+							<vue-bootstrap-table :setting="tableModel.spyjModel" 
+								:values="mainModel.pgyjValues" :page-size-opts='[2000]' show-pager="false" v-ref:spyj>
+							</vue-bootstrap-table>
+						</simple-card>
+
+
+
+					</div>
+
+
+				</el-tab-pane>
+
+
+
+		
+
+
+
+
+			</el-tabs>
+		</div>
+	</div>
+
+</div>
+<style>
+	#changeDeadline .ivu-select {
+		width: 150px;
+	}
+</style>
+
+
+<Modal :visible.sync="add.visible" title="新增危害辨识" :footer-hide="true">
+
+	<div class="epc-content" style="position: relative;background-color: white;">
+		<el-form :model="add" :rules="add.rules" v-ref:addform>
+
+			<el-form-item label="分组名" prop="name">
+				<iv-input :value.sync="add.name"></iv-input>
+			</el-form-item>
+
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="add.visible=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+		<vi-button type="primary" @click="doAddGroupName" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>
+<Modal :visible.sync="groupUser.visible" title="批量分配人员" :footer-hide="true">
+
+	<div class="epc-content" style="position: relative;background-color: white;">
+		<el-form :model="groupUser" :rules="groupUser.rules" v-ref:userform>
+
+			<el-form-item label="分组名" prop="name">
+				<iv-input :value.sync="groupUser.name" textonly></iv-input>
+			</el-form-item>
+			<el-form-item label="落实人" prop="user.id">
+				<input-select :value.sync="groupUser.user" id-field="id" display-field="name" clearable
+					@click="doSelectUser(3)"></input-select>
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="groupUser.visible=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="doSaveGroupUser" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>
+<Modal :visible.sync="opinionModel.visible" :title="opinionModel.title" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <el-form :model="opinionModel" :rules="opinionModel.rules" v-ref:opinionform>
+           
+          
+            <el-form-item :label="opinionModel.title+'结果'" prop="result">
+                <iv-radio-group :model.sync="opinionModel.result">
+                    <iv-radio value="1" 
+                        @change="opinionModel.result=1">
+                        通过</iv-radio>
+                    <iv-radio value="2" 
+                        @change="opinionModel.result=2">
+                        不通过</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+            <el-form-item label="意见内容" prop="opinion">
+                <iv-textarea :value.sync="opinionModel.opinion"></iv-textarea>
+            </el-form-item>
+        
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="opinionModel.visible=false" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSaveOpinionModel" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false" @do-save="doSaveUsers"
+	:filter-data="selectModel.userSelectModel.filterData" :single-select="userType==1||userType==3">
+</user-select-modal>
+<add-group :visible="addGroup.visible" @do-save="doSaveItem"></add-group>
+
+<temp-modal :visible.sync="tempModal.visible" :filter-data="tempModal.filterData" single-select  @do-save="doSavetemps"
+	 >
+</temp-modal>

@@ -1,0 +1,350 @@
+<div>
+<!--    <div  class="flex-v-center title-simplecard mb5 base-border-bottom">能量隔离</div>-->
+    <div class="mb50 flex-layout pdt10"  v-if="model.enableProcessIsolation==1 || model.enableProcessIsolation==2">
+        <div class="flex-v-start mr10 ">
+            <iv-checkbox v-if="model.enableProcessIsolation==2" :checked.sync="permitModel.enableProcessIsolation"  true-value="1" false-value="0" >工艺隔离</iv-checkbox>
+            <!--<div v-else style="margin-right: 20px;width:60px;margin-top:10px;">工艺隔离 </div>-->
+            <iv-checkbox v-else checked=true disabled>工艺隔离</iv-checkbox>
+        </div>
+        <div class="disabled-container flex-grow1">
+            <div class="disabled-mask border-ele" v-if="permitModel.enableProcessIsolation==0"></div>
+            <div class="disabled-content">
+                <div class="">
+                    <el-form class="width-auto-ipt" label-width="130px">
+                        <el-form-item label="工艺管道">
+                            <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="隔离点">
+                            <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="隔离方法" class="mb10">
+                            <div class="flex-layout">
+                                <div class="flex-grow1 form-disabled">
+                                    <div class="ele-disabled-mask"></div>
+                                    <iv-checkbox-group class="group-vertical">
+                                        <iv-checkbox disabled v-for="item of  permitModel.geliffList">{{item.name}}</iv-checkbox>
+                                    </iv-checkbox-group>
+                                </div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="挂牌上锁">
+                            <div class="form-disabled">
+                                <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                            </div>
+                        </el-form-item>
+        
+                        <el-form-item label="隔离位置示意图">
+                            <div class="form-disabled">
+                                <div class="link-disabled">上传文件</div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="图片">
+                            <div class="form-disabled">
+                                <div class="link-disabled">上传文件</div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item class="is-required" label="隔离实施人">
+                            <multiple-input-select
+                                    :selected-multiple.sync="process.isolators"
+                                    @on-click="showSelectUser(1,'isolators')">
+                            </multiple-input-select>
+                        </el-form-item>
+                        <el-form-item class="is-required" label="解除隔离实施人">
+                            <!--<input-select :value="process.disisolators" id-field="id" display-field="name"-->
+                                          <!--@click="showSelectUser(1,'disisolators')"></input-select>-->
+                            <multiple-input-select
+                                    :selected-multiple.sync="process.disisolators"
+                                    @on-click="showSelectUser(1,'disisolators')">
+                            </multiple-input-select>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 flex-layout "  v-if="model.enableMechanicalIsolation==1 || model.enableMechanicalIsolation==2">
+        <!--<div class="flex-v-start mr10">-->
+                <!--&lt;!&ndash;<iv-checkbox checked="true"  @change="changeEnable($event,'2')"   style="visibility:hidden;"></iv-checkbox>&ndash;&gt;-->
+                <!--<div  style="margin-right: 20px;width:60px;margin-top:10px;">机械隔离 </div>-->
+        <!--</div>-->
+        <div class="flex-v-start mr10 ">
+            <iv-checkbox v-if="model.enableMechanicalIsolation==2" :checked.sync="permitModel.enableMechanicalIsolation"  true-value="1" false-value="0" >机械隔离</iv-checkbox>
+            <!--<div v-else style="margin-right: 20px;width:60px;margin-top:10px;">机械隔离 </div>-->
+            <iv-checkbox v-else checked=true disabled>机械隔离</iv-checkbox>
+
+        </div>
+        <div class="disabled-container flex-grow1">
+            <div class="disabled-mask border-ele" v-if="permitModel.enableMechanicalIsolation==0"></div>
+            <div class="">
+                <el-form class="width-auto-ipt" label-width="130px">
+                    <el-form-item label="设施设备">
+                        <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                    </el-form-item>
+                    <el-form-item label="机械隔离部位 ">
+                        <div class="form-disabled">隔离操作人手动录入（可以录入多个）</div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <div class="form-disabled">
+                            <div class="link-disabled">上传文件</div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  class="is-required" label="隔离实施人">
+                        <!--<input-select :value="mechanical.isolator" id-field="id" display-field="name"-->
+                                      <!--@click="showSelectUser(2,'isolator')"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="mechanical.isolators"
+                                @on-click="showSelectUser(2,'isolators')">
+                        </multiple-input-select>
+                    </el-form-item>
+                    <el-form-item   class="is-required" label="解除隔离实施人">
+                        <!--<input-select :value="mechanical.disisolator" id-field="id" display-field="name"-->
+                                      <!--@click="showSelectUser(2,'disisolator')"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="mechanical.disisolators"
+                                @on-click="showSelectUser(2,'disisolators')">
+                        </multiple-input-select>
+                        </el-form-item>
+
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 flex-layout "  v-if="model.enableElectricIsolation==1 || model.enableElectricIsolation==2">
+        <!--<div class="flex-v-start mr10">-->
+                <!--&lt;!&ndash; <iv-checkbox    @change="changeEnable($event,'3')"  checked="true"  style="visibility:hidden;"  ></iv-checkbox> &ndash;&gt;-->
+                <!--<div  style="margin-right: 20px;width:60px;margin-top:10px;"  >电气隔离 </div>-->
+        <!--</div>-->
+        <div class="flex-v-start mr10 ">
+            <iv-checkbox v-if="model.enableElectricIsolation==2" :checked.sync="permitModel.enableElectricIsolation"  true-value="1" false-value="0" >电气隔离</iv-checkbox>
+            <!--<div v-else style="margin-right: 20px;width:60px;margin-top:10px;">电气隔离 </div>-->
+            <iv-checkbox v-else checked=true disabled>电气隔离</iv-checkbox>
+        </div>
+        <div class="disabled-container flex-grow1">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableElectricIsolation==0"></div>
+            <div class="">
+                <el-form class="width-auto-ipt" label-width="130px">
+                    <el-form-item label="电气设施设备">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="电气隔离部位">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <div class="form-disabled">
+                            <div class="link-disabled">上传文件</div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  class="is-required" label="隔离实施人">
+                        <!--<input-select :value="electric.isolator" id-field="id" display-field="name"-->
+                                      <!--@click="showSelectUser(3,'isolator')"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="electric.isolators"
+                                @on-click="showSelectUser(3,'isolators')">
+                        </multiple-input-select>
+                    </el-form-item>
+                    <el-form-item   class="is-required" label="解除隔离实施人">
+                        <!--<input-select :value="electric.disisolator" id-field="id" display-field="name"-->
+                                      <!--@click="showSelectUser(3,'disisolator')"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="electric.disisolators"
+                                @on-click="showSelectUser(3,'disisolators')">
+                        </multiple-input-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 flex-layout "  v-if="model.enableSystemMask==1 || model.enableSystemMask==2" >
+        <!--<div class="flex-v-start mr10">-->
+                <!--&lt;!&ndash; <iv-checkbox   @change="changeEnable($event,'4')"  checked="true"  style="visibility:hidden;"></iv-checkbox> &ndash;&gt;-->
+
+                <!--<div  style="margin-right: 20px;width:60px;margin-top:10px;"  >系统屏蔽 </div>-->
+        <!--</div>-->
+        <div class="flex-v-start mr10 ">
+            <iv-checkbox v-if="model.enableSystemMask==2" :checked.sync="permitModel.enableSystemMask"  true-value="1" false-value="0" >系统屏蔽</iv-checkbox>
+            <!--<div v-else style="margin-right: 20px;width:60px;margin-top:10px;">电气隔离 </div>-->
+            <iv-checkbox v-else checked=true disabled>系统屏蔽</iv-checkbox>
+
+        </div>
+        <div class="disabled-container flex-grow1" :class="{'ele-enable':permitModel.enableSystemMask=='0'}">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableSystemMask==0"></div>
+            <div class="">
+                <el-form class="width-auto-ipt" label-width="130px">
+                    <el-form-item label="保护系统名称">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="保护系统子件名称">
+                        <div class="form-disabled">
+                            隔离操作人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <div class="form-disabled">
+                            <div class="link-disabled">上传文件</div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  class="is-required" label="隔离实施人">
+                        <!--<input-select :value="systemMask.isolator" id-field="id" display-field="name"-->
+                                      <!--@click="showSelectUser(4,'isolator')"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="systemMask.isolators"
+                                @on-click="showSelectUser(4,'isolators')">
+                        </multiple-input-select>
+                    </el-form-item>
+                    <el-form-item   class="is-required" label="解除隔离实施人">
+                        <!--<input-select :value="systemMask.disisolator" id-field="id" display-field="name"-->
+                                      <!--@click="showSelectUser(4,'disisolator')"></input-select>-->
+                        <multiple-input-select
+                                :selected-multiple.sync="systemMask.disisolators"
+                                @on-click="showSelectUser(4,'disisolators')">
+                        </multiple-input-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="flex-layout "  v-if="model.enableBlindPlate==1 || model.enableBlindPlate==2" >
+        <!--<div class="flex-v-start mr10">-->
+        <!--&lt;!&ndash; <iv-checkbox   @change="changeEnable($event,'4')"  checked="true"  style="visibility:hidden;"></iv-checkbox> &ndash;&gt;-->
+
+        <!--<div  style="margin-right: 20px;width:60px;margin-top:10px;"  >系统屏蔽 </div>-->
+        <!--</div>-->
+        <div class="flex-v-start mr10 " style="flex-shrink:0">
+            <iv-checkbox v-if="model.enableBlindPlate==2" :checked.sync="permitModel.enableBlindPlate"  true-value="1" false-value="0" >盲板抽堵</iv-checkbox>
+            <!--<div v-else style="margin-right: 20px;width:60px;margin-top:10px;">电气隔离 </div>-->
+            <iv-checkbox v-else checked=true disabled>盲板抽堵</iv-checkbox>
+
+        </div>
+        <div class="disabled-container flex-grow1" :class="{'ele-enable':permitModel.enableBlindPlate=='0'}">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableBlindPlate==0"></div>
+            <div class="mb30">
+                <div class="flex-v-center" style="font-weight: 700;font-size: 12px;">
+                    <span class="base-border-left-blue"></span>管道和盲板信息
+                </div>
+                <div style="min-height:20px;text-align: right">
+                    <span @click="doShowAddBlindPlate" style="cursor: pointer;font-size:14px;display: inline-block;color:#33a6ff !important" >添加</span>
+                </div>
+                <div>
+                    <vue-bootstrap-table
+                        :values="tableList"
+                         :columns="tableModel.columns"
+                         :show-empty-row="false"
+                        :page-size-opts="[999]"
+                        :code="moduleCode"
+                        :resizeable="true"
+                         :lazy-load='true'
+                        :show-scroll="true"
+                         :show-pager='false'
+                        @on-del-row="doRemoveBandPlate"
+                        @on-edit-row="doEditBandPlate"
+                        show-loading v-ref:main-table>
+                    </vue-bootstrap-table>
+                </div>
+                <div style="margin-top: 14px; display: flex;justify-content: space-between;">
+                    <div class="parameter-image" >
+                        <span style="float:left;">盲板位置图：</span>
+                        <image-view :images="getFiles(permitModel.fileList, 'PTW32')" @on-close="doDeleteFile">
+                        </image-view>
+                    </div>
+                    <vue-file-upload
+                            :events="figureUpModel.events"
+                            :params="figureUpModelParams"
+                            :filters="figureUpModel.filters"
+                            @on-success-upload="doUploadFigure"
+                            custom-style
+                            style="clear: both">
+                        <span class="link-ele">添加</span>
+                    </vue-file-upload>
+                </div>
+            </div>
+            <div class="mt15">
+                <div class="flex-v-center" style="font-weight: 700;font-size: 12px;">
+                    <span class="base-border-left-blue"></span>操作角色
+                </div>
+                <div class="mt15">
+                    <iv-checkbox :checked.sync="permitModel.enableBlindPlateStopping"  true-value="1" false-value="0">“堵”操作</iv-checkbox>
+                    <div style="position: relative">
+                        <div class="disabled-mask border-ele" v-if="permitModel.enableBlindPlateStopping!='1'"></div>
+                        <div class="flex-v-center mb10">
+                            <div style="width:120px;"><label style="color:red;">*</label>作业人</div>
+                            <div style="width:360px">
+                                <multiple-input-select
+                                        :selected-multiple.sync="permitModel.selworkPersonnels['11']"
+                                        @on-click="showBlindPlateUser('11')">
+                                </multiple-input-select>
+                            </div>
+                        </div>
+                        <div class="flex-v-center">
+                            <div style="width:120px;"><label style="color:red;">*</label>监护人</div>
+                            <div style="width:360px">
+                                <multiple-input-select
+                                        :selected-multiple.sync="permitModel.selworkPersonnels['12']"
+                                        @on-click="showBlindPlateUser('12')">
+                                </multiple-input-select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="mt15 mb30">
+                    <iv-checkbox :checked.sync="permitModel.enableBlindPlatePulling"  true-value="1" false-value="0">“抽”操作</iv-checkbox>
+                    <div style="position: relative">
+                        <div class="disabled-mask border-ele" v-if="permitModel.enableBlindPlatePulling!='1'"></div>
+                        <div class="flex-v-center mb10">
+                            <div style="width:120px;"><label style="color:red;">*</label>作业人</div>
+                            <div style="width:360px">
+                                <multiple-input-select
+                                        :selected-multiple.sync="permitModel.selworkPersonnels['13']"
+                                        @on-click="showBlindPlateUser('13')">
+                                </multiple-input-select>
+                            </div>
+                        </div>
+                        <div class="flex-v-center">
+                            <div style="width:120px;"><label style="color:red;">*</label>监护人</div>
+                            <div style="width:360px">
+                                <multiple-input-select
+                                        :selected-multiple.sync="permitModel.selworkPersonnels['14']"
+                                        @on-click="showBlindPlateUser('14')">
+                                </multiple-input-select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<ptw-blind-plate-form-modal
+    :visible.sync="formModel.show" @do-save="doSaveBlindPlateVo" v-ref:ptw-blind-form
+></ptw-blind-plate-form-modal>
+
+<user-select-modal :visible.sync="showUserSelectModal1" @do-save="doSaveBlindPlateUser" ></user-select-modal>
+<user-select-modal :visible.sync="showUserSelectModal" @do-save="doSaveUser" ></user-select-modal>
+
+<!--<ptw-worker-select-modal :visible.sync="showUserSelectModal" @do-save="doSaveBlindPlateUser" :filter-data="ptwWorkerFilterData"></ptw-worker-select-modal>-->
+<ptw-worker-select-modal  :visible.sync="showPtwSelectModal" @do-save="doSaveUser" :filter-data="ptwWorkerFilterData"></ptw-worker-select-modal>
+
+

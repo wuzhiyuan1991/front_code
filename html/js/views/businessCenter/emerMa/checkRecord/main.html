@@ -1,0 +1,51 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                    <ul style="display: inline-flex">
+                        <li @click="doChangeType('1')" :class="{'checked': recordType === '1'}" class="s-result-item">计划检查记录</li>
+                        <li @click="doChangeType('0')" :class="{'checked': recordType === '0'}" class="s-result-item">非计划检查记录</li>
+                    </ul>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <iv-dropdown-item>
+                                <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                </iv-col>
+                </iv-col>
+            </iv-row>
+        </div>
+
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<aside :show.sync="detailModel.show"  class="large-info-aside" placement="right">
+    <editComponent></editComponent>
+</aside>
+
+<aside :show.sync="detailNotPlanModel.show" class="large-info-aside" placement="right">
+    <notPlanDetailComponent></notPlanDetailComponent>
+</aside>

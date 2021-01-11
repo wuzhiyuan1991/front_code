@@ -1,0 +1,58 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item :label="$t('ori.perm.messageTopic')" prop="title">
+						<iv-input :value.sync="mainModel.vo.title" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.messageContent')" prop="content">
+						<iv-input type="textarea" :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					
+				</el-form>
+			</simple-card>
+			
+			<simple-card class="fip-content-item" filter :filter-when="mainModel.opType !== 'create'">
+				<p slot="title"><i class="basicPng"></i><span>{{$t("bs.bac.user")}}</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.disable == 0" @click.prevent="doShowUserSelectModal()" >
+					<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+				</a>
+				<vue-bootstrap-table
+					:url="tableModel.userTableModel.url"
+					:columns="tableModel.userTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					:lazy-load="true"
+					@on-del-row="doRemoveUsers"
+					v-ref:user-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="mainModel.isReadOnly && mainModel.vo.disable == 0" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button type="ghost" v-if="mainModel.opType=='view' && mainModel.vo.disable == 0" icon="android-document" @click="doPublish">{{$t("gb.common.release")}}</iv-button>
+		<iv-button v-if="mainModel.opType != 'create' && mainModel.vo.disable == 0" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData"  @do-save="doSaveUsers"></user-select-modal>
+

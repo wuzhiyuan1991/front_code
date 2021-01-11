@@ -1,0 +1,25 @@
+<!-- <div class="form-dialog" id="dialog-form" style="height: 600px;width: 370px;"> -->
+<div class="edit-pop-container">
+    <div class="epc-content">
+        <iv-row>
+            <iv-col span="24" >
+                <ul style="background: #fff">
+                    <li class="treeview"  v-for="parent in mainModel.vo.kpointList">
+                        <div style="border-bottom: solid 1px #eee; padding: 10px 10px;">
+                            <a class="courseA" style="color: #000">
+                                <span>{{parent.name}}</span>
+                            </a>
+                        </div>
+                        <div v-for="(rowIndex,kpoint) in parent.kpointList" @click="doPointClick(kpoint)" @dblClick="doPointDblClick(kpoint)" style="border-bottom: solid 1px #eee; padding: 10px 10px 10px 30px;cursor: pointer;">
+                            <iv-radio :checked.sync="kpoint.rowCheck"></iv-radio>
+                            <span>{{kpoint.name}}</span>
+                        </div>
+                    </li>
+                </ul>
+            </iv-col>
+        </iv-row>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+    </div>
+</div>

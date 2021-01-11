@@ -1,0 +1,38 @@
+<div :class="classes">
+    <List
+        v-ref:left
+        :prefix-cls="prefixCls + '-list'"
+        :data="leftData"
+        :render-format="renderFormat"
+        :checked-keys.sync="leftCheckedKeys"
+        :valid-keys-count.sync="leftValidKeysCount"
+        :style="listStyle"
+        :title="titles[0]"
+        :filterable="filterable"
+        :filter-placeholder="filterPlaceholder"
+        :filter-method="filterMethod"
+        @on-dblclick="onLeftDblclick"
+        :not-found-text="notFoundText">
+        <slot></slot>
+    </List><Operation
+        :prefix-cls="prefixCls"
+        :operations="operations"
+        :left-active="leftValidKeysCount > 0"
+        :right-active="rightValidKeysCount > 0"></Operation><List
+        v-ref:right
+        :prefix-cls="prefixCls + '-list'"
+        :data="rightData"
+        :render-format="renderFormat"
+        :checked-keys.sync="rightCheckedKeys"
+        :valid-keys-count.sync="rightValidKeysCount"
+        :style="listStyle"
+        :title="titles[1]"
+        :filterable="filterable"
+        :filter-placeholder="filterPlaceholder"
+        :filter-method="filterMethod"
+        :not-found-text="notFoundText"
+        @on-dblclick="onRightDblclick"
+        :showcount="showcount">
+        <slot></slot>
+    </List>
+</div>

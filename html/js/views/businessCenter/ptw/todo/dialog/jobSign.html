@@ -1,0 +1,48 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form style="width:400px;" :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item  :label="mainModel.title" >
+                    <span >{{mainModel.user.name}}</span>
+                </el-form-item>
+                <el-form-item  label="会签结果" prop="signResult"  v-show="!isCloseStep">
+                    <iv-radio-group :model.sync="mainModel.vo.signResult" @change="doChangesignResult">
+                        <iv-radio value="1">
+                            <span>通过</span>
+                        </iv-radio>
+                        <iv-radio value="2">
+                            <span>不通过</span>
+                        </iv-radio>
+                    </iv-radio-group>
+                </el-form-item>
+                <el-form-item  :label="mainModel.title+'承诺'" v-show="!isCloseStep">
+                    <span>{{permitSign.content}}</span>
+                </el-form-item>
+                <el-form-item  :label="mainModel.title+'意见'" prop="signOpinion" v-show="!isCloseStep">
+                    <span v-if="!modify">{{mainModel.vo.unit}}</span>
+                    <iv-input type="textarea" :rows="6" v-else :value.sync="mainModel.vo.signOpinion" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item  label="签名">
+                    <div v-show="mainModel.signImg===null">
+                        <img :src="signImgQrcode" style="width: 100px">
+                        <span>请登陆到App端扫描签名</span>
+                    </div>
+                    <div v-show="mainModel.signImg&&mainModel.signImg.length>0" class="flex-v-center sign-box">
+                        <image-view v-if="mainModel.signImg.length>0" :images="mainModel.signImg" :show-close="false"></image-view>
+                        <span class="link-ele" @click="doResign">重新签名</span>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <!--<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+    </div>
+</Modal>
+<style>
+    .sign-box .lite-box{
+        margin: 0;
+        margin-right: 10px;
+    }
+</style>

@@ -1,0 +1,13 @@
+<Modal :visible.sync="visible" :title="modalTitle" @on-cancel="doClose"  class="userSelectModal">
+        <div class="modal-box-default">
+            <el-form >
+                <el-form-item :label="textName">
+                    <iv-input :value.sync="text"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div slot="footer">
+            <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>
+            <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>
+        </div>
+</Modal>

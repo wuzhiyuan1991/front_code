@@ -1,0 +1,234 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title" style="padding-left: 5px;">
+                <i class="myTrainingPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button v-if="mainModel.isReadOnly" type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <!--课程名称-->
+                    <el-form-item :label="$t('bd.trm.courseName')" prop="courseId" class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.course.name" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <!--所属公司-->
+                    <el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+                        <iv-input :value="getDataDic('org', mainModel.vo.course.compId)['compName']"
+                                  textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box">
+                        <iv-input :value="getDataDic('org', mainModel.vo.course.orgId)['deptName']" textonly></iv-input>
+                    </el-form-item>
+                    <!--课程类型-->
+                    <el-form-item :label="$t('bd.trm.coursetType')" class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.course.attr1" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                	<!--讲师-->
+                    <!-- <el-form-item label="培训讲师" class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.teacherNames" textonly></iv-input>
+                    </el-form-item> -->
+                    <el-form-item class="small-info-box" label="讲师" prop="teachers">
+                        <div class="exam-paper-point">
+                            <div class="ivu-tag" v-for="tag in mainModel.vo.course.teachers">
+                                <span class="ivu-tag-text">{{tag.name}}</span>
+                            </div>
+                        </div>
+                    </el-form-item>
+                	<!--培训方式-->
+                    <el-form-item :label=$t('bc.hal.modeTrain') class="small-info-box">
+                        <span>{{getDataDic('course_type', mainModel.vo.course.type)}}</span>
+                    </el-form-item>
+                    <!--培训要求-->
+                    <el-form-item label="培训要求" class="small-info-box">
+                        <span>{{getDataDic('training_requirement', mainModel.vo.course.requirement)}}</span>
+                    </el-form-item>
+                    <!--培训进度-->
+                    <!--<el-form-item :label="$t('bd.trm.learnRate')" prop="percent" class="small-info-box">-->
+                        <!--<iv-input :value.sync="mainModel.vo.percent" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <!--培训学时-->
+                    <el-form-item :label=$t('bd.trm.trainingHours') prop="trainHour" class="small-info-box">
+                        <iv-input type="number" :value.sync="mainModel.vo.course.trainHour" style="width:100%;"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+					<!--语言-->
+                    <el-form-item :label=$t('bd.trm.languageTraining') prop="language" class="small-info-box">
+                        <span>{{getDataDic('course_language', mainModel.vo.course.language)}}</span>
+                    </el-form-item>
+                    <!--取证类型-->
+                    <el-form-item :label=$t('bd.trm.forensicsType') class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.course.certificationSubject.name"
+                                  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+
+                    <!--所属行业-->
+                    <!--<el-form-item :label=$t('bs.bac.industry') class="small-info-box">-->
+                        <!--<iv-input :value.sync="mainModel.vo.industry" :textonly="mainModel.isReadOnly"></iv-input>-->
+                    <!--</el-form-item>-->
+
+                    <!--课程简介-->
+                    <el-form-item :label=$t('bd.trm.courseIntro') class="small-info-box" style="width: 600px;">
+                        <iv-input :value.sync="mainModel.vo.course.description" class="display-all-line"
+                                  :textonly="mainModel.isReadOnly" class="display-text"></iv-input>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+    <div class="rel-info-panel bip-content" style="padding-bottom: 0;">
+        <div class="rip-item">
+            <simple-card class="fip-content-item" style="padding: 10px 0px 20px 0px;">
+                <p slot="title"><i class="myTrainingsDetailPng"></i><span>培训信息</span></p>
+                <el-form class="bip-content-form" style="height:200px;" :model="mainModel.vo" is-label-vertical
+                         :rules="mainModel.rules" v-ref:ruleform>
+                    <iv-row class="bip-content-item">
+                        <el-form-item label="培训开始时间" prop="courseId" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.startTime"
+                                      :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="培训结束时间" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.endTime"
+                                      :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="允许考试时间（开始）" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.examSchedule.entryStartTime"
+                                      :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="允许考试时间（结束）" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.examSchedule.entryDeadline"
+                                      :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                    </iv-row>
+                    <iv-row class="bip-content-item">
+                    	<el-form-item label="试卷名称" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.examSchedule.examPaper.name"
+                                      :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+                        <!--任务类型-->
+                        <el-form-item label="任务类型" class="small-info-box">
+                            <span>{{getDataDic('train_task_type', mainModel.vo.source)}}</span>
+                        </el-form-item>
+                        <!--复陪周期-->
+                        <el-form-item label="复培周期" class="small-info-box">
+                            <span>{{frequence}}</span>
+                        </el-form-item>
+                        <el-form-item label="备注" prop="courseId" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.trainPlan.remarks"
+                                      :textonly="mainModel.isReadOnly"></iv-input>
+                        </el-form-item>
+
+                    </iv-row>
+                </el-form>
+            </simple-card>
+        </div>
+    </div>
+    <div class="rel-info-panel" style="padding-bottom: 0;" >
+    	<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.examPointCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>知识点</span></p>
+				<a slot="extra" @click.prevent="cardModel.examPointCardModel.showContent = !cardModel.examPointCardModel.showContent;" >
+					<span v-if="cardModel.examPointCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<vue-bootstrap-table
+					:setting="tableModel.examPointTableModel"
+					v-ref:exampoint-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+        <div class="rip-item" v-if="mainModel.vo.course.type !== '2'">
+            <simple-card class="fip-content-item" style="padding: 10px 0px 20px 0px;">
+                <p slot="title"><i class="myTrainingsDetailPng"></i><span>{{$t("bd.trm.chapterInform")}}</span></p>
+                <ul style="padding-left: 10px;">
+                    <li class="treeview" icon="icon-hammer" v-for="kpoint in mainModel.vo.studyDetails">
+                        <div style="border-bottom: solid 1px #eee; padding: 10px 0px;">
+                            <a>
+                                <Icon type="document" v-if="kpoint.kpointType==1" style="padding-right: 5px;"></Icon>
+                                <Icon type="ios-folder" v-if="kpoint.kpointType==0" style="padding-right: 5px;"></Icon>
+                                <span>{{kpoint.kpointName}}</span>
+                                <span class="icon icon-folder" style="float: right">
+									<span style="margin-right:35px;color: red"
+                                          v-if="kpoint.kpointType == 1 && kpoint.status != 2 && kpoint.status != 3 && mainModel.vo.course.type !=3">{{$t("bc.ria.adoptNot")}}</span>
+									<span style="margin-right:35px;"
+                                          v-if="kpoint.kpointType == 1 && kpoint.status == 2 && mainModel.vo.course.type !=3">{{$t("bc.ria.adopt")}}</span>
+									<span @click="doStartLearning(kpoint.kpointId)" style="margin-right:5px;"
+                                          v-if="kpoint.kpointType == 1 && mainModel.vo.course.type !=3">{{$t("bc.ria.studyStart")}}</span>
+	                            </span>
+                            </a>
+                        </div>
+
+                        <ul style="display: block; border-bottom: solid 1px #eee; padding: 10px 0px 10px 30px;"
+                            v-for="studyDetail in kpoint.studyDetails">
+                            <a>
+                                <Icon type="document" style="padding-right: 5px;"></Icon>
+                                {{studyDetail.kpointName}}
+                                <span style="float: right">
+									<span style="margin-right:35px;color: red"
+                                          v-if="studyDetail.kpointType == 1 && studyDetail.status != 2 && kpoint.status != 3 && mainModel.vo.course.type !=3">{{$t("bc.ria.adoptNot")}}</span>
+									<span style="margin-right:35px;"
+                                          v-if="studyDetail.kpointType == 1 && studyDetail.status == 2 && mainModel.vo.course.type !=3">{{$t("bc.ria.adopt")}}</span>
+									<span @click="doStartLearning(studyDetail.kpointId)" style="margin-right:5px;"
+                                          v-if="studyDetail.kpointType == 1 && mainModel.vo.course.type !=3">{{$t("bc.ria.studyStart")}}</span>
+								</span>
+                            </a>
+                        </ul>
+                    </li>
+                </ul>
+            </simple-card>
+        </div>
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <file-list-simple-card readonly title="参考资料" :data="referenceMaterials"> </file-list-simple-card>
+        </div>
+    </div>
+    <!--<div class="rel-info-panel" style="padding-bottom: 0;">-->
+        <!--<div class="rip-item">-->
+            <!--<simple-card class="fip-content-item">-->
+                <!--<p slot="title"><i class="myTrainingsDetailPng"></i><span>参考资料</span></p>-->
+                <!--<div style="padding-left: 10px;">-->
+                    <!--<lite-box v-for="(index,pic) in referenceMaterials" class="myTrainingFile"-->
+                              <!--v-if="referenceMaterials.length > 0">-->
+                        <!--<a v-text="pic.orginalName" target="_blank" style="width: 90px; margin: 2px;" href="/file/down/{{pic.fileId}}"></a>-->
+                    <!--</lite-box>-->
+                <!--</div>-->
+
+            <!--</simple-card>-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card class="fip-content-item" style="padding: 10px 0px 20px 0px;">
+                <p slot="title"><i class="myTrainingsDetailPng"></i><span>模拟卷</span></p>
+                <ul>
+                    <li class="treeview" icon="icon-hammer" v-for="paper in mainModel.vo.analogVolume">
+                        <div style="border-bottom: solid 1px #eee; padding: 10px 0px;">
+                            <a>
+                                <!--<Icon type="document" v-if="kpoint.kpointType==1"style="padding-right: 5px;"></Icon>-->
+                                <span>{{paper.name}}</span>
+                                <span class="icon icon-folder" style="float: right">
+								<span @click="doStartExercise(paper.id)">开始练习</span>
+							</span>
+                            </a>
+                        </div>
+
+                    </li>
+                </ul>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+</div>
+

@@ -1,0 +1,37 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container ivu-radio-wrapper-14" >
+        <div class="epc-content">
+            <iv-radio-group :model.sync="mainModel.vo.type">
+                <iv-radio value="2">
+                    预约发起作业
+                </iv-radio>
+                <div>
+                    <icon type="ios-alert"></icon>
+                    <label style="margin-left: 1em;color : #b4b4b4;">发起作业需要经过预约，审批，才能进入作业申请</label>
+               </div>
+                <iv-radio style="margin-top:5px;" value="1">
+                    直接发起作业
+                </iv-radio>
+                <div class="mb5">
+                    <icon type="ios-alert"></icon>
+                    <label style="margin-left: 1em; color : #b4b4b4;">发起作业可以直接进入作业申请</label>
+                </div>
+            </iv-radio-group>
+    </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+<!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+    </div>
+    <!--    <template slot="footer">-->
+    <!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+    <!--        <vi-Button type="primary" size="large" @click="doSave">确定</vi-Button>-->
+    <!--    </template>-->
+</Modal>
+
+<style>
+    .ivu-radio-wrapper-14 .ivu-radio-wrapper{
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>

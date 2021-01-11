@@ -1,0 +1,43 @@
+<div class="homeCenter">
+			<div class="main-panel">
+				<div class="contentHome">
+					<div class="homeCompLeft">
+						<div class="topHidden">
+							<div class="homeCompTitle"><span>公告通知</span></div>
+							<div class="content homeMin">
+								<p v-for="notice in compNotices" @click="doDown(notice)" style="cursor: pointer">{{notice.name}}</p>
+							</div>
+						</div>
+					</div>
+					<div class="homeCompLeft">
+						<div class="topHidden">
+							<div class="homeCompTitle"><span>公司制度</span></div>
+							<div class="content homeMin">
+								<p v-for="rule in compRules" @click="doDown(rule)" style="cursor: pointer">{{rule.name}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="contentHome">
+					<div class="homeCompLeft">
+						<div class="bottomTrain">
+								<div class="homeCompTitle"><span>公司报表</span></div>
+								<div class="tabHeaderMain homeEchartMain">
+
+								</div>
+						</div>
+					</div>
+					<div class="homeCompLeft">
+						<div class="bottomForm">
+							<div class="homeCompTitle"><span>个人报表</span></div>
+							<div class="tabHeaderMain homeEchartMain">
+								<!--<report-tabs-component :type="1"></report-tabs-component>-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!--<Modal :visible.sync="userModel.show" :title="userModel.title" width="400" :footer-hide="true">-->
+	<!--<userComponent></userComponent>-->
+<!--</Modal>-->

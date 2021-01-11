@@ -1,0 +1,35 @@
+<Modal v-if="load" :visible.sync="show" title="分配权重" :width="640">
+    <div class="modal-box-default">
+        <table class="table tb-table-w " style="margin-bottom:10px">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>要素名称</th>
+                <th>权重（%）</th>
+                <th>是否加入审核</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(index, item) in factors">
+                <td>{{index + 1}}</td>
+                <td><span class="ellipsis" style="display: block;max-width: 300px" :title="item.auditElement.name"> {{item.auditElement.name}}</span></td>
+                <td>
+                    <iv-input-number style="width: 100px" :max="100" :min="0" :value.sync="item.weight"></iv-input-number>
+                </td>
+                <td>
+                    <iv-checkbox  :checked.sync="item.attr1"></iv-checkbox>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+    <div slot="footer">
+        <div slot="footer">
+            <vi-Button type="ghost" size="large" @click="cancel">取消</vi-Button>
+            <vi-Button type="primary" size="large" @click="confirm">确认</vi-Button>
+        </div>
+
+    </div>
+</Modal>

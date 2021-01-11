@@ -1,0 +1,68 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="few-info-sider pull-right">
+			<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+			<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+			<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>-->
+			<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+			<iv-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+			<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<el-form-item label="计划名称" prop="auditPlanId">
+						<iv-input :value.sync="mainModel.vo.auditPlan.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="安全体系名称" prop="auditTableId">
+						<iv-input :value.sync="mainModel.vo.auditTable.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="负责人" prop="ownerId">
+						<iv-input :value.sync="mainModel.vo.user.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!-- 暂时屏蔽企业管理员 -->
+					<!--<el-form-item label="企业管理人" prop="ownerId">-->
+						<!--<iv-input :value.sync="mainModel.vo.scorePeople.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="到期日期" prop="endDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate" clearable></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp" style="color: red;"></iv-input>
+					</el-form-item>
+					<el-form-item label="超期天数" >
+						<iv-input v-else :value="getDates(mainModel.vo.endDate)" textonly class="inp"></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+		<simple-card class="fip-content-item fixed-table-card">
+			<p slot="title"><i class="basicPng"></i><span>详情</span></p>
+			<vue-bootstrap-table
+					:url="tableModel.detailTableModel.url"
+					:columns="tableModel.detailTableModel.columns"
+					:show-empty-row="false"
+					:use-default-global-filter="false"
+					:lazy-load="true"
+					v-ref:detail-table
+			>
+			</vue-bootstrap-table>
+		</simple-card>
+	</div>
+
+</div>
+
+

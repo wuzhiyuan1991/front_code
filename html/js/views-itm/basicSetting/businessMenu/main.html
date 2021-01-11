@@ -1,0 +1,166 @@
+<iv-row type="flex" align="middle" style="background: #fff; height: 95%;align-items: stretch;overflow-x: hidden">
+<iv-col class="menuList" span="24">
+<el-tabs @tab-click="doTabs">
+	<el-tab-pane label="检查项分类">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" class="menuTitle">
+				<vi-button type="text" class="mp-header-item-btn" @click="treeShowList">{{$t('bs.bac.expandAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeHide">{{$t('bs.bac.collapseAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('risktype')">添加</vi-button>
+			</iv-col>
+		</iv-row>
+		<iv-tree-grid :model="risktype.data"  v-ref:treegridRisk
+		:selected-datas.sync="selectedTreeDatas"
+		id-attr="id"
+		pid-attr="parentId"
+		display-attr="name"
+		:single-select="true"
+		:show-checkbox="false"
+		:allow-parent-checked="true"
+		@on-add-node="risktypeDoAddNode"
+		@on-edit-node="risktypeDoEditNode"
+		@on-del-node="risktypeDoDelNode"
+		:edit="true"
+		:open="risktype.showHide"
+		></iv-tree-grid>
+	</el-tab-pane>
+	<el-tab-pane label="检查依据分类">
+		<iv-col span="24" class="menuTitle">
+			<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkbasistype')">添加</vi-button>
+		</iv-col>
+		<iv-tree-grid :model="checkbasistype.data"  v-ref:treegrid
+			:selected-datas.sync="selectedTreeDatas"
+			id-attr="id"
+			pid-attr="parentId"
+			display-attr="name"
+			:single-select="true"
+			:show-checkbox="false"
+			:allow-parent-checked="true"
+			@on-add-node="checkbasistypeDoAddNode"
+			@on-edit-node="checkbasistypeDoEditNode"
+			@on-del-node="checkbasistypeDoDelNode"
+			:edit="true"
+			:open="checkbasistype.showHide"
+			></iv-tree-grid>
+	</el-tab-pane>
+	<el-tab-pane label="检查表分类">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" class="menuTitle">
+				<vi-button type="text" class="mp-header-item-btn" @click="treeList">{{$t('bs.bac.expandAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListHide">{{$t('bs.bac.collapseAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('listTableType')">添加</vi-button>
+			</iv-col>
+		</iv-row>
+		<iv-tree-grid :model="listTableType.data"  v-ref:treegridList
+			:selected-datas.sync="selectedTreeDatas"
+			id-attr="id"
+			pid-attr="parentId"
+			display-attr="name"
+			:single-select="true"
+			:show-checkbox="false"
+			:allow-parent-checked="true"
+			@on-add-node="listTableTypeDoAddNode"
+			@on-edit-node="listTableTypeDoEditNode"
+			@on-del-node="listTableTypeDoDelNode"
+			:edit="true"
+			:open="listTableType.showHide"
+			></iv-tree-grid>
+	</el-tab-pane>
+	<el-tab-pane label="设备设施分类">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" class="menuTitle">
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListEquipment">{{$t('bs.bac.expandAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListHideEquipment">{{$t('bs.bac.collapseAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('equipmentType')">添加</vi-button>
+			</iv-col>
+		</iv-row>
+		<iv-tree-grid :model="equipmentType.data"  v-ref:equipment
+				   :selected-datas.sync="selectedTreeDatas"
+				   id-attr="id"
+				   pid-attr="parentId"
+				   display-attr="name"
+				   :single-select="true"
+				   :show-checkbox="false"
+				   :allow-parent-checked="true"
+				   @on-add-node="equipmentTypeDoAddNode"
+				   @on-edit-node="equipmentTypeDoEditNode"
+				   @on-del-node="equipmentTypeDoDelNode"
+				   :edit="true"
+				   :open="equipmentType.showHide"
+		></iv-tree-grid>
+	</el-tab-pane>
+	<el-tab-pane label="行业分类">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" class="menuTitle">
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListIndustry">{{$t('bs.bac.expandAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListHideIndustry">{{$t('bs.bac.collapseAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('industryCategory')">添加</vi-button>
+			</iv-col>
+		</iv-row>
+		<iv-tree-grid :model="industryCategory.data"  v-ref:industry
+				   :selected-datas.sync="selectedTreeDatas"
+				   id-attr="id"
+				   pid-attr="parentId"
+				   display-attr="name"
+				   :single-select="true"
+				   :show-checkbox="false"
+				   :allow-parent-checked="true"
+				   @on-add-node="industryCategoryDoAddNode"
+				   @on-edit-node="industryCategoryDoEditNode"
+				   @on-del-node="industryCategoryDoDelNode"
+				   :edit="true"
+				   :open="industryCategory.showHide"
+		></iv-tree-grid>
+	</el-tab-pane>
+	<el-tab-pane label="课程类型">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" class="menuTitle">
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListCourseCategory">{{$t('bs.bac.expandAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListHideCourseCategory">{{$t('bs.bac.collapseAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('courseCategory')">添加</vi-button>
+			</iv-col>
+		</iv-row>
+		<iv-tree-grid :model="courseCategory.data"  v-ref:course
+				   :selected-datas.sync="selectedTreeDatas"
+				   id-attr="id"
+				   pid-attr="parentId"
+				   display-attr="name"
+				   :single-select="true"
+				   :show-checkbox="false"
+				   :allow-parent-checked="true"
+				   @on-add-node="courseCategoryDoAddNode"
+				   @on-edit-node="courseCategoryDoEditNode"
+				   @on-del-node="courseCategoryDoDelNode"
+				   :edit="true"
+				   :open="courseCategory.showHide"
+		></iv-tree-grid>
+	</el-tab-pane>
+	<el-tab-pane label="取证类型">
+		<iv-row type="flex" align="middle" class="mp-header-item">
+			<iv-col span="24" class="menuTitle">
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListCertificationSubject">{{$t('bs.bac.expandAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeListHideCertificationSubject">{{$t('bs.bac.collapseAll')}}</vi-button>
+				<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('certificationSubject')">添加</vi-button>
+			</iv-col>
+		</iv-row>
+		<iv-tree-grid :model="certificationSubject.data"  v-ref:certification
+				   :selected-datas.sync="selectedTreeDatas"
+				   id-attr="id"
+				   pid-attr="parentId"
+				   display-attr="name"
+				   :single-select="true"
+				   :show-checkbox="false"
+				   :allow-parent-checked="true"
+				   @on-add-node="certificationSubjectDoAddNode"
+				   @on-edit-node="certificationSubjectDoEditNode"
+				   @on-del-node="certificationSubjectDoDelNode"
+				   :edit="true"
+				   :open="certificationSubject.showHide"
+		></iv-tree-grid>
+	</el-tab-pane>
+</el-tabs>
+	</iv-col>
+	</iv-row>
+<Modal :visible.sync="addModel.show" :title="addModel.title" width="520" :footer-hide="true">
+	<editcomponent @doupdate="doUpdate"  @doeditadd="doEditAdd"></editcomponent>
+</Modal>

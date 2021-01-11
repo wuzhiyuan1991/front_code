@@ -1,0 +1,466 @@
+
+<style>
+    .parameter .ivu-modal-content{
+        border-radius: 20px;
+    }
+    .parameter .ivu-modal-body{
+        border-radius: 20px;
+    }
+    .ivu-select-dropdown{
+        overflow-x: hidden;
+    }
+    .el-tabs__header{
+        border-bottom: none;
+        padding: 0;
+        position: relative;
+        margin: 0;
+        font-size: 16px;
+    }
+    .el-tabs__item:first-child{
+        padding-left: 0;
+    }
+    .el-form-item__label{
+        width: 120px !important;
+    }
+    .el-form-item__content{
+        margin-left: 120px !important;
+    }
+    .basicBody{
+        min-height:400px;
+    }
+    .mp-header-item .mp-header-item-btn{
+        border-right: none;
+    }
+    .mp-header-item .mp-header-item-btn span{
+        font-size: 16px;
+    }
+    .setup .fade-transition.ivu-poptip-popper{
+        left:0 !important;
+    }
+    .setup .basicBody:first-child .el-form-item:nth-child(2) label{
+        position: absolute;
+        left: 20px;
+    }
+    .parameterColor{
+        position: relative;
+        height:160px;
+        width: 18%;
+        margin:0 20px 20px 0;
+        float: left;
+        border-radius: 3px;
+    }
+    .parameter .el-form-item{
+        width: 100%;
+    }
+    .parameter button.btn{
+        margin-right: 20px;
+        background: #00467c;
+        color: #fff;
+    }
+    .parameter .ivu-input-wrapper{
+        width: 40%;
+    }
+    .spanPara{
+        color:#999999;
+    }
+    .divPara{
+        margin-top: 10px;
+        overflow: hidden;
+        line-height: 30px;
+    }
+    .divPara img{
+        margin-right: 10px;
+        float: left;
+    }
+    .parameterColor .check{
+        height: 70px;
+        width: 75px;
+        position: relative;
+        float: right;
+        margin: 5px;
+        background: url(./images/all.png) no-repeat 0 -245px transparent;
+        /*border-right: 30px solid #1afa29;*/
+        /*border-top: 30px solid #1afa29;*/
+        /*border-bottom: 30px solid rgba(0, 0, 0, 0);*/
+        /*border-left: 30px solid rgba(0, 0, 0, 0);*/
+    }
+    .parameterColor i{
+        position: absolute;
+        right: 8px;
+        font-size: 40px;
+        top: 4px;
+        color:#00467d;
+    }
+    .uploadFile{
+        position: relative;
+        width: 60px;
+        float: left;
+    }
+    .paramPng{
+        height:500px;
+        width: 1000px;
+    }
+    .paramPng img{
+        height:100%;
+        width: 100%;
+    }
+    .application{
+        text-align: center;
+        margin-top: 30px;
+    }
+    .application button{
+        background: #43a047;
+        border: 1px solid #43a047;
+        color:#fff;
+    }
+    .application button:hover{
+        background: #43a047;
+        color:#fff;
+    }
+    .parameterColor.skin .parameterCheck{
+        display: none;
+    }
+    .skin_blue .parameterColor.skin_blue .parameterCheck,
+    .skin_greenGrass .skin_greenGrass .parameterCheck,
+    .skin_green .skin_green .parameterCheck,
+    .skin_red .skin_red .parameterCheck,
+    .skin_purple .skin_purple .parameterCheck,
+    .skin_black .skin_black .parameterCheck{
+        display: block;
+    }
+    .simple-card-head{
+        padding: 3px 0 15px 10px;
+        line-height: 17px;
+        border-bottom: 1px solid #f5f5f5;
+        margin-bottom: 20px;
+    }
+    /*.simple-card.simple-card-dis-hover{*/
+        /*border-bottom: 1px solid #f5f5f5;*/
+    /*}*/
+    .businessCon button.pull-left{
+        margin:20px 0 20px 9px;
+    }
+    .businessCon table{
+        width:800px;
+        border:1px solid  #c8c8c8;
+    }
+    .businessCon table tr td{
+        padding:9px 0 9px 9px;
+    }
+    .businessCon table tr td .ivu-checkbox-wrapper{
+        margin-right:91px;
+    }
+    .simple-card-head p.checkRe{
+        padding: 10px 0 10px 10px;
+    }
+    .simple-card-head p.checkRe:hover{
+        background: #f2f2f2;
+    }
+    .parameter .simple-card-head{
+        padding: 0;
+    }
+    /*.parameter .simple-card-body{*/
+        /*!*width: 800px;*!*/
+    /*}*/
+</style>
+<div class="tab-container parameter">
+    <div class="mp-header formTitle">
+        <iv-row type="flex" align="middle" class="mp-header-item">
+            <iv-col span="24" >
+                <vi-button type="text" class="mp-header-item-btn" @click="doShowCompanyInfo" :class="{active:mainModel.showCompanyInfo}"> {{$t('bs.bac.systemParameter')}}</vi-button>
+                <vi-button type="text" class="mp-header-item-btn" @click="doShowBusinessInfo" :class="{active:mainModel.ShowBusinessInfo}">{{$t('bs.bac.serviceParameter')}}</vi-button>
+                <vi-button type="text" class="mp-header-item-btn" @click="doShowIndustryInfo" :class="{active:mainModel.showIndustryInfo}">{{$t('bs.bac.bs.bac.theme')}}</vi-button>
+            </iv-col>
+        </iv-row>
+    </div>
+    <el-form :model="mainModel" :rules="rules" label-width="80px" v-ref:ruleform style="min-height: 465px;overflow: auto;width:100%;background: #fff;padding:20px;height: calc(100% - 80px);">
+        <div v-if="mainModel.showCompanyInfo">
+            <div class="basicBody">
+                <div style="border-bottom: 1px solid #f5f5f5;margin-bottom: 10px;">
+                    <el-form-item prop="name" class="small-info-box" :label="$t('bs.bac.webpage')+'title'">
+                        <iv-input :value.sync="mainModel.title"></iv-input>
+                    </el-form-item>
+                    <el-form-item prop="organizationCode" class="small-info-box" :label="$t('bs.bac.ent')+'logo'">
+                        <iv-input :value.sync="mainModel.logoName"></iv-input>
+                        <span class="spanPara">logo链接，可直接修改{{logo}}</span>
+                        <div class="divPara" style="line-height: 30px;">
+                            <img :src="logo" style="height: 30px; background: #999">
+                            <!--<img v-else src="images/enterprise.png" style="height: 30px;"/>-->
+                            <div class="uploadFile">
+                                <vue-file-upload custom-style :events="logoModel.events" :params="logoModel.params" @on-success-upload="logoUploadModel">
+                                    <vi-button class="ivu-btn"><span>{{$t('gb.comnon.upload')}}</span></vi-button>
+                                </vue-file-upload>
+                            </div>
+                            <span class="spanPara">LOGO上传，支持(长120*宽60)像素JPG、PNG格式</span>
+                        </div>
+                    </el-form-item>
+                </div>
+                <!--<el-form-item prop="legalPerson" class="small-info-box" :label="$t('bs.bac.webpage')+'ico'">-->
+                    <!--<iv-input :value.sync="mainModel.iconName"></iv-input>-->
+                    <!--<span class="spanPara">ico链接，可直接修改</span>-->
+                    <!--<div class="divPara" style="line-height: 30px;">-->
+                        <!--<img v-if="ParaShowImg" :src="ParaShowUrl" style="height: 32px;">-->
+                        <!--<img v-else src="images/webpage.png" style="height: 32px;" />-->
+                        <!--<div class="uploadFile">-->
+                            <!--<vue-file-upload custom-style :events="uploadModel.events" :params="uploadModel.params" :filters="uploadModel.filters">-->
+                                <!--<vi-button class="ivu-btn"><span>{{$t('gb.comnon.upload')}}</span></vi-button>-->
+                            <!--</vue-file-upload>-->
+                        <!--</div>-->
+                        <!--<span class="spanPara">请上传大小为32×32的ico图片</span>-->
+                    <!--</div>-->
+                <!--</el-form-item>-->
+                <div style="border-bottom: 1px solid #f5f5f5;margin-bottom: 10px;">
+                    <el-form-item prop="regno" class="small-info-box" :label="$t('bs.bac.signIn')">
+                        <iv-input :value.sync="mainModel.lgName"></iv-input>
+                        <span class="spanPara">图片链接，可直接修改</span>
+                        <div class="divPara"  style="line-height: 160px;">
+                            <img :src="lgImg" style="height: 160px;" onerror="void(this.src='images/loginBox.png');">
+                            <!--<img v-else src="images/loginBox.png" style="height: 160px;"/>-->
+                            <div class="uploadFile">
+                                <vue-file-upload custom-style :events="lgModel.events" :params="lgModel.params" @on-success-upload="lgUploadModel">
+                                    <vi-button class="ivu-btn"><span>{{$t('gb.comnon.upload')}}</span></vi-button>
+                                </vue-file-upload>
+                            </div>
+                            <span class="spanPara">图片上传，支持(长480*宽320)像素JPG、PNG格式</span>
+                        </div>
+                    </el-form-item>
+                    <el-form-item prop="attr1" class="small-info-box" :label="$t('bs.bac.signInBg')">
+                    <iv-input :value.sync="mainModel.bgName"></iv-input>
+                    <span class="spanPara">图片链接，可直接修改</span>
+                    <div class="divPara"  style="line-height: 155px;">
+                        <img :src="bgImg" style="height: 155px;">
+                        <!--<img v-else src="images/loginBg.png" style="height: 155px;"/>-->
+                        <div class="uploadFile">
+                            <vue-file-upload  custom-style :events="bgModel.events" :params="bgModel.params" @on-success-upload="bgUploadModel">
+                                <vi-button class="ivu-btn" ><span>{{$t('gb.comnon.upload')}}</span></vi-button>
+                            </vue-file-upload>
+                        </div>
+                        <span class="spanPara">图片上传，支持(长1920*宽1080)像素JPG、PNG格式</span>
+                    </div>
+                </el-form-item>
+                </div>
+                <!--<el-form-item prop="industry" class="small-info-box" label="检查记录">-->
+                <!--</el-form-item>-->
+            </div>
+            <div style="background: #fff;padding: 0;">
+                <vi-button class="pull-left ivu-btn btn" @click="save"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+                <vi-button class="pull-left ivu-btn btn"><span>{{$t('gb.common.cancel')}}</span></vi-button>
+            </div>
+        </div>
+        <div v-if="mainModel.ShowBusinessInfo">
+            <simple-card  :show-content.sync="isShowItem">
+                <p slot="title" @click.prevent="isShowItem = !isShowItem" class="checkRe">检查记录</p>
+                <a slot="extra" @click.prevent="isShowItem = !isShowItem">
+                    <span v-if="isShowItem"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+                <div class="businessCon">
+                    <table border="1">
+                        <tr>
+                            <td>检查结果值集</td>
+                            <td>结果必填校验</td>
+                            <td>检查结果默认值</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <iv-checkbox :checked.sync="checkResult.notRefer" @change="checkedChange"  value="">不涉及</iv-checkbox>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>
+                                <iv-checkbox :checked.sync="defaultChoose.notRefer.bol" :disabled="noReferCheckDisable" @change="defaultChange1" value=""></iv-checkbox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <iv-checkbox :checked.sync="true" :disabled="true" value="">不合格</iv-checkbox>
+                            </td>
+                            <td>
+                                <iv-checkbox :checked.sync="checkResult.illegal.description" :disabled="true" value="">文字描述</iv-checkbox>
+                                <iv-checkbox :checked.sync="checkResult.illegal.photoForce"  value="">拍照</iv-checkbox>
+                                <iv-checkbox :checked.sync="checkResult.illegal.videoForce"  value="">视频</iv-checkbox>
+                            </td>
+                            <td>
+                                <iv-checkbox :checked.sync="defaultChoose.illegal.bol"  :disabled="illegalCheckDisable" @change="defaultChange2" value=""></iv-checkbox>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <iv-checkbox :checked.sync="true" :disabled="true"  value="">合格</iv-checkbox>
+                            </td>
+                            <td>
+                                <iv-checkbox :checked.sync="checkResult.legal.description"  value="">文字描述</iv-checkbox>
+                                <iv-checkbox :checked.sync="checkResult.legal.photoForce"  value="">拍照</iv-checkbox>
+                                <iv-checkbox :checked.sync="checkResult.legal.videoForce"  value="">视频</iv-checkbox>
+                            </td>
+                            <td>
+                                <iv-checkbox :checked.sync="defaultChoose.legal.bol"  :disabled="legalCheckDisable" @change="defaultChange3" value=""></iv-checkbox>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;margin-bottom: 20px;">
+                        <vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+                    </div>
+                </div>
+            </simple-card>
+            <simple-card  :show-content.sync="isShowCheckTask">
+                <p slot="title" @click.prevent="isShowCheckTask = !isShowCheckTask" class="checkRe">检查任务</p>
+                <a slot="extra" @click.prevent="isShowCheckTask = !isShowCheckTask">
+                    <span v-if="isShowCheckTask"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+                <div class="businessCon">
+                	<iv-checkbox :checked.sync="checkTaskSet.isLateCheckAllowed"  value="" v-if = "!showPlanType">检查任务过期可补做</iv-checkbox>
+                    <iv-checkbox :checked.sync="checkTaskSet.isLateWorkPlanExecute "  value="" v-if = "showPlanType">工作计划过期可执行</iv-checkbox>
+                    <iv-checkbox :checked.sync="checkTaskSet.isLatePollingPlanExecute"  value="" v-if = "showPlanType">巡检计划过期可执行</iv-checkbox>
+                    <div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;">
+                        <vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+                    </div>
+                </div>
+            </simple-card>
+            <simple-card  :show-content.sync="isShowRadomObser">
+                <p slot="title" @click.prevent="isShowRadomObser = !isShowRadomObser" class="checkRe">随机观察</p>
+                <a slot="extra" @click.prevent="isShowRadomObser = !isShowRadomObser">
+                    <span v-if="isShowRadomObser"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+                <div class="businessCon">
+                	<iv-checkbox :checked.sync="radomObserSet.region"  value="">所属公司/部门必填</iv-checkbox>
+                    <div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;">
+                        <vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+                    </div>
+                </div>
+            </simple-card>
+            <!--<simple-card  :show-content.sync="isShowDailyInspection">-->
+                <!--<p slot="title" @click.prevent="isShowDailyInspection = !isShowDailyInspection" class="checkRe">非计划检查</p>-->
+                <!--<a slot="extra" @click.prevent="isShowDailyInspection = !isShowDailyInspection">-->
+                    <!--<span v-if="isShowDailyInspection"><Icon type="chevron-up"></Icon></span>-->
+                    <!--<span v-else><Icon type="chevron-down"></Icon></span>-->
+                <!--</a>-->
+                <!--<div class="businessCon">-->
+                    <!--选择顺序:-->
+                    <!--<iv-radio-group :model.sync="dailyInspection.selectOrder">-->
+                        <!--<iv-radio value="1">检查表</iv-radio>-->
+                        <!--<iv-radio value="2">部门</iv-radio>-->
+                        <!--<iv-radio value="3">两者皆可</iv-radio>-->
+                    <!--</iv-radio-group>-->
+                    <!--<div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;">-->
+                        <!--<vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</simple-card>-->
+
+            <!--<simple-card  :show-content.sync="isShowPoolGovern">-->
+                <!--<p slot="title" @click.prevent="isShowPoolGovern = !isShowPoolGovern" class="checkRe">隐患治理</p>-->
+                <!--<a slot="extra" @click.prevent="isShowPoolGovern = !isShowPoolGovern">-->
+                    <!--<span v-if="isShowPoolGovern"><Icon type="chevron-up"></Icon></span>-->
+                    <!--<span v-else><Icon type="chevron-down"></Icon></span>-->
+                <!--</a>-->
+                <!--<div class="businessCon">-->
+                    <!--<iv-checkbox :checked.sync="poolGovern.verifyUser"  value="">可以修改验证人</iv-checkbox>-->
+                    <!--<div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;">-->
+                        <!--<vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</simple-card>-->
+
+            <!--<simple-card  :show-content.sync="isShowReportFunction">-->
+                <!--<p slot="title" @click.prevent="isShowReportFunction = !isShowReportFunction" class="checkRe">报表功能</p>-->
+                <!--<a slot="extra" @click.prevent="isShowReportFunction = !isShowReportFunction">-->
+                    <!--<span v-if="isShowReportFunction"><Icon type="chevron-up"></Icon></span>-->
+                    <!--<span v-else><Icon type="chevron-down"></Icon></span>-->
+                <!--</a>-->
+                <!--<div class="businessCon">-->
+                    <!--<iv-checkbox :checked.sync="reportFunction.isDataContain">统计数据包含下属机构</iv-checkbox>-->
+                    <!--<div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;">-->
+                        <!--<vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</simple-card>-->
+            
+            <simple-card  :show-content.sync="isShowBoatCertificate">
+                <p slot="title" @click.prevent="isShowBoatCertificate = !isShowBoatCertificate" class="checkRe">证书过期</p>
+                <a slot="extra" @click.prevent="isShowBoatCertificate = !isShowBoatCertificate">
+                    <span v-if="isShowBoatCertificate"><Icon type="chevron-up"></Icon></span>
+                    <span v-else><Icon type="chevron-down"></Icon></span>
+                </a>
+                <div class="businessCon">
+                   	 证书过期通知人
+                   	 <table border="1">
+                        <tr>
+                            <td>{{$t('gb.common.code')}}</td>
+                            <td>{{$t('bd.trm.fullName')}}</td>
+                            <td>{{$t('gb.common.ownedComp')}}</td>
+                            <td>{{$t('gb.common.ownedDept')}}</td>
+                            <td>{{$t('das.oniu.mobile')}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>{{certExpireNoticeReceiver.code}}</td>
+                            <td>{{certExpireNoticeReceiver.name}}</td>
+                            <td>
+                            	<iv-input :value="getDataDic('org', certExpireNoticeReceiver.compId)['compName']" textonly></iv-input>
+                            </td>
+                            <td>
+                            	<iv-input v-else :value="getDataDic('org', certExpireNoticeReceiver.orgId)['deptName']" textonly></iv-input>
+                            </td>
+                            <td>{{certExpireNoticeReceiver.mobile}}</td>
+                            <td>
+	                            <div  style="text-align: center;bottom: 3px;">
+		                               <button class="btn btn-default" @click.prevent="doShowUserSelectModal">更改</button>
+		                        </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="background: #fff;padding: 0;border-bottom:1px solid #f5f5f5;overflow: hidden;width: 100%;margin-bottom: 20px;">
+                        <vi-button class="pull-left ivu-btn btn" @click="saveBusiness"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+                    </div>
+                </div>
+            </simple-card>
+        </div>
+        <div v-if="mainModel.showIndustryInfo" class="basicBody">
+            <div class="parameterColor" :class="mainModel.skin == 'skin_blue'?'skin_blue':'skin'" @click="doClick(1)" style="background:#00467d">
+                <div class="parameterCheck">
+                    <div class="check"></div>
+                </div>
+            </div>
+            <div class="parameterColor" :class="mainModel.skin == 'skin_black'?'skin_black':'skin'" @click="doClick(2)" style="background:#323537" >
+                <div class="parameterCheck">
+                    <div class="check"></div>
+                </div>
+            </div>
+            <div class="parameterColor" :class="mainModel.skin == 'skin_greenGrass'?'skin_greenGrass':'skin'" @click="doClick(3)" style="background:#43a047" >
+                <div class="parameterCheck">
+                    <div class="check"></div>
+                </div>
+            </div>
+            <div class="parameterColor" :class="mainModel.skin == 'skin_green'?'skin_green':'skin'" @click="doClick(4)" style="background:#00897b" >
+                <div class="parameterCheck">
+                    <div class="check"></div>
+                </div>
+            </div>
+            <div class="parameterColor" :class="mainModel.skin == 'skin_red'?'skin_red':'skin'" @click="doClick(5)" style="background:#cf5e00" >
+                <div class="parameterCheck">
+                    <div class="check"></div>
+                </div>
+            </div>
+            <div class="parameterColor" :class="mainModel.skin == 'skin_purple'?'skin_purple':'skin'" @click="doClick(6)" style="background:#5e35b1" >
+                <div class="parameterCheck">
+                    <div class="check"></div>
+                </div>
+            </div>
+        </div>
+    </el-form>
+</div>
+<!-- 弹框 -->
+<Modal :visible.sync="viewDetail.show" :title="" width="1000" :footer-hide="true" :mask-closable="true">
+    <!--images/theme/11.png-->
+    <!--<view-detail ></view-detail>-->
+    <div class="paramPng">
+        <img :src="showImg">
+    </div>
+    <div class="application">
+        <vi-button @click="application" :value="skin" class="ivu-btn"><span>应用</span></vi-button>
+    </div>
+</Modal>
+
+<user-select-modal single-select :visible.sync="selectModal.showUserSelectModal.visible"  :filter-data="selectModal.showUserSelectModal.filterData" @do-save="doSaveUsers"></user-select-modal>

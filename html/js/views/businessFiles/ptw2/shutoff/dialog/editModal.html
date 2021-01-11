@@ -1,0 +1,16 @@
+<Modal :visible.sync="visible"  title="编辑" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item  :label="mainModel.inputLabel" prop="name">
+                    <iv-input type='textarea' :rows="6" :value.sync="mainModel.vo.name" ></iv-input>
+                    <!--                        <iv-input type="textarea" :rows="4" :value.sync="modalEdit.form.name" ></iv-input>-->
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

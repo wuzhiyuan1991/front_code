@@ -1,0 +1,164 @@
+<simple-card style="width:750px;">
+    <p slot="title" class="ptw-title">作业关闭</p>
+    <div class="lite-box-21" v-for="(index, items) in personList" style="padding-left:9px;">
+        <div class="mb20" v-if="items.type=='success'">
+            <div class="mb10 base-border-bottom">作业完成</div>
+            <div class="flex-layout mb10">
+                <div class="form-item-label color-item-999">作业完成声明</div><!---->
+                <div class="flex-grow1">{{model.promiseList['7']}}
+                </div>
+            </div>
+            <div class="flex-layout mb10">
+                <div class="form-item-label color-item-999">作业申请人意见</div>
+                <div class=" flex-grow1">{{isApplyPerson(items.list).signOpinion}}</div>
+            </div>
+            <div v-for="item in items.list" class="flex-layout flex-v-end " style="align-items: end;margin-bottom:7px">
+                <div class="form-item-label color-item-999"><span>{{item.signCatalog.name}}</span></div>
+                <div class="w185" v-if="item && item.user">{{item.user.name}}</div>
+                <div class="w185" v-else>
+                    <span v-for="(oneindex, one) in item.users">{{one.name}} <span v-show="oneindex<item.users.length-1">，</span></span>
+                </div>
+
+                <div class="color-item-999 mr20">签名</div>
+                <div class=" flex-grow1 flex-layout flex-v-end" style="align-items: end;" >
+                    <p  class="mr20 w180" style="height: 20px;">
+                        <image-view v-show="isWorkClose" :image-style="imageStyle" :images="convertFileData(item.cloudFiles)" :show-close="false"></image-view>
+                    </p>
+                    <div style="min-width: 86px;width: 86px;" class="form-item-label color-item-999">签名时间</div>
+                    <p class="" v-if="item.cloudFiles && item.cloudFiles.length>0 && isWorkClose">{{item.cloudFiles[0].createDate}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="mb20" v-if="items.type=='cancel'">
+            <div class="mb10 base-border-bottom ">作业取消</div>
+            <div class="flex-layout mb10" style="align-items: end">
+                <div class="form-item-label color-item-999">用户取消原因</div>
+                <div class=" flex-grow1">
+                    <!--{{reasonStr}}-->
+                    <!--                <ul class="ul-inside">-->
+                    <!--                    <li v-for="item of cancelReasonList" v-if="item.isExtra!=1||item.content">-->
+                    <!--                        {{item.isExtra==1?item.content:item.name}}-->
+                    <!--                    </li>-->
+                    <!--                </ul>-->
+                    <div  class="el-form-item ptw-border ul-style-none" style="width:100%;border:none;padding:0;">
+                        <ul class="ul-inside">
+                            <li v-for="ritem of reasonList" style="line-height: 2;">
+                                <input style="width:14px;" type="checkbox" disabled :checked="ritem.checkResult == '2'" />
+                                {{ritem.name || ritem.content}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-layout mb10" style="align-items: baseline">
+                <div class="form-item-label color-item-999">用户取消声明</div>
+                <div class="flex-grow1">{{model.promiseList['6']}}</div>
+            </div>
+            <div v-for="item in items.list" class="flex-layout flex-v-end " style="align-items: end;margin-bottom:7px">
+                <div class="form-item-label color-item-999"><span>{{item.signCatalog.name}}</span></div>
+                <div class="w185" v-if="item && item.user">{{item.user.name}}</div>
+                <div class="w185" v-else>
+                    <span v-for="(oneindex, one) in item.users">{{one.name}} <span v-show="oneindex<item.users.length-1">，</span></span>
+                </div>
+
+                <div class="color-item-999 mr20">签名</div>
+                <div class=" flex-grow1 flex-layout flex-v-end" style="align-items: end;" >
+                    <p  class="mr20 w180" style="height: 20px;">
+                        <image-view  v-show="isWorkClose" :image-style="imageStyle" :images="convertFileData(item.cloudFiles)" :show-close="false"></image-view>
+                    </p>
+                    <div style="min-width: 86px;width: 86px;" class="form-item-label color-item-999">签名时间</div>
+                    <p class="" v-if="item.cloudFiles && item.cloudFiles.length>0 && isWorkClose">{{item.cloudFiles[0].createDate}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="mb10" v-if="items.type=='postpone'">
+            <div v-if="items.isOne" class="mb10 base-border-bottom">作业续签</div>
+            <div class="flex-layout mb10">
+                <div class="form-item-label color-item-999">作业有效期</div>
+                <div class=" flex-grow1 flex-layout">
+                    <span v-if="items.vo && items.vo.extensionTime">
+                        {{items.vo.extensionTime}}  {{items.vo.extensionUnit==1?'小时':'天'}}
+                    </span>
+                    <!--{{getExtensionTime(items.vo.permitStartTime, items.vo.permitEndTime, items.vo.extensionUnit)}} {{items.vo.extensionUnit=='1'?'小时':'天'}}-->
+                </div>
+            </div>
+            <div class="flex-layout mb10">
+                <div class="form-item-label color-item-999">作业续签期限</div>
+                <div class=" flex-grow1 flex-layout">
+                    <!--{{items.vo.permitStartTime}}到{{items.vo.permitEndTime}}-->
+                    <span v-if="items.vo.workStartTime && items.vo.workEndTime && items.vo.versionNum>1">
+                        {{items.vo.workStartTime}} 到 {{items.vo.workEndTime}}
+                    </span>
+
+                </div>
+            </div>
+            <!--<div class="flex-layout mb10">-->
+                <!--<div class="form-item-label color-item-999">续签理由</div>-->
+                <!--<div class=" flex-grow1 flex-layout">-->
+                    <!--{{items.vo.attr2}}-->
+                <!--</div>-->
+            <!--</div>-->
+            <div v-for="item in items.list" class="flex-layout flex-v-end " style="align-items: end;margin-bottom:7px">
+                <div class="form-item-label color-item-999"><span>{{item.signCatalog.name}}</span></div>
+                <div class=" w185">
+                    <div class=" w185" v-if="item && item.user">{{item.user.name}}</div>
+                    <div class=" w185" v-else>
+                        <span v-for="(oneindex, one) in item.users">{{one.name}} <span v-show="oneindex<item.users.length-1">，</span></span>
+                    </div>
+                </div>
+                <div class="color-item-999 mr20">签名</div>
+                <div class=" flex-grow1 flex-layout flex-v-end" style="align-items: end;" >
+                    <p  class="mr20 w180" style="height: 20px;">
+                        <image-view v-show="isWorkClose" :image-style="imageStyle" :images="convertFileData(item.cloudFiles)" :show-close="false"></image-view>
+                    </p>
+                    <div style="min-width: 86px;width: 86px;" class="form-item-label color-item-999">签名时间</div>
+                    <p class="" v-if="item.cloudFiles && item.cloudFiles.length>0 && isWorkClose">{{item.cloudFiles[0].createDate}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="mb10" v-if="items.type=='delay'">
+            <div v-if="items.isOne" class="mb10 base-border-bottom">作业延期</div>
+            <div class="flex-layout mb10">
+                <div class="form-item-label color-item-999">作业延期期限</div>
+                <div class=" flex-grow1 flex-layout" v-if="items.vo.permitStartTime && items.vo.versionNum>1">
+                    <!--{{postponeTime}}-->
+                    <!--{{item.workPermit}}-->
+                    {{items.vo.permitStartTime}}到{{items.vo.permitEndTime}}
+                </div>
+            </div>
+            <!--<div class="flex-layout mb10">-->
+                <!--<div class="form-item-label color-item-999">作业延期理由</div>-->
+                <!--<div class=" flex-grow1 flex-layout">-->
+                    <!--{{items.vo.attr2}}-->
+                <!--</div>-->
+            <!--</div>-->
+            <div v-for="item in items.list" class="flex-layout flex-v-end" style="align-items: end;margin-bottom:7px">
+                <div class="form-item-label color-item-999"><span>{{item.signCatalog.name}}</span></div>
+                <div class=" w185" v-if="item && item.user">{{item.user.name}}</div>
+                <div class=" w185" v-else>
+                    <span v-for="(oneindex, one) in item.users">{{one.name}} <span v-show="oneindex<item.users.length-1">，</span></span>
+                </div>
+
+                <div class="color-item-999 mr20">签名</div>
+                <div class=" flex-grow1 flex-layout flex-v-end" style="align-items: end;" >
+                    <p  class="mr20 w180" style="height: 20px;">
+                        <image-view  v-show="isWorkClose" :image-style="imageStyle" :images="convertFileData(item.cloudFiles)" :show-close="false"></image-view>
+                    </p>
+                    <div style="min-width: 86px;width: 86px;" class="form-item-label color-item-999">签名时间</div>
+                    <p class="" v-if="item.cloudFiles && item.cloudFiles.length>0 && isWorkClose">{{item.cloudFiles[0].createDate}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</simple-card>
+
+<style>
+    .w185{
+        width: 11em;
+        /*padding-right: 20px;*/
+        /*margin-right:10px;*/
+    }
+    .w180{
+        width:160px;
+    }
+</style>

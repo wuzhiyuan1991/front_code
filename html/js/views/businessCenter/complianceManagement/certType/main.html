@@ -1,0 +1,64 @@
+<div class="businessMenuInfo" v-el:viewbox>
+    <iv-row type="flex" align="middle">
+        <iv-col class="menuList" span="24">
+            <el-tabs @tab-click="doTabs" class="scroll-tabs" v-if="routeType === 'default' || routeType === 'equipmentType'">
+                <!--证件类型-->
+                <el-tab-pane label="证件分类" v-if="routeType === 'default' || routeType === 'equipmentType'">
+                    <iv-row type="flex" align="middle" class="mp-header-item-func">
+                        <iv-col span="22" class="menuTitle">
+                            <vi-button type="text" class="mp-header-item-btn" @click="showAll">
+                                {{$t('bs.bac.expandAll')}}
+                            </vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
+                                {{$t('bs.bac.collapseAll')}}
+                            </vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('equipmentType')">添加
+                            </vi-button>
+                        </iv-col>
+                        <!-- <iv-col span="2" class="menuTitle">
+                            <iv-checkbox  :checked.sync="showEquipmentTypeCode" >编码列==</iv-checkbox>
+                        </iv-col> -->
+                    </iv-row>
+                        <iv-tree-grid :model="equipmentType.data" v-ref:tree-grid-equipment-type
+                                      :selected-datas.sync="selectedTreeDatas"
+                                      id-attr="id"
+                                      pid-attr="parentId"
+                                      :display-attr="showEquipmentTypeCode ? 'nameCode' : 'name'"
+                                      :single-select="true"
+                                      :show-checkbox="false"
+                                      :allow-parent-checked="true"
+                                      @on-add-node="doAddNode"
+                                      @on-edit-node="doEditNode"
+                                      @on-del-node="doDeleteNode"
+                                      :edit="true"
+                                      :default-open-layer="1"
+                                      :open="equipmentType.showHide"
+                                      sort-key="orderNo"
+                        ></iv-tree-grid>
+                </el-tab-pane>
+            </el-tabs>
+        </iv-col>
+    </iv-row>
+</div>
+<risk-assessment-kind
+    :visible.sync="hazardFactor.catalogVisible"
+    @do-save ="doSaveCatalog"
+    @do-update ="doUpdateCatalog"
+    v-ref:risk-assessment-kind
+></risk-assessment-kind>
+
+<Modal :visible.sync="addModel.show" :title="addModel.title" width="520" :footer-hide="true">
+    <editcomponent
+            @do-update="doUpdate"
+            @do-add-top="doEditAdd"
+            :visible.sync="addModel.show"
+            :list="currentList"
+    ></editcomponent>
+</Modal>
+
+<style>
+    .businessMenuInfo .ivu-col-span-22{
+        display: block;
+        width: 100%;
+    }
+</style>

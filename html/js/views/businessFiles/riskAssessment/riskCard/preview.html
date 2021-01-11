@@ -1,0 +1,197 @@
+<Modal v-if="load" :visible.sync="show" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+        <iv-button @click="doPrint(false)" v-if="allImages.length>0">带图打印</iv-button>
+        <iv-button @click="doPrint(true)" ><span v-if="allImages.length>0">无图</span>打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+        {{isPrintImg}}
+    </div>
+    <div class="preview-box" id="section-to-print">
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center">{{data.topCompName}}</h4>
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center mt5">岗位安全风险告知卡</h4>
+        <div class="table-tip">
+            <span class="code"><span v-if="data.topCompCode">{{data.topCompCode}}-</span><span>{{data.beCheckDeptCode}}-</span>{{year}}-{{month}}</span>
+        </div>
+        <table class="preview-box-table txt-center">
+            <colgroup>
+                <col style="width:2.5rem;">
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <tbody  style="width:600px;">
+
+            <tr>
+                <td  colspan="2">风险点名称</td>
+                <td  colspan="2">{{mainModel.riskPoint}}</td>
+                <td  colspan="1"   rowspan="2"    >危险源或潜在事件/标准</td>
+                <td  colspan="4"   rowspan="2" >{{mainModel.dominationArea.name}}</td>
+            </tr>
+            <tr>
+                <td  colspan="2"  >风险点编号</td>
+                 <td colspan="2" >
+                   {{mainModel.code}}
+                </td>
+
+
+
+            </tr>
+           <tr>
+                <td  colspan="2"  >风险等级</td>
+                 <td colspan="2" >
+                    {{mainModel.riskLevel}}
+                </td>
+                <td  colspan="1"     >可能发生的事故典型及后果</td>
+                <td  colspan="4"   class='accident_mes'  >{{mainModel.scene}}</td>
+
+
+            </tr> 
+
+            <tr class="img-table">
+                <td  colspan="2"     >
+                    <img :style="imageStyle" 
+                    :src="calcImageURL(item)" 
+                     :data-src="image.fullSrc"
+                     v-for="item of  fileModel.riskPointPic.data "
+                     >
+                </td>
+                <td  colspan="2"  >
+                    <img :style="imageStyle" 
+                    :src="calcImageURL(item)" 
+                     :data-src="image.fullSrc"
+                     v-for="item of  fileModel.safetyPic.data "
+                     >
+                </td>
+                <td  colspan="1"     >管控措施</td>
+                <td  colspan="4"   class='accident_mes'    >{{mainModel.controlMeasures}}</td>
+            </tr>
+
+            <tr>
+                <td  colspan="2">责任部门</td>
+                <td  colspan="2">
+                    <span v-for="(index,item) in mainModel.positions ">
+                         <span>{{item.name}} <span v-show="index < mainModel.positions.length-1">,</span></span>
+
+                    </span>
+                    {{data.checkCompanyName}}
+                
+                </td>
+                <td  colspan="1"   rowspan="3"    >应急处置措施</td>
+                <td  colspan="4"   rowspan="3" >  {{mainModel.emergencyMeasures}}</td>
+            </tr>
+            <tr>
+                <td  colspan="2"  >责任人</td>
+                 <td colspan="2"    >
+                   
+                             <span  v-if="mainModel.users"  v-for="(index,item) in mainModel.users"  >
+                                 <span>{{item.username}} <span v-show="index < mainModel.users.length-1">,</span>  </span>
+                            </span>
+                 
+                    
+
+
+                </td>
+            </tr>
+            <tr>
+                <td  colspan="2"  >联系电话</td>
+                 <td colspan="2" >
+                      {{mainModel.telephone}}
+                </td>
+            </tr>
+
+            
+
+
+
+
+
+
+
+            </tbody>
+        </table>
+
+
+
+    </div>
+
+</Modal>
+<style>
+    .table-tip {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        padding-right: 40px;
+    }
+
+    .table-tip-code {
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+    .check-content-body{
+        display: flex;
+        flex-direction: column;
+        padding-top:5px;
+        text-align: left;
+        min-height: 150px;
+    }
+    .check-content-section{
+
+    }
+    .content-one   .check-content-section{
+        flex-grow: 1;
+        flex-wrap: wrap;
+    }
+    .check-content-item{
+        display: flex;
+    }
+    .item-requires{
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 150px;
+    }
+    .check-content-item .item-requires>p{
+    }
+    .check-bottom{
+        display: flex;
+        justify-content: space-between;
+    }
+    .check-content-suggest{
+        height: 100px;
+    }
+    .content-item-num{
+        /*margin-left: -15px;*/
+    }
+    .content-item-require{
+        flex-grow: 1;
+    }
+    .date-margin{
+        display: inline-block;
+        width:50px;
+        text-align:right;
+    }
+    .check-item{
+        margin-left: 20px;
+    }
+    .check-hidden p{
+       max-width: 900px;
+    }
+    .check-hidden img{
+        min-height: 50px;
+        min-width: 300px;
+        max-width: 860px;
+    }
+    .grow1{
+        flex-grow: 1;
+    }
+    .img-table{
+          height: 200px;
+    }
+    .accident_mes{
+        text-align: initial;
+        word-break: break-all;
+        white-space: break-spaces;
+    }
+</style>

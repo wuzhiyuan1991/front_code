@@ -1,0 +1,53 @@
+<li class="custom-vi-tree-item">
+
+	<!-- 	<div v-if="model.id" {bold: isFolder,'custom-vi-tree-item-selected':showChecked}> -->
+	<div :style="ulStyle" :class="treeClasses" v-if="isShow" @click="doClickNode($event)">
+		<!--@click.stop="toggle(model, 0)" -->
+		<iv-checkbox v-ref:checkbox v-show="showCheckbox" :checked.sync="selected" :disabled="!allowParentChecked && (isFolder && singleSelect)"></iv-checkbox>
+		<!-- 		<span v-if="isFolder">[{{open ? '-' : '+'}}]</span> -->
+		<!--<Icon  v-if="isFolder" :type="open ? 'chevron-down' : 'chevron-right'"></Icon>-->
+        <span :class="{'align-text': !showCheckbox}" data-type="toggle">
+		    <Icon v-if="isFolder" class="tree-arrow" :type="open ? 'arrow-down-b' : 'arrow-right-b'"></Icon>
+        </span>
+		<!--显示辅助图标-->
+		<span v-if="customIco" data-type="toggle">{{{customFunc(model)}}}</span>
+		<!-- @click.stop="toggle(model, 1)"-->
+		<span data-type="toggle">{{displayLabelValue}}</span>
+
+		<div v-if="edit" style="display: inline-block;position: absolute;left: 300px;">
+			<a @click.stop="doAddNode()">新增</a>
+			<a @click.stop="doEditNode()" style="padding-left: 10px;">编辑</a>
+			<a @click.stop="doDelNode()" style="padding-left: 10px;">删除</a>
+		</div>
+	</div>
+	<!-- 	</div> -->
+
+	<ul v-show="open">
+		<!-- 		<iv-tree-node v-ref:treeNode class="item" v-for="model in model.children" :model="model" :selected-datas.sync="selectedDatas"> -->
+		<select-tree-node
+				:open-deep="openDeep"
+				:layer="layer+1"
+				:custom-ico="customIco"
+				:custom-func="customFunc"
+				:allow-parent-checked="allowParentChecked"
+				:show-checkbox="showCheckbox"
+				v-ref:treenode
+				class="item"
+				v-for="childModel in model.children | filterBy dataQuery"
+				:data-query.sync="dataQuery"
+				:model="childModel"
+				:id-attr="idAttr"
+				:disabled ="childModel.disabled"
+				:parent-node="parentNode"
+				:type="type"
+				:department="department"
+				:parent-model="model"
+				:display-attr="displayAttr"
+				:edit="edit"
+				:open-btn-click="openBtnClick"
+				:open-status="openStatus1"
+				:default-open="defaultOpen">
+		</select-tree-node>
+
+	</ul>
+</li>

@@ -1,0 +1,202 @@
+/**横排form样式BEGIN**/
+
+.el-form {
+    width: 370px;
+}
+
+.el-form-item {
+    /* 	float: left; */
+    /*margin-bottom: 16px;*/
+    height: auto;
+    overflow: inherit;/*原来是hidden  修复下拉框不显示，总是要手动显示出来的问题*  这里不应该overflow:hidden 来清除浮动，clear:both,已经达到了清除浮动的效果*/
+    clear:both;
+}
+
+.el-form-item__label {
+    text-align: left;
+    vertical-align: middle;
+    float: left;
+    font-size: 14px;
+    /*color: #5e6d82;*/
+    line-height: 1;
+    color: #666;
+    padding: 14px 12px 14px 0;
+    box-sizing: border-box;
+    word-break: break-all;
+}
+.el-form-item__label-light .el-form-item__label{
+    color: #999;
+}
+.color-item-999{
+    color: #999;
+    font-size:12px;
+}
+
+
+/* .el-form-item__content { */
+
+
+/*     position: relative; */
+
+
+/*     font-size: 14px; */
+
+
+/*     line-height: 36px; */
+
+
+/* } */
+
+.el-form-item__vertical_content,
+.el-form-item__content:not(.ivu-checkbox-group p) {
+    position: relative;
+    font-size: 14px;
+    line-height: 31px;
+    padding: 3px 0;
+}
+
+.el-form-item .ivu-poptip-rel,
+.el-form-item input,
+.el-form-item textarea,
+.el-form-item .ivu-select {
+    width: 100%;
+}
+
+
+/**横排form样式END**/
+
+
+/**竖排form样式BEGIN**/
+
+.el-form_vertical {
+    /* 	width: 623px; */
+    min-height: 50px;
+    height: 100%;
+    padding-bottom: 10px;
+}
+
+.el-form-item_vertical {
+    /*     margin-left: 4px; */
+    float: left;
+    height: auto;
+    /*overflow: hidden;*/
+}
+
+.el-form-item__vertical_label {}
+
+.el-form-item__vertical_content {}
+
+
+/**竖排form样式END**/
+
+.bip-content-form .el-form-item_vertical {
+    width: 250px;
+}
+
+
+/* 解决 .el-form-item .ivu-select 宽度100%, ivu-select-dropdown宽度溢出问题 */
+
+
+/* .el-form-item .ivu-select-dropdown { */
+
+
+/* 	width : initial; */
+
+
+/* }  */
+
+
+/* 验证错误时边框的红色 */
+
+.is-error input,
+.is-error .ivu-radio-group,
+.is-error .ivu-checkbox-group,
+.is-error .ivu-select-selection,
+.is-error textarea {
+    border: solid 1px #D90000;
+    border-radius: 6px;
+}
+
+.is-error .ivu-select-single input {
+    border: none;
+}
+/* .is-required */
+
+
+/* form必填label的红色星星 星号后面必须由空格, 解决垂直显示时不对齐问题*/
+
+.el-form-item.is-required .el-form-item__label:before,
+.el-form-item_vertical.is-required .el-form-item__vertical_label:before {
+    content: '* ';
+    color: #ff4949;
+    font-family: inherit;
+}
+
+
+/* form必填label的无左内边距 */
+
+.el-form-item.is-required .el-form-item__label {
+    padding-left: 1px;
+}
+
+
+/* form一般label的左内边距，确保与必填的对齐 */
+
+.el-form-item .el-form-item__label {
+    padding-left: 9px;
+}
+
+/*下面代码是添加的*/
+
+
+
+
+/*fixed-width是表单内容宽度固定为260px 可以用来inline水平布局 也可以用来统一表单内容宽度*/
+.el-form.fixed-width .el-form-item__content,
+.el-form-item.fixed-width .el-form-item__content,
+.el-form.fixed-width .el-form-item__content .ivu-poptip-rel,
+.el-form-item.fixed-width .el-form-item__content .ivu-poptip-rel
+{
+    width: 260px;
+    overflow: inherit;
+    line-height: 26px;
+}
+@media  (max-width: 1750px){
+    body .fixed-width .el-form-item .ivu-select,
+    .el-form.fixed-width .el-form-item__content,
+    .el-form-item.fixed-width .el-form-item__content,
+    .el-form.fixed-width .el-form-item__content .ivu-poptip-rel,
+    .el-form-item.fixed-width .el-form-item__content .ivu-poptip-rel
+    {
+        width: 240px;
+    }
+
+}
+/*width-auto-ipt-formitem 表单内容宽度填充满，可自定义 */
+.width-auto-ipt-formitem .ivu-poptip-rel,
+.width-auto-ipt-formitem .el-form-item__content{
+    width: auto !important;
+}
+.width-auto-ipt-formitem .ivu-poptip-rel{
+    display: block;
+}
+/*修复fixed-width造成里面的行高变化问题 */
+.el-form.fixed-width .el-form-item__content .ivu-poptip-rel,
+.el-form-item.fixed-width .el-form-item__content .ivu-poptip-rel,
+.el-form.fixed-width .el-form-item__content .ivu-poptip-rel .ivu-poptip-rel,
+.el-form-item.fixed-width .el-form-item__content .ivu-poptip-rel .ivu-poptip-rel
+{
+   line-height: 1.5;
+}
+/*去掉表单的label 的pad-left*/
+.elform-item-nopadleft .el-form-item .el-form-item__label{
+    padding-left: 0;
+}
+.ivu-input-wrapper.ivu-input-type>div{
+    word-break: break-all;
+}
+.formitem-inline .el-form-item{
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 50px;
+}

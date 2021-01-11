@@ -1,0 +1,121 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="部门" prop="supplier" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.supplier" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="岗位" prop="address" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.address" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="周期" prop="phone" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.phone" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="帆布手套" prop="fax" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item  label="线手套" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="肥皂" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="毛巾" prop="usage" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.usage" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="劳保鞋" prop="usage" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.usage" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="焊工手套" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="安全帽" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="工作服" prop="usage" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.usage" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="冬装棉袄" prop="usage" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.usage" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="化学防护手套" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="护目镜" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="面罩" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="耳塞" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="反光服" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="防毒面具" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="防烫手套" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="防毒口罩" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="滤毒罐" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="防尘口罩" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="备注" prop="type" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fax" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  label="发放方式" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+</div>
+
+
+
+

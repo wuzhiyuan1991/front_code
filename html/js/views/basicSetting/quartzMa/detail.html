@@ -1,0 +1,45 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item label="任务名称" >
+						<iv-input :value.sync="mainModel.vo.quartzJobName" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="任务描述" >
+						<iv-input :value.sync="mainModel.vo.description" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="cron表达式" prop="cron">
+						<iv-input :value.sync="mainModel.vo.cron" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="任务状态">
+						<iv-input :value.sync="mainModel.vo.triggerState" textonly></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.vo.triggerState =='NORMAL'" type="ghost" @click="doPause" icon="android-document">暂停</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.vo.triggerState =='PAUSED'" type="ghost" @click="doResume" icon="android-document">恢复</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>
+
+

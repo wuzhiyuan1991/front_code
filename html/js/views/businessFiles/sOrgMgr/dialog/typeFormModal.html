@@ -1,0 +1,50 @@
+<Modal :visible.sync="visible" title="编辑安全机构" width="520" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+                <el-form-item label="父级分类" prop="parentId">
+                    <iv-tree-select
+                            :model.sync="mainModel.vo.parentId"
+                            :list="parentList"
+                            id-attr="id"
+                            display-attr="name"
+                            placeholder="请选择父级分类"
+                            clearable
+                            @on-change="doChangeParent"
+                    >
+                        <iv-tree
+                                :model="parentList"
+                                :selected-datas.sync="selectedDatas"
+                                id-attr="id"
+                                pid-attr="parentId"
+                                display-attr="name"
+                                serch-filterable
+                                single-select
+                                show-checkbox
+                                allow-parent-checked
+                        >
+                        </iv-tree>
+                    </iv-tree-select>
+                </el-form-item>
+
+                <!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+                    <code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+                </el-form-item> -->
+                <el-form-item :label="$t('gb.common.name')" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+                <el-form-item label="排序位置" prop="insertPointObjId">
+                    <span>当前节点之后</span>
+                    <i-select :model.sync="mainModel.vo.insertPointObjId" clearable :list="orderList" style="width: 180px;margin-left: 3px;">
+                        <i-option  v-for = "upper in orderList" :value="upper.id">{{upper.name}}</i-option>
+                    </i-select>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+            <!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+        </div>
+    </div>
+</Modal>

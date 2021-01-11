@@ -1,0 +1,66 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<div style="padding-bottom: 5px;border-bottom: 1px solid #ddd;margin-bottom: 8px;" v-show="mainModel.isOptions2">
+			<span @click="doAddItem" style="float: right;margin-left: 15px;color: rgb(51, 166, 255);cursor: pointer;">
+				<Icon type="plus-round"></Icon>添加
+			</span>
+			<span v-show="mainModel.list && mainModel.list.length>1" @click="doDelItem" style="float: right;margin-left: 15px;color: rgb(51, 166, 255);cursor: pointer;">
+				<Icon type="trash-a"></Icon>删除
+			</span>
+			<div style="width:400px;">
+				<a @click="changeTab(index)"  v-for="(index, item) in mainModel.list"  :style="mainModel.listIndex == index?'color:#33A6FF;display:inline-block;margin-right:15px;width:60px;':'color:#666;display:inline-block;margin-right:15px;width:60px'" :class="{'checked': insiderIndex === '0'}" class="main-special-item" href="javascript:void(0);">问题 {{(parseInt(index + 1))}} </a>
+			</div>
+		</div>
+
+
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+			<el-form-item :label="isRemarkShow ? $t('gb.common.problemDesc') : $t('gb.common.describeSup')" prop="problem" :class="requireProblem">
+				<input-search  :input-val.sync="mainModel.vo.problem"  is-text="true" url="/pool/problems"></input-search>
+			</el-form-item>
+
+			<el-form-item v-if="isRemarkShow" :label="$t('gb.common.latentDefect')" prop="latentDefect" >
+				<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.latentDefect"></iv-input>
+			</el-form-item>
+
+			<el-form-item :label="$t('gb.common.recMeasure')" v-if="isRemarkShow" prop="remark">
+				<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.remark"></iv-input>
+			</el-form-item>
+			<!-- <el-form-item label="检查依据" prop="violatedClause" v-if="isRemarkShow">
+				<iv-input :value.sync="mainModel.vo.legalRegulation.name" type="textarea" readonly  @click="doShowLegalRegulationSelectModal" style="cursor: pointer;"></iv-input>
+				<Icon type="plus" @click="doShowLegalRegulationSelectModal" title="选择检查依据" style="cursor: pointer;top: 7px; width: 32px; height: 32px; line-height: 32px; font-size: 16px; text-align: center; color: #9ea7b4; position: absolute; right: 0; z-index: 1"></Icon>
+			</el-form-item> -->
+			<el-form-item :label="$t('gb.common.picture')" prop="rightPictures" :class="requirePic">
+				<lite-box v-for="(index,pic) in mainModel.vo.rightPictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.rightPictures)" @click="doPic(pic.fileId)">
+					<img :src="convertPicPath(pic.fileId)">
+				</lite-box>
+				<vue-file-upload :events="rightPicModel.events" v-if="mainModel.vo.rightPictures.length < 9" :params="rightPicModel.params" @on-success-upload="rightPic" :filters="rightPicModel.filters" class="file_upload"></vue-file-upload>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.video')" prop="wrongPictures" :class="requireVideo">
+				<lite-box v-for="(index,pic) in mainModel.vo.wrongPictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.wrongPictures)" @click="doPlay(pic.fileId)">
+					<img :src="convertPath()">
+				</lite-box>
+				<vue-file-upload :events="wrongPicModel.events" v-if="mainModel.vo.wrongPictures < 1" :params="wrongPicModel.params" @on-success-upload="wrongPic" :filters="wrongPicModel.filters" class="file_upload"></vue-file-upload>
+			</el-form-item>
+		</el-form>
+
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>
+
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+	<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400"  footer-hide>
+	<img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>
+
+<!-- <check-basis-select-modal
+		single-select
+		:visible.sync="checkBasis.visible"
+		:filter-data="checkBasis.filterData"
+		@do-save="doSaveLegalRegulations"
+></check-basis-select-modal> -->

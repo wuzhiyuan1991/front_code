@@ -1,0 +1,17 @@
+<div class="edit-pop-container">
+    <!--epc-content-row-space 控制每一行的间距-->
+    <div class="epc-content" :rules="rules" style="height: 300px;padding-top:0">
+        <el-tabs style="width:100%;" :active-name="mainModel.tabName" @tab-click="changeTab">
+            <el-tab-pane label="备注说明">
+                <iv-input type="textarea" :value.sync="mainModel.vo.remarks" textonly></iv-input>
+            </el-tab-pane>
+            <el-tab-pane label="电子签名">
+                <image-view :images="mainModel.vo.signatureImgs" :show-close="false"></image-view>
+            </el-tab-pane>
+            <el-tab-pane label="现场图片">
+                <image-view :images="mainModel.vo.pictures" :show-close="false"></image-view>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+</div>
+

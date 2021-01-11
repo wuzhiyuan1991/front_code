@@ -1,0 +1,90 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div style="display: flex;">
+            <div style="width: 320px;border-bottom: 2px solid #33a6ff;display: inline-flex;align-items: center;padding: 0 20px;">
+                <div>
+                    <iv-button v-if="hasAuth('createType')" @click="doCreateType">增加</iv-button>
+                    <iv-button v-if="hasAuth('editType')" @click="doUpdateType">修改</iv-button>
+                    <iv-button v-if="hasAuth('deleteType')" @click="doDeleteType">删除</iv-button>
+                </div>
+            </div>
+            <div class="mp-header formTitle" style="flex-grow: 1;flex-basis: 0;">
+                <iv-row $main-header-row-attr-default-display>
+
+                    <iv-col span="16">
+                        <!--<all-classification $main-header-classification-attr-default></all-classification>-->
+                        <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                    </iv-col>
+                    <iv-col span="8">
+                        <div class="prelative addButton pull-right">
+                            <vi-button v-if="hasAuth('create')" @click="doAddCreate">{{$t("gb.common.add")}}</vi-button>
+
+                            <iv-dropdown trigger="click" placement="bottom-end">
+                                <vi-button type="ghost" icon="chevron-down"></vi-button>
+                                <iv-dropdown-menu slot="list">
+                                    <iv-dropdown-item>
+	                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+	                                </iv-dropdown-item>
+	                                 <iv-dropdown-item>
+	                                    <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+	                                </iv-dropdown-item>
+	                                $main-header-dropdown-item-tag-common-display
+                                </iv-dropdown-menu>
+                            </iv-dropdown>
+                        </div>
+                        $main-header-refresh-button
+                    </iv-col>
+                </iv-row>
+                <iv-row $main-header-row-attr-default-hidden>
+                    <iv-col span="24">
+                        <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                        </vi-button>
+                        <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                                   @click="doUpdate">{{$t("gb.common.edition")}}
+                        </vi-button>
+                        <!-- <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                                   @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                        </vi-button> -->
+                        <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                                   @click="doDelete">{{$t("gb.common.del")}}
+                        </vi-button>
+                    </iv-col>
+                </iv-row>
+            </div>
+        </div>
+
+        <div class="mp-content">
+            <div class="lr-layout" style="padding: 0;">
+                <div class="lr-layout-l legal-regulation-type-box" style="width: 300px;overflow-y: auto;">
+                    <iv-tree
+                            id-attr="id"
+                            pid-attr="parentId"
+                            display-attr="name"
+                            :model="legalTypes"
+                            :selected-datas.sync="treeSelectData"
+                            :show-checkbox="false"
+                            :single-select="true"
+                            :trigger-parent-event="true"
+                            lazy-load
+                            @on-tree-node-click="doTreeNodeClick"
+                    ></iv-tree>
+                </div>
+                <div class="lr-layout-r" style="padding: 0;">
+                    <vue-bootstrap-table  lazy-load  $main-center-table-attr-default show-seq></vue-bootstrap-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel :data1="irllegalregulation" :type-id="typeId"></detail-panel>
+</aside>
+
+<type-form-modal
+        :visible.sync="typeForm.visible"
+        :list="legalTypes"
+        @do-save="doSaveType"
+></type-form-modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>

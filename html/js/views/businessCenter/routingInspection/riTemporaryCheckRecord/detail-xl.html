@@ -1,0 +1,146 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button type="ghost" @click="doExportExcel" v-if="hasAuth('export')" style="margin-right: 10px;">导出明细</iv-button>
+				<vi-button type="ghost" v-if="hasAuth('delete')" @click="doDelete" style="margin-right: 10px;">{{$t("gb.common.del")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form"  :model="mainModel.vo" is-label-vertical v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="巡检表" class="small-info-box" >
+						<input-select :value="mainModel.vo.riCheckTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowRiCheckTableSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedComp')" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="状态(总数/不合格数)" class="small-info-box" >
+						<iv-input textonly :value="mainModel.vo.checkResultDetail"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="检查开始时间" prop="checkBeginDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkBeginDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkBeginDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="检查结束时间" prop="checkEndDate" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkEndDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkEndDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  label="检查人" class="small-info-box" >
+						<div style="display: inline-flex;align-items: center;flex-wrap: wrap;">
+							<span style="margin-right: 5px;">{{mainModel.vo.user.name}}</span>
+							<span v-if="mainModel.vo.faceSignName"> ( {{mainModel.vo.faceSignName}} ) </span>
+							<div v-show="mainModel.vo.cloudFiles.length > 0" style="position: relative">
+								<!--<Icon type="ios-eye" size="24"></Icon>-->
+								<a style="margin-left: 5px;" @click="doShowimg" v-if="showImage" >查看签名</a>
+								<image-view id="image-view" v-if="showImg" :images="images" :show-close="false" @on-hide="getHide" @view="getView"  style="position: absolute;top: 0;left: 0;opacity: 0;" ></image-view>
+							</div>
+						</div>
+<!--						<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>-->
+					</el-form-item>
+					<el-form-item  label="结果"  class="small-info-box" >
+						<iv-input textonly :value="checkResultText"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+
+					<el-form-item  label="巡检计划" prop="checkPlanId" class="small-info-box" >
+						<input-select :value="mainModel.vo.riCheckPlan" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowRiCheckPlanSelectModal())" ></input-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item  label="来源" prop="checkSource" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iri_check_record_check_source', mainModel.vo.checkSource) }}</span>
+						<i-select :model.sync="mainModel.vo.checkSource" :list="getDataDicList('iri_check_record_check_source')" v-else></i-select>
+					</el-form-item>
+					<el-form-item  label="巡检任务" prop="checkTaskId" class="small-info-box" >
+						<input-select :value="mainModel.vo.riCheckTask" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowRiCheckTaskSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="备注" prop="remarks" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title"><i class="basicPng"></i><span>巡检线路</span></p>
+                <ul v-for="(i, group) in routeAreas" class="layout-timeline layout-timeline-6" :class="{'end': i % 2 !== 0}">
+                    <li v-for="item in group" class="layout-timeline-item" :class="calcClass(i, item)">
+                        <div class="name" :title="item.name">{{item.name}}</div>
+                        <div class="line"></div>
+                        <div class="sq">{{item.index}}</div>
+                    </li>
+                </ul>
+            </simple-card>
+        </div>
+
+    </div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>巡检记录明细</span></p>
+				<div class="lr-layout" style="padding: 0;height: 600px;background-color: #fff;">
+					<div class="lr-layout-l" style="border: 1px solid #ddd;">
+						<div class="title">巡检线路</div>
+						<ul>
+							<li v-for="(index, area) in checkAreas"
+								class="lr-layout-li"
+								:class="{'checked': index === checkedAreaIndex}"
+								style="display: flex;"
+								@click="doSelectArea(index)">
+								<span style="min-width: 25px;">{{index + 1}}</span>
+								<span :title="area.name" style="flex: 1;overflow: hidden;text-overflow: ellipsis;">{{area.name}}</span>
+								<span class="sw-tag sw-tag-red" v-if="area.result0Num !== 0">{{area.result0Num}}</span>
+							</li>
+						</ul>
+					</div>
+					<div class="lr-layout-r"  style="border: 1px solid #ddd;">
+						<div class="layout-body">
+							<div v-for="(index, point) in checkedArea.points">
+
+								<div class="body-header">
+									<div style=" border-bottom: 1px solid green;">巡检点: {{point.name}}</div>
+								</div>
+
+								<lite-table
+										:values="point.checkItems"
+										:columns="tableModel.columns"
+										:page-size-opts="[1000]"
+										show-sequence
+										@on-click="doShowDetailModal"
+								></lite-table>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</simple-card>
+		</div>
+
+	</div>
+
+</div>
+
+<record-detail
+		:visible.sync="rdModel.visible"
+></record-detail>
+
+

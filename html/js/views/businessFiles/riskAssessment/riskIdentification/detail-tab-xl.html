@@ -1,0 +1,505 @@
+<div class="detail-large-container">
+  <div class="base-info-panel">
+    <div class="bip-header">
+      <div class="bip-header-title">
+        <i class="recordPng"></i><span>{{mainModel.title}}</span>
+      </div>
+      <div class="bip-header-btn-group">
+        <iv-button v-if="hasAuth('edit')" type="ghost" @click.stop="doShowRiskIdentificationFormModal4Update">
+          {{$t('gb.common.edition')}}</iv-button>
+        <!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+        <!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+        <!--				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>-->
+        <!--				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+        <iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost"
+          @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+        <vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">
+          {{$t("gb.common.cancel")}}</vi-button>
+        <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+      </div>
+    </div>
+    <div class="bip-content">
+      <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules" v-ref:ruleform>
+        <iv-row class="bip-content-item">
+          <el-form-item label="编号" prop="number" class="small-info-box">
+            <iv-input :value.sync="mainModel.vo.number" :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <el-form-item label="区域" prop="region" class="small-info-box">
+            <iv-input :value.sync="mainModel.vo.region" :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <el-form-item label="涉及岗位" prop="position" class="small-info-box">
+            <iv-input :value.sync="mainModel.vo.position" :textonly="mainModel.isReadOnly"></iv-input>
+          </el-form-item>
+          <el-form-item label="风险评价等级" prop="riskLevel" class="small-info-box">
+            <iv-input :value.sync="mainModel.vo.riskLevel" :textonly="mainModel.isReadOnly"
+              style="width: 75px;display: inline-block">
+            </iv-input>
+          </el-form-item>
+        </iv-row>
+        <!--
+			<el-form-item label="活动产品服务" prop="activeProductService" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.activeProductService" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="后果分析" prop="aftermathAnalyze" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.aftermathAnalyze" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				<iv-row class="bip-content-item">
+					<el-form-item label="变更管理" prop="changeManage" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.changeManage" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险管控单位" prop="controlUnit" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_control_unit', mainModel.vo.controlUnit) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.controlUnit" :list="getDataDicList('ira_risk_identification_control_unit')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="事件学习" prop="eventLearn" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.eventLearn" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="存在状态" prop="existenceState" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_existence_state', mainModel.vo.existenceState) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.existenceState" :list="getDataDicList('ira_risk_identification_existence_state')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="存在时态" prop="existenceTense" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_existence_tense', mainModel.vo.existenceTense) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.existenceTense" :list="getDataDicList('ira_risk_identification_existence_tense')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="危害因素成因" prop="hazardCause" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.hazardCause" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="危害因素种类" prop="hazardType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.hazardType" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="是否危险重要" prop="isImportantDanger" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ira_risk_identification_is_important_danger', mainModel.vo.isImportantDanger) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isImportantDanger" :list="getDataDicList('ira_risk_identification_is_important_danger')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="其他活动" prop="otherActive" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.otherActive" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.remarks')" prop="remark" class="small-info-box"  full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item label="剩余风险评价等级" prop="residualRiskLevel" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.residualRiskLevel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="残余风险等级模型" prop="residualRiskModel" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.residualRiskModel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="残余评估模型" prop="residualRiskModelId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.residualRiskModelId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险评价等级" prop="riskLevel" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskLevel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="风险等级模型" prop="riskModel" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskModel" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="评估模型" prop="riskModelId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.riskModelId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+      </el-form>
+    </div>
+  </div>
+
+  <div class="rel-info-panel">
+    <div class="rel-info-panel-content-tabs">
+      <el-tabs active-key="relTab">
+        <el-tab-pane label="详细信息" key="basTab">
+          <div class="rip-item">
+            <el-form :model="mainModel.vo" class="rip-item-form">
+              <div class="rip-item-form-card">
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('gb.common.ownedComp')">
+                      <iv-input :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item label="所属部门">
+                      <iv-input :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('活动产品服务')">
+                      <span>{{mainModel.vo.activeProductService}}</span>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('变更管理')">
+                      <span>{{mainModel.vo.changeManage}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('事件学习')">
+                      <span>{{mainModel.vo.eventLearn}}</span>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('其他活动')">
+                      <span>{{mainModel.vo.otherActive}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('后果分析')">
+                      <span>{{mainModel.vo.aftermathAnalyze}}</span>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('危害因素种类')">
+                      <span>{{mainModel.vo.hazardType}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('危害因素成因')">
+                      <span>{{mainModel.vo.hazardCause}}</span>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('存在状态')">
+                      <span>{{getDataDic('ira_risk_identification_existence_state', mainModel.vo.existenceState)}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('存在时态')">
+                      <span>{{getDataDic('ira_risk_identification_existence_tense', mainModel.vo.existenceTense)}}</span>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('是否危险重要')">
+                      <span v-if="mainModel.vo.isImportantDanger == '0'">否</span>
+                      <span v-else>是</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('风险管控单位')">
+                      <span v-for="(index,item) in  mainModel.controlUnit">
+                        {{getDataDic('ira_risk_identification_control_unit', item)}}
+                        <span v-if="mainModel.controlUnit.length > 1 && index < mainModel.controlUnit.length-1">,</span>
+                      </span>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('剩余风险评价等级')">
+                      <span>{{mainModel.vo.residualRiskLevel}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.equipmentType')" prop="equipmentType.id">
+                      <div v-if="mainModel.isReadOnly">{{displayTypeName}}</div>
+                    </el-form-item>
+                  </iv-col>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('评估方法')">
+                      <span>{{getDataDic('risk_evalu_method', mainModel.vo.evaluMethod)}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+                <iv-row>
+                  <iv-col span="12">
+                    <el-form-item :label="$t('备注')">
+                      <span>{{mainModel.vo.remark}}</span>
+                    </el-form-item>
+                  </iv-col>
+                </iv-row>
+              </div>
+            </el-form>
+          </div>
+          <div class="rip-item">
+            <p>
+              <span style="font-size: 17px;font-weight: 600;">控制措施</span>
+              <span style="padding-left: 15px">{{mainModel.vo.riskModelInfo}}</span>
+              <a style="padding-left: 5px" @click="doEditRiekLevel(1)">{{mainModel.vo.riskLevel}}</a>
+            </p>
+            <div style="padding-left: 15px">
+              <br>
+              <simple-card :show-content.sync="cardModel.riskIdentifiContMeasuresCardModel1.showContent" filter
+                filter-when>
+                <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>技术措施</span></p>
+                <a slot="extra"
+                  @click.prevent="cardModel.riskIdentifiContMeasuresCardModel1.showContent = !cardModel.riskIdentifiContMeasuresCardModel1.showContent;">
+                  <span v-if="cardModel.riskIdentifiContMeasuresCardModel1.showContent">
+                    <Icon type="arrow-up-b"></Icon>收起
+                  </span>
+                  <span v-else>
+                    <Icon type="arrow-down-b"></Icon>展开
+                  </span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create'"
+                  @click.prevent="doShowRiskIdentifiContMeasuresFormModal4Create(1)">
+                  <span>
+                    <Icon type="plus"></Icon>添加
+                  </span>
+                </a>
+                <vue-bootstrap-table :setting="tableModel.riskIdentifiContMeasuresTableModel1"
+                  @on-del-row="doRemoveRiskIdentifiContMeasures"
+                  @on-edit-row="doShowRiskIdentifiContMeasuresFormModal4Update" :show-pager="false" :show-seq="true"
+                  v-ref:riskidentificontmeasures-table1>
+                </vue-bootstrap-table>
+              </simple-card>
+              <br>
+              <simple-card :show-content.sync="cardModel.riskIdentifiContMeasuresCardModel2.showContent" filter
+                filter-when>
+                <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>管理措施</span></p>
+                <a slot="extra"
+                  @click.prevent="cardModel.riskIdentifiContMeasuresCardModel2.showContent = !cardModel.riskIdentifiContMeasuresCardModel2.showContent;">
+                  <span v-if="cardModel.riskIdentifiContMeasuresCardModel2.showContent">
+                    <Icon type="arrow-up-b"></Icon>收起
+                  </span>
+                  <span v-else>
+                    <Icon type="arrow-down-b"></Icon>展开
+                  </span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create'"
+                  @click.prevent="doShowRiskIdentifiContMeasuresFormModal4Create(2)">
+                  <span>
+                    <Icon type="plus"></Icon>添加
+                  </span>
+                </a>
+                <vue-bootstrap-table :setting="tableModel.riskIdentifiContMeasuresTableModel2"
+                  @on-del-row="doRemoveRiskIdentifiContMeasures"
+                  @on-edit-row="doShowRiskIdentifiContMeasuresFormModal4Update" :show-pager="false" :show-seq="true"
+                  v-ref:riskidentificontmeasures-table2>
+                </vue-bootstrap-table>
+              </simple-card>
+              <br>
+              <simple-card :show-content.sync="cardModel.riskIdentifiContMeasuresCardModel5.showContent" filter
+                filter-when>
+                <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>防护措施</span></p>
+                <a slot="extra"
+                  @click.prevent="cardModel.riskIdentifiContMeasuresCardModel5.showContent = !cardModel.riskIdentifiContMeasuresCardModel5.showContent;">
+                  <span v-if="cardModel.riskIdentifiContMeasuresCardModel5.showContent">
+                    <Icon type="arrow-up-b"></Icon>收起
+                  </span>
+                  <span v-else>
+                    <Icon type="arrow-down-b"></Icon>展开
+                  </span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create'"
+                  @click.prevent="doShowRiskIdentifiContMeasuresFormModal4Create(5)">
+                  <span>
+                    <Icon type="plus"></Icon>添加
+                  </span>
+                </a>
+                <vue-bootstrap-table :setting="tableModel.riskIdentifiContMeasuresTableModel5"
+                  @on-del-row="doRemoveRiskIdentifiContMeasures"
+                  @on-edit-row="doShowRiskIdentifiContMeasuresFormModal4Update" :show-pager="false" :show-seq="true"
+                  v-ref:riskidentificontmeasures-table5>
+                </vue-bootstrap-table>
+              </simple-card>
+            </div>
+          </div>
+
+          <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.riskIdentificationEvalCardAddModel.showContent">
+              <p slot="title">
+                <span style="font-size: 17px;font-weight: 600;">增补控制措施</span>
+                <span style="padding-left: 15px;font-size: 14px;font-weight: normal;">剩余风险评价等级：</span>
+                <span
+                  style="padding-left: 15px;font-size: 14px;font-weight: normal;">{{mainModel.vo.residualRiskModelInfo}}</span>
+                <a style="padding-left: 5px ;font-size: 14px;font-weight: normal;"
+                  @click="doEditRiekLevel(2)">{{mainModel.vo.residualRiskLevel ? mainModel.vo.residualRiskLevel : "设置风险等级"}}</a>
+              </p>
+              <a slot="extra"
+                @click.prevent="cardModel.riskIdentificationEvalCardAddModel.showContent = !cardModel.riskIdentificationEvalCardAddModel.showContent;">
+                <span v-if="cardModel.riskIdentificationEvalCardAddModel.showContent">
+                  <Icon type="arrow-up-b"></Icon>收起
+                </span>
+                <span v-else>
+                  <Icon type="arrow-down-b"></Icon>展开
+                </span>
+              </a>
+              <a slot="extra" style="float: right" @click="doEditRiekLevel(3)"><span>
+                  <Icon type="person-stalker"></Icon>动态评估
+                </span></a>
+              <div style="padding-left: 15px">
+                <br>
+                <simple-card :show-content.sync="cardModel.riskIdentifiContMeasuresCardModel3.showContent" filter
+                  filter-when>
+                  <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>技术措施</span></p>
+                  <a slot="extra"
+                    @click.prevent="cardModel.riskIdentifiContMeasuresCardModel3.showContent = !cardModel.riskIdentifiContMeasuresCardModel3.showContent;">
+                    <span v-if="cardModel.riskIdentifiContMeasuresCardModel3.showContent">
+                      <Icon type="arrow-up-b"></Icon>收起
+                    </span>
+                    <span v-else>
+                      <Icon type="arrow-down-b"></Icon>展开
+                    </span>
+                  </a>
+                  <a slot="extra" v-show="mainModel.opType != 'create'"
+                    @click.prevent="doShowRiskIdentifiContMeasuresFormModal4Create(3)">
+                    <span>
+                      <Icon type="plus"></Icon>添加
+                    </span>
+                  </a>
+                  <vue-bootstrap-table :setting="tableModel.riskIdentifiContMeasuresTableModel3"
+                    @on-del-row="doRemoveRiskIdentifiContMeasures"
+                    @on-edit-row="doShowRiskIdentifiContMeasuresFormModal4Update" :show-pager="false" :show-seq="true"
+                    v-ref:riskidentificontmeasures-table3>
+                  </vue-bootstrap-table>
+                </simple-card>
+                <br>
+                <simple-card :show-content.sync="cardModel.riskIdentifiContMeasuresCardModel4.showContent" filter
+                  filter-when>
+                  <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>管理措施</span></p>
+                  <a slot="extra"
+                    @click.prevent="cardModel.riskIdentifiContMeasuresCardModel4.showContent = !cardModel.riskIdentifiContMeasuresCardModel4.showContent;">
+                    <span v-if="cardModel.riskIdentifiContMeasuresCardModel4.showContent">
+                      <Icon type="arrow-up-b"></Icon>收起
+                    </span>
+                    <span v-else>
+                      <Icon type="arrow-down-b"></Icon>展开
+                    </span>
+                  </a>
+                  <a slot="extra" v-show="mainModel.opType != 'create'"
+                    @click.prevent="doShowRiskIdentifiContMeasuresFormModal4Create(4)">
+                    <span>
+                      <Icon type="plus"></Icon>添加
+                    </span>
+                  </a>
+                  <vue-bootstrap-table :setting="tableModel.riskIdentifiContMeasuresTableModel4"
+                    @on-del-row="doRemoveRiskIdentifiContMeasures"
+                    @on-edit-row="doShowRiskIdentifiContMeasuresFormModal4Update" :show-pager="false" :show-seq="true"
+                    v-ref:riskidentificontmeasures-table4>
+                  </vue-bootstrap-table>
+                </simple-card>
+                <br>
+                <simple-card :show-content.sync="cardModel.riskIdentifiContMeasuresCardModel6.showContent" filter
+                  filter-when>
+                  <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>防护措施</span></p>
+                  <a slot="extra"
+                    @click.prevent="cardModel.riskIdentifiContMeasuresCardModel6.showContent = !cardModel.riskIdentifiContMeasuresCardModel6.showContent;">
+                    <span v-if="cardModel.riskIdentifiContMeasuresCardModel6.showContent">
+                      <Icon type="arrow-up-b"></Icon>收起
+                    </span>
+                    <span v-else>
+                      <Icon type="arrow-down-b"></Icon>展开
+                    </span>
+                  </a>
+                  <a slot="extra" v-show="mainModel.opType != 'create'"
+                    @click.prevent="doShowRiskIdentifiContMeasuresFormModal4Create(6)">
+                    <span>
+                      <Icon type="plus"></Icon>添加
+                    </span>
+                  </a>
+                  <vue-bootstrap-table :setting="tableModel.riskIdentifiContMeasuresTableModel6"
+                    @on-del-row="doRemoveRiskIdentifiContMeasures"
+                    @on-edit-row="doShowRiskIdentifiContMeasuresFormModal4Update" :show-pager="false" :show-seq="true"
+                    v-ref:riskidentificontmeasures-table6>
+                  </vue-bootstrap-table>
+                </simple-card>
+              </div>
+            </simple-card>
+          </div>
+          <div class="rip-item" v-if="false">
+            <simple-card :show-content.sync="cardModel.riskIdentificationEvalCardModel.showContent" filter filter-when>
+              <p slot="title"><i class="basicPng"></i><span>风险评价记录</span></p>
+              <a slot="extra"
+                @click.prevent="cardModel.riskIdentificationEvalCardModel.showContent = !cardModel.riskIdentificationEvalCardModel.showContent;">
+                <span v-if="cardModel.riskIdentificationEvalCardModel.showContent">
+                  <Icon type="arrow-up-b"></Icon>收起
+                </span>
+                <span v-else>
+                  <Icon type="arrow-down-b"></Icon>展开
+                </span>
+              </a>
+              <vue-bootstrap-table :setting="tableModel.riskIdentificationEvalTableModel"
+                @on-del-row="doRemoveRiskIdentificationEval" @on-edit-row="doShowRiskIdentificationEvalFormModal4Update"
+                v-ref:riskidentificationeval-table>
+              </vue-bootstrap-table>
+            </simple-card>
+          </div>
+
+        </el-tab-pane>
+        <el-tab-pane label="设备设施" key="relTab">
+          <div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+
+            <div class="rip-item">
+              <!--							<p>-->
+              <!--								<span style="font-size: 17px;font-weight: 600;">设备设施</span>-->
+              <!--								<span style="padding-left: 15px">设备设施分类</span>-->
+              <!--								<a style="padding-left: 5px" @click="doEditRiekLevel(1)">{{mainModel.vo.equipmentType.name}}</a>-->
+              <!--							</p>-->
+              <simple-card :show-content.sync="cardModel.equipmentCardModel.showContent" filter filter-when>
+                <p slot="title" style="width: 800px;"><i class="basicPng"></i><span>设备设施</span>
+                  <span style="padding-left: 15px;font-size: 14px">设备设施分类:</span>
+                  <!--									<a style="padding-left: 5px;font-size: 14px" @click="">{{mainModel.vo.equipmentType.name}}</a>-->
+                  <a style="padding-left: 5px;font-size: 14px" @click="">{{displayTypeName}}</a>
+                </p>
+
+                <a slot="extra"
+                  @click.prevent="cardModel.equipmentCardModel.showContent = !cardModel.equipmentCardModel.showContent;">
+                  <span v-if="cardModel.equipmentCardModel.showContent">
+                    <Icon type="arrow-up-b"></Icon>收起
+                  </span>
+                  <span v-else>
+                    <Icon type="arrow-down-b"></Icon>展开
+                  </span>
+                </a>
+                <a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowEquipmentSelectModal()">
+                  <span>
+                    <Icon type="plus"></Icon>添加
+                  </span>
+                </a>
+                <vue-bootstrap-table :setting="tableModel.equipmentTableModel" @on-del-row="doRemoveEquipment"
+                  v-ref:equipment-table>
+                </vue-bootstrap-table>
+              </simple-card>
+            </div>
+          </div>
+
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </div>
+</div>
+
+<riskidentificontmeasures-form-modal :visible.sync="formModel.riskIdentifiContMeasuresFormModel.show"
+  @do-save="doSaveRiskIdentifiContMeasures" @do-update="doUpdateRiskIdentifiContMeasures"
+  :equipment-type="mainModel.vo.equipmentType" :equipment="mainModel.vo.equipment" :comp-id="mainModel.vo.compId"
+  :org-id="mainModel.vo.orgId" :risk-identification-id="mainModel.vo.id"
+  :risk-model-score-info="mainModel.vo.riskModelScoreInfo"
+  :residual-risk-model-score-info="mainModel.vo.residualRiskModelScoreInfo"
+  :query-url="formModel.riskIdentifiContMeasuresFormModel.queryUrl"
+  :hidden-fields="formModel.riskIdentifiContMeasuresFormModel.hiddenFields" v-ref:riskidentificontmeasures-form-modal>
+</riskidentificontmeasures-form-modal>
+<riskidentificationeval-form-modal :type="'riskIdentification'"
+  :visible.sync="formModel.riskIdentificationEvalFormModel.show" @do-save="doSaveRiskIdentificationEval"
+  @do-update="doUpdateRiskIdentificationEval" :query-url="formModel.riskIdentificationEvalFormModel.queryUrl"
+  :hidden-fields="formModel.riskIdentificationEvalFormModel.hiddenFields" v-ref:riskidentificationeval-form-modal>
+</riskidentificationeval-form-modal>
+<!--<riskidentification-form-modal-->
+<!--:visible.sync="formModel.riskIdentificationFormModel.show"-->
+<!--@do-save="doUpdateRiskIdentification"-->
+<!--:query-url="formModel.riskIdentificationFormModel.queryUrl"-->
+<!--v-ref:riskidentification-form-modal>-->
+<!--</riskidentification-form-modal>-->
+<Modal :visible.sync="riskLevelModel.show" :title="riskLevelModel.title" :footer-hide="true">
+  <risk-level-component @do-update-risk-level-finshed="doUpdateRiskLevelFinshed"></risk-level-component>
+</Modal>
+<equipment-select-modal :visible.sync="selectModel.equipmentSelectModel.visible"
+  :filter-data="selectModel.equipmentSelectModel.filterData" :comp-id="mainModel.vo.compId" :org-id="mainModel.vo.orgId"
+  :equipment-type-id="mainModel.vo.equipmentType.id" :domination-area="mainModel.vo.dominationArea"
+  :is-comp-disable="false" @do-save="doSaveEquipment">
+</equipment-select-modal>

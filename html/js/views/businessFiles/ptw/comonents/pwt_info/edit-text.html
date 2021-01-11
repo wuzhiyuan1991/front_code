@@ -1,0 +1,19 @@
+<Modal :visible.sync="visible" :title="modalTitle" @on-cancel="doClose"  class="userSelectModal" footer-hide>
+        <div class="modal-box-default">
+            <el-form label-width="130px" >
+                <el-form-item :label="textName">
+                    <iv-input :value.sync="text"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            <!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+    </div>
+<!--        <div slot="footer">-->
+<!--            <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--            <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--        </div>-->
+</Modal>

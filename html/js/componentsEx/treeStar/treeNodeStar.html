@@ -1,0 +1,36 @@
+<li class="custom-vi-tree-item custom-tree-star" style="position: relative">
+		<!-- 	<div v-if="model.id" {bold: isFolder,'custom-vi-tree-item-selected':showChecked}> -->
+		<div :class="treeClasses" v-if="isShow" @mouseenter="doShowStar"  @mouseleave="doHideStar">
+			<iv-checkbox  v-show="showCheckbox" :checked.sync="checked" @click="toggle($event, 0)" :disabled="!allowParentChecked && (isFolder && singleSelect)"></iv-checkbox>
+			<!-- 		<span v-if="isFolder">[{{open ? '-' : '+'}}]</span> -->
+			<Icon  v-if="isFolder" :type="open ? 'chevron-down' : 'chevron-right'"></Icon>
+			<span class="tree-center" @click="toggle($event, 1)" :class="listClasses" :title="displayLabelValue">{{displayLabelValue}}</span>
+			<span style="display: none">{{isValue}}</span>
+			<span v-if="!isFolder">
+
+				<span @click="doStar" v-if="isTab && isIndex" class="tree-star-icon">
+					<span  v-if="!star" class="tree-cursor"><Icon type="ios-star-outline" :class="{'tree-star-show' : isStarShow,'tree-star-hide':!isStarShow}"></Icon></span>
+					<span  v-else class="tree-cursor"><Icon type="ios-star"></Icon></span>
+				</span>
+
+				<span v-else class="tree-star">
+					<span class="tree-cursor" @click="doEditUp" style="width: 15px;display: inline-block;">
+						<i class="ivu-icon ivu-icon-arrow-up-c" v-if="isIndex" style="margin: 0px"></i></span>
+					<span class="tree-cursor" @click="doEditDown" style="width: 15px;display: inline-block;">
+						<i class="ivu-icon ivu-icon-arrow-down-c" v-if="isIndex" style="margin: 0px"></i></span>
+					<span class="tree-cursor" @click="doDelNode" style="width: 15px;display: inline-block;">
+						<i class="ivu-icon ivu-icon-ios-minus" v-if="isIndex" style="margin: 0px"></i></span>
+				</span>
+			</span>
+		</div>
+
+
+		<ul v-show="this.open || !this.parentModel" >
+			<iv-tree-node-star :allow-parent-checked="allowParentChecked" :show-checkbox="showCheckbox" v-ref:tree-nodes class="item" v-for="(index,childModel) in model.children"  :sort-index="index" :is-title-click="isTitleClick" :is-tab="isTab" :star="childModel.star" :is-index="childModel.index" :model="childModel" :id-attr="idAttr" :parent-model="model" :display-attr="displayAttr" :edit="edit" :default-open="defaultOpen">
+			</iv-tree-node-star>
+		</ul>
+</li>
+
+
+
+

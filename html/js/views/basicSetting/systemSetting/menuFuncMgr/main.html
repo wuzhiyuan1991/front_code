@@ -1,0 +1,50 @@
+<div class="tab-container" style="height: 100%; overflow-x: hidden">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row type="flex" align="middle" class="mp-header-item">
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t('bs.bac.menuMgr')}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="treeShowList">{{$t('bs.bac.expandAll')}}
+                    </vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="treeHide">{{$t('bs.bac.collapseAll')}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+
+        <div class="mp-content">
+            <div>
+                <iv-row type="flex" align="middle">
+                    <iv-col class="menuList" span="24">
+
+                        <iv-tree-grid
+                                :model="mainModel.data"
+                                v-ref:treegrid
+                                id-attr="id"
+                                pid-attr="parentId"
+                                display-attr="name"
+                                :single-select="true"
+                                :show-checkbox="false"
+                                :allow-parent-checked="true"
+                                @on-add-node="doAddNode"
+                                @on-edit-node="doEditNode"
+                                @on-del-node="doDelNode"
+                                @on_tree_data_ready="doTreeDataReady"
+                                :edit="true"
+                                :auth-mgr-show="false"
+                                :open="mainModel.showHide"
+                                assist
+                                :assist-func="assistFunc"
+                        ></iv-tree-grid>
+                    </iv-col>
+                </iv-row>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<Modal :visible.sync="updateModel.show" :title="updateModel.title" width="520" :footer-hide="true">
+    <detailComponent @do-update="doUpdate"></detailComponent>
+</Modal>
+

@@ -1,0 +1,40 @@
+<simple-card v-if="!!title" :class="class">
+  <p slot="title"><i class="basicPng"></i><span>{{title}}</span></p>
+  <span slot="extra">
+    <slot name="extra"></slot>
+  </span>
+  <simple-card>
+    <span slot="title" v-if="!readonly">{{remark}}
+      <span class="titlePrompt">（文件支持{{fileType}}格式; 单个文件大小最大支持{{fileMaxSize}};
+        {{ isShowFileMax ? '最多上传1个文件' : '' }}）</span>
+    </span>
+
+    <lite-box v-for="(index,pic) in data" :show-close="!readonly" @on-close="doDeleteFile(pic.fileId,index)"
+      @click="doPlay(pic)">
+      <img :src="convertPath()">
+    </lite-box>
+
+    <vue-file-upload v-if="!readonly && data.length < 1" @on-success-upload="referMater" :params="params"
+      :filters="filters" class="file_upload"></vue-file-upload>
+  </simple-card>
+
+</simple-card>
+<simple-card v-else :class="class">
+  <span slot="title">{{remark}}
+    <span class="titlePrompt" v-if="!readonly">（文件支持{{fileType}}格式; 单个文件大小最大支持{{fileMaxSize}};
+      {{ isShowFileMax ? '最多上传1个文件' : ''}}）</span>
+  </span>
+
+  <lite-box v-for="(index,pic) in data" :show-close="!readonly" @on-close="doDeleteFile(pic.fileId,index)"
+    @click="doPlay(pic)">
+    <img :src="convertPath()">
+  </lite-box>
+
+  <vue-file-upload v-if="!readonly && data.length < 1" @on-success-upload="referMater" :params="params"
+    :filters="filters" class="file_upload"></vue-file-upload>
+</simple-card>
+
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+  <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>

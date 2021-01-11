@@ -1,0 +1,135 @@
+
+<simple-card class="ptw-base-info" style="width:860px;">
+    <p slot="title">作业关闭</p>
+    <div class="flex-layout">
+        <div class="flex-grow1">
+            <!-- <div class="ml10 mt30"    >
+                <p style="padding-top:15px;">作业进行过程中，作业申请人根据作业现场实际情况发起相关操作:</p>
+                <p style="cursor: pointer;">定义作业关闭可操作的的选项：
+                    <iv-checkbox disabled  :checked="true" class="mr20">作业完成</iv-checkbox>
+                    <iv-checkbox disabled  :checked="true" class="mr20">作业取消 </iv-checkbox>
+                    <iv-checkbox @on-change="doChangeExtenType($arguments,'1')"  :checked.sync="checkbox.renew" class="mr20"><span class="link-ele">作业延期</span> </iv-checkbox>
+                </p>
+            </div> -->
+            <div class="flex-layout ml10 mt20" style="cursor: pointer;" >
+                <span style="border-bottom:none;" class="tab-item" :class="{checked:tab.selectedIndex==0}" @click="tab.selectedIndex=0">作业完成</span>
+                <span style="border-bottom:none;border-left:none;" class="tab-item" :class="{checked:tab.selectedIndex==1}" @click="tab.selectedIndex=1">作业取消</span>
+                <span style="border-bottom:none;border-left:none;" class="tab-item" :class="{checked:tab.selectedIndex==2}"  @click="tab.selectedIndex=2" v-show="checkbox.renew">作业延期</span> <!--------- 原作业续签  --------->
+                <!-- <span style="border-bottom:none;border-left:none;" class="tab-item" :class="{checked:tab.selectedIndex==3}"  @click="tab.selectedIndex=3" v-show="checkbox.delay">作业延期</span> -->
+            </div>
+            <div class=" ml10" v-show="tab.selectedIndex==0">
+                    <div style="border:1px solid #ddd;width:840px;" class="pdb10 pdr10">
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item" style="width:630px;padding-left:2em;">
+                            <el-form class="width-auto-ipt" label-width="130px">
+                                <el-form-item label="作业完成声明">
+                                    <div class="flex-layout" style="padding-left:10px;">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                            {{model.comments["7"]}}
+                                        </div>
+                                        <div class="link-ele pdl5"  @click="gotoDic(1)">定制内容</div>
+                                    </div>
+                                </el-form-item>
+
+                            </el-form>
+                        </div>
+                        <div class="ml15 pdt10 mt20" style="border-top:1px solid #ddd;">
+                            <sign-view @on-custom-content="doCustomContentRole" :need-info="false" type="2" :model="model" order-key="enableCompleteOrder"></sign-view>
+                        </div>
+                    </div>
+            </div>
+            <div class="  ml10"  v-show="tab.selectedIndex==1">
+                    <div style="border:1px solid #ddd;width:840px;" class="pdb10 pdr10">
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item" style="width:630px;padding-left:2em;">
+                            <el-form class="width-auto-ipt" label-width="130px">
+                                <el-form-item label="作业取消原因">
+                                    <div class="flex-layout" style="padding-left:10px;">
+                                        <div class="flex-grow1 form-disabled bgw h80">
+                                            <div class="ele-disabled-mask"></div>
+                                            <iv-checkbox-group class="group-vertical">
+                                                <iv-checkbox disabled v-for="item of cancelReasonList">{{item.name}}</iv-checkbox>
+                                                <iv-checkbox disabled>其他________________（填写）</iv-checkbox>
+                                            </iv-checkbox-group>
+                                        </div>
+                                        <div class="link-ele pdl5 flex-noshrink"  @click="doCustomContent(5)">定制内容</div>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业取消声明">
+                                    <div class="flex-layout" style="padding-left:10px;">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                            {{model.comments["6"]}}
+                                        </div>
+                                        <div class="link-ele pdl5"  @click="gotoDic(2)">定制内容</div>
+                                    </div>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div class="ml15 pdt10 mt20" style="border-top:1px solid #ddd;">
+                            <sign-view @on-custom-content="doCustomContentRole" :need-info="false" type="3" :model="model" order-key="enableCancelOrder"></sign-view>
+                        </div>
+                    </div>
+            </div>
+            <div class="  ml10"  v-show="tab.selectedIndex==2">
+                    <div style="border:1px solid #ddd;width:840px;" class="pdb10 pdr10" >
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item" style="width:630px;padding-left:2em;">
+                            <el-form class="width-auto-ipt" label-width="130px">
+                                <el-form-item label="作业有效期">
+                                    <div class="flex-layout">
+                                        <iv-input :maxlength="10" type="number" :value.sync="model.extensionTime">
+                                            <i-select :popper-fixed="false" slot="append"
+                                                      :model.sync="model.extensionUnit" :list="extensionTypeList"
+                                                      style="width: 100px"
+                                            >
+                                                <i-option v-for="item of  extensionTypeList"
+                                                          :value="item.value">{{item.name}}</i-option>
+                                            </i-select>
+                                        </iv-input>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="" label-width=0>
+                                    <div style="width:100%;border-top:1px solid #ddd;">
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="作业延期期限">
+                                    <div class="  form-disabled ">
+                                        自___年___月___日___时___分始， 至___年___月___日___时___分止
+                                    </div>
+                                </el-form-item>
+                                <!--<el-form-item label="作业续签理由">-->
+                                    <!--<div class="  form-disabled ">-->
+                                        <!--手动录入-->
+                                    <!--</div>-->
+                                <!--</el-form-item>-->
+                            </el-form>
+                        </div>
+                        <div class="ml15 pdt10 mt20" style="border-top:1px solid #ddd;">
+                            <sign-view @on-custom-content="doCustomContentRole" :need-info="false" type="4" :model="model" order-key="enableExtendOrder"
+                                       extension-type="1" v-ref:renew></sign-view>
+                        </div>
+                    </div>
+            </div>
+            <!-- <div class=" ml10" v-show="tab.selectedIndex==3">
+                    <div style="border:1px solid #ddd;width:840px;" class="pdb10 pdr10" >
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item" style="width:630px;padding-left:2em;">
+                            <el-form class="width-auto-ipt" label-width="130px">
+                                <el-form-item label="作业延期期限">
+                                    <div class="  form-disabled ">
+                                        自___年___月___日___时___分始， 至___年___月___日___时___分止                                        </div>
+                                </el-form-item>
+         
+                            </el-form>
+                        </div>
+                        <div class="ml15 pdt10 mt20" style="border-top:1px solid #ddd;">
+                            <sign-view :need-info="false" type="5" :model="model" order-key="enableExtendOrder"
+                                       extension-type="2" v-ref:delay></sign-view>
+                        </div>
+                    </div>
+            </div> -->
+
+        </div>
+    </div>
+</simple-card>

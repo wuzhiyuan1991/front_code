@@ -1,0 +1,21 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item v-if="mainModel.type === 1 " label="风险评价" prop="riskLevel">
+				<risk-model  :model.sync="riskModel"></risk-model>
+			</el-form-item>
+
+			<el-form-item v-if="mainModel.type === 2 || mainModel.type === 3" label="剩余风险评价" prop="residualRiskLevel">
+				<risk-model  :model.sync="residualRiskModel"></risk-model>
+			</el-form-item>
+
+		</el-form>
+
+	</div>
+	<div class="epc-content" v-if="mainModel.type === 3">
+		<span style="font-size: 14px;color: red">该操作会将【增补控制措施】下的所有数据移至【控制措施】,请确认！</span>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>	
+</div>

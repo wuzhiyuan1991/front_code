@@ -1,0 +1,84 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width="600" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content el-form-item__label_light ptw-base-info" style="min-height:390px;">
+            <el-form style="width:522px;" class="ptw-base-info"  :model="mainModel.vo"
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <!--<el-form-item :label="$t('gb.common.code')" prop="code">-->
+                    <!--<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+                <!--</el-form-item>-->
+                <el-form-item v-if="mainModel.vo.isInherent=='1'" label="信息项名称" prop="oldName">
+                    <iv-input style="width:375px;" :value.sync="mainModel.vo.oldName" textonly></iv-input>
+                </el-form-item>
+                <el-form-item :label="mainModel.vo.isInherent=='1'?'名称（拟定修改）':'信息项名称'" prop="name">
+                    <iv-input style="width:375px;" :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+
+                <!--<el-form-item v-if="mainModel.vo.isInherent!='1'" label="信息项名称" prop="name">-->
+                    <!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+
+                <el-form-item v-if="mainModel.vo.isInherent!='1'" label="数据类型" prop="dataType">
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_column_setting_data_type', mainModel.vo.dataType) }}</span>
+                    <i-select style="width:375px;" v-else :model.sync="mainModel.vo.dataType" :list="getDataDicList('iptw_card_column_setting_data_type')" clearable></i-select>
+                </el-form-item>
+
+                <el-form-item v-if="mainModel.vo.dataType=='10'" label=" " prop="value" >
+                    <form-item-row>
+                        <div class="form-disabled h80 bgw ivu-checkbox-wrapper-flex">
+                            <div class="ele-disabled-mask"></div>
+                            <div class="group-vertical ">
+                                <iv-checkbox-group style="border:none;" class="group-vertical" v-show="listModel.list.length>0">
+                                    <iv-checkbox disabled v-for="item of listModel.list"><span class="checked-box-span">{{item.name}}</span></iv-checkbox>
+                                </iv-checkbox-group>
+                            </div>
+                        </div>
+                        <div style="padding-right:15px;" class="link-ele pdl5" slot="after" @click="listModel.show=true">定制内容</div>
+                    </form-item-row>
+                </el-form-item>
+
+                <el-form-item v-if="mainModel.vo.isInherent=='1'" label="固化字段" prop="isInherent">
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_column_setting_is_inherent', mainModel.vo.isInherent) }}</span>
+                    <i-select style="width:375px;" disabled v-else :model.sync="mainModel.vo.isInherent" :list="getDataDicList('iptw_card_column_setting_is_inherent')" clearable></i-select>
+                </el-form-item>
+
+                <el-form-item :label="$t('gb.common.state')" prop="disable">
+                    <!--<form-item-row>-->
+                        <!--<disable-select style="width:100%;" :disabled="mainModel.vo.isInherent=='1' && codeMap(mainModel.vo)" :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" show-input></disable-select>-->
+                    <!--</form-item-row>-->
+                    <i-select style="width:375px;" :disabled="mainModel.vo.isInherent=='1' && codeMap(mainModel.vo)" :model.sync="mainModel.vo.disable" :list="getDataDicList('iptw_card_column_setting_is_disable')" show-input ></i-select>
+
+                </el-form-item>
+                <el-form-item label="是否必填项" prop="isRequired">
+                        <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_column_setting_is_required', mainModel.vo.isRequired) }}</span>
+                        <i-select  v-else style="width:375px;" :disabled="mainModel.vo.isInherent=='1' && codeMap(mainModel.vo, 'require')" :model.sync="mainModel.vo.isRequired" :list="getDataDicList('iptw_card_column_setting_is_required')" clearable></i-select>
+                </el-form-item>
+                <!--<el-form-item label="作业票模板" prop="tpl.id">-->
+                    <!--<input-select :value="mainModel.vo.ptwCardTpl" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowPtwCardTplSelectModal())" ></input-select>-->
+                <!--</el-form-item>-->
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+
+    <Modal :visible.sync="listModel.show"  title="编辑" width:420 :footer-hide="true">
+        <div style="background: #fff;min-height: 100px;padding:15px;font-size:14px;">
+            <base-list
+                    :values.sync="listModel.list"
+                    @on-selected='doSelectTaskIndex'
+                    @on-add-ok="doSaveList"
+                    @on-edit-ok="doEditList"
+                    @on-del="doDelListItem"
+                    @on-del-all="doDelListAll"
+            ></base-list>
+        </div>
+    </Modal>
+
+
+</Modal>
+
+
+
+
+

@@ -1,0 +1,165 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+			<iv-button v-if="hasAuth('edit')" type="ghost" @click.stop="doShowGasDetectionRecordFormModal4Update">{{$t('gb.common.edition')}}</iv-button>
+<!-- 				<iv-button v-if="mainModel.isReadOnly" type="ghost" @click.stop="mainModel.isReadOnly = false">{{$t('gb.common.edition')}}</iv-button> -->
+<!-- 				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button> -->
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="作业许可" prop="workPermit.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.workPermit" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowWorkPermitSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="作业票" prop="workCardId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workCardId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="检测地点" prop="detectSite" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.detectSite" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="检测时间" prop="detectTime" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.detectTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.detectTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="检测类型" prop="type" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_gas_detection_record_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('iptw_gas_detection_record_type')" clearable></i-select>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rel-info-panel-content-tabs">
+			<el-tabs active-key="relTab">
+				<el-tab-pane label="相关" key="relTab">
+<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+						<div class="rip-item">
+							<simple-card :show-content.sync="cardModel.gasDetectionDetailCardModel.showContent" filter filter-when>
+								<p slot="title"><i class="basicPng"></i><span>气体检测详情</span></p>
+								<a slot="extra" @click.prevent="cardModel.gasDetectionDetailCardModel.showContent = !cardModel.gasDetectionDetailCardModel.showContent;" >
+									<span v-if="cardModel.gasDetectionDetailCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+									<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+									</a>
+								<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowGasDetectionDetailFormModal4Create" >
+									<span><Icon type="plus"></Icon>添加</span>
+								</a>
+								<vue-bootstrap-table
+									:setting="tableModel.gasDetectionDetailTableModel"
+									@on-del-row="doRemoveGasDetectionDetail"
+									@on-edit-row="doShowGasDetectionDetailFormModal4Update"
+									v-ref:gasdetectiondetail-table
+									>
+								</vue-bootstrap-table>
+							</simple-card>
+						</div>
+
+							</div>
+
+				</el-tab-pane>
+				<el-tab-pane label="资料" key="basTab">
+					<div class="rip-item">
+						<el-form :model="mainModel.vo" class="rip-item-form">
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">基本信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('编码')">
+											<span>{{mainModel.vo.code}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('作业许可')">
+											<span>{{mainModel.vo.workPermitId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('状态')">
+											<span>{{mainModel.vo.disable}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('作业票')">
+											<span>{{mainModel.vo.workCardId}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>
+							<div class="rip-item-form-card">
+								<p class="rip-item-form-card-title">详细信息</p>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('检测地点')">
+											<span>{{mainModel.vo.detectSite}}</span>
+										</el-form-item>
+									</iv-col>
+									<iv-col span="12">
+										<el-form-item :label="$t('检测时间')">
+											<span>{{mainModel.vo.detectTime}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+								<iv-row>
+									<iv-col span="12">
+										<el-form-item :label="$t('检测类型')">
+											<span>{{mainModel.vo.type}}</span>
+										</el-form-item>
+									</iv-col>
+								</iv-row>
+							</div>			
+						</el-form>
+					</div>	
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+			<div class="rip-item">
+				<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+			</div>
+        -->
+	</div>
+
+</div>
+
+<cloudfile-select-modal :visible.sync="selectModel.cloudFileSelectModel.visible" :filter-data="selectModel.cloudFileSelectModel.filterData" single-select @do-save="doSaveCloudFile"></cloudfile-select-modal>
+<ptwworkpermit-select-modal :visible.sync="selectModel.workPermitSelectModel.visible" :filter-data="selectModel.workPermitSelectModel.filterData" single-select @do-save="doSaveWorkPermit"></ptwworkpermit-select-modal>
+
+<gasdetectiondetail-form-modal
+		:visible.sync="formModel.gasDetectionDetailFormModel.show"
+		@do-save="doSaveGasDetectionDetail"
+		@do-update="doUpdateGasDetectionDetail"
+		:query-url="formModel.gasDetectionDetailFormModel.queryUrl"
+		:hidden-fields="formModel.gasDetectionDetailFormModel.hiddenFields"
+		v-ref:gasdetectiondetail-form-modal>
+</gasdetectiondetail-form-modal>
+<gasdetectionrecord-form-modal
+		:visible.sync="formModel.gasDetectionRecordFormModel.show"
+		@do-update="doUpdateGasDetectionRecord"
+		:query-url="formModel.gasDetectionRecordFormModel.queryUrl"
+		v-ref:gasdetectionrecord-form-modal>
+</gasdetectionrecord-form-modal>
+

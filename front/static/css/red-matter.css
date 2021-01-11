@@ -1,0 +1,35 @@
+/*  
+Theme Name:exam-theme http://www.hseedu.com
+Author:westdrug
+Update @ 2013/10/29
+*/
+
+/*---======== /theme-matter ========---*/
+	.c-master {color: #ea562e;}
+	/* .e-logo a {background: url(../images/red-theme/e-logo.png) no-repeat 0 0;} */
+	.ana-jx,.ana-kd,.ana-bjing,.ana-bj,.dtback,.q-card-icon,.ex-per-nav em,.ques-wrong-card ul li.wrong-ans a,.my-test-icon,.o-radio,.o-checkbox,.collect-icon,.k-down,.b-down,.nav-icon,.e-clock,.kg-list dl dt span,.bj-link a,.subNav li.poiter-item a.a-subNav,.l-f-w-pic-1,.l-f-w-pic-2,.l-f-w-pic-3,.t-p-t-icon,.t-p-t-icon-1,.t-p-t-icon-2,.t-p-topic-num,.t-p-topic-img,.answer-bar,.answer-list ol li a,.answer-jg .answer-list ol li a,.exp-a-right,.exp-a-error,.qj-icon,.bc-icon,.dtClose,.thr-itme-icon,.goTopBtn a,.n-d-t-icon,.allKmIco {background: url(../img/e-icon.png) no-repeat;}
+	.e-km-title,.e-pl,.e-nr {background: url(../images/red-theme/stair-icon.png) no-repeat;}
+	.e-km-i-list ul li a {background: url(../images/red-theme/stair-bg.png) no-repeat -191px 0;}
+	.e-km-i-list ul li a:hover {background-position: 0 0;}
+	.subNav li.current a.a-subNav {background: url(../images/red-theme/nav-curr-bg.png) no-repeat 50% 28px;color: #fff;}
+	.e-h-line {border-bottom: 2px solid #e54c23;}
+	.k-btn,.poin-item-sub-nav,.pagination ul > li > a:hover,.pagination ul > .active > a:hover,.pagination ul > .active > a {background: #ea562e;}
+	.a-s-n-title span,.answer-sheet-number,.zh-test-list {border: 1px dotted #ea562e;}
+	.l-f-w-menu ol li.current a,.l-f-w-menu ol li a:hover {border-bottom-color: #ea562e;}
+	/* .subNav li.current a.a-subNav {color: #e54c23;font-weight: bold;} */
+	.l-f-w-menu ol li.current a,.l-f-w-menu ol li a:hover,.ztree li a:hover,.ztree li a.curSelectedNode {color: #ea562e;}
+	/* .e-login-btn,.e-register-btn {background-color: #e54c23;}
+	.e-login-btn:hover,.e-register-btn:hover,.s-km-list ul li:hover .s-km-btn {background-color: #ea562e;} */
+	.s-km-list ul li .s-km-btn:hover {background-color: #dc4218;}
+	.subNav li.hover a.a-subNav {color: #ea562e;}
+	.answer-bar.open,.allItemWrap dl dd a:hover {background-color: #ea562e;}
+	.k-btn {border: 1px solid #78b4ff; background: #78b4ff;}
+	.k-btn:hover {background: #78b4ff;}
+	.kg-list {background-color: #fff;border: 1px solid #78b4ff; }
+	.answer-bar,.answer-list {border: 1px solid #e54c23;}
+	.d-tips-9 .d-s-head-txt {color: #ea562e;}
+	.e-login-options li input:focus {border-color: #e54c23;box-shadow: 0 0 5px rgba(230,37,37,.3);}
+	.my-history-title {border-bottom: 2px solid #e54c23;}
+	.my-history-title ul li.current a {background-color: #e54c23;border: 1px solid;border-color: #e54c23 #e54c23 #e54c23 #e54c23;border-top-width: 2px;}
+	.my-history-title ul li a:hover {color: #e54c23;}
+	

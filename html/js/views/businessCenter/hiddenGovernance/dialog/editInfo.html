@@ -1,0 +1,35 @@
+<Modal :visible.sync="visible"  title="编辑" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item label="检查依据" prop="checkBasis" >
+					<iv-input name="name" type="textarea" :rows="5" :value.sync="mainModel.vo.checkBasis" data-options="required:true"></iv-input>
+				</el-form-item>
+
+				<el-form-item label="一级分类" prop="firstLevel" v-if="isShowXBGDField">
+					<i-select :model.sync="mainModel.vo.firstLevel" :list="getDataDicList('pool_first_level')" :disabled="selectModel.disabled">
+					<i-option v-for="s in getDataDicList('pool_first_level')" :value="s.id">{{s.value}}</i-option>
+					</i-select>
+<!--					<span >{{getDataDic('pool_first_level', mainModel.vo.firstLevel)}}</span>-->
+				</el-form-item>
+
+				<el-form-item label="二级分类" prop="secondLevel" v-if="isShowXBGDField">
+					<i-select :model.sync="mainModel.vo.secondLevel" :list="getDataDicList('pool_second_level')" :disabled="selectModel.disabled">
+					<i-option v-for="s in getDataDicList('pool_second_level')" :value="s.id">{{s.value}}</i-option>
+					</i-select>
+<!--					<span >{{getDataDic('pool_second_level', mainModel.vo.secondLevel)}}</span>-->
+				</el-form-item>
+
+				<el-form-item label="低老坏分类" prop="lowOldBadLevel" v-if="isShowXBGDField">
+					<i-select :model.sync="mainModel.vo.lowOldBadLevel" :list="getDataDicList('pool_low_old_bad_level')" :disabled="selectModel.disabled">
+					<i-option v-for="s in getDataDicList('pool_low_old_bad_level')" :value="s.id">{{s.value}}</i-option>
+					</i-select>
+<!--					<span >{{getDataDic('pool_low_old_bad_level', mainModel.vo.lowOldBadLevel)}}</span>-->
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

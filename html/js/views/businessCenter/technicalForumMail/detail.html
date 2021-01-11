@@ -1,0 +1,332 @@
+<div class="detail-container">
+  <div class="few-info-panel pull-left">
+    <div
+      class="fip-header"
+      v-show="mainModel.opType=='create'||mainModel.vo.state== 0"
+    >
+      <div class="bip-header-title">
+        <Icon type="ios-photos"></Icon>
+        <span>发表评论</span>
+      </div>
+    </div>
+    <!-- 新增模块 -->
+    <div
+      v-if="mainModel.opType=='create'||mainModel.vo.state== 0"
+      class="fip-content"
+      style="position: relative;"
+    >
+      <!-- 关键字弹窗 -->
+      <span
+        style="position: absolute;top: 60px;right: 30px;cursor:pointer ;"
+        @click="doSelect"
+        v-if="mainModel.opType!='view'"
+        >选择</span
+      >
+      <el-form
+        class="bip-content-form"
+        :model="mainModel.vo"
+        :rules="baseRules"
+        v-ref:ruleform
+      >
+        <el-form-item label="标题" prop="title">
+          <iv-input
+            :value.sync="mainModel.vo.title"
+            :textonly="mainModel.isReadOnly"
+            id="title"
+          ></iv-input>
+        </el-form-item>
+        <style>
+          .clicked {
+            background-color: #62adff !important;
+            color: #fff !important;
+          }
+          #icon-delete{
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            color: #f03d10;
+
+          }
+           img{
+            max-width: 550px;
+          }
+        
+        </style>
+       
+        <el-form-item label="关键词" prop="keyword">
+          <div v-if="mainModel.opType!='create'||mainModel.opType=='view'" id="keymask" style="width: 400px; z-index: 999;position: absolute; left: 0; top: -5px; height:100%;display: block;">  </div>
+          <div class="keywords">
+            <div
+              class="keyword"
+              v-for="(index,item) in keywordsSure"
+              :class='item.clicked?"clicked":""'
+              :key="index"
+              @click="doKeyWords(index)"
+            >
+              {{item.keyword}}
+              <Icon type="android-remove-circle" id="icon-delete" v-if="mainModel.opType!='view'"></Icon>
+            </div>
+        
+          </div>
+        </el-form-item>
+        <!-- 文件暂传关闭 -->
+        <!-- <vue-file-upload
+        :custom-style="true"
+        :params="params"
+        @on-success-upload="doFileSuccessUpload"
+        :filters="filters"
+        class="file_upload_buttom"
+>
+    <slot><span class="file_tps"><i class="ivu-icon ivu-icon-link"></i>添加视频</span></slot>
+</vue-file-upload> -->
+      </el-form>
+      <div v-if="mainModel.opType=='view'"  style="margin-left: 30px; " >
+        <div v-html="mainModel.vo.content" class="item-content " @click="doViewImages"></div>
+        <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+     </div>
+    <div v-else style="margin-left: 30px;" id="img-max">  
+      <textarea
+      :textonly="mainModel.isReadOnly"
+        id="reply-data1"
+        name="kindEditor"
+        maxlength="2000"
+        v-model="mainModel.vo.content"
+      ></textarea>
+    </div>
+     
+    </div>
+    <div
+      v-else
+      class="fip-content"
+      id="forum"
+      style=" padding-top: 45px; padding-left: 30px;"
+    >
+      <p style="font-size: 20px;font-weight: 700; ">
+        {{mainModel.vo.title}}
+      </p>
+      <div class="keywords" style="margin: 12px 0;width: 570px;">
+       
+        <div class="keyword" v-for="(item, index) in mainModel.vo.techKeyWords" :key="index">{{index.keyword}}</div>
+       
+      </div>
+      <div v-html="mainModel.vo.content" id="content-detail" @click="doViewImages"></div>
+      <image-view :images="images" v-ref:image-viewer style="display: none;"></image-view>
+      <!-- <iv-textarea id="content" :value.sync="mainModel.vo.content" readonly></iv-textarea> -->
+
+      <div
+        style="width: 100%;border-radius: 5px;background-color:#eef3f5 ;padding: 5px; margin-top: 30px;"
+      >
+        <span style="margin-left: 10px;">{{mainModel.vo.replyTime}}个回复</span>
+        <!-- <span style="position: relative;left:400px;"
+          ><i-select size="small" :popper-fixed="false" :model.sync="" :list="">
+            <i-option :value="">默认排序 </i-option>
+          </i-select></span
+        > -->
+      </div>
+      <div v-if="moreRelpyModel">
+        <div class="reply" v-for="item in mainModel.vo.articleReplies">
+          <div class="relpyInfo">
+            <img :src="getFaceid(item.user.faceid)" style="border-radius: 50%;" />
+            <div>
+              <div style="margin: 5px 0;color: #333; font-size: 14px;">
+                <span style="margin: 0 20px;">{{item.user.username}}</span>
+                <span>{{item.createDate}}</span>
+              </div>
+              <div style="margin: 5px 0">
+                <span style="margin: 0 20px; color: #999; font-size: 12px;">
+                  {{getCompName(item.orgId)}}/{{getOrgName(item.orgId)}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div :value.sync="item.content" v-html="item.content" @click="doViewImages" readonly style="color: #333; font-size: 14px; padding-left: 78px;" id="reply-item"></div>
+        </div>
+      </div>
+
+      <div
+        style="width: 100%;margin: 20px 0;text-align: center;"
+        @click="doSelectRelpy"
+      >
+        <a v-show="! isShow" style="margin: 0 auto;"
+          >查看全部 {{mainModel.vo.replyTime ||0}} 条回复</a
+        >
+        <a v-show="isShow" style="margin: 0 auto;">已经显示全部</a>
+      </div>
+    </div>
+  </div>
+  <div class="few-info-sider pull-right">
+    <iv-button
+      v-if="(mainModel.opType=='create'||mainModel.vo.state== 0 )&&(mainModel.opType!='view')"
+      type="ghost"
+      @click="doSaveForum"
+      icon="filing">{{$t('gb.comnon.save')}}</iv-button>
+    <vi-button
+      v-if="(mainModel.opType=='view')&& isCreator&&(mainModel.vo.state== 0)&&hasAuth('edit')"
+      type="ghost"
+      @click="doEdit"
+      icon="ios-compose ">编辑</vi-button>
+    <vi-button
+    v-if="mainModel.opType!='view'&&mainModel.opType!='create'"
+      type="ghost"
+      @click="doCancel"
+      icon="android-remove-circle">取消</vi-button>
+    <vi-button
+    v-if="(mainModel.vo.state== 0||mainModel.vo.state== 1 )&&isCreator&&mainModel.opType!='update'&&hasAuth('delete')"
+      type="ghost"
+      @click="doDelete"
+      icon="trash-a">{{$t("gb.common.del")}}</vi-button>
+    <iv-button
+      v-if="(mainModel.vo.state== 0||mainModel.opType=='view')&&(mainModel.vo.state!= 1)&&mainModel.opType!='update'"
+      type="ghost"
+      @click="doPublish"
+      icon="upload">发布</iv-button>
+    <iv-button type="ghost" icon="android-cancel" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+    <iv-button
+      v-if="mainModel.isReadOnly&&mainModel.vo.state != 0&&hasAuth('reply')"
+      type="ghost"
+      @click="doreplyData"
+      icon="chatbubble-working" >回复</iv-button>
+    <!-- <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy"
+			icon="android-document">复制</iv-button>
+		<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"
+			icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+  </div>
+</div>
+<style>
+  #title {
+    width: 440px;
+  }
+  .reply {
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  .ul-lite-box{
+    display: none ;
+  }
+  .relpyInfo {
+    width: 100%;
+    padding: 10px;
+    height: 70px;
+    display: flex;
+  }
+  #content-detail {
+    word-wrap: break-word;
+  }
+  #content-detail img{
+    max-width: 550px;
+  }
+  #reply-item img{
+    max-width: 475px;
+  }
+  .relpyInfo img {
+    width: 50px;
+    height: 50px;
+  }
+  .ke-container {
+    width: 550px !important;
+  }
+  .item-content p{
+    word-wrap: break-word;
+  }
+  .keyword {
+    padding: 0 20px;
+    margin: 0 5px 5px 5px;
+    line-height: 30px;
+    border-radius: 30px;
+    background-color: #e5f2ff;
+    color: #2eabff;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+  }
+  .keywords {
+    width: 400px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .keywords1 {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .keywordSelectModal .ivu-textarea-wrapper {
+    width: 100% !important;
+  }
+
+  #forum .ivu-textarea-wrapper {
+    width: 100% !important;
+    margin: 10px 0;
+  }
+  
+  .keywordSelectModal p {
+    margin: 10px 0;
+  }
+
+  .ke-edit {
+    max-height: 600px;
+  }
+</style>
+<modal
+  :visible.sync="keywordSelectModal.show"
+  title="关键词选择"
+  :footer-hide="true"
+  width="600"
+>
+  <div
+    class="keywordSelectModal"
+    style="background-color: white;padding: 10px 20px;"
+  >
+    <p>选择下列的关键字</p>
+    <div class="keywords1">
+      <div
+        class="keyword"
+        v-for="(index,item) in mainModel.vo.techKeyWords"
+        :class='item.clicked?"clicked":""'
+        :key="index"
+        @click="doKeyWords1(index)"
+      >
+        {{item.val.keyword}}
+      </div>
+    </div>
+    <p>上述关键字不包含的，请手动录入：(多个关键字有逗号分隔)</p>
+    <iv-input
+      id="keyword-data"
+      :value.sync="keyword"
+    ></iv-input>
+    <div class="sw-co-footer">
+      <iv-button
+        type="primary"
+        @click="doSaveKeyWord"
+        style="margin-right: 20px;"
+        >确定</iv-button
+      >
+      <iv-button @click="doClosePage1">取消</iv-button>
+    </div>
+  </div>
+</modal>
+<modal
+  :visible.sync="relpyModal.show"
+  title="回复"
+  :footer-hide="true"
+  width="600"
+>
+  <div class="relpyModal" style="background-color: white;padding: 10px 20px;">
+    <textarea
+      name="kindEditor"
+      id="reply-data"
+      maxlength="2000"
+      :visible.sync="mainModel.vo.reply"
+      v-html="mainModel.vo.reply"
+      placeholder=""
+    ></textarea>
+
+    <div class="sw-co-footer">
+      <iv-button type="primary" @click="doSaveData" style="margin-right: 20px;"
+        >确定</iv-button
+      >
+      <iv-button @click="doClosePage">取消</iv-button>
+    </div>
+  </div>
+</modal>

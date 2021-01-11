@@ -1,0 +1,28 @@
+<div class="businessMenuInfo" v-el:viewbox  :class="{'business-menu':viewScllow}" >
+    <iv-row type="flex" align="middle" >
+        <iv-col class="menuList" span="24">
+         <el-tabs @tab-click="doTabs" :top-type.sync="topSubMenu">
+            <el-tab-pane label="检查表">
+                <iv-row type="flex" align="middle" class="mp-header-item-func" :style="{ top: topSubMenu + 'px' }">
+                    <iv-col span="16" class="menuTitle">
+                        <div v-if="tableModel.selectedDatas.length > 0">
+                            <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                            <vi-button type="text" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                        </div>
+                    </iv-col>
+                    <iv-col span="8" class="menuTitle">
+                        <vi-button style="float: right;" v-if="tableModel.selectedDatas.length === 0" type="text" class="mp-header-item-btn" @click="doShowCheckTableSelectModal()">添加</vi-button>
+                    </iv-col>
+                </iv-row>
+
+                <div class="mp-content">
+                    <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+        </iv-col>
+    </iv-row>
+</div>
+
+<tpachecktable-select-modal :visible.sync="selectModel.tpaCheckTableSelectModel.visible" :filter-data="selectModel.tpaCheckTableSelectModel.filterData"  @do-save="doSaveCheckTable" :filter-data="selectModel.tpaCheckTableSelectModel.filterData"></tpachecktable-select-modal>
+

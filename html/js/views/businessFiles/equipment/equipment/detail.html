@@ -1,0 +1,330 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="checkListPng2"></i><span>{{$t("gb.common.basicInfo")}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button v-if="mainModel.isReadOnly && mainModel.vo.isIdentification === '0'" type="ghost" @click="doAddRiskIdentification">风险识别</iv-button>
+                <iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+                <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+                <vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+                <iv-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">
+                    {{$t("gb.common.del")}}
+                </iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+
+        <!-- 模型基础信息 -->
+        <div class="bip-content">
+
+            <el-form class="bip-content-form" :model="mainModel.vo" :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules"
+                     is-label-vertical v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.equipmentCode')" prop="code">
+                        <iv-input :value.sync="mainModel.vo.code" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.equipmentName')" prop="name">
+                        <iv-input :value.sync="mainModel.vo.name" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.equipmentNumber')" prop="version">
+                        <iv-input :value.sync="mainModel.vo.version" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.equipmentType')" prop="equipmentType.id">
+                        <!--<input-select :value="mainModel.vo.equipmentType" id-field="id" display-field="name" :textonly="mainModel.isReadOnly"-->
+                                      <!--@click="(!mainModel.isReadOnly) && (doShowEquipmentTypeSelectModal())"></input-select>-->
+<!--                        <div v-if="mainModel.isReadOnly">{{displayTypeName}}</div>-->
+<!--                        <iv-tree-select-->
+<!--                            :model.sync="mainModel.vo.equipmentType.id"-->
+<!--                            :list="typeList"-->
+<!--                            id-attr="id"-->
+<!--                            display-attr="name"-->
+<!--                            v-else-->
+<!--                        >-->
+<!--                            <iv-tree-->
+<!--                                :model="typeList"-->
+<!--                                :selected-datas.sync="selectedDatas4Tree"-->
+<!--                                serch-filterable-->
+<!--                                id-attr="id"-->
+<!--                                pid-attr="parentId"-->
+<!--                                display-attr="name"-->
+<!--                                single-select-->
+<!--                                show-checkbox-->
+<!--                                allow-parent-checked>-->
+<!--                            </iv-tree>-->
+<!--                        </iv-tree-select>-->
+
+                        <span style="display: inline-block;white-space: normal;word-break: break-all;font-size: 12px;padding-top: 3px" v-if="mainModel.isReadOnly">{{displayTypeName}}</span>
+                        <input-select :value.sync="mainModel.vo.equipmentType" :clearable="true" id-field="id" @do-clear-input="doClearLeader" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowEquipmentTypeModal())"></input-select>
+                        <span style="display: inline-block;white-space: normal;word-break: break-all;font-size: 12px;padding-top: 3px" v-if="isXBGDRiskAssessment && mainModel.vo.equipmentType.id && !mainModel.isReadOnly">{{displayTypeName}}</span>
+
+                    </el-form-item>
+
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" :label="$t('hag.common.regDate')" prop="createDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.createDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.createDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('hag.common.warrantyMonth')" prop="warranty">
+                        <iv-input :value.sync="mainModel.vo.warranty" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('hag.common.dateScrap')" prop="retirementDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.retirementDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.retirementDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('gb.common.personInCharge')" class="small-info-box" prop="ownerId">
+                        <input-select :value.sync="mainModel.vo.user" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name"
+                                      :textonly="mainModel.isReadOnly" @click="(!isReadOnly) && doShowUserSelectModal()"></input-select>
+
+                    </el-form-item>
+
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" :label="$t('gb.common.ownedComp')" prop="compId">
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('gb.common.ownedDept')" prop="orgId">
+                        <department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"
+                                                :comp-id.sync="mainModel.vo.compId"></department-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+                    </el-form-item>
+
+                    <el-form-item class="small-info-box" label="属地" class="small-info-box" prop="dominationArea.id">
+                        <!--<input-select :value.sync="mainModel.vo.dominationArea" :clearable="true" id-field="id" display-field="name"-->
+                                      <!--:textonly="mainModel.isReadOnly" @click="doShowDominationAreaSelectModal"></input-select>-->
+                        <cascade-input-select
+                                :value="mainModel.vo.dominationArea"
+                                :cascade-id="mainModel.vo.orgId"
+                                :textonly="mainModel.isReadOnly"
+                                @click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())"
+                        ></cascade-input-select>
+                    </el-form-item>
+
+                    <el-form-item class="small-info-box" :label="$t('gb.common.state')" prop="state" class="small-info-box">
+                        <i-select :model.sync="mainModel.vo.state" :list="getDataDicList('stateData')" v-if="!mainModel.isReadOnly">
+                            <i-option v-for="item in getDataDicList('stateData')" :value="item.id">{{item.value}}</i-option>
+                        </i-select>
+                        <span v-else>{{getDataDic('stateData', mainModel.vo.state)}}</span>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="下次检验日期" prop="nextCheckDate">
+                        <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.nextCheckDate"></date-picker>
+                        <div v-else>{{displayNextCheckDateText}}</div>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="提前提醒时间" prop="notifyMonth">
+                        <iv-input-number v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.notifyMonth" type="number" :is-integer='true'>
+                            <span slot="append">月</span>
+                        </iv-input-number>
+                        <div v-else v-show="mainModel.vo.notifyMonth">{{mainModel.vo.notifyMonth}}月</div>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="提醒人" prop="notifyUsers">
+                        <multiple-input-select
+                                :selected-multiple.sync="mainModel.vo.notifyUsers"
+                                :textonly="mainModel.isReadOnly"
+                                @on-click="doShowUserSelectModal(1)"
+                        ></multiple-input-select>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="工艺编号" prop="technicsNo">
+                        <iv-input :value.sync="mainModel.vo.technicsNo" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <div v-if="isXBGDRiskAssessment">
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="是否完好" prop="intact">
+                        <span v-if="mainModel.isReadOnly">{{ getDataDic('common_state', mainModel.vo.intact) }}</span>
+                        <i-select v-else :model.sync="mainModel.vo.intact" :list="getDataDicList('common_state')" clearable></i-select>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="管理单位" prop="mgrUnit">
+                        <iv-input :value.sync="mainModel.vo.mgrUnit" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="服务管线" prop="servicePipeline">
+                        <iv-input :value.sync="mainModel.vo.servicePipeline" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="机型/规格" prop="modelSpecification">
+                        <iv-input :value.sync="mainModel.vo.modelSpecification" :show-tip="true" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="工作能力" prop="workAbility">
+                        <iv-input :value.sync="mainModel.vo.workAbility" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="ABC分级" prop="level">
+<!--                        <iv-input :value.sync="mainModel.vo.level" :textonly="mainModel.isReadOnly"></iv-input>-->
+                        <span v-if="mainModel.isReadOnly">{{ getDataDic('ABC_level', mainModel.vo.level) }}</span>
+                        <i-select v-else :model.sync="mainModel.vo.level" :list="getDataDicList('ABC_level')" clearable></i-select>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="专业" prop="speciality">
+<!--                        <iv-input :value.sync="mainModel.vo.speciality" :textonly="mainModel.isReadOnly"></iv-input>-->
+                        <span v-if="mainModel.isReadOnly">{{ getDataDic('equipment_speciality', mainModel.vo.speciality) }}</span>
+                        <i-select v-else :model.sync="mainModel.vo.speciality" :list="getDataDicList('equipment_speciality')" clearable></i-select>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="失效模型" prop="failureModel">
+                        <iv-input :value.sync="mainModel.vo.failureModel" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="制造日期" prop="manufactureDate">
+                        <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.manufactureDate" clearable></date-picker>
+                        <iv-input v-else :value="formatYMD(mainModel.vo.manufactureDate)" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="投用日期" prop="applyDate">
+                        <date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.applyDate" clearable></date-picker>
+                        <iv-input v-else :value="formatYMD(mainModel.vo.applyDate)" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="制造国" prop="manufactureCountry">
+                        <iv-input :value.sync="mainModel.vo.manufactureCountry" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="制造厂家" prop="manufacturer">
+                        <iv-input :value.sync="mainModel.vo.manufacturer" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="出厂编号" prop="manufactureNo">
+                        <iv-input :value.sync="mainModel.vo.manufactureNo"  :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="长x宽x高(mm)" prop="lwh">
+                        <iv-input :value.sync="mainModel.vo.lwh" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="设备重量kg" prop="weight">
+                        <iv-input :value.sync="mainModel.vo.weight" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="设计寿命(年)" prop="life">
+                        <iv-input :value.sync="mainModel.vo.life" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+                    <el-form-item class="small-info-box" label="管理单元编码" prop="managementUnitCode">
+                        <iv-input :value.sync="mainModel.vo.managementUnitCode" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="管理单元类型" prop="managementUnitType">
+                        <iv-input :value.sync="mainModel.vo.managementUnitType" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="管线" prop="pipeline">
+                        <iv-input :value.sync="mainModel.vo.pipeline" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="产品标准" prop="productStandard">
+                        <iv-input :value.sync="mainModel.vo.productStandard" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+<!--                    <el-form-item class="small-info-box" label="区域" prop="region">-->
+<!--                        <iv-input :value.sync="mainModel.vo.region" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--                    </el-form-item>-->
+                    <el-form-item class="small-info-box" label="是否特种设备" prop="special">
+                        <span v-if="mainModel.isReadOnly">{{ getDataDic('common_state', mainModel.vo.special) }}</span>
+                        <i-select v-else :model.sync="mainModel.vo.special" :list="getDataDicList('common_state')" clearable></i-select>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="是否测量设备" prop="measure">
+                        <span v-if="mainModel.isReadOnly">{{ getDataDic('common_state', mainModel.vo.measure) }}</span>
+                        <i-select v-else :model.sync="mainModel.vo.measure" :list="getDataDicList('common_state')" clearable></i-select>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="ERP设备编号" prop="erpEquipmentNo">
+                        <iv-input :value.sync="mainModel.vo.erpEquipmentNo" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="ERP站场编号" prop="erpStationNo">
+                        <iv-input :value.sync="mainModel.vo.erpStationNo" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+
+                    <el-form-item class="small-info-box" label="修改信息" prop="modifyInfo">
+                        <iv-input :value.sync="mainModel.vo.modifyInfo" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" label="3D站场编号" prop="stationNo">
+                        <iv-input :value.sync="mainModel.vo.stationNo" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('gb.common.remarks')" prop="remark" full-width>
+                        <iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly" :width="380"></iv-textarea>
+                    </el-form-item>
+                </iv-row>
+
+
+                </div>
+
+
+
+
+
+            </el-form>
+        </div>
+    </div>
+
+    <div class="rel-info-panel">
+        <div class="rip-item rip-tableFirst">
+            <simple-card class="fip-content-item" v-show="mainModel.vo.isIdentification === '1'">
+                <p slot="title"><i class="basicPng"></i><span>风险辨识</span></p>
+<!--                <a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowRiskIdentificationSelectModal()" >-->
+<!--                    <span><Icon type="plus"></Icon>添加</span>-->
+<!--                </a>-->
+                <vue-bootstrap-table
+                        :setting="tableModel.riskIdentificationTableModel"
+                        @on-del-row="doRemoveRiskIdentification"
+                        v-ref:riskidentification-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+            <simple-card class="fip-content-item">
+                <p slot="title"><i class="basicPng"></i><span>{{$t("bc.ria.equipmentParts")}}</span></p>
+                <a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowEquipmentItemFormModal4Create">
+                    <span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+                </a>
+                <vue-bootstrap-table
+                        :url="tableModel.equipmentItemTableModel.url"
+                        :columns="tableModel.equipmentItemTableModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        @on-del-row="doRemoveEquipmentItems"
+                        @on-edit-row="doShowEquipmentItemFormModal4Update"
+                        v-ref:equipmentitem-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+
+            <simple-card class="fip-content-item">
+                <p slot="title"><i class="basicPng"></i><span>维检修记录</span></p>
+                <vue-bootstrap-table
+                        :setting="tableModel.poolTableModel"
+                        v-ref:pool-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+
+<!--<equipmenttype-select-modal single-select :visible.sync="selectModel.equipmentTypeSelectModel.visible"-->
+                            <!--@do-save="doSaveEquipmentType"></equipmenttype-select-modal>-->
+
+<equipmentitem-form-modal
+        :visible.sync="formModel.equipmentItemFormModel.show"
+        @do-save="doSaveEquipmentItem"
+        @do-update="doUpdateEquipmentItem"
+        :query-url="formModel.equipmentItemFormModel.queryUrl"
+        v-ref:equipmentitem-form-modal>
+</equipmentitem-form-modal>
+
+<user-select-modal single-select :visible.sync="mainModel.showUserSelectModal" @do-save="doSaveUser"></user-select-modal>
+
+<user-select-modal :visible.sync="mainModel.showUsersSelectModal" @do-save="doSaveUsers"></user-select-modal>
+
+<!--属地选择器-->
+<dominationarea-select-modal
+        single-select
+        :visible.sync="selectModel.dominationAreaSelectModel.visible"
+        :filter-data="selectModel.dominationAreaSelectModel.filterData"
+        @do-save="doSaveDominationArea"
+></dominationarea-select-modal>
+<equipment-type-select-modal :visible.sync="selectModel.equipmentTypeSelectModel.visible" @do-save="doSaveEquipmentType"></equipment-type-select-modal>

@@ -1,0 +1,24 @@
+<div class="ivu-textarea-wrapper" :style="{'width': width>0? width+'px':width }">
+
+    <div v-if="readonly" style="white-space: pre-wrap;word-break: break-all; font-size: 12px;">{{value}}</div>
+
+    <template v-else>
+    <pre><span>{{value}}</span><br></pre>
+
+    <textarea
+            v-el:textarea
+            class="ivu-textarea ivu-input"
+            :style="textareaStyles"
+            :placeholder="placeholder"
+            :disabled="disabled"
+            :maxlength="maxLength"
+            :readonly="readonly"
+            v-model="value"
+            :rows="rows"
+            :autofocus="autoFocus"
+            @focus="handleFocus"
+            @blur="handleBlur"
+            @change="handleChange">
+    </textarea>
+    </template>
+</div>

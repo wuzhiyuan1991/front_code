@@ -1,0 +1,156 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>补充信息</span>
+		</div>
+		<div class="fip-content">
+			<simple-card class="fip-content-item">
+				<el-form class="fip-content-item-form">
+					<el-form-item label="事故名称" >
+						<iv-input :value.sync="mainModel.vo.accident.name" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="发生时间" >
+						<iv-input  :value.sync="mainModel.vo.accident.accidentTime" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故单位" >
+						<iv-input  :value="getDataDic('org', mainModel.vo.accident.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  label="事故单位负责人" >
+						{{mainModel.vo.accident.unitPrincipal.name}}
+					</el-form-item>
+					<el-form-item label="手机号码" >
+						{{mainModel.vo.accident.unitPrincipal.mobile}}
+					</el-form-item>
+					<el-form-item label="事故现场负责人" >
+						{{mainModel.vo.accident.scenePrincipal.name}}
+					</el-form-item>
+					<el-form-item label="手机号码" >
+						{{mainModel.vo.accident.scenePrincipal.mobile}}
+					</el-form-item>
+					<el-form-item  label="事故简要经过">
+						<iv-input :value.sync="mainModel.vo.accident.description" type="textarea" :rows="5" textonly></iv-input>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+			<el-form class="fip-content-item-form" :model="mainModel.vo"
+					 :rules="baseRules" v-ref:ruleform>
+				<simple-card class="fip-content-item">
+					<!--<p slot="title"><i class="basicPng"></i><span>补充信息</span></p>-->
+					<el-form-item label="报告编码" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="作业类别" prop="jobClass">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iam_investigation_job_class', mainModel.vo.jobClass) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.jobClass" :list="getDataDicList('iam_investigation_job_class')"></i-select>
+					</el-form-item>
+					<el-form-item label="事故类型" prop="accidentType">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iam_investigation_accident_type', mainModel.vo.accidentType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.accidentType" :list="getDataDicList('iam_investigation_accident_type')"></i-select>
+					</el-form-item>
+					<el-form-item label="详细说明" prop="specify">
+						<iv-input :value.sync="mainModel.vo.specify" type="textarea" :rows="5" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</simple-card>
+
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>事件背景及事件发生经过的详细描述</span></p>
+					<a slot="extra" v-show="mainModel.opType != 'create' && showEditBtn.details" @click.prevent="showEditBtn.details = !showEditBtn.details" >
+						<span>编辑</span>
+					</a>
+					<a slot="extra" v-show="!showEditBtn.details" @click.prevent="doSaveText('details')" >
+						<span>保存</span>
+					</a>
+					<el-form-item prop="details" label-width="0" class="el-form-item-2span">
+						<iv-input  style="word-wrap:break-word" type="textarea" :rows="5" :value.sync="mainModel.vo.details" :textonly="showEditBtn.details"></iv-input>
+					</el-form-item>
+				</simple-card>
+
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>直接原因</span></p>
+					<a slot="extra" v-show="mainModel.opType != 'create' && showEditBtn.immediateCause" @click.prevent="showEditBtn.immediateCause = !showEditBtn.immediateCause" >
+						<span>编辑</span>
+					</a>
+					<a slot="extra" v-show="!showEditBtn.immediateCause" @click.prevent="doSaveText('immediateCause')" >
+						<span>保存</span>
+					</a>
+					<el-form class="fip-content-item-form">
+						<el-form-item prop="details" label-width="0" class="el-form-item-2span">
+							<iv-input style="word-wrap:break-word" type="textarea" :rows="5" :value.sync="mainModel.vo.immediateCause" :textonly="showEditBtn.immediateCause"></iv-input>
+						</el-form-item>
+					</el-form>
+				</simple-card>
+
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>系统原因</span></p>
+					<a slot="extra" v-show="mainModel.opType != 'create' && showEditBtn.systemReason" @click.prevent="showEditBtn.systemReason = !showEditBtn.systemReason" >
+						<span>编辑</span>
+					</a>
+					<a slot="extra" v-show="!showEditBtn.systemReason" @click.prevent="doSaveText('systemReason')" >
+						<span>保存</span>
+					</a>
+					<el-form class="fip-content-item-form">
+						<el-form-item prop="systemReason" label-width="0" class="el-form-item-2span">
+							<iv-input style="word-wrap:break-word" type="textarea" :rows="5" :value.sync="mainModel.vo.systemReason" :textonly="showEditBtn.systemReason"></iv-input>
+						</el-form-item>
+					</el-form>
+				</simple-card>
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>整改行动</span></p>
+					<a slot="extra" v-show="mainModel.opType != 'create' && showEditBtn.rectification" @click.prevent="showEditBtn.rectification = !showEditBtn.rectification" >
+						<span>编辑</span>
+					</a>
+					<a slot="extra" v-show="!showEditBtn.rectification" @click.prevent="doSaveText('rectification')" >
+						<span>保存</span>
+					</a>
+					<el-form class="fip-content-item-form">
+						<el-form-item prop="details" label-width="0" class="el-form-item-2span">
+							<iv-input style="word-wrap:break-word" type="textarea" :rows="5" :value.sync="mainModel.vo.rectification" :textonly="showEditBtn.rectification"></iv-input>
+						</el-form-item>
+					</el-form>
+				</simple-card>
+			</el-form>
+			
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>调查人</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowInvestigatorSelectModal()" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.investigatorTableModel"
+					@on-del-row="doRemoveInvestigators"
+					v-ref:investigator-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>附件</span></p>
+				<p style="margin-bottom: 10px">如照片，目击者陈述，草图，简图，测试报告，记录等</p>
+				<div class="rel-info-panel-content-tabs">
+					<el-tabs active-key="relTab">
+						<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+							<file-list-simple-card remark="" :data="fileModel.file.data" :config="fileModel.file.cfg"></file-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+							<image-list-simple-card  remark="" :data="fileModel.pic.data" :config="fileModel.pic.cfg"></image-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+							<video-list-simple-card remark="" :data="fileModel.video.data" :config="fileModel.video.cfg"></video-list-simple-card>
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doConfirmCallback('doDelete')" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+<user-select-modal :visible.sync="selectModel.investigatorSelectModel.visible" :filter-data="selectModel.investigatorSelectModel.filterData"  @do-save="doSaveInvestigators"></user-select-modal>
+

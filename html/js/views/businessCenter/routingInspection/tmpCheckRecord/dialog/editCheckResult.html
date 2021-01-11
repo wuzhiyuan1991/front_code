@@ -1,0 +1,42 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+			<el-form-item :label="isRemarkShow ? $t('gb.common.problemDesc') : $t('gb.common.describeSup')" prop="problem" :class="requireProblem">
+				<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.problem"></iv-input>
+			</el-form-item>
+
+			<el-form-item v-if="isRemarkShow" :label="$t('gb.common.latentDefect')" prop="latentDefect" >
+				<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.latentDefect"></iv-input>
+			</el-form-item>
+
+			<el-form-item :label="$t('gb.common.recMeasure')" v-if="isRemarkShow" prop="remark">
+				<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.remark"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.picture')" prop="rightPictures" :class="requirePic">
+				<lite-box v-for="(index,pic) in mainModel.vo.rightPictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.rightPictures)" @click="doPic(pic.fileId)">
+					<img :src="convertPicPath(pic.fileId)">
+				</lite-box>
+				<vue-file-upload :events="rightPicModel.events" v-if="mainModel.vo.rightPictures.length < 9" :params="rightPicModel.params" @on-success-upload="rightPic" :filters="rightPicModel.filters" class="file_upload"></vue-file-upload>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.video')" prop="wrongPictures" :class="requireVideo">
+				<lite-box v-for="(index,pic) in mainModel.vo.wrongPictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.wrongPictures)" @click="doPlay(pic.fileId)">
+					<img :src="convertPath()">
+				</lite-box>
+				<vue-file-upload :events="wrongPicModel.events" v-if="mainModel.vo.wrongPictures < 1" :params="wrongPicModel.params" @on-success-upload="wrongPic" :filters="wrongPicModel.filters" class="file_upload"></vue-file-upload>
+			</el-form-item>
+		</el-form>
+
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>
+
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+	<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400"  footer-hide>
+	<img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>

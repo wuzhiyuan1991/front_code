@@ -1,0 +1,67 @@
+<div class="contacts" style="padding: 0;">
+    <div class="home-header">
+        <i class="contactsIco"></i>
+        <span>通讯录</span>
+        <!--<span style="margin-left: 200px;font-size: 15px;">集团</span>-->
+        <div class="homeSelect" style="margin-top: 4px">
+            <company-tree-select :serch-filterable="false" :id.sync="parentId"></company-tree-select>
+        </div>
+    </div>
+    <div class="home-content" style="padding: 10px 10px;">
+        <iv-input icon="ios-search-strong" :value.sync="searchDatas" style="width:380px" @on-click="doIconClickSearch"
+                  @on-enter="doEnterSearch"></iv-input>
+        <ul class="home-Contacts-Center" v-if="hideFlag" v-loadscroll="loadMore">
+            <li v-for="item in tabsList" @click="doDetailInfo($event,item)">
+                <!--<Poptip class="hidePopTipArrow " placement="left-start" :hide-trigger="hidePopTipTrigger">-->
+                <div class="home-lefts">
+                    <img v-if="item.faceid !=null" :src="headerFaceUrl(item.faceid)">
+                    <a href="javascript:void(0);" v-else class="img"></a>
+                </div>
+                <div class="home-rigths">
+                    <p>{{item.name}}</p><span>{{item.mobile}}</span>
+                </div>
+                <!--<div class="homePiptip"  slot="content">-->
+                <!--<div class="homeModel">-->
+                <!--<div class="homeAsideTitle">-->
+                <!--<div class="homeTitleImg"><img src="css/images/course.jpg"></div>-->
+                <!--<p class="homeTitleName">{{mainModel.vo.name}}</p>-->
+                <!--</div>-->
+                <!--<div class="homeAsideCenter">-->
+                <!--<p><span>公司</span><b>{{compName}}</b></p>-->
+                <!--<p><span>部门</span><b>{{deptName}}</b></p>-->
+                <!--<p><span>职务</span><b>{{mainModel.vo.posNames}}</b></p>-->
+                <!--<p><span>安全角色</span><b>{{mainModel.vo.roleName}}</b></p>-->
+                <!--</div>-->
+                <!--<div class="homeFooter">-->
+                <!--<p><span>电话</span><b>{{mainModel.vo.mobile}}</b></p>-->
+                <!--<p><span>邮箱</span><b>{{mainModel.vo.email}}</b></p>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</Poptip>-->
+            </li>
+        </ul>
+    </div>
+    <div class="homePiptip" :style="{top:scrollTop + 'px'}" v-if="homeInfo">
+        <div class="homeModel">
+            <div class="homeAsideTitle">
+                <!--<div class="homeTitleImg"><img src="css/images/course.jpg"></div>-->
+                <div class="homeTitleImg">
+                    <img v-if="mainModel.vo.faceid !=null" :src="headerFaceUrl(mainModel.vo.faceid)">
+                    <a href="javascript:void(0);" v-else class="img"></a>
+                </div>
+                <p class="homeTitleName">{{mainModel.vo.name}}</p>
+            </div>
+            <div class="homeAsideCenter">
+                <p><span>公司</span><b>{{compName}}</b></p>
+                <p><span>部门</span><b>{{deptName}}</b></p>
+                <p><span>职务</span><b>{{mainModel.vo.posNames}}</b></p>
+                <p><span>安全角色</span><b>{{mainModel.vo.roleName}}</b></p>
+            </div>
+            <div class="homeFooter">
+                <p><span>电话</span><b>{{mainModel.vo.mobile}}</b></p>
+                <p><span>邮箱</span><b>{{mainModel.vo.email}}</b></p>
+            </div>
+        </div>
+    </div>
+</div>

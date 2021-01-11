@@ -1,0 +1,145 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <!--					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+                <!--						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+                <!--					</el-form-item>-->
+                <el-form-item label="设备类型">
+                    <span
+                        style="display:block;word-break: break-all;word-wrap: break-word;">{{diaPlayEqTypeName}}</span>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="内容" prop="name">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.name"
+                        :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+
+                <!--新增检查项-->
+                <el-form-item label="落实类型" prop="bizItemType">
+                    <i-select :model.sync="mainModel.vo.bizItemType" :list="getDataDicList('ira_biz_item_type')"
+                        :disabled="disableBizItemType" clearable>
+                        <i-option v-for="s in getDataDicList('ira_biz_item_type')" :value="s.id" v-show="isFinish">
+                            {{s.value}}
+                        </i-option>
+                    </i-select>
+                </el-form-item>
+                <div class="line" v-if="mainModel.vo.bizItemType"><span
+                        class="line_span">{{ getDataDic('ira_biz_item_type', mainModel.vo.bizItemType) +"信息" }}</span>
+                </div>
+
+                <div v-if="mainModel.vo.bizItemType === '1' || mainModel.vo.bizItemType === '2'">
+                    <el-form-item :label="$t('gb.common.ownedComp')" prop="checkItem.compId" class="small-info-box">
+                        <company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.checkItem.compId">
+                        </company-tree-select>
+                        <iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly>
+                        </iv-input>
+                    </el-form-item>
+                    <!--检查项-->
+                    <div v-if="mainModel.vo.bizItemType === '1'">
+                        <el-form-item label="检查对象名称" prop="checkItem.checkObjName" class="small-info-box">
+                            <iv-input :value.sync="mainModel.vo.checkItem.checkObjName" :textonly="mainModel.isReadOnly"
+                                :disabled="true" :show-tip="true"></iv-input>
+                        </el-form-item>
+                        <el-form-item label="检查标准" prop="checkItem.checkStd" class="small-info-box">
+                            <!--							<iv-input :value.sync="mainModel.vo.checkItem.checkStd" type="textarea" :textonly="mainModel.isReadOnly" :show-tip="true" ></iv-input>-->
+                            <iv-input :value.sync="mainModel.vo.name" type="textarea" :textonly="mainModel.isReadOnly"
+                                :show-tip="true" disabled></iv-input>
+
+                        </el-form-item>
+                    </div>
+                    <!--设备维保项-->
+                    <div v-if="mainModel.vo.bizItemType === '2'">
+                        <el-form-item label="工作项内容" prop="checkItem.name" class="small-info-box">
+                            <!--							<iv-input :value.sync="mainModel.vo.checkItem.name" type="textarea" :textonly="mainModel.isReadOnly" :show-tip="true"></iv-input>-->
+                            <iv-input :value.sync="mainModel.vo.name" type="textarea" :textonly="mainModel.isReadOnly"
+                                :show-tip="true" disabled></iv-input>
+
+                        </el-form-item>
+                        <!--						<el-form-item label="工作表" prop="periodicWorkTable.id">-->
+                        <!--							<input-select :value="mainModel.vo.periodicWorkTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowPeriodicWorkTableSelectModal())" clearable></input-select>-->
+                        <!--						</el-form-item>-->
+                        <!--						<el-form-item label="工作项分组"  class="small-info-box">-->
+                        <!--							<i-select :model.sync="mainModel.vo.periodicWorkTable.group.id" :list="mainModel.periodicWorkTableGroupList">-->
+                        <!--								<i-option v-for="group in mainModel.periodicWorkTableGroupList" :value="group.id">{{group.name}}</i-option>-->
+                        <!--							</i-select>-->
+                        <!--						</el-form-item>-->
+                    </div>
+
+                </div>
+
+                <!--新增隐患-->
+                <div v-if="mainModel.vo.bizItemType === '3'">
+                    <el-form-item label="隐患信息" v-if="this.mainModel.opType === 'create'">
+                        <iv-radio-group :model.sync="poolType">
+                            <iv-radio value="0">新增隐患</iv-radio>
+                            <iv-radio value="1">选择已有隐患</iv-radio>
+                        </iv-radio-group>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedComp')" prop="pool.compId">
+                        <company-tree-select v-if="!!mainModel.opType" :id.sync="mainModel.vo.pool.compId"
+                            :disabled="poolType == 1"></company-tree-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.ownedDept')" prop="pool.orgId">
+                        <department-tree-select v-else :id.sync="mainModel.vo.pool.orgId"
+                            :comp-id.sync="mainModel.vo.pool.compId" :disabled="poolType == 1"></department-tree-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.problemDesc')" prop="pool.problem">
+                        <input-search :input-val.sync="mainModel.vo.pool.problem" is-text="true"
+                            :disabled="poolType == 1">
+                        </input-search>
+                    </el-form-item>
+                    <el-form-item label="专业" prop="pool.specialty" v-if="showSpecialty">
+                        <i-select :model.sync="mainModel.vo.pool.specialty" :list="getDataDicList('specialty')"
+                            :disabled="poolType == 1">
+                            <i-option v-for="s in getDataDicList('specialty')" :value="s.id">{{s.value}}</i-option>
+                        </i-select>
+                    </el-form-item>
+                </div>
+            </el-form>
+
+        </div>
+        <simple-card v-if="mainModel.vo.bizItemType === '1' || mainModel.vo.bizItemType === '2'">
+            <p slot="title" style="font-size: 14px"><i class="basicPng"></i><span>{{checkTableTitle}}</span></p>
+            <a slot="extra" style="margin-right: 10px;" @click.prevent="doShowCheckTableSelectModel()">
+                <span>
+                    <Icon type="plus"></Icon>添加
+                </span>
+            </a>
+            <vue-bootstrap-table :columns="tableModel.checkTable.columns" :show-column-picker="false" :show-pager="true"
+                :selected-datas.sync="tableModel.checkTable.selectedDatas" :show-empty-row="false"
+                :values.sync="tableModel.checkTable.dataList" is-cache-selected-data lazy-load v-ref:check-table>
+            </vue-bootstrap-table>
+        </simple-card>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+<!--<checkitem-select-modal single-select :visible.sync="selectModel.checkItemSelectModal.visible" :filter-data="selectModel.checkItemSelectModal.filterData" @do-save="doSaveCheckItem"></checkitem-select-modal>-->
+<pool-select-modal single-select :visible.sync="selectModel.poolSelectModal.visible"
+    :filter-data="selectModel.poolSelectModal.filterData" @do-save="doSavePool"></pool-select-modal>
+<periodic-work-table-select-modal single-select :visible.sync="selectModel.periodicWorkTableSelectModal.visible"
+    :filter-data="selectModel.periodicWorkTableSelectModal.filterData" @do-save="doSavePeriodicWorkTable">
+</periodic-work-table-select-modal>
+<check-table-select-modal single-select :visible.sync="selectModel.checkTableSelectModal.visible"
+    :filter-data="selectModel.checkTableSelectModal.filterData" @do-save="doSaveCheckTable">
+</check-table-select-modal>
+
+<style>
+    .line {
+        margin-top: 20px;
+        border-top: 1px solid #ddd;
+        text-align: center
+    }
+
+    .line_span {
+        position: relative;
+        top: -10px;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+
+    .simple-card-head {
+        padding: 8px 0px 0px 0px;
+    }
+</style>

@@ -1,0 +1,66 @@
+<div class="m-colorPicker" ref="colorPicker">
+    <!-- 颜色显示小方块 -->
+    <div class="colorBtn jscolor"
+         :style="{ 'background-color': showColor }"
+         @click="open"
+         :class="{ disabled: disabled, 'active': openStatus }"
+         v-el:js-color
+    ></div>
+    <!-- 用以激活HTML5颜色面板 -->
+    <!--<input type="color"-->
+           <!--ref="html5Color"-->
+           <!--v-model="html5Color"-->
+           <!--@change="updateValue(html5Color)">-->
+    <!-- 颜色色盘 -->
+
+    <div class="box" :class="{ open: openStatus }" v-el:box>
+        <!--<div class="hd">-->
+            <!--<div class="colorView" :style="{ 'background-color': showPanelColor }"></div>-->
+            <!--<div class="defaultColor"-->
+                 <!--@click="handleDefaultColor"-->
+                 <!--@mouseover="hoveColor = defaultColor"-->
+                 <!--@mouseout="hoveColor = null"-->
+            <!--&gt;默认颜色-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="bd">
+            <h3>主题颜色</h3>
+            <ul class="tColor">
+                <li
+                        v-for="color of tColor"
+                        :style="{ backgroundColor: color.color }"
+                        @mouseover="hoveColor = color.color"
+                        @mouseout="hoveColor = null"
+                        @click="updateValue(color.color)"
+                        :title="color.name"
+                ></li>
+            </ul>
+            <ul class="bColor">
+                <li v-for="item of colorPanel">
+                    <ul>
+                        <li
+                                v-for="color of item"
+                                :style="{ backgroundColor: color.color }"
+                                @mouseover="hoveColor = color.color"
+                                @mouseout="hoveColor = null"
+                                @click="updateValue(color.color)"
+                                :title="color.name"
+                        ></li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>标准颜色</h3>
+            <ul class="tColor">
+                <li
+                        v-for="color of bColor"
+                        :style="{ backgroundColor: color.color }"
+                        @mouseover="hoveColor = color.color"
+                        @mouseout="hoveColor = null"
+                        @click="updateValue(color.color)"
+                        :title="color.name"
+                ></li>
+            </ul>
+            <h3 @click="triggerHtml5Color" style="cursor: pointer;">更多颜色...</h3>
+        </div>
+    </div>
+</div>

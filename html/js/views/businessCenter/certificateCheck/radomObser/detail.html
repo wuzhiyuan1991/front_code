@@ -1,0 +1,85 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<!--epc-content-row-space 控制每一行的间距-->
+			<simple-card class="fip-content-item epc-content-row-space">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+			<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+				<el-form-item :label="$t('gb.common.checkUser')" prop="user.name">
+					<input-select :value="mainModel.vo.user" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUserSelectModal())" ></input-select>
+				</el-form-item>
+
+				<el-form-item :label="$t('gb.common.checkTime')" prop="checkDate">
+					<date-picker  :selected-date.sync="mainModel.vo.checkDate" v-if="!mainModel.isReadOnly"></date-picker>
+					<iv-input :value.sync="mainModel.vo.checkDate" textonly v-else></iv-input>
+				</el-form-item>
+				<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+					<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+					<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+				</el-form-item>
+				<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId">
+					<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+					<iv-input v-show="mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+				</el-form-item>
+				<el-form-item :label="$t('gb.common.equipmentAndFacilities')">
+					<input-select :value.sync="mainModel.vo.equipment" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name"   :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowEquipmentSelectModel())" ></input-select>
+				</el-form-item>
+				<el-form-item :label="$t('gb.common.describe')" prop="content">
+					<iv-input  :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly" v-if="mainModel.isReadOnly"></iv-input>
+					<iv-input type="textarea" :value.sync="mainModel.vo.content" v-else></iv-input>
+				</el-form-item>
+				</el-form>
+			</simple-card>
+			<simple-card class="fip-content-item" :show-content.sync="isShowCardContent" v-if="mainModel.opType != 'create'">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('bc.hal.enclosure')}}</span></p>
+
+				<simple-card class="fip-content-sub-item" v-if="videoFiles.length < 1">
+					<span slot="title">{{$t('gb.common.picture')}}<span class="titlePrompt">（文件支持png,jpg,jpeg格式; 单个文件333大小最大支持10MB; 最多上传9个文件）</span></span>
+					<lite-box v-for="(index,pic) in picFiles" :show-close="(mainModel.vo.status == 1)" @on-close="doConfirmCallback('doDeleteFile', '确认删除文件?', pic.fileId,picFiles,index)" @click="doPic(pic.fileId)">
+						<!--<img :src="convertPicPath(pic.fileId)">-->
+						<div :style='{ backgroundImage: backgroundStyle(pic.fileId)}' style="background-size: cover;width:100%;height:100%;background-repeat: no-repeat;background-position: center center"></div>
+					</lite-box>
+					<vue-file-upload v-if="mainModel.vo.status == 1" :events="picModel.events" :params="picModel.params" @on-success-upload="pic" :filters="picModel.filters"  class="file_upload"></vue-file-upload>
+				</simple-card>
+				<simple-card class="fip-content-sub-item" v-if="picFiles.length < 1">
+					<span slot="title">{{$t('gb.common.video')}}<span class="titlePrompt">（文件只支持mp4格式; 单个文件大小最大支持10MB; 最多上传1个文件）</span></span>
+					<lite-box v-for="(index,vedio) in videoFiles" :show-close="(mainModel.vo.status == 1)" @on-close="doConfirmCallback('doDeleteFile', '确认删除文件?', vedio.fileId,videoFiles,index)" @click="doPlay(vedio.fileId)">
+						<img :src="convertPath()">
+					</lite-box>
+					<vue-file-upload v-if="mainModel.vo.status == 1" :events="videoModel.events" :params="videoModel.params" @on-success-upload="video" :filters="videoModel.filters" class="file_upload"></vue-file-upload>
+				</simple-card>
+			</simple-card>
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasPermission('2070006002') && (mainModel.vo.status == 1)" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasPermission('2070006003')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>
+
+<!-- <checkobject-select-modal single-select :visible.sync="mainModel.showCheckObjectSelectModal"  @do-save="doSaveCheckObject"></checkobject-select-modal> -->
+<user-select-modal single-select :visible.sync="mainModel.showUserSelectModal"  @do-save="doSaveUser"></user-select-modal>
+<equipment-select-modal single-select :visible.sync="mainModel.showEquipmentSelectModal"  @do-save="doSaveEquipment"
+						:filter-data="selectModel.equipmentSelectModel.filterData"
+></equipment-select-modal>
+
+<Modal :visible.sync="playVideoModel.show" width="450" :footer-hide="true" class="type-video">
+	<div v-if="playVideoModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal :visible.sync="showPicModel.show" width="400" :footer-hide="true" class="type-pic">
+	<img v-if="showPicModel.show" :src="convertPicPath(showPicModel.id,'watermark')">
+</Modal>
+

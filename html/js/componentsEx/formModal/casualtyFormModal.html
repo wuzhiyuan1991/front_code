@@ -1,0 +1,31 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo"  :rules="mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('accidentId') == -1)" label="事故" prop="accidentId">
+						<iv-input :value.sync="mainModel.vo.accidentId" :disabled="(disabledFields.indexOf('accidentId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('affiliation') == -1)" label="人员归属" prop="affiliation">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iam_casualty_affiliation', mainModel.vo.affiliation) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.affiliation" :list="getDataDicList('iam_casualty_affiliation')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('deathToll') == -1)" label="死亡人数" prop="deathToll">
+						<iv-input :value.sync="mainModel.vo.deathToll" :disabled="(disabledFields.indexOf('deathToll') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('injuryNumber') == -1)" label="受伤人数" prop="injuryNumber">
+						<iv-input :value.sync="mainModel.vo.injuryNumber" :disabled="(disabledFields.indexOf('injuryNumber') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" label="事故描述" prop="remarks" full-width>
+						<iv-input :value.sync="mainModel.vo.remarks" type="textarea" :rows="5" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

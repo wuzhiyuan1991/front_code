@@ -1,0 +1,287 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">
+					{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}
+				</iv-button>
+				<vi-button v-if="hasAuth('enable') && mainModel.opType != 'create' && mainModel.isReadOnly" type="ghost"
+					@click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">
+					{{$t("gb.common.del")}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && mainModel.opType != 'create'" type="ghost" @click="doCancel">
+					{{$t("gb.common.cancel")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="baseRules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item label="编码" prop="code" class="small-info-box">
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"
+							:allow-empty="allowEmpty"></code-input>
+					</el-form-item>
+					<el-form-item label="名称" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="所在地址" prop="mrsPlace" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.mrsPlace" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="投用时间" prop="timeOfInvestment" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd"
+							:selected-date.sync="mainModel.vo.timeOfInvestment"></date-picker>
+						<iv-input v-else :value.sync="timeOfInvestment" textonly class="inp"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="重大危险源单元分类" prop="mrsUnitClassification" class="small-info-box">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icpe_check_object_mrs_unit_classification', mainModel.vo.mrsUnitClassification) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.mrsUnitClassification"
+							:list="getDataDicList('icpe_check_object_mrs_unit_classification')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="占地面积（m2）" prop="mrsFloorArea" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.mrsFloorArea"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="重大危险源级别" prop="riskLevel" class="small-info-box">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icpe_check_object_mrs_risk_level', mainModel.vo.riskLevel) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.riskLevel"
+							:list="getDataDicList('icpe_check_object_mrs_risk_level')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="R值" prop="valueOfR" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.valueOfR" :textonly="mainModel.isReadOnly"
+							:min="0"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="单元内主要装置/设施" prop="mrsEquipmentOfUnit" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.mrsEquipmentOfUnit" :textonly="mainModel.isReadOnly">
+						</iv-input>
+					</el-form-item>
+					<el-form-item label="单元内主要生产工艺" prop="mrsProdProcessOrUnit" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.mrsProdProcessOrUnit" :textonly="mainModel.isReadOnly">
+						</iv-input>
+					</el-form-item>
+					<el-form-item label="单元内单个最大容器危险化学品存量（T）" prop="mrsMaxSingleReservesOfUnit" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.mrsMaxSingleReservesOfUnit"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="单元内所有危险化学品总存量（T）" prop="mrsTotalReservesOfUnit" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.mrsTotalReservesOfUnit"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="危险化学品临界量（T）" prop="mrsCriticalReserves" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.mrsCriticalReserves"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="所处环境功能区" prop="mrsFunctionalArea" class="small-info-box">
+						<span
+							v-if="mainModel.isReadOnly">{{ getDataDic('icpe_check_object_mrs_functional_area', mainModel.vo.mrsFunctionalArea) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.mrsFunctionalArea"
+							:list="getDataDicList('icpe_check_object_mrs_functional_area')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="与周边重点防护目标的最近距离（m）" prop="protectionDistance" class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.protectionDistance"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="厂区边界外500米范围人口估值" prop="approximationPopulationOfBoundary"
+						class="small-info-box">
+						<iv-input type="number" :value.sync="mainModel.vo.approximationPopulationOfBoundary"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="所属公司" prop="compId" class="small-info-box">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId">
+						</company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly>
+						</iv-input>
+					</el-form-item>
+
+					<el-form-item label="所属部门" prop="orgId" class="small-info-box">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId"
+												:comp-id.sync="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="属地" prop="dominationArea.id" class="small-info-box">
+						<cascade-input-select :value="mainModel.vo.dominationArea" :cascade-id="mainModel.vo.orgId"
+							:textonly="mainModel.isReadOnly"
+							@click="(!mainModel.isReadOnly) && (doShowDominationAreaSelectModal())">
+						</cascade-input-select>
+					</el-form-item>
+
+					<el-form-item class="small-info-box" :label="$t('gb.common.state')" prop="disable">
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly"
+							:show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item label="备注" class="small-info-box" full-width prop="remark" style="width: 600px;">
+						<iv-input type="textarea" :rows="3" class="display-all-line" :value.sync="mainModel.vo.remark"
+							:textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+			</el-form>
+		</div>
+	</div>
+	<div :class="{'rel-info-panel-mask': mainModel.opType=='create'}">
+		<div class="rel-info-panel">
+			<div class="rip-item">
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>其他信息</span></p>
+					<div class="child-h100" style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;">
+						<ul style="display: inline-flex;">
+							<li v-for="(index, item) in tabs" class="lr-layout-li"
+								:class="{'checked': index === checkedTabIndex}" style="width: auto;text-align: center;"
+								@click="doChangeTab(index)">
+								<span style="font-size: 14px;">{{item.name}}</span>
+							</li>
+						</ul>
+					</div>
+<div  style="height: 600px;overflow-y: auto" class="child-h100">
+					<div class="bip-content" v-if="checkedTabIndex == 0">
+						<div style="border-bottom: 1px solid #e9e9e9;height: 30px;">
+							<a slot="extra" style="float: right"
+								v-show="mainModel.isReadOnly && mainModel.isChemicalObjReadOnly"
+								@click.prevent="doUpdateChemicalObj">
+								<span>
+									<Icon type="compose">编辑</Icon>
+								</span>
+							</a>
+							<a slot="extra" style="float: right"
+								v-show="mainModel.isReadOnly && !mainModel.isChemicalObjReadOnly">
+								<span>
+									<Icon type="android-document" 	@click.stop="doSaveChemicalObj">保存</Icon>
+									<icon class="ml5" type="ios-undo" @click.stop="doCancelChemicalObj(model)">取消</icon>
+								</span>
+							</a>
+						</div>
+						<el-form label-width="135px" class="bip-content-form fixed-width width-auto-ipt" :model="mainModel.vo"
+							:rules="chemicalObjRules" v-ref:chemicalobjform>
+							<div class="flex-layout ml20-between ">
+								<el-form-item label="危险化学品" prop="catalog.id" >
+									<input-select :value="mainModel.vo.catalog" id-field="id" display-field="name"
+										:textonly="mainModel.isChemicalObjReadOnly" clearable
+										@click="(!mainModel.isChemicalObjReadOnly) && (doShowCheckObjectCatalogSelectModal())">
+									</input-select>
+								</el-form-item>
+								<el-form-item label="危险化学品编码" prop="catalog.code">
+									<iv-input :value.sync="mainModel.vo.catalog.code"
+										:textonly="mainModel.isChemicalObjReadOnly" disabled></iv-input>
+								</el-form-item>
+								<el-form-item label="UN编号" prop="catalog.unNumber" >
+									<iv-input :value.sync="mainModel.vo.catalog.unNumber"
+										:textonly="mainModel.isChemicalObjReadOnly" disabled></iv-input>
+								</el-form-item>
+							</div>
+							<div class="flex-layout ml20-between ">
+								<el-form-item label="物理状态" prop="mrsCatalogPhysicalState">
+									<iv-input :value.sync="mainModel.vo.mrsCatalogPhysicalState"
+											  :textonly="mainModel.isChemicalObjReadOnly"></iv-input>
+								</el-form-item>
+								<el-form-item label="操作温度（℃）" prop="mrsCatalogOperatingTemperature">
+									<iv-input :value.sync="mainModel.vo.mrsCatalogOperatingTemperature"
+										:textonly="mainModel.isChemicalObjReadOnly"></iv-input>
+								</el-form-item>
+								<el-form-item label="操作压力（MPa）" prop="mrsCatalogOperatingPressure">
+									<iv-input :value.sync="mainModel.vo.mrsCatalogOperatingPressure"
+											  :textonly="mainModel.isChemicalObjReadOnly"></iv-input>
+								</el-form-item>
+							</div>
+							<div class="flex-layout ml20-between">
+								<el-form-item  label="危险化学品用途" prop="mrsCatalogUse" >
+									<span
+											v-if="mainModel.isChemicalObjReadOnly">{{ getDataDic('icpe_check_object_mrs_catalog_use', mainModel.vo.mrsCatalogUse) }}</span>
+									<i-select v-else :model.sync="mainModel.vo.mrsCatalogUse"
+											  :list="getDataDicList('icpe_check_object_mrs_catalog_use')" clearable>
+									</i-select>
+								</el-form-item>
+								<el-form-item></el-form-item>
+								<el-form-item></el-form-item>
+							</div>
+							<div class="flex-layout ml20-between width-auto-ipt-formitem ">
+								<el-form-item class="flex-grow1" label="备注"  prop="mrsCatalogRemark">
+									<iv-input type="textarea" :rows="5" style="width: 66.67%"
+											  :value.sync="mainModel.vo.mrsCatalogRemark"
+											  :textonly="mainModel.isChemicalObjReadOnly"></iv-input>
+								</el-form-item>
+
+							</div>
+						</el-form>
+					</div>
+					<!--index:1,危险化学品安全技术说明书（SDS）-->
+					<div class="bip-content" v-if="checkedTabIndex == 1">
+						<file-list-simple-card remark="" :data="fileModel.M1.data" :config="fileModel.M1.cfg">
+						</file-list-simple-card>
+					</div>
+					<!--index:2,区域位置图-->
+					<div class="bip-content" v-if="checkedTabIndex == 2">
+						<file-list-simple-card remark="" :data="fileModel.M2.data" :config="fileModel.M2.cfg">
+						</file-list-simple-card>
+					</div>
+					<!--index:3,平面布置图-->
+					<div class="bip-content" v-if="checkedTabIndex == 3">
+						<file-list-simple-card remark="" :data="fileModel.M3.data" :config="fileModel.M3.cfg">
+						</file-list-simple-card>
+					</div>
+					<!--index:4,工艺流程图-->
+					<div class="bip-content" v-if="checkedTabIndex == 4">
+						<file-list-simple-card remark="" :data="fileModel.M4.data" :config="fileModel.M4.cfg">
+						</file-list-simple-card>
+					</div>
+					<!--index:5,主要管道设备-->
+					<div v-if="checkedTabIndex == 5">
+						<tab-main-pipe-equipment :data="mainModel.componentData" :model="mainModel.vo">
+						</tab-main-pipe-equipment>
+					</div>
+					<!--index:6制度化管理-->
+					<div class="bip-content" v-if="checkedTabIndex == 6">
+						<div>
+							<p class="fz14 font-bold mb5">共用</p>
+							<file-list-simple-card remark="" :data="mainModel.componentData.systemM5C" :config="fileModel.M5C.cfg">
+							</file-list-simple-card>
+						</div>
+						<div>
+							<p class="fz14 font-bold mb5">其他</p>
+						<file-list-simple-card remark="" :data="fileModel.M5.data" :config="fileModel.M5.cfg">
+						</file-list-simple-card>
+						</div>
+					</div>
+					<!--安全评价报告-->
+					<div v-if="checkedTabIndex == 7">
+						<tab-safety-evaluation :model="mainModel.vo" :data="mainModel.componentData"></tab-safety-evaluation>
+					</div>
+					<!--安全监测监控系统-->
+					<div v-if="checkedTabIndex ==8">
+						<tab-safety-monitor :model="mainModel.vo"></tab-safety-monitor>
+					</div>
+</div>
+				</simple-card>
+			</div>
+		</div>
+	</div>
+</div>
+
+<dominationarea-select-modal single-select :visible.sync="selectModel.dominationAreaSelectModel.visible"
+	:filter-data="selectModel.dominationAreaSelectModel.filterData" @do-save="doSaveDominationArea">
+</dominationarea-select-modal>
+<checkobjectcatalog-select-modal single-select :visible.sync="selectModel.checkObjectCatalogSelectModel.visible"
+	:filter-data="selectModel.checkObjectCatalogSelectModel.filterData" @do-save="doSaveCheckObjectCatalog">
+</checkobjectcatalog-select-modal>
+<!--设备设施-->
+<!--<equipment-select-modal
+		:visible.sync="selectModel.equipmentSelectModel.visible"
+		:filter-data="selectModel.equipmentSelectModel.filterData"
+		@do-save="doSaveEquipment"
+></equipment-select-modal>-->

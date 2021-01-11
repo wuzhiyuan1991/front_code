@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件预览</title>
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        div {
+            font-family: "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif,
+            "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            height:100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div id="msg">正在将文档转换成PDF，请稍等......</div>
+
+    <script src="js/libs/jquery/jquery-2.0.3.min.js"></script>
+    <script>
+        var timer;
+
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return decodeURI(r[2]); return null; //返回参数值
+        }
+        var id = getUrlParam("id");
+        var count = 0;
+
+        function getPdfPath() {
+            $.ajax({
+                url: '/file/previewpdf/' + id,
+                xhrFields: {
+                    withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
+                },
+                success: function (res) {
+                    if (res.content) {
+                        clearInterval(timer);
+                        window.location.href = res.content;
+                    }
+                },
+                error: function (e) {
+                    clearInterval(timer);
+                    if (e.content) {
+                        document.getElementById("msg").textContent = e.content;
+                    } else {
+                        document.getElementById("msg").textContent = '文件转换为PDF失败，请下载后打开';
+                    }
+                }
+            })
+        }
+        function longInterval() {
+            clearInterval(timer);
+            document.getElementById("msg").textContent = '该文件内容比较多，需要更长时间转换，请耐心等候......';
+            timer = setInterval(function () {
+                getPdfPath()
+            }, 5000);
+        }
+        timer = setInterval(function () {
+            count++;
+            if (count > 5) {
+                longInterval();
+            } else {
+                getPdfPath();
+            }
+        }, 2000)
+
+        getPdfPath();
+    </script>
+</body>
+</html>

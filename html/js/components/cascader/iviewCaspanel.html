@@ -1,0 +1,9 @@
+<ul v-if="data && data.length" :class="[prefixCls + '-menu']">
+        <Casitem
+            v-for="item in data"
+            :prefix-cls="prefixCls"
+            :data.sync="item"
+            :tmp-item="tmpItem"
+            @click.stop="handleClickItem(item)"
+            @mouseenter.stop="handleHoverItem(item)"></Casitem>
+    </ul><Caspanel v-if="sublist && sublist.length" :prefix-cls="prefixCls" :data.sync="sublist" :disabled="disabled" :trigger="trigger" :change-on-select="changeOnSelect"></Caspanel>

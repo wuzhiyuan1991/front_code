@@ -1,0 +1,57 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="18" >
+                    <all-classification $main-header-classification-attr-default :showdept="true"></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="6">
+                    <div class="prelative addButton pull-right">
+                        <!--<vi-button @click="doAdd">{{$t("gb.common.add")}}</vi-button>-->
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+			                    <!--<iv-dropdown-item>-->
+                                    <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <!--<iv-dropdown-item>-->
+                                    <!--$main-header-div-tag-download-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                    <div class="main-special-box-1">
+                        <a @click="doFilterBySpecial('1')" :class="{'checked': filterTabId === 'todo1'}" class="main-special-item"  href="javascript:void(0);">待办</a>
+                        <a @click="doFilterBySpecial()" :class="{'checked': filterTabId === 'todo'}" class="main-special-item" href="javascript:void(0);">所有</a>
+                    </div>
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button type="text" v-if="hasAuth('modify')" class="mp-header-item-btn" @click="doModify">变更评审人</vi-button>
+                    <vi-button type="text" v-if="hasAuth('cancel')" class="mp-header-item-btn" @click="doCancelTask">{{$t("gb.common.cancel")}}</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<member-select-modal
+        :visible.sync="userSelectModel.visible"
+        @do-save="doModifyAuditor"
+></member-select-modal>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>

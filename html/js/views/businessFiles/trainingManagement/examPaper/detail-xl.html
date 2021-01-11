@@ -1,0 +1,152 @@
+<div class="detail-large-container ">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group ">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click="doPreview">预览</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<vi-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</vi-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical
+					 :rules="rules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box">
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+
+					</el-form-item>
+
+					<el-form-item  label="试卷名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="所属公司" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="所属部门" prop="orgId" class="small-info-box" >-->
+						<!--<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>-->
+						<!--<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>-->
+					<!--</el-form-item>-->
+
+					<el-form-item class="small-info-box" label="考试时长" prop="replyTime" >
+						<!--<iv-input  :value.sync="mainModel.vo.replyTime" placeholder="请输入考试时长，以分钟为单位" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<iv-input v-if="!mainModel.isReadOnly"  :value.sync="mainModel.vo.replyTime" placeholder="请输入考试时长，以分钟为单位" :textonly="mainModel.isReadOnly"></iv-input>
+						<span v-else>{{mainModel.vo.replyTime}}分钟</span>
+					</el-form-item>
+				</iv-row>
+
+				<iv-row class="bip-content-item">
+					<el-form-item  label="试卷类型" prop="type"  class="small-info-box">
+						<!--<span>{{mainModel.vo.type==0 ? "手动组卷":"随机组卷"}}</span>-->
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.type" :list="getDataDicList('paper_type')" :disabled="mainModel.opType != 'create'">
+							<i-option v-for="item in getDataDicList('paper_type')" :value="item.id">{{item.value}}</i-option>
+						</i-select>
+						<span v-else>{{getDataDic('paper_type', mainModel.vo.type)}}</span>
+					</el-form-item>
+					<el-form-item  label="对应课程" prop="course.id"  class="small-info-box">
+						<input-select :value.sync="mainModel.vo.course" @do-clear-input="doClearCourseInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowCourseSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item  label="对应章节"  class="small-info-box" prop="courseKpoint.id" v-if="showCourseKpoint">
+						<input-select :value.sync="mainModel.vo.courseKpoint" @do-clear-input="doClearCourseKpointInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowKpointModel())" ></input-select>
+					</el-form-item>
+
+ 					<el-form-item  label="试卷总分" class="small-info-box" >
+						<iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.score" textonly></iv-input>
+						<span v-else>{{mainModel.vo.score}}分</span>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item" style="min-height: 600px">
+			<simple-card :show-content.sync="cardModel.paperTopicCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>试题</span></p>
+				<a slot="extra" @click.prevent="cardModel.paperTopicCardModel.showContent = !cardModel.paperTopicCardModel.showContent;" >
+					<span v-if="cardModel.paperTopicCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowPaperTopicFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				
+			    <simple-card class="rip-item-sub" v-for="(tIndex,topic) in mainModel.vo.paperTopics">
+					<div class="clearfix" style="margin-bottom: 10px;line-height: 28px;">
+						<div class="left" style="width: 600px;font-weight: bold;">
+							{{topic.name}}<span v-show="topic.title">:{{topic.title}}</span>
+						</div>
+
+						<div class="right">
+							<iv-input icon="ios-search" @on-click="setFilterValue(topic._keyWord, tIndex)" @on-enter="setFilterValue(topic._keyWord, tIndex)" :value.sync="topic._keyWord" placeholder="请输入" style="width:200px;height: 29px;" v-show="topic.showInput"></iv-input>
+							<vi-button type="text" icon="ios-search" @click="toggleItemInput(topic, true)" v-show="!topic.showInput">搜索</vi-button>
+							<vi-button type="text" icon="power" @click="toggleItemInput(topic, false)" v-show="topic.showInput">折叠</vi-button>
+
+							<vi-button type="text" icon="plus"  v-if="hasAuth('edit')" @click="doShowQuestionSelectModal(topic.type,topic.id)">{{$t("bd.trm.testQuestion")}}</vi-button>
+							<iv-dropdown trigger="click" placement="bottom-end" v-if="hasAuth('edit')">
+								<vi-button type="text" icon="more">更多</vi-button>
+								<iv-dropdown-menu slot="list">
+									<iv-dropdown-item  @click="doShowPaperTopicFormModal4Update(topic.id)">
+										<a href="javascript:void(0);"  style="margin-right:5px;"> <Icon type="edit"></Icon>编辑</a>
+									</iv-dropdown-item>
+									<iv-dropdown-item  @click="doMovePaperTopics(-1,tIndex)">
+										<a href="javascript:void(0);"  style="margin-right:5px;"><Icon type="arrow-up-a"></Icon>上移</a>
+									</iv-dropdown-item>
+									<iv-dropdown-item  @click="doMovePaperTopics(1,tIndex)">
+										<a href="javascript:void(0);" ><Icon type="arrow-down-a"></Icon>下移</a>
+									</iv-dropdown-item>
+									<iv-dropdown-item  @click="doRemovePaperTopics(topic.id)">
+										<a href="javascript:void(0);" > <span><Icon type="trash-a"></Icon>{{$t("gb.common.del")}}</span></a>
+									</iv-dropdown-item>
+								</iv-dropdown-menu>
+							</iv-dropdown>
+						</div>
+					</div>
+                    <vue-bootstrap-table
+                            :columns="tableModel.singleSelectQuestionTableModel.columns"
+                            :show-filter="false"
+                            :show-column-picker="false"
+                            :show-pager="true"
+                            :values="topic.questions | question-filter topic.keyWord"
+                            @on-click-cell="doClickCell"
+                            :show-empty-row="false"
+                            :show-seq="true"
+                    >
+                    </vue-bootstrap-table>
+                </simple-card>
+			</simple-card>
+		</div>
+
+	</div>
+	
+</div>
+
+
+<papertopic-form-modal
+		:auto-hide="false"
+		:visible.sync="formModel.paperTopicFormModel.show"
+		@do-save="doSavePaperTopic"
+		@do-update="doUpdatePaperTopic"
+		:query-url="formModel.paperTopicFormModel.queryUrl"
+		v-ref:papertopic-form-modal>
+</papertopic-form-modal>
+
+<add-question-modal
+		:visible.sync="selectModel.questionSelectModel.visible"
+		:filter-data="selectModel.questionSelectModel.filterData"
+		:course-id="mainModel.vo.course.id"
+		@do-save="doSaveQuestions"
+></add-question-modal>
+
+<course-select-modal single-select :visible.sync="selectModel.courseSelectModel.visible"  :filter-data="selectModel.courseSelectModel.filterData" @do-save="doSaveCourse"></course-select-modal>
+
+<Modal :visible.sync="kpoint.show" :title="kpoint.title" width="1000" height="800" :footer-hide="true">
+	<kpo-int-modal @do-save-kpoint="doSaveKpoint"></kpo-int-modal>
+</Modal>

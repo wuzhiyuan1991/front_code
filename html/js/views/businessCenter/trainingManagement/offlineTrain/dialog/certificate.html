@@ -1,0 +1,18 @@
+<div class="edit-pop-container">
+    <!--epc-content-row-space 控制每一行的间距-->
+    <div class="epc-content" :rules="rules" style="height: 300px">
+        <el-form  :model="mainModel.vo" v-ref:ruleform>
+            <el-form-item label="证书图片">
+                <image-view :images=" mainModel.vo.pictures" @on-close="doDeleteFile"></image-view>
+
+                <vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload" class="file_upload"
+                                 :filters="pictures.filters" v-if="mainModel.vo.pictures.length < 9"></vue-file-upload>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>
+

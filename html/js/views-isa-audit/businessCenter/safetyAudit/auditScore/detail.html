@@ -1,0 +1,87 @@
+<div class="detail-container" style="background-color:#fff;">
+
+    <div class="few-info-panel pull-left">
+
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{mainModel.title}}</span>
+        </div>
+
+        <div class="fip-content">
+            <!-- 模型基础信息 -->
+            <simple-card class="fip-content-item">
+                <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+                <el-form class="fip-content-item-form" :model="mainModel.vo" :rules="mainModel.emptyRules" v-ref:ruleform>
+                    <!--<el-form-item :label="$t('gb.common.code')" prop="code" v-show="mainModel.opType !== 'create'">-->
+                        <!--<iv-input :value.sync="mainModel.vo.code" :textonly="true"></iv-input>-->
+                    <!--</el-form-item>-->
+                    <el-form-item :label="$t('bc.hal.planName')" prop="name">
+                        <iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('bc.hal.formReview')" prop="auditTableId">
+                        <input-select :value="mainModel.vo.auditTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowauditTableSelectModal())"></input-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.personInCharge')" prop="ownerId">
+                        <user-select v-if="!mainModel.isReadOnly" @do-save="doSaveUser" :data-model="mainModel.vo.user.name" single-select></user-select>
+                        <iv-input v-else textonly :value.sync="mainModel.vo.user.name"></iv-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="发布状态" prop="status">
+                        <iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>
+                    </el-form-item> -->
+                    <el-form-item :label="$t('gb.common.startTime')" prop="startDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.endTime')" prop="endDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.timePublish')" prop="publishDate">
+                        <date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.publishDate"></date-picker>
+                        <iv-input v-else :value.sync="mainModel.vo.publishDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+
+                </el-form>
+            </simple-card>
+
+            <simple-card class="fip-content-item" :show-content.sync="cardModel.showFactorContent">
+                <p slot="title"><i class="basicPng"></i><span>{{$t("bc.ria.manageFactor")}}</span></p>
+                <a slot="extra" href="javascript:void(0);" @click="getFactors()">
+                    <span><Icon type="refresh"></Icon>{{$t("bc.ria.refresh")}}</span>
+                </a>
+                <a slot="extra" @click.prevent="cardModel.showFactorContent = !cardModel.showFactorContent;">
+                    <span v-if="cardModel.showFactorContent"><Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}</span>
+                    <span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
+                </a>
+                <table class="table tb-table-w">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px">序号</th>
+                            <th>要素名称</th>
+                            <th>权重</th>
+                            <th>审核得分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(index, item) in factors">
+                            <td>{{index + 1}}</td>
+                            <td><span class="ellipsis" style="display: block;max-width: 350px" :title="item.elementName"> {{item.elementName}}</span></td>
+                            <td>{{item.auditWeight.weight || 0}}%</td>
+                            <td>{{item.actScore||0}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </simple-card>
+
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+        <a v-if="hasAuth('grade')" v-link="{path: '/isaGradeAudit', query: {id: mainModel.vo.id}}" target="_blank">
+            <iv-button type="ghost" icon="edit">{{$t("bd.ria.score")}}</iv-button>
+        </a>
+        <a v-if="hasAuth('allot')" v-link="{path: '/isaAllotAudit', query: {id:  mainModel.vo.id, mode: 'transfer'}}" target="_blank">
+            <iv-button type="ghost" icon="ios-navigate">指派</iv-button>
+        </a>
+    </div>
+</div>

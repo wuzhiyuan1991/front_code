@@ -1,0 +1,96 @@
+<Modal :visible.sync="visible" :title="title" footer-hide>
+    <div class="edit-pop-container" >
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="width: 425px">
+                <el-form-item  label="所属公司" prop="compId" label-width="165px">
+                    <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+                </el-form-item>
+
+                <el-form-item  label="复培课程" prop="course.id" label-width="165px">
+                    <input-select :value="mainModel.vo.course" id-field="id" display-field="name" @click="doShowCourseSelectModal" ></input-select>
+                </el-form-item>
+
+                <el-form-item  label="复培学员" prop="trainTasks" label-width="165px">
+                    <multiple-input-select
+                            :selected-multiple.sync="users"
+                            :disabled="!hasCourseSelected"
+                            @on-click="doShowUserSelectModal"
+                    ></multiple-input-select>
+                </el-form-item>
+
+                <el-form-item  label="培训开始时间" prop="startTime" label-width="165px">
+                    <date-picker  format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.startTime" :begin="mainModel.now"></date-picker>
+                </el-form-item>
+
+                <el-form-item  label="培训结束时间" prop="endTime" label-width="165px">
+                    <date-picker  format="yyyy-MM-dd 23:59:59" :selected-date.sync="mainModel.vo.endTime" :begin="mainModel.now"></date-picker>
+                </el-form-item>
+
+                <el-form-item label-width="165px">
+                    <iv-checkbox :checked.sync="withExam" v-show="isCourseExamExist">是否安排考试</iv-checkbox>
+                    <div v-show="!isCourseExamExist && hasCourseSelected">此课程无考试题</div>
+                </el-form-item>
+
+                <div v-if="withExam">
+                    <el-form-item label="考试试题" prop="exam.examPaper.id" label-width="165px">
+                        <input-select :value="mainModel.vo.exam.examPaper" id-field="id" display-field="name"  @do-clear-input="doClearInput" :clearable="true" @click="doShowExamPaperSelectModal"  :disabled="!hasCourseSelected"></input-select>
+                    </el-form-item>
+                    <el-form-item  label="允许考试时间（开始）" prop="exam.examDate" label-width="165px">
+                        <date-picker
+                                format="yyyy-MM-dd HH:mm:ss"
+                                :begin="beginDate"
+                                :selected-date.sync="mainModel.vo.exam.examDate"
+                                time-zero
+                                type="datetime"
+                                :disabled="!hasExam"
+                        ></date-picker>
+                    </el-form-item>
+                    <el-form-item  label="允许考试时间（结束）" prop="exam.entryDeadline" label-width="165px">
+                        <date-picker
+                                format="yyyy-MM-dd HH:mm:ss"
+                                :begin="beginDate"
+                                :selected-date.sync="mainModel.vo.exam.entryDeadline"
+                                time-zero
+                                type="datetime"
+                                :disabled="!hasExam"
+                        ></date-picker>
+                    </el-form-item>
+                    <el-form-item :label="scoreLabel" prop="exam.passLine" label-width="165px">
+                        <iv-input  type="number" :value.sync="mainModel.vo.exam.passLine" placeholder="请输入分数"  :disabled="!hasExam"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="备注" label-width="165px">
+                        <iv-input :value.sync="mainModel.vo.remarks" type="textarea"></iv-input>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave(1)" class="pull-right">生成计划并发布</vi-button>
+            <vi-button type="primary" @click="doSave(0)" class="pull-right">生成计划</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<!--选择课程-->
+<course-select-modal
+        single-select
+        :visible.sync="selectModel.courseSelectModel.visible"
+        :filter-data="selectModel.courseSelectModel.filterData"
+        @do-save="doSaveCourse"
+></course-select-modal>
+
+<!--选择试卷-->
+<exam-paper-select-modal
+        single-select
+        :visible.sync="selectModel.examPaperSelectModel.visible"
+        :filter-data="selectModel.examPaperSelectModel.filterData"
+        @do-preview="doPreview"
+        @do-save="doSaveExamPaper"
+></exam-paper-select-modal>
+
+<!--选择培训人员-->
+<user-select-modal
+        :visible.sync="selectModel.userSelectModel.visible"
+        :filter-data="selectModel.userSelectModel.filterData"
+        @do-save="doSaveUsers"
+></user-select-modal>

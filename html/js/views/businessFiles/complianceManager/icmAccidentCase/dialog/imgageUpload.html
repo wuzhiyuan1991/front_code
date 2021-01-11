@@ -1,0 +1,48 @@
+<simple-card :class="{ 'image-upload': true}">
+  <span slot="title" style="overflow: hidden;">
+    <span class="titlePrompt left" style="font-size: 16px;">（文件支持{{fileType}}格式; 限制文件大小为{{fileMaxSize}};）</span>
+    <vi-Button type="ghost" icon="ios-cloud-upload-outline" @click="updateLoad" class="right"
+      style="margin-top: 35px;display: block;">添加</vi-Button>
+  </span>
+  <div>
+    <vue-file-upload v-ref:uploader v-if="readonly && data.length < 9" @on-success-upload="referMater" :params="params"
+      :filters="filters" class="icmAccidentCase-upload-audio">
+    </vue-file-upload>
+    <image-view v-show="data && data.length>0" :images="data" @on-close="doDeleteFile">
+    </image-view>
+  </div>
+</simple-card>
+<style>
+  .icmAccidentCase-upload-audio>:first-child {
+    display: none;
+  }
+
+  .image-upload .ul-lite-box {
+    margin-top: 20px;
+    display: block;
+    word-wrap: break-word;
+    word-break: normal;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .image-upload div.ul-lite-box:first-child {
+    display: block;
+  }
+
+  .image-upload .ul-lite-box .lite-box {
+    width: 50px;
+    height: 50px;
+    margin-right: 13px;
+    display: block;
+
+  }
+
+  .image-upload .ul-lite-box .lite-box .ivu-icon-music-note {
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    font-size: 16px;
+    opacity: 1;
+  }
+</style>

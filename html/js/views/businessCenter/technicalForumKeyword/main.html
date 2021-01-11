@@ -1,0 +1,51 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="12">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="12">
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                       
+                    </div>
+                    $main-header-refresh-button
+                  
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>  
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn" >{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('edit')&& tableModel.selectedDatas.length==1" @click="doUpdate">编辑</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('enable') && tableModel.selectedDatas.length==1" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('delete')" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content" >
+            <div style="position: absolute;bottom: 11px;left: 20px;"  >
+                <iv-checkbox :checked.sync="isCheckKind" :middle="isHalfCheck" :disabled="" @change.stop="checkSelect"> 多选
+                </iv-checkbox>
+              </div>
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<aside :show.sync="detailModel.show" class="middle-info-aside">
+    <detail-panel></detail-panel>
+</aside>
+<!--导入-->
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+<Modal :visible.sync="mainModel.showDeleteResult" title="提示" :footer-hide="true">
+    <div class="epc-header"></div>
+    <div class="edit-pop-container">
+        <div class="epc-content" style="font-size: 14px;background: #fff;">
+            <span>{{mainModel.successMsg}}</span><br>
+            <span>{{mainModel.faildMsg}}</span><br>
+        </div>
+    </div>
+</Modal>

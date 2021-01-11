@@ -1,0 +1,67 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskType') == -1)" label="风险分类id" prop="riskTypeId">
+						<input-select :value="mainModel.vo.riskType" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('riskType') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showRiskTypeSelectModal = true)" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkFrequency') == -1)" label="检查频次" prop="checkFrequency">
+						<iv-input :value.sync="mainModel.vo.checkFrequency" :disabled="(disabledFields.indexOf('checkFrequency') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkItem') == -1)" label="检查项id" prop="checkItemId">
+						<input-select :value="mainModel.vo.checkItem" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('checkItem') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showCheckItemSelectModal = true)" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('controlHierarchy') == -1)" label="管控层级" prop="controlHierarchy">
+						<iv-input :value.sync="mainModel.vo.controlHierarchy" :disabled="(disabledFields.indexOf('controlHierarchy') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('controlMeasures') == -1)" label="控制措施" prop="controlMeasures">
+						<iv-input :value.sync="mainModel.vo.controlMeasures" :disabled="(disabledFields.indexOf('controlMeasures') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="是否禁用，0启用，1禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('hazardFactorId') == -1)" label="危害因素id" prop="hazardFactorId">
+						<iv-input :value.sync="mainModel.vo.hazardFactorId" :disabled="(disabledFields.indexOf('hazardFactorId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('markup') == -1)" label="'危害辨识来源标识" prop="markup">
+						<iv-input :value.sync="mainModel.vo.markup" :disabled="(disabledFields.indexOf('markup') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('positionId') == -1)" label="岗位id" prop="positionId">
+						<iv-input :value.sync="mainModel.vo.positionId" :disabled="(disabledFields.indexOf('positionId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskLevel') == -1)" label="风险等级" prop="riskLevel">
+						<iv-input :value.sync="mainModel.vo.riskLevel" :disabled="(disabledFields.indexOf('riskLevel') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskModel') == -1)" label="风险等级模型" prop="riskModel">
+						<iv-input :value.sync="mainModel.vo.riskModel" :disabled="(disabledFields.indexOf('riskModel') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskModelId') == -1)" label="评估模型id" prop="riskModelId">
+						<iv-input :value.sync="mainModel.vo.riskModelId" :disabled="(disabledFields.indexOf('riskModelId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('scene') == -1)" label="场景" prop="scene">
+						<iv-input :value.sync="mainModel.vo.scene" :disabled="(disabledFields.indexOf('scene') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('state') == -1)" label="状态（0已评估，1未评估,2未通过）" prop="state">
+						<iv-input :value.sync="mainModel.vo.state" :disabled="(disabledFields.indexOf('state') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<risktype-select-modal single-select :visible.sync="mainModel.showRiskTypeSelectModal"  @do-save="doSaveRiskType"></risktype-select-modal>
+<checkitem-select-modal single-select :visible.sync="mainModel.showCheckItemSelectModal"  @do-save="doSaveCheckItem"></checkitem-select-modal>

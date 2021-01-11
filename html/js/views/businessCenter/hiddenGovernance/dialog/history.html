@@ -1,0 +1,319 @@
+<ul class="ivu-timeline">
+    <li class="ivu-timeline-item hidden-danger-timeline-item" v-for="item in items">
+        <div class="ivu-timeline-item-tail"></div>
+        <div class="ivu-timeline-item-head ivu-timeline-item-head-blue"></div>
+        <div class="ivu-timeline-item-content">
+            <div class="brief-info" @click="toggleOpen(item)">
+                <span class="time">{{item.date || '处理中'}}</span>
+                <div class="info" :class="briefBackground(item)">
+                    <span class="name">{{item.briefUser}}</span>
+                    <span class="action">{{item.desp}}</span>
+                    <Icon :type="item.open ? 'chevron-up' : 'chevron-down'" v-if="item.showIcon"></Icon>
+                </div>
+            </div>
+
+            <div class="detail-info" v-if="item.showIcon" v-show="item.open" :class="calcBackground(item)">
+                <template v-if="item.date || item._taskType === 'zheng_gai'">
+                    <ul v-if="item._taskType === 'deng_ji'">
+                        <li class="detail-item">
+                            <div class="tit">问题描述</div>
+                            <div class="con">{{item.problem}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">图片</div>
+                            <div class="con">
+                                <div class="image_b" v-for="img in item.images"
+                                     @click="doPic(img,img.ext)"
+                                     :style='{ backgroundImage: backgroundStyle(img)}'>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">视频</div>
+                            <div class="con">
+                                <div class="image_b" v-for="video in item.videos"
+                                     @click="doPic(video,video.ext)" :style='{ backgroundImage: videoBackgroundStyle()}'></div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">音频</div>
+                            <!--<div class="con">-->
+                                <!--<div class="image_b" v-for="voice in item.voices"-->
+                                     <!--@click="doPlayAudio(voice.ctxPath)" :style='{ backgroundImage: videoBackgroundStyle()}'></div>-->
+                            <!--</div>-->
+                            <ul style="display: flex;flex-wrap: wrap;">
+                                <li v-for="voice in item.voices" @click="doPlayAudio(voice.ctxPath)" style="height: 80px;width: 80px;text-align: center; background-color: #fff;line-height: 98px;cursor: pointer;border: 1px solid #ddd;margin: 0 10px 10px 0;border-radius: 5px;">
+                                    <Icon type="music-note" style="font-size: 32px;"></Icon>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                	<!--节点: 委托-->
+                    <ul v-if="item._taskType === 'wei_tuo'">
+                    	<li class="detail-item">
+                            <div class="tit">初始处理人</div>
+                            <div class="con">{{item.initialCandidates}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">委托人</div>
+                            <div class="con">{{item.mandators}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">被委托人</div>
+                            <div class="con">{{item.users}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">委托原因</div>
+                            <div class="con">{{item.reason}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">委托时间</div>
+                            <div class="con">{{item.date}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">当前处理人</div>
+                            <div class="con">{{item.finalCandidates}}</div>
+                        </li>
+                    </ul>
+                    <!--节点: 审批-->
+                    <ul v-if="item._taskType === 'shen_pi'">
+                        <li class="detail-item">
+                            <div class="tit">审批人</div>
+                            <div class="con">{{item.users}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">审批时间</div>
+                            <div class="con">{{item.date}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">审批结果</div>
+                            <div class="con">{{item.operationName}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">审批意见</div>
+                            <div class="con">{{item.suggestion}}</div>
+                        </li>
+                    </ul>
+
+                    <!--节点: 指派-->
+                    <ul v-if="item._taskType === 'zhi_pai'">
+                        <li class="detail-item">
+                            <div class="tit">指派人</div>
+                            <div class="con">{{item.users}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">分配时间</div>
+                            <div class="con">{{item.date}}</div>
+                        </li>
+                        <li class="detail-item" v-if="!item.isErpAssign">
+                            <div class="tit">整改人</div>
+                            <div class="con">{{item.dealName}}</div>
+                        </li>
+                        <li class="detail-item" v-if="item.isErpAssign">
+                            <div class="tit">ERP工单整改人</div>
+                            <div class="con">{{item.dealName}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">奖励金额（元）</div>
+                            <div class="con">{{item.rewardAmount}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">奖励人次</div>
+                            <div class="con">{{item.rewardNum}}</div>
+                        </li>
+
+                        <li class="detail-item">
+                            <div class="tit">整改期限</div>
+                            <div class="con">{{item.maxDealDate}}</div>
+                        </li>
+                        <li class="detail-item" v-if="item.isErpAssign">
+                            <div class="tit">站队整改人</div>
+                            <div class="con">{{item.secondDealCandidates}}</div>
+                        </li>
+                        <li class="detail-item" v-if="item.isErpAssign">
+                            <div class="tit">整改期限</div>
+                            <div class="con">{{item.maxSecondDealDate}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit" style="width: 150px;">整改后需要验证</div>
+                            <div class="con">{{item.needVerify === '1' ? '否' : '是'}}</div>
+                        </li>
+                        <li class="detail-item" v-show="item.needVerify !== '1'">
+                            <div class="tit">验证人</div>
+                            <div class="con">{{item.accepterName}}</div>
+                        </li>
+                        <li class="detail-item" v-show="item.needVerify !== '1'">
+                            <div class="tit">验证期限</div>
+                            <div class="con">{{item.maxAcceptDate}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">整改要求</div>
+                            <div class="con">{{item.dealDemand}}</div>
+                        </li>
+                        
+                    </ul>
+
+                    <!--节点: 整改-->
+                    <ul v-if="item._taskType === 'zheng_gai'">
+                        <template v-if="!item.date">
+                        <li class="detail-item">
+                            <div class="tit">处理人</div>
+                            <div class="con">{{item.users}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">处理期限</div>
+                            <div class="con">{{item.deadlineDate}}</div>
+                        </li>
+                        </template>
+                        <template v-else>
+                            <li class="detail-item">
+                                <div class="tit">整改人</div>
+                                <div class="con">{{item.users}}</div>
+                            </li>
+                            <li class="detail-item">
+                                <div class="tit">整改时间</div>
+                                <div class="con">{{item.date}}</div>
+                            </li>
+                            <li class="detail-item" v-if="mainModel.enableRespOrgId">
+                                <div class="tit">治理责任部门</div>
+                                <div class="con">{{ item.respOrgId}}</div>
+                            </li>
+                        </template>
+                        <li class="detail-item">
+                            <div class="tit">整改方案措施</div>
+                            <div class="con">{{item.dealStep}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">临时补救措施</div>
+                            <div class="con">{{item.emergencyStep}}</div>
+                        </li>
+                        <!--<li class="detail-item">-->
+                        <!--<div class="tit">整改进度</div>-->
+                        <!--<div class="con">{{item.operationName}}</div>-->
+                        <!--</li>-->
+                        <!--<li class="detail-item">-->
+                        <!--<div class="tit">整改结果</div>-->
+                        <!--<div class="con">{{item.suggestion}}</div>-->
+                        <!--</li>-->
+                        <li class="detail-item" :class="{'hidden-schedule': item.schedule.length > 0}">
+                            <div class="tit">进度详情</div>
+                            <div class="con schedule-info">
+                                <div v-for="s in item.schedule">
+                                    <div v-if="s.relType === 'OpRecord'" class="schedule-item" style="flex-direction: column;">
+                                        <span>{{s.date}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{s.operatorName}}</span>
+                                        <span @click="doScheduleClicked(s)" style="color: blue;cursor: pointer;" class="link">{{s.detail}}</span>
+                                    </div>
+                                    <div v-else class="schedule-item" style="flex-direction: column;">
+                                        <span>{{s.date}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{s.operatorName}}</span>
+                                        <span>{{s.detail}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">受阻原因</div>
+                            <div class="con">{{item.suggestion}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">图片</div>
+                            <div class="con">
+                                <div class="image_b" v-for="img in item.images"
+                                     @click="doPic(img,img.ext)"
+                                     :style='{ backgroundImage: backgroundStyle(img)}'>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">视频</div>
+                            <div class="con">
+                                <div class="image_b" v-for="video in item.videos"
+                                     @click="doPic(video,video.ext)" :style='{ backgroundImage: videoBackgroundStyle()}'></div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">附件</div>
+                            <div class="con">
+                                <div v-for="doc in item.docs">
+                                    <span>{{doc.orginalName}}</span>
+                                    <a :href="convertFilePath(doc)" target="_blank">
+                                        <Icon type="android-download" size="18"></Icon>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!--节点: 验证-->
+                    <ul v-if="item._taskType === 'yan_zheng'">
+                        <li class="detail-item">
+                            <div class="tit">验证人</div>
+                            <div class="con">{{item.users}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">验证时间</div>
+                            <div class="con">{{item.date}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">验证结果</div>
+                            <div class="con">{{item.operationName}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">备注</div>
+                            <div class="con">{{item.acceptRemark}}</div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">图片</div>
+                            <div class="con">
+                                <div class="image_b" v-for="img in item.images"
+                                     @click="doPic(img,img.ext)"
+                                     :style='{ backgroundImage: backgroundStyle(img)}'>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">视频</div>
+                            <div class="con">
+                                <div class="image_b" v-for="video in item.videos"
+                                     @click="doPic(video,video.ext)"
+                                     :style='{ backgroundImage: videoBackgroundStyle()}'>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="detail-item">
+                            <div class="tit">附件</div>
+                            <div class="con">
+                                <div v-for="doc in item.docs">
+                                    <span>{{doc.orginalName}}</span>
+                                    <a :href="convertFilePath(doc)" target="_blank">
+                                        <Icon type="android-download" size="18"></Icon>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </template>
+                <ul v-else>
+                    <li class="detail-item">
+                        <div class="tit">处理人</div>
+                        <div class="con">{{item.users}}</div>
+                    </li>
+                    <li class="detail-item">
+                        <div class="tit">处理期限</div>
+                        <div class="con">{{item.deadlineDate}}</div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </li>
+</ul>
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertPicPath(picModel.file,'original')">
+</Modal>
+<audio-player
+        :visible.sync="audioModel.visible"
+        :path="audioModel.path"
+></audio-player>

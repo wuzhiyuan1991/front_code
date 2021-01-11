@@ -1,0 +1,63 @@
+<div class="catalogTaskForm">
+    <div class="flex-layout-between list-li-h"><div></div><div><iv-button class="small" @click="doSave">保存</iv-button></div></div>
+    <div class="catalogTaskFormRow head" style="background:#eef3f5; color:#666;" >
+        <div class="catalogTaskFormBoxHead" :style='columnsStyle[index]' v-for="(index,title) of titles">
+            {{title}}
+        </div>
+        <div class="catalogTaskFormBoxHead col-del"></div>
+</div>
+<div class="catalogTaskFormRow" v-for="(index, item) in values" style="background:#eef3f5; color:#666;" >
+    <div class="catalogTaskFormBox ellipsis" :style='columnsStyle[colIndex]' v-for="(colIndex, col) in columns">
+        <span v-if="!col.type">{{item[col.fieldName]}}</span>
+        <iv-input v-else :value.sync="item[col.fieldName]" class="display-all-line" :type="col.type" :rows="6"></iv-input>
+    </div>
+    <div class="catalogTaskFormBox col-del"><span class="link-ele" @click="delItem(index,item)">删除</span></div>
+</div>
+    <div class="catalogTaskFormRow"  >
+        <div @click="doAddRow" class="bottomBtn">添加</div>
+    </div>
+
+</div>
+
+
+<style>
+    .col-del{
+        width:80px;
+    }
+    .catalogTaskForm{
+        display: inline-block;
+        width:auto;
+        height: auto;
+        padding-bottom: 100px;
+    }
+    .catalogTaskFormRow{
+        width:100%;
+        display: flex;
+        align-items: center;
+        justify-content:center;
+        flex-wrap:nowrap;
+    }
+
+    .catalogTaskFormBox{
+        flex:none;
+        padding:5px;
+        margin-right:10px;
+    }
+    .catalogTaskFormBoxHead{
+        padding:5px;
+        text-align: center;
+        margin-right:10px;
+    }
+    .catalogTaskForm .bottomBtn{
+        border: 1px dashed #ddd;
+        margin: 5px auto;
+        border-radius: 6px;
+        color: #666;
+        width: 95%;
+        text-align: center;
+    }
+    .catalogTaskForm .bottomBtn:hover{
+        border: 1px dashed #19a3e7;
+        cursor: pointer;
+    }
+</style>

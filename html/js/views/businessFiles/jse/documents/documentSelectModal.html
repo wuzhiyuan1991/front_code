@@ -1,0 +1,26 @@
+<Modal :visible.sync="visible" footer-hide width="800" title="选择公共文件">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <div class="lr-layout-r card-bag-box">
+            <iv-breadcrumb style="margin-top: 0;">
+                <breadcrumb-item v-for="(index, path) in paths" @click="doClickBreadItem(index, path)">{{path.name}}</breadcrumb-item>
+            </iv-breadcrumb>
+
+            <ul class="card-bag-ul">
+                <li v-for="doc in documents" class="card-bag-item">
+                    <div @click="doClickFolder(doc)" style="display: inline-flex;align-items: center;flex-grow: 1;overflow: hidden;">
+                        <iv-checkbox :checked.sync="doc.isChecked" @click.stop="doClickCheckbox(doc)" :disabled="doc.type === '1'" :style="checkboxVisible(doc)"></iv-checkbox>
+                        <!--<Icon :type="doc.type === '1' ? 'folder' : 'document'"></Icon>-->
+                        <file-icon size="26" :ext="doc.ext"></file-icon>
+                        <span class="text-ellipsis">{{doc.name}}</span>
+                    </div>
+                </li>
+            </ul>
+            </div>
+        </div>
+        <div class="modal-footer-b">
+            <vi-button type="primary" @click="doSave" style="margin-right: 15px;">保存</vi-button>
+            <vi-button @click="close">取消</vi-button>
+        </div>
+    </div>
+</Modal>

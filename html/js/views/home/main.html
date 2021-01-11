@@ -1,0 +1,135 @@
+<div class="homeCenter">
+			<div class="main-panel">
+				<div class="contentHome">
+					<div class="homeLeft" style="width: calc(60% - 10px);margin-right: 10px;">
+						<div class="topHidden">
+							<div class="homeTitle"><span>工作台</span></div>
+							<div class="content">
+								<el-tabs  class="MatterListNav" @tab-click="doTabs" v-if="isShowTabs">
+									<el-tab-pane v-for="item in todoList" :label="item.name">
+										<!--<ul  v-for="list in item.children" class="MatterList">-->
+											<!--<li>{{list.Nuber}}</li>-->
+											<!--<li>{{list.Matter}}</li>-->
+											<!--<li>{{list.Name}}</li>-->
+											<!--<li>{{list.StartTime}}</li>-->
+											<!--<li>{{list.EndTime}}</li>-->
+											<!--<ul  v-for="center in list.childrens" class="MatterCenter">-->
+												<!--<li>{{center.Nuber}}</li>-->
+												<!--<li  class="MatterColor">{{center.Matter}}</li>-->
+												<!--<li>{{center.Name}}</li>-->
+												<!--<li>{{center.StartTime}}</li>-->
+												<!--<li>{{center.EndTime}}</li>-->
+											<!--</ul>-->
+										<!--</ul>-->
+										<ul class="TrainingTitle homeConsole">
+											<li>编码</li>
+											<li>类型</li>
+											<li>开始时间</li>
+											<li>结束时间</li>
+										</ul>
+										<ul  v-for="info in tabsList" class="MatterList homeConsole">
+											<li class="MatterColor" @click="doTodo(info.type,info.relId,info.isComplete)">{{info.name}}</li>
+											<li>{{getDataDic('todo_type',info.type)}}</li>
+											<li>{{info.startTime}}</li>
+											<li>{{info.deadLine}}</li>
+										</ul>
+									</el-tab-pane>
+								</el-tabs>
+							</div>
+						</div>
+					</div>
+					<div class="homeLeft">
+						<div>
+							<full-calendar class="test-fc" :events="fcEvents" first-day='0' v-ref:canendar
+										   @change-month="changeMonth"
+										   @event-click="eventClick"
+										   @day-click="dayClickDemo"
+										   @more-click="moreClick">
+							</full-calendar>
+							<div class="calendarBootm">
+								<div class="calendarBootmRigth">
+									<span @click="doAddInspectionPlan">＋检查计划</span>
+								</div>
+							</div>
+							<div class="calendarClick">
+								<div class="calendarNext" @click="doPrev"><Icon type="arrow-left-b"></Icon></div>
+								<div class="calendarPrev"  @click="doNext"><Icon type="arrow-right-b"></Icon></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="contentHome">
+					<div class="homeLeft" style="width: calc(60% - 10px);margin-right: 10px;">
+						<!--<div class="bottomForm">-->
+							<!--<div class="homeTitle"><span>个人报表</span></div>-->
+							<!--&lt;!&ndash;//tab切换&ndash;&gt;-->
+							<!--<div class="tabHeaderMain">-->
+								<!--<div class="tabInfo">-->
+									<!--<ul class="tabList">-->
+										<!--<li v-for="($index,item) in tabItem" @click="doChangeIndex($index)" v-bind:class="{active: activeIndex == $index}">{{item.name}}</li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--&lt;!&ndash;//图表检查次数排名 v-show="showActive"&ndash;&gt;-->
+								<!--<div class="content" >-->
+									<!--<div class="echarts" v-if="showActive" ><vuecharts :options="polarCharts"  v-ref:polarCharts></vuecharts></div>-->
+								<!--</div>-->
+								<!--&lt;!&ndash;//符合率排名 v-show="hideActive"&ndash;&gt;-->
+								<!--<div class="content" >-->
+									<!--&lt;!&ndash;<div  class="echarts"   v-show="hideActive">因为隐藏会是图表不加载</div>&ndash;&gt;-->
+									<!--<div  class="echarts" v-if="hideActive"><vuecharts :options="bar"  v-ref:bar></vuecharts></div>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="wanghuai">-->
+						<!--</div>-->
+					<!--</div>-->
+						<div class="bottomTrain">
+							<div class="homeTitle"><span>我的培训</span></div>
+							<div class="content TrainingMain">
+								<ul class="TrainingTitle homeTrain">
+									<li>课程名称</li>
+									<li>培训方式</li>
+									<li>任务类型</li>
+									<li>开始时间</li>
+									<li>学习进度</li>
+								</ul>
+								<ul class="TrainingList" v-for="item in trainingData">
+									<li @click="doToTrainingActuality(item.id)">{{item.course==null?"":item.course.name}}</li>
+									<li>{{getDataDic('course_type', item.course==null?null:item.course.type)}}</li>
+									<li>{{getDataDic('train_task_type',item.source)}}</li>
+									<li>{{item.course==null?"":item.course.createDate}}</li>
+									<li>{{item.percent}}%</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="homeLeft">
+						<div class="bottomForm">
+							<div class="homeTitle"><span>个人报表</span></div>
+							<!--//tab切换-->
+							<div class="tabHeaderMain">
+								<!--<div class="tabInfo">-->
+									<!--<ul class="tabList">-->
+										<!--&lt;!&ndash;<li v-for="($index,item) in tabItem" @click="doChangeIndex($index)" v-bind:class="{active: activeIndex == $index}">{{item.name}}</li>&ndash;&gt;-->
+										<!--<li>检查次数排名</li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--&lt;!&ndash;//图表检查次数排名 v-show="showActive"&ndash;&gt;-->
+								<!--<div class="content" >-->
+									<!--<div class="echarts" v-if="showActive" ><vuecharts :options="polarCharts"  v-ref:polarCharts></vuecharts></div>-->
+								<!--</div>-->
+								<!--//符合率排名 v-show="hideActive"-->
+								<!--<div class="content" >-->
+									<!--&lt;!&ndash;<div  class="echarts"   v-show="hideActive">因为隐藏会是图表不加载</div>&ndash;&gt;-->
+									<!--<div  class="echarts" v-if="hideActive"><vuecharts :options="bar"  v-ref:bar></vuecharts></div>-->
+								<!--</div>-->
+								<report-tabs-component :type="1"></report-tabs-component>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<Modal :visible.sync="userModel.show" :title="userModel.title" width="400" :footer-hide="true">
+	<userComponent></userComponent>
+</Modal>

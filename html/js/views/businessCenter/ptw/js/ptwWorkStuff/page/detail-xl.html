@@ -1,0 +1,101 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="作业许可" prop="workPermit.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.workPermit" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowWorkPermitSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="类型" prop="stuffType" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_work_stuff_stuff_type', mainModel.vo.stuffType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.stuffType" :list="getDataDicList('iptw_work_stuff_stuff_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="风险库/气体指标" prop="stuff.id" class="small-info-box" >
+						<input-select :value="mainModel.vo.gasCatalog" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowGasCatalogSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="作业票" prop="workCardId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.workCardId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="现场核对结果" prop="checkResult" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_work_stuff_check_result', mainModel.vo.checkResult) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.checkResult" :list="getDataDicList('iptw_work_stuff_check_result')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="其他的内容/资格证名称" prop="content" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="是否为其他" prop="isExtra" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_work_stuff_is_extra', mainModel.vo.isExtra) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isExtra" :list="getDataDicList('iptw_work_stuff_is_extra')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="个人防护设备类型" prop="ppeCatalogId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.ppeCatalogId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<!-- 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+		</div>
+		-->
+		<!-- tab页签式 - 无需附件上传请删除此段代码 -->
+		<!--
+		<div class="rip-item">
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>附件参考</span></p>
+				<div class="rel-info-panel-content-tabs">
+					<el-tabs active-key="relTab">
+						<el-tab-pane :label="'文件(' + fileModel.file.data.length + ')'" key="fileTab">
+							<file-list-simple-card  :data="fileModel.file.data" :config="fileModel.file.cfg"></file-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'图片(' + fileModel.pic.data.length + ')'" key="picTab">
+							<image-list-simple-card  :data="fileModel.pic.data" :config="fileModel.pic.cfg"></image-list-simple-card>
+						</el-tab-pane>
+						<el-tab-pane :label="'视频(' + fileModel.video.data.length + ')'" key="videoTab">
+							<video-list-simple-card  :data="fileModel.video.data" :config="fileModel.video.cfg"></video-list-simple-card>
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</simple-card>
+		</div>
+		-->
+	</div>
+
+
+</div>
+
+<ptwworkpermit-select-modal :visible.sync="selectModel.workPermitSelectModel.visible" :filter-data="selectModel.workPermitSelectModel.filterData" single-select @do-save="doSaveWorkPermit"></ptwworkpermit-select-modal>
+<ptwstuff-select-modal :visible.sync="selectModel.ptwStuffSelectModel.visible" :filter-data="selectModel.ptwStuffSelectModel.filterData" single-select @do-save="doSavePtwStuff"></ptwstuff-select-modal>
+<ptwcatalog-select-modal :visible.sync="selectModel.gasCatalogSelectModel.visible" :filter-data="selectModel.gasCatalogSelectModel.filterData" single-select @do-save="doSaveGasCatalog"></ptwcatalog-select-modal>
+
+
+

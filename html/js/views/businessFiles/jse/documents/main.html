@@ -1,0 +1,84 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <span style="font-size: 16px;">公共文件库</span>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <!--<vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>-->
+
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+        </div>
+
+        <div class="mp-content" style="padding: 0;display: flex;background: #ecf0f4;">
+
+            <div class="lr-layout-r card-bag-box">
+                <div>
+                    <iv-button v-if="hasAuth('create')" type="primary" @click="doAddFolder">添加文件夹</iv-button>
+                    <vue-file-upload
+                            v-if="hasAuth('create')"
+                            style="display: inline-block;"
+                            custom-style
+                            :params="uploadModel.params"
+                            @on-before-upload="doUploadBefore"
+                            @on-success-upload="doUploadSuccess"
+                            @on-upload-complete="onUploadComplete"
+                            :filters="uploadModel.filters">
+                        <iv-button type="primary">添加文件</iv-button>
+                    </vue-file-upload>
+                    <!--<iv-button @click="refresh" class="right">刷新</iv-button>-->
+                </div>
+
+                <iv-breadcrumb>
+                    <breadcrumb-item v-for="(index, path) in paths" @click="doClickBreadItem(index, path)">{{path.name}}</breadcrumb-item>
+                </iv-breadcrumb>
+
+                <ul class="card-bag-ul">
+                    <li v-for="doc in documents" class="card-bag-item">
+                        <div @click="doClickFolder(doc)" style="display: inline-flex;align-items: center;flex-grow: 1;overflow: hidden;">
+                            <file-icon size="26" :ext="doc.ext"></file-icon>
+                            <span class="text-ellipsis" v-if="doc.type === '1'">{{doc.name}}</span>
+                            <a :href="convertFilePath(doc)" target="_blank" class="text-ellipsis link" v-if="doc.type === '2'">{{doc.name}}</a>
+                        </div>
+                        <div style="min-width: 100px;text-align: right;">
+                            <a href="javascript:void(0);" v-if="hasAuth('edit')" @click="doMove(-1, doc)"><i class="ivu-icon ivu-icon-arrow-up-a"></i></a>
+                            <a href="javascript:void(0);" v-if="hasAuth('edit')" @click="doMove(1, doc)"><i class="ivu-icon ivu-icon-arrow-down-a"></i></a>
+                            <a href="javascript:void(0);" v-if="hasAuth('edit') && doc.type === '1'" @click="doUpdate(doc)"><i class="ivu-icon ivu-icon-edit"></i></a>
+                            <a :href="convertFilePath(doc)" target="_blank" v-if="doc.type === '2'"><i class="ivu-icon ivu-icon-android-download"></i></a>
+                            <a href="javascript:void(0);" v-if="hasAuth('delete')" @click="doConfirmCallback('doDelete', '确定删除该文件夹或文件?', doc)"><i class="ivu-icon ivu-icon-trash-a"></i></a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Modal :visible.sync="formModel.visible" title="文件夹" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item label="文件夹名称" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveFolder" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+

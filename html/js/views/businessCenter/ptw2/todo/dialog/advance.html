@@ -1,0 +1,202 @@
+
+<ul class="ivu-timeline" style=";margin-top: 20px;">
+    <li class="ivu-timeline-item hidden-danger-timeline-item" style="padding:0;" v-for="(index, item) in list">
+        <div class="ivu-timeline-item-tail"></div>
+        <div class="ivu-timeline-item-head ivu-timeline-item-head-blue"></div>
+        <div class="ivu-timeline-item-content" style="padding-bottom: 5px">
+            <div class="brief-info" @click="item.isShow=!item.isShow">
+                <!--<span class="time" style="width:75px;">{{getStepName(item.step)}}</span>-->
+                <div class="info" style="width:740px;" :class="briefBackground(item)">
+                    <span class="name" style="width: 150px;">{{item.operateTime}}</span>
+                    <span class="name">{{item.operator.name}}</span>
+                    <span class="name" style="font-weight: 600;width:250px;">{{getStepsName(item)}}</span>
+
+                    <!--<Icon :type="item.open ? 'chevron-up' : 'chevron-down'" v-if="item.showIcon"></Icon>-->
+                    <!--<Icon :type="item.isShow ? 'chevron-up' : 'chevron-down'" ></Icon>-->
+                    <span v-if="item.operationType==2 && item.workCard" class="action right text-center"  :style="getResultStyle(item.workCard.auditResult)" >{{getResult(item.workCard.auditResult)}}</span >
+                    <span v-if="((item.signType!=1 && item.operationType==7) || item.operationType==8) && item.workPersonnel" class="action right text-center"  :style="getResultStyle1(item.workPersonnel.signResult)" >{{getResultAttr(item.workPersonnel.signResult)}}</span >
+                    <span v-if="((item.signType==1 && item.operationType==7) )" class="action right text-center"  :style="getResultStyle1(1)" >通过</span >
+
+                </div>
+            </div>
+
+            <!--<div  style="margin-left: 85px;width: 460px;" class="detail-info" v-show="item.isShow" :class="calcBackground(item)">-->
+                <!--&lt;!&ndash;节点: 指派&ndash;&gt;-->
+                <!--<ul v-if="item.step=='1'">-->
+                    <!--&lt;!&ndash;<li class="detail-item">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="tit">预案编码</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="con">{{ item.code }}</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">预案名称</div>-->
+                        <!--<div class="con">{{ item.name }}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">版本号</div>-->
+                        <!--<div class="con">{{ item.verNo }}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">预案类型</div>-->
+                        <!--<div class="con">{{ getType(item.type) }}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">所属公司</div>-->
+                        <!--<div class="con">{{ getComp(compId) }}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">修订频率</div>-->
+                        <!--<div class="con">{{ item.reviseFrequence}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">备注</div>-->
+                        <!--<div class="con">-->
+                            <!--<iv-textarea :rows="4" :value.sync="item.remark" readonly :width="260"></iv-textarea>-->
+                        <!--</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">附件资料</div>-->
+                        <!--<div class="con">{{{getFileList(item.fileList)}}}</div>-->
+                    <!--</li>-->
+                <!--</ul>-->
+
+
+                <!--<ul v-else>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">处理结果</div>-->
+                        <!--<div class="con">{{ getResult(item.result) }}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item" v-if="item.rollbackStep">-->
+                        <!--<div class="tit">回退节点</div>-->
+                        <!--<div class="con">{{getStepName(item.rollbackStep)}}</div>-->
+                    <!--</li>-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">参与人员</div>-->
+                        <!--<div class="con">-->
+                            <!--<iv-textarea :rows="4" :value.sync="item.participant" readonly :width="260"></iv-textarea>-->
+
+                        <!--</div>-->
+                    <!--</li>-->
+
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">过程详情备注描述</div>-->
+                        <!--<div class="con">-->
+                            <!--<iv-textarea :rows="4" :value.sync="item.remark" readonly :width="260"></iv-textarea>-->
+                        <!--</div>-->
+                    <!--</li>-->
+                    <!--&lt;!&ndash;<li class="detail-item">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="tit">备注</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<div class="con">{{item.remark}}</div>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                    <!--<li class="detail-item">-->
+                        <!--<div class="tit">附件资料</div>-->
+                        <!--<div class="con">{{{getFileList(item.fileList)}}}</div>-->
+                    <!--</li>-->
+                <!--</ul>-->
+                <!--&lt;!&ndash;<ul v-else>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li class="detail-item">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="tit">处理结果</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="con">{{ getResult(item.result) }}</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li class="detail-item" v-if="item.rollbackStep">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="tit">回退节点</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="con">{{getStepName(item.rollbackStep)}}</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li class="detail-item">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="tit">参与人员</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="con">{{item.participant}}</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li class="detail-item">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="tit">过程详情备注描述</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="con">{{item.deadlineDate}}</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li class="detail-item">&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="tit">备注</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;<div class="con">{{item.remark}}</div>&ndash;&gt;-->
+                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+            <!--</div>-->
+
+        </div>
+    </li>
+</ul>
+
+
+
+
+
+<style>
+    .historyBox .right{
+        float:right;
+        width: 50px !important;
+    }
+    .historyBox .el-form{
+        width:500px;
+    }
+    .border-left{
+        width:100%;
+        border-left:1px dashed #ddd;
+        padding-top:20px;
+        padding-bottom: 50px;
+        /*height: 650px;*/
+        overflow-y: visible;
+    }
+    .historyBoxHead{
+        width: 530px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 20px;
+        margin-left: 80px;
+    }
+    .historyBoxTitle{
+        font-size: 14px;
+        color: #666;
+        font-weight: 700;
+        width: 80px;
+    }
+    .historyBoxHeadname{
+        width:150px;
+        margin-left:20px;
+        text-align: center;
+    }
+    .historyBoxHeadResultGreen{
+        width: 80px;
+        border-radius: 20px;
+        text-align: center;
+        background: #aacd03;
+        color: #fff;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    .historyBoxHeadResult{
+        width: 80px;
+        border-radius: 20px;
+        text-align: center;
+        background: red;
+        color: #fff;
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    .leftPoint{
+        position: absolute;
+        left: -91px;
+        font-size: 22px;
+    }
+    .historyBoxBody{
+        background: #ddd;
+        margin-left: 95px;
+        width: 506px;
+        margin-top: 5px
+    }
+    .text-center{
+        width: 72px !important;
+        text-align: center;
+        border-radius: 10px;
+        height: 26px;
+        line-height: 26px;
+        margin-top: 3px;
+    }
+</style>
+

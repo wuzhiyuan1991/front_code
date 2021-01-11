@@ -1,0 +1,74 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('agreementDeadline') == -1)" label="健康安全环保协议有效期" prop="agreementDeadline">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.agreementDeadline" :disabled="(disabledFields.indexOf('agreementDeadline') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.agreementDeadline)" :disabled="(disabledFields.indexOf('agreementDeadline') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('businessScope') == -1)" label="经营范围" prop="businessScope">
+						<iv-input :value.sync="mainModel.vo.businessScope" :disabled="(disabledFields.indexOf('businessScope') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('certificate') == -1)" label="资质证书" prop="certificate">
+						<iv-input :value.sync="mainModel.vo.certificate" :disabled="(disabledFields.indexOf('certificate') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('cetDeadline') == -1)" label="证书期限" prop="cetDeadline">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.cetDeadline" :disabled="(disabledFields.indexOf('cetDeadline') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.cetDeadline)" :disabled="(disabledFields.indexOf('cetDeadline') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compType') == -1)" label="企业类别" prop="compType">
+						<iv-input :value.sync="mainModel.vo.compType" :disabled="(disabledFields.indexOf('compType') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('corporation') == -1)" label="法人代表" prop="corporation">
+						<iv-input :value.sync="mainModel.vo.corporation" :disabled="(disabledFields.indexOf('corporation') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('deptAddr') == -1)" label="单位地址" prop="deptAddr">
+						<iv-input :value.sync="mainModel.vo.deptAddr" :disabled="(disabledFields.indexOf('deptAddr') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('deptName') == -1)" label="单位名称" prop="deptName">
+						<iv-input :value.sync="mainModel.vo.deptName" :disabled="(disabledFields.indexOf('deptName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('empNum') == -1)" label="雇员人数" prop="empNum">
+						<iv-input :value.sync="mainModel.vo.empNum" :disabled="(disabledFields.indexOf('empNum') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('licenceNo') == -1)" label="营业执照编号" prop="licenceNo">
+						<iv-input :value.sync="mainModel.vo.licenceNo" :disabled="(disabledFields.indexOf('licenceNo') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('linkman') == -1)" label="联系人" prop="linkman">
+						<iv-input :value.sync="mainModel.vo.linkman" :disabled="(disabledFields.indexOf('linkman') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('mobilePhone') == -1)" label="手机" prop="mobilePhone">
+						<iv-input :value.sync="mainModel.vo.mobilePhone" :disabled="(disabledFields.indexOf('mobilePhone') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('qualification') == -1)" label="服务资质" prop="qualification">
+						<iv-input :value.sync="mainModel.vo.qualification" :disabled="(disabledFields.indexOf('qualification') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('qualificationLevel') == -1)" label="资质等级" prop="qualificationLevel">
+						<iv-input :value.sync="mainModel.vo.qualificationLevel" :disabled="(disabledFields.indexOf('qualificationLevel') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('registerCapital') == -1)" label="注册资金" prop="registerCapital">
+						<iv-input :value.sync="mainModel.vo.registerCapital" :disabled="(disabledFields.indexOf('registerCapital') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remark') == -1)" :label="$t('gb.common.remarks')" prop="remark" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remark" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('securityAgreement') == -1)" label="健康安全环保协议" prop="securityAgreement">
+						<iv-input :value.sync="mainModel.vo.securityAgreement" :disabled="(disabledFields.indexOf('securityAgreement') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('serviceType') == -1)" label="服务类别" prop="serviceType">
+						<iv-input :value.sync="mainModel.vo.serviceType" :disabled="(disabledFields.indexOf('serviceType') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('telephone') == -1)" label="座机" prop="telephone">
+						<iv-input :value.sync="mainModel.vo.telephone" :disabled="(disabledFields.indexOf('telephone') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

@@ -1,0 +1,63 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('stepDesc') == -1)" label="步骤描述" prop="stepDesc">
+						<iv-input :value.sync="mainModel.vo.stepDesc" :disabled="(disabledFields.indexOf('stepDesc') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('jsaMasterId') == -1)" label="jsa主表" prop="jsaMaster.id">
+						<input-select :value="mainModel.vo.ptwJsaMaster" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('ptwJsaMaster') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowPtwJsaMasterSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskAccept') == -1)" label="残余风险是否可接受" prop="riskAccept">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_detail_risk_accept', mainModel.vo.riskAccept) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.riskAccept" :list="getDataDicList('iptw_jsa_detail_risk_accept')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('currentControl') == -1)" label="控制措施" prop="currentControl">
+						<iv-input :value.sync="mainModel.vo.currentControl" :disabled="(disabledFields.indexOf('currentControl') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('degree') == -1)" label="严重性" prop="degree">
+						<iv-input :value.sync="mainModel.vo.degree" :disabled="(disabledFields.indexOf('degree') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('harmDesc') == -1)" label="危害描述" prop="harmDesc">
+						<iv-input :value.sync="mainModel.vo.harmDesc" :disabled="(disabledFields.indexOf('harmDesc') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('improveControl') == -1)" label="改进措施" prop="improveControl">
+						<iv-input :value.sync="mainModel.vo.improveControl" :disabled="(disabledFields.indexOf('improveControl') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('itemId') == -1)" label="明细" prop="itemId">
+						<iv-input :value.sync="mainModel.vo.itemId" :disabled="(disabledFields.indexOf('itemId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('phase') == -1)" label="作业阶段" prop="phase">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_jsa_detail_phase', mainModel.vo.phase) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.phase" :list="getDataDicList('iptw_jsa_detail_phase')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('possiblity') == -1)" label="可能性" prop="possiblity">
+						<iv-input :value.sync="mainModel.vo.possiblity" :disabled="(disabledFields.indexOf('possiblity') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('result') == -1)" label="后果及影响" prop="result">
+						<iv-input :value.sync="mainModel.vo.result" :disabled="(disabledFields.indexOf('result') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskModel') == -1)" label="风险等级评估模型" prop="riskModel">
+						<iv-input :value.sync="mainModel.vo.riskModel" :disabled="(disabledFields.indexOf('riskModel') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskModelId') == -1)" label="风险等级模型" prop="riskModelId">
+						<iv-input :value.sync="mainModel.vo.riskModelId" :disabled="(disabledFields.indexOf('riskModelId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskModelLatId') == -1)" label="风险等级评估结果纬度" prop="riskModelLatId">
+						<iv-input :value.sync="mainModel.vo.riskModelLatId" :disabled="(disabledFields.indexOf('riskModelLatId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('riskScore') == -1)" label="风险分值" prop="riskScore">
+						<iv-input :value.sync="mainModel.vo.riskScore" :disabled="(disabledFields.indexOf('riskScore') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('stepId') == -1)" label="步骤" prop="stepId">
+						<iv-input :value.sync="mainModel.vo.stepId" :disabled="(disabledFields.indexOf('stepId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<ptwjsamaster-select-modal :visible.sync="selectModel.ptwJsaMasterSelectModel.visible" :filter-data="selectModel.ptwJsaMasterSelectModel.filterData" single-select @do-save="doSavePtwJsaMaster"></ptwjsamaster-select-modal>

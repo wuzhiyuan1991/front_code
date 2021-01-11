@@ -1,0 +1,181 @@
+<div class="mechanism-setting">
+    <div class="mechanism-item" v-if="showItem === 'person' || showItem === 'all'">
+        <div class="mechanism-title" @click.prevent="userConfs.show = !userConfs.show">
+            <div class="mechanism-side">
+                <strong >个人积分</strong>
+                <a href="javascript:void(0);" @click.prevent="userConfs.show = !userConfs.show" >
+                    <Icon type="chevron-up" v-show="userConfs.show" @click.prevent="userConfs.show = !userConfs.show"></Icon>
+                    <Icon type="chevron-down" v-show="!userConfs.show" @click.prevent="userConfs.show = !userConfs.show"></Icon>
+                </a>
+            </div>
+        </div>
+        <div  v-show="userConfs.show" style="margin-left: 20px;margin-top: 10px">
+            <table border="1">
+                <colgroup>
+                    <col style="width: 50px;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="my-td my-bg my-center" style="text-align: center;">序号</td>
+                    <td class="my-td my-bg">激励考核项</td>
+                    <td class="my-td my-bg my-center" style="width:7%">应用规则</td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">1</td>
+                    <td class="my-td">
+                        按检查表（计划或非计划）检查1次，无论是否发现问题得
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.CheckNum.score"></iv-input-number>分。(不区分属地内或外)。
+                        每人每日应用此项规则积分最大上限
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.CheckNum.dailyMaxScore"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConfs.vo.CheckNum.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="my-td my-center">2</td>
+                    <td class="my-td">
+                        通过随机观察(不使用检查表)，或者计划非计划检查（使用检查表）发现隐患并当场跟踪完成整改的得
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.ImmedReformOfRadomObser.score"></iv-input-number>分。
+                        每人每日应用此项规则积分最大上限
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.ImmedReformOfRadomObser.dailyMaxScore"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConfs.vo.ImmedReformOfRadomObser.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">3</td>
+                    <td class="my-td">计划、非计划检查和随机观察发现问题，经属地负责人或属地直属副总确认为隐患，依据判断的等级不同分别给予检查人加分；
+                        <br/>
+                        <div v-for="(m,model) in riskModelEffectiveProblems" style="clear:both">
+                            <span style="float: left;">{{model.riskModelName}}: </span>
+                            <div v-for="(i,range) in model.riskGradeLatRanges" style="float: left;">
+                                <div v-for="(index,conf) in userConfs.vo.EffectiveProblem.subRuleConfs" style="float: left;">
+                                    <span v-if="conf.rangeId == range.id">
+                                         {{range.level}} <iv-input-number :disabled ="!disabled" :min="0" :value.sync="userConfs.vo.EffectiveProblem.subRuleConfs[index].score"></iv-input-number>分 &nbsp;&nbsp;
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+<!--                        <div v-for="(index,conf) in userConfs.vo.EffectiveProblem.subRuleConfs" style="float: left;" v-if="effectiveProblemRangeShow === true && riskGradeLatRanges.length > 0">-->
+<!--                            <span>-->
+<!--                                [{{conf.level}}]得<iv-input-number :disabled ="!disabled" :min="0" :value.sync="userConfs.vo.EffectiveProblem.subRuleConfs[index].score"></iv-input-number>分 &nbsp;&nbsp;-->
+<!--                            </span>-->
+<!--                        </div>-->
+                        <br/>
+                        每人每日应用此项规则积分最大上限
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.EffectiveProblem.dailyMaxScore"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConfs.vo.EffectiveProblem.enabled" :disabled="!disabled"></iv-checkbox>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">4</td>
+                    <td class="my-td">
+                        随机观察发现问题（无论后续判定是否属实），得
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.RandomObservation.score"></iv-input-number>分。
+                        每人每日应用此项规则积分最大上限
+                        <iv-input-number :min="0" :disabled ="!disabled" :value.sync="userConfs.vo.RandomObservation.dailyMaxScore"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConfs.vo.RandomObservation.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mechanism-item" v-if="showItem === 'department' || showItem === 'all'">
+        <div class="mechanism-title" @click.prevent="deptConfs.show = !deptConfs.show">
+            <div class="mechanism-side">
+                <strong >部门积分</strong>
+                <a href="javascript:void(0);"  @click.prevent="deptConfs.show = !deptConfs.show">
+                    <Icon type="chevron-up" v-show="deptConfs.show" @click.prevent="deptConfs.show = !deptConfs.show"></Icon>
+                    <Icon type="chevron-down" v-show="!deptConfs.show" @click.prevent="deptConfs.show = !deptConfs.show"></Icon>
+                </a>
+            </div>
+        </div>
+        <div v-show="deptConfs.show" style="margin-left: 20px;margin-top: 10px">
+            <table border="1">
+                <colgroup>
+                    <col style="width: 50px;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="my-td my-center my-bg">序号</td>
+                    <td class="my-td my-bg">激励考核项</td>
+                    <td class="my-td my-center my-bg" style="width: 7%">应用规则</td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">1</td>
+                    <td class="my-td">部门人均当月得分排名，根据排名，部门此项指标的得分分别为n1,n2,n3,n4......0,0(从大到小递减，直至最后都为0)。其中，最大值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptPerCapitaScore.subRuleConfs.DeptPerCapitaScore1.score"></iv-input-number>，递减值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptPerCapitaScore.subRuleConfs.DeptPerCapitaScore2.score"></iv-input-number></td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConfs.vo.DeptPerCapitaScore.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">2</td>
+                    <td class="my-td">部门人均当月发现问题个数排名，根据排名，部门此项指标的得分分别为n1,n2,n3,n4......0,0(从大到小递减，直至最后都为0)。其中，最大值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptPerCapitaProblem.subRuleConfs.DeptPerCapitaProblem1.score"></iv-input-number>，递减值为<iv-input-number :disabled ="!disabled"  :min="0" :value.sync="deptConfs.vo.DeptPerCapitaProblem.subRuleConfs.DeptPerCapitaProblem2.score"></iv-input-number></td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConfs.vo.DeptPerCapitaProblem.enabled" :disabled="!disabled"></iv-checkbox>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">3</td>
+                    <td class="my-td">部门隐患当月整改率排名，根据排名，部门此项指标的得分分别为n1,n2,n3,n4......0,0(从大到小递减，直至最后都为0)。其中，最大值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptReformRate.subRuleConfs.DeptReformRate1.score" :disabled ="disabled"></iv-input-number>，递减值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptReformRate.subRuleConfs.DeptReformRate2.score"></iv-input-number></td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConfs.vo.DeptReformRate.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">4</td>
+                        <td class="my-td">系统会统计部门当月的发现隐患，对应不同的隐患等级，会有不同的加分。
+                            <br/>
+<!--                            <div v-for="(i,range) in deptDiscoverHiddenDangers" style="float: left;" v-if="deptDiscoverHDRangeShow === false">-->
+<!--                                <div v-for="(index,conf) in deptConfs.vo.DeptDiscoverHiddenDanger.subRuleConfs" style="float: left;">-->
+<!--                                <span v-if="conf.rangeId == range.id">-->
+<!--                                     [{{range.level}}]隐患（经过确认）<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptDiscoverHiddenDanger.subRuleConfs[index].score"></iv-input-number>分 &nbsp;&nbsp;-->
+<!--                                </span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div v-for="(m,model) in riskModelDeptDiscoverHiddenDangers" style="clear:both">
+                                <span style="float: left;">{{model.riskModelName}}: </span>
+                                <div v-for="(i,range) in model.riskGradeLatRanges" style="float: left;">
+                                    <div v-for="(index,conf) in deptConfs.vo.DeptDiscoverHiddenDanger.subRuleConfs" style="float: left;">
+                                    <span v-if="conf.rangeId == range.id">
+                                         {{range.level}}<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptDiscoverHiddenDanger.subRuleConfs[index].score"></iv-input-number>分 &nbsp;&nbsp;
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+<!--                            <div v-for="(index,conf) in deptConfs.vo.DeptDiscoverHiddenDanger.subRuleConfs" style="float: left;" v-if="deptDiscoverHDRangeShow === true && deptDiscoverHiddenDangers.length > 0">-->
+<!--                            <span>-->
+<!--                                [{{conf.level}}]隐患（经过确认）<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptDiscoverHiddenDanger.subRuleConfs[index].score"></iv-input-number>分 &nbsp;&nbsp;-->
+<!--                            </span>-->
+<!--                            </div>-->
+                        </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConfs.vo.DeptDiscoverHiddenDanger.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="my-td my-center">5</td>
+                    <td class="my-td">部门抽查符合率排名，根据排名，部门此项指标的得分分别为n1,n2,n3,n4......0,0(从大到小递减，直至最后都为0)。其中，最大值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptRandomPassRate.subRuleConfs.DeptRandomPassRate1.score" :disabled ="disabled"></iv-input-number>，递减值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptRandomPassRate.subRuleConfs.DeptRandomPassRate2.score"></iv-input-number></td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConfs.vo.DeptRandomPassRate.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">6</td>
+                    <td class="my-td">部门隐患排查参与率排名，根据排名，部门此项指标的得分分别为n1,n2,n3,n4......0,0(从大到小递减，直至最后都为0)。其中，最大值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptPoolIdentifyRate.subRuleConfs.DeptPoolIdentifyRate1.score" :disabled ="disabled"></iv-input-number>，递减值为<iv-input-number :disabled ="!disabled" :min="0" :value.sync="deptConfs.vo.DeptPoolIdentifyRate.subRuleConfs.DeptPoolIdentifyRate2.score"></iv-input-number></td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConfs.vo.DeptPoolIdentifyRate.enabled" :disabled="!disabled"></iv-checkbox>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--v-if="hasPermission('1060002002')"-->
+    <!--  <iv-button @click="doSave" v-if="hasPermission('1060002002')"  style="margin-top: 10px;">保存</iv-button>-->
+    <div style="background: #fff;padding: 0;margin-left: 20px">
+        <vi-button class="pull-left ivu-btn btn"  v-if="disabled"  @click="doSave" style="margin-top: 10px;background: #00467c;
+    color: #fff;"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+    </div>
+</div>

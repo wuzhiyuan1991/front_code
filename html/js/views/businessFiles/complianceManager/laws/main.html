@@ -1,0 +1,90 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="lr-layout" style="padding: 0;">
+            <div class="lr-layout-l legal-regulation-type-box" style="width: 300px;">
+                <div style="display:flex;justify-content:left;border-bottom: rgb(51, 166, 255) solid 2px;">
+                    <Icon title="编辑" v-if="hasAuth('editType')" type="edit" @click="doUpdateType"
+                        style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                    <Icon title="创建" v-if="hasAuth('createType')" type="plus-round" @click="doCreateType"
+                        style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                    <Icon title='删除' v-if="hasAuth('deleteType')" type="trash-a" @click="doDeleteType"
+                        style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                    <Icon title='导出' v-if="hasAuth('exportType')" type="android-download"  @click="doExportType"
+                        style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                    <Icon title='导入' v-if="hasAuth('importType')" type="android-upload" @click="doImportType"
+                        style="margin:20px;font-size: 18px;cursor: pointer;"></Icon>
+                </div>
+                <iv-tree style="overflow-y: auto;" id-attr="id" pid-attr="parentId" display-attr="name"
+                    :model="legalTypes" :selected-datas.sync="treeSelectData" :show-checkbox="false"
+                    :single-select="true" :trigger-parent-event="true" @on-tree-node-click="doTreeNodeClick"
+                    :show-icon-plus="true"></iv-tree>
+            </div>
+            <div class="lr-layout-r" style="padding: 0">
+                <div class="mp-header formTitle">
+                    <iv-row $main-header-row-attr-default-display>
+
+                        <iv-col $main-header-condition-div-attr-default>
+                            <!-- <all-classification $main-header-classification-attr-default></all-classification> -->
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                        </iv-col>
+                        <iv-col $main-header-func-div-attr-default>
+                            <div class="prelative addButton pull-right">
+                                <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+
+                                <iv-dropdown trigger="click" placement="bottom-end">
+                                    <vi-button type="ghost" icon="chevron-down"></vi-button>
+                                    <iv-dropdown-menu slot="list">
+                                        <iv-dropdown-item>
+                                            <div v-if="hasAuth('import')" class="uploadAport" @click="doImport">
+                                                <a>{{$t("gb.common.import")}}</a></div>
+                                        </iv-dropdown-item>
+                                        <iv-dropdown-item v-if="hasAuth('export')">
+                                            $main-header-div-tag-download-excel
+                                        </iv-dropdown-item>
+                                        $main-header-dropdown-item-tag-common-display
+                                        <!-- {header-dropdown-items-html} -->
+                                    </iv-dropdown-menu>
+                                </iv-dropdown>
+                            </div>
+                            $main-header-refresh-button
+                        </iv-col>
+                    </iv-row>
+                    <iv-row $main-header-row-attr-default-hidden>
+                        <iv-col span="24">
+                            <vi-button type="text" class="mp-header-item-btn">
+                                {{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                            </vi-button>
+                            <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doUpdate">
+                                {{$t("gb.common.edition")}}
+                            </vi-button>
+                            <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doRevise">
+                                修订
+                            </vi-button>
+                            <!-- <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn" @click="doEnableDisable">
+                        {{$t("gb.common.EnableDisable")}}
+                    </vi-button> -->
+                            <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                                @click="doDelete">
+                                {{$t("gb.common.del")}}
+                            </vi-button>
+                            <!-- {header-buttons-html} -->
+                        </iv-col>
+                    </iv-row>
+                </div>
+                <div class="mp-content">
+                    <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel :isShow='detailModel.show' :typeid='typeId' v-ref:detail-panel></detail-panel>
+</aside>
+<type-form-modal :visible.sync="typeForm.visible" :list="legalTypes" :spare-id="'main'" @do-tree-save="doSaveType">
+</type-form-modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" max-file-size='30mb' :templete-url="templete.url"
+    :import-model.sync="importProgress.show"></import-progress>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.typeUrl" max-file-size='30mb' :templete-url="templete.typeUrl"
+    :import-model.sync="importTypeProgress.show"></import-progress>

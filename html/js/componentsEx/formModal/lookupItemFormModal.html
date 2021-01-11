@@ -1,0 +1,54 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="编码" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="键" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+<!--					<el-form-item v-if="(hiddenFields.indexOf('i18nCode') == -1)" label="国际化编码" prop="i18nCode">
+						<iv-input :value.sync="mainModel.vo.i18nCode" :disabled="(disabledFields.indexOf('i18nCode') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('i18nId') == -1)" label="国际化id" prop="i18nId">
+						<iv-input :value.sync="mainModel.vo.i18nId" :disabled="(disabledFields.indexOf('i18nId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>-->
+				<!--	<el-form-item v-if="(hiddenFields.indexOf('lookupCode') == -1)" label="数据字典编码" prop="lookupCode">
+						<iv-input :value.sync="mainModel.vo.lookupCode" :disabled="(disabledFields.indexOf('lookupCode') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>-->
+					<!--<el-form-item v-if="(hiddenFields.indexOf('lookup') == -1)" label="数据字典" prop="lookupId">-->
+						<!--<input-select :value="mainModel.vo.lookup" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('lookup') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showLookupSelectModal = true)" ></input-select>-->
+					<!--</el-form-item>-->
+			<!--		<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="类型" prop="type">
+						<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>-->
+					<!--<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="类型" prop="type">-->
+						<!--&lt;!&ndash;<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>&ndash;&gt;-->
+						<!--<i-select :list="mainModel.dicType" :model.sync="mainModel.vo.type">-->
+							<!--<i-option v-for="item in mainModel.dicType " :value="item.type">{{ item.name }}</i-option>-->
+						<!--</i-select>-->
+					<!--</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="状态" prop="disable">
+						<i-select :list="getDataDicList('disable')" :model.sync="mainModel.vo.disable">
+							<i-option v-for="s in getDataDicList('disable') " :value="s.id">{{ s.value }}</i-option>
+						</i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('value') == -1)" label="值" prop="value">
+						<iv-input type="textarea" :rows="8" :value.sync="mainModel.vo.value" :disabled="(disabledFields.indexOf('value') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" label="备注" prop="remarks">
+						<iv-input :value.sync="mainModel.vo.remarks" :disabled="(disabledFields.indexOf('remarks') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="内容" prop="content">
+					<iv-input type="textarea" :rows="8" :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<!--<lookup-select-modal single-select :visible.sync="mainModel.showLookupSelectModal"  @do-save="doSaveLookup"></lookup-select-modal>-->

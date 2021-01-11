@@ -1,0 +1,140 @@
+<div class="edit-pop-container">
+	<div class="epc-content" style="background-color: #fff;padding-top: 10px;">
+		<el-form :model="mainModel.vo" v-ref:ruleform is-label-vertical>
+
+			<!--评定维度名称-->
+	       	<div style="height:40px;">
+	       		<el-form-item prop="name" :rules="ruleModel.name">
+					<div style="display: flex;">
+						<div class="c-gradelat-lable"><span v-show="!isReadOnly">*</span> {{$t('bd.ria.DimensName')}}</div>
+						<iv-input :textonly="isReadOnly" :value.sync="mainModel.vo.name"></iv-input>
+					</div>
+	       		</el-form-item>
+	       	</div>
+
+			<!--评定维度项-->
+			<table style="width: 100%;">
+				<colgroup>
+					<col style="width: 50px;">
+					<col style="width: 150px;">
+					<col>
+					<col v-if="showDeleteIcon"  style="width: 50px;">
+				</colgroup>
+				<thead>
+				<tr style="border-bottom: 1px solid #ddd;height: 40px;">
+					<th style="padding-left: 12px;">{{$t("bd.ria.term")}}</th>
+					<th>{{$t("bd.ria.score")}}</th>
+					<th>{{$t("bd.ria.degree")}}</th>
+					<th v-if="showDeleteIcon" class="text-center">{{$t("gb.common.op")}}</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr v-for="(index, item) in mainModel.vo.latScores" class="c-gradelat-tr" :style="trStyle">
+					<td style="padding-left: 8px;display: inline-block">
+						<div style="height: 40px;">
+							<span style="margin-top:10px;display: inline-block;border: 1px solid #ddd;padding: 0 5px;height: 20px;">{{index+1}}</span>
+						</div>
+					</td>
+					<td>
+						<div style="height: 40px;line-height: 40px;">
+							<el-form-item :prop="'latScores.'+index+'.score'" :rules="ruleModel.latScore.score">
+								<iv-input style="width: 120px;" type="number" :value.sync="item.score" placeholder="评分" :disabled="isDataReferenced" :textonly="isReadOnly"></iv-input>
+							</el-form-item>
+						</div>
+					</td>
+					<td>
+						<div style="height: 40px;line-height: 40px;">
+						<el-form-item :prop="'latScores.'+index+'.name'" :rules="ruleModel.latScore.name">
+							<iv-input style="width: 290px;"  :textonly="isReadOnly" :value.sync="item.name"></iv-input>
+						</el-form-item>
+						</div>
+					</td>
+					<td v-if="showDeleteIcon" class="text-center">
+						<div style="height: 40px;line-height: 40px;">
+							<Icon type="android-remove-circle" @click="removeLatScore(index)" style="cursor: pointer;color: red;font-size: 20px;"></Icon>
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+
+			<!--添加维度项按钮-->
+			<div v-if="showDeleteIcon" style="padding: 15px 0 0;">
+				<iv-button type="dashed" @click="addLatScore" long>{{$t("bd.ria.addDimensItem")}}</iv-button>
+			</div>
+
+			<!--分类-->
+       		<div style="margin-top: 20px;border: 1px solid #ddd; border-radius: 4px;">
+				<div class="c-gradelat-title">
+					<strong>{{$t("bd.hal.classInfo")}}</strong>
+					<div>
+						<a href="javascript:void(0);" @click.prevent="extendModel.show = !extendModel.show" style="margin-right: 10px;">
+				            <span v-if="extendModel.show">
+				            	<Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}
+				            </span>
+							<span v-else>
+				            	<Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}
+				            </span>
+						</a>
+						<a href="javascript:void(0);" @click="addExtend" v-show="!isReadOnly">
+							<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+						</a>
+					</div>
+				</div>
+
+				<div v-show="showContent" class="c-gradelat-content">
+					<el-tabs icon-type="android-remove-circle" type="border-card" :model="mainModel.vo.gradeExtend"
+							 :closable="!isReadOnly" :editable="!isReadOnly" @tab-remove="removeExtend">
+						<el-tab-pane v-for="(index,ext) in mainModel.vo.gradeExtend" :label.sync="ext.name">
+
+							<table style="width: 100%;">
+								<colgroup>
+									<col style="width: 30px;">
+									<col style="width: 200px;">
+									<col style="width: 200px;">
+								</colgroup>
+								<thead>
+								<tr style="border-bottom: 1px solid #ddd;height: 40px;">
+									<th></th>
+									<th>{{$t("bd.ria.sketch")}}</th>
+									<th>{{$t("bd.ria.detailed")}}</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr v-for="(latIndex, latExt) in ext.scoreExtend" class="c-gradelat-tr" :style="trStyle">
+									<td class="text-center">
+										<div style="height: 40px;">
+											<span style="margin-top:10px;height: 24px;display: inline-block;border: 1px solid #ddd;padding: 0 5px;">{{latIndex+1}}</span>
+										</div>
+									</td>
+									<td>
+										<div style="height: 57px;line-height: 57px;">
+											<el-form-item :prop="'gradeExtend.'+index+'.scoreExtend.'+latIndex+'.name'" :rules="ruleModel.latExt.name">
+												<span  v-if="isReadOnly"  style="line-height: 24px;display: inline-block;padding-right: 15px;">{{latExt.name}}</span>
+												<iv-input style="width: 240px;" type="textarea" v-if="!isReadOnly" :textonly="isReadOnly" :value.sync="latExt.name"></iv-input>
+											</el-form-item>
+										</div>
+									</td>
+									<td>
+										<div style="height: 57px;line-height: 57px;">
+										<el-form-item :prop="'gradeExtend.'+index+'.scoreExtend.'+latIndex+'.description'" :rules="ruleModel.latExt.description">
+											<span v-if="isReadOnly" style="line-height: 24px;display: inline-block">{{latExt.description}}</span>
+											<iv-input v-if="!isReadOnly"  style="width: 240px;" type="textarea" :textonly="isReadOnly" :value.sync="latExt.description"></iv-input>
+										</el-form-item>
+										</div>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+       		</div>
+
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button v-show="!isReadOnly" type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+</div>

@@ -1,0 +1,35 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+
+                <el-form-item label="自评项" prop="name">
+                    <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+                <el-form-item label="分数" prop="score">
+                    <iv-input :value.sync="mainModel.vo.score" type="number"></iv-input>
+                </el-form-item>
+                <el-form-item label="自评依据" prop="asmtBasisList[0].id" class="small-info-box" >
+                    <input-select
+                            :value="mainModel.vo.asmtBasisList[0]"
+                            :clearable="true"
+                            id-field="id"
+                            display-field="name"
+                            @click="doShowAsmtBasisSelectModal"
+                    ></input-select>
+                </el-form-item>
+                <!--<el-form-item label="备注" prop="remarks">-->
+                    <!--<iv-input :value.sync="mainModel.vo.remarks"></iv-input>-->
+                <!--</el-form-item>-->
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+<asmt-basis-select-modal
+        single-select
+        :visible.sync="selectModel.visible"
+        @do-save="doSaveAsmtBasis"
+></asmt-basis-select-modal>

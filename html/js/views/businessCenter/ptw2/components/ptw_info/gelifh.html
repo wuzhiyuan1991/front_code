@@ -1,0 +1,180 @@
+<div>
+<!--    <div  class="flex-v-center title-simplecard mb5 base-border-bottom">能量隔离</div>-->
+    <div class="mb50 flex-layout pdt10"  v-if="model.enableProcessIsolation==1">
+        <p class="flex-v-start mr10 ">
+            <iv-checkbox checked="true" @change="changeEnable($event,'1')"     style="visibility:hidden;"   ></iv-checkbox>
+            <div  style="margin-right: 20px;"  >工艺隔离</div>   
+        </p>
+        <div class="disabled-container flex-grow1"   >
+            <div class="disabled-mask border-ele" v-show="permitModel.enableProcessIsolation==1"></div>
+            <div class="disabled-content">
+                <div class="">
+                    <el-form class="width-auto-ipt" label-width="130px">
+                        <el-form-item label="工艺管道">
+                            <div class="form-disabled">作业申请人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="隔离点">
+                            <div class="form-disabled">作业申请人手动录入（可以录入多个）</div>
+                        </el-form-item>
+                        <el-form-item label="隔离方法" class="mb10">
+                            <div class="flex-layout">
+                                <div class="flex-grow1 form-disabled">
+                                    <div class="ele-disabled-mask"></div>
+                                    <iv-checkbox-group class="group-vertical">
+                                        <iv-checkbox disabled v-for="item of  permitModel.geliffList">{{item.name}}</iv-checkbox>
+                                    </iv-checkbox-group>
+                                </div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="挂牌上锁">
+                            <div class="form-disabled">
+                                <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                            </div>
+                        </el-form-item>
+        
+                        <el-form-item label="隔离位置示意图">
+                            <div class="form-disabled">
+                                <div class="link-disabled">上传文件</div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="图片">
+                            <div class="form-disabled">
+                                <div class="link-disabled">上传文件</div>
+                            </div>
+                        </el-form-item>
+                        <el-form-item class="is-required" label="隔离实施人">
+                            <input-select :value="process.isolator" id-field="id" display-field="name"
+                                          @click="showSelectUser(1,'isolator')"></input-select>
+                        </el-form-item>
+                        <el-form-item class="is-required" label="解除隔离实施人">
+                            <input-select :value="process.disisolator" id-field="id" display-field="name"
+                                          @click="showSelectUser(1,'disisolator')"></input-select>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 flex-layout "  v-if="model.enableMechanicalIsolation==0">
+        <p class="flex-v-start mr10">
+                <iv-checkbox checked="true"  @change="changeEnable($event,'2')"   style="visibility:hidden;"></iv-checkbox>
+                <div  style="margin-right: 20px;"  >机械隔离 </div>  
+
+        </p>
+        <div class="disabled-container flex-grow1">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableMechanicalIsolation==1"></div>
+            <div class="">
+                <el-form class="width-auto-ipt" label-width="130px">
+                    <el-form-item label="设施设备">
+                        <div class="form-disabled">作业申请人手动录入（可以录入多个）</div>
+                    </el-form-item>
+                    <el-form-item label="机械隔离部位 ">
+                        <div class="form-disabled">作业申请人手动录入（可以录入多个）</div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <div class="form-disabled">
+                            <div class="link-disabled">上传文件</div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  class="is-required" label="隔离实施人">
+                        <input-select :value="mechanical.isolator" id-field="id" display-field="name"
+                                      @click="showSelectUser(2,'isolator')"></input-select>
+                    </el-form-item>
+                    <el-form-item   class="is-required" label="解除隔离实施人">
+                        <input-select :value="mechanical.disisolator" id-field="id" display-field="name"
+                                      @click="showSelectUser(2,'disisolator')"></input-select>
+                        </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="mb50 flex-layout "  v-if="model.enableElectricIsolation==1">
+        <p class="flex-v-start mr10">
+                <iv-checkbox    @change="changeEnable($event,'3')"  checked="true"  style="visibility:hidden;"  ></iv-checkbox>
+                <div  style="margin-right: 20px;"  >电气隔离 </div>  
+        </p>
+        <div class="disabled-container flex-grow1">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableElectricIsolation==1"></div>
+            <div class="">
+                <el-form class="width-auto-ipt" label-width="130px">
+                    <el-form-item label="电气设施设备">
+                        <div class="form-disabled">
+                            作业申请人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="电气隔离部位">
+                        <div class="form-disabled">
+                            作业申请人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <div class="form-disabled">
+                            <div class="link-disabled">上传文件</div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  class="is-required" label="隔离实施人">
+                        <input-select :value="electric.isolator" id-field="id" display-field="name"
+                                      @click="showSelectUser(3,'isolator')"></input-select>
+                    </el-form-item>
+                    <el-form-item   class="is-required" label="解除隔离实施人">
+                        <input-select :value="electric.disisolator" id-field="id" display-field="name"
+                                      @click="showSelectUser(3,'disisolator')"></input-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="flex-layout "  v-if="model.enableSystemMask==1" >
+        <p class="flex-v-start mr10">
+                <iv-checkbox   @change="changeEnable($event,'4')"  checked="true"  style="visibility:hidden;"></iv-checkbox>
+
+                <div  style="margin-right: 20px;"  >系统屏蔽 </div>    
+        </p>
+        <div class="disabled-container flex-grow1" :class="{'ele-enable':permitModel.enableSystemMask=='1'}">
+            <div class="disabled-mask border-ele" v-show="permitModel.enableSystemMask==0"></div>
+            <div class="">
+                <el-form class="width-auto-ipt" label-width="130px">
+                    <el-form-item label="保护系统名称">
+                        <div class="form-disabled">
+                            作业申请人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="保护系统子件名称">
+                        <div class="form-disabled">
+                            作业申请人手动录入（可以录入多个）
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="挂牌上锁">
+                        <div class="form-disabled">
+                            <iv-checkbox  disabled true-value="0" false-value="1">是（需要）</iv-checkbox>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <div class="form-disabled">
+                            <div class="link-disabled">上传文件</div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item  class="is-required" label="隔离实施人">
+                        <input-select :value="systemMask.isolator" id-field="id" display-field="name"
+                                      @click="showSelectUser(4,'isolator')"></input-select>
+                    </el-form-item>
+                    <el-form-item   class="is-required" label="解除隔离实施人">
+                        <input-select :value="systemMask.disisolator" id-field="id" display-field="name"
+                                      @click="showSelectUser(4,'disisolator')"></input-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+</div>
+<user-select-modal single-select :visible.sync="showUserSelectModal" @do-save="doSaveUser"></user-select-modal>

@@ -1,0 +1,13 @@
+<div class="ivu-rate" :class="{'ivu-rate-disabled': disabled}" @mouseleave="handleMouseleave">
+    <div
+            class="ivu-rate-star"
+            v-for="item in count"
+            :class="starCls(item)"
+            @mousemove="handleMousemove(item, $event)"
+            @click="handleClick(item)">
+        <span class="ivu-rate-star-content" type="half"></span>
+    </div>
+    <div class="ivu-rate-text" v-if="showText" v-show="value > 0">
+        <slot>{{ value }}</slot>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<Modal :visible.sync="show" title="保存查询方案" width="520" :footer-hide="true">
+	<div class="edit-pop-container report">
+		<div class="epc-content">
+			<el-form :model="mainModel" :rules="rules" v-ref:ruleform >
+				<el-form-item label="方案分类" prop="type">
+					<iv-input v-if="!enableChangeQueryType" :value="displayType" textonly></iv-input>
+					<i-select v-if="enableChangeQueryType" :model.sync="mainModel.type" :list="queryInfoTypes" @on-change="onISelectChange">
+						<i-option v-for="qryInfoType in queryInfoTypes" :value="qryInfoType.id">{{qryInfoType.name}}</i-option>
+					</i-select>
+				</el-form-item>
+				<el-form-item label="已有方案"  prop="id">
+					<i-select :model.sync="mainModel.id" :list="qryInfoList">
+						<i-option v-for="info in qryInfoList" :value="info.id">{{ info.name }}</i-option>
+					</i-select>
+				</el-form-item>
+				<el-form-item label="新建方案名称" prop="name">
+					<iv-input :value.sync="mainModel.name" style="width:258px"></iv-input>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSaveAs" class="pull-right">另存</vi-button>
+			<vi-button v-if="displayDoSave" type="primary" @click="doSave" class="pull-right">保存</vi-button>
+		</div>
+	</div>
+</Modal>

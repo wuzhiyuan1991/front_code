@@ -1,0 +1,380 @@
+.ptw-base-info .ivu-input,
+.ptw-base-info .form-disabled,
+.ptw-base-info .ivu-select-selection{
+    border-radius:0 ;
+}
+.ptw-base-info  .h80{
+     min-height: 80px;
+}
+.ptw-base-info .bgeee{
+    background: #eee;
+}
+.ptw-base-info .bgg{
+    background: #F3F3F3;
+}
+.ptw-base-info .border-color-fff{
+    border-color: #fff;
+}
+.ptw-base-info .border-color-ddd{
+    border-color: #ddd !important;
+}
+.ptw-base-info .bdnone{
+    border:none !important;
+}
+.ptw-base-info .pd1{
+    padding:1px;
+}
+.ptw-base-info .bgw, .ptw-base-info .bgw input{
+    background: #fff !important;
+}
+.ptw-base-info .ivu-checkbox-wrapper-flex .ivu-checkbox-wrapper{
+    display: flex !important;
+}
+.ptw-base-info .ivu-checkbox-wrapper-flex .ivu-checkbox{
+    margin-top:2px;
+}
+.ptw-base-info .color666 , .ptw-base-info .color666 input{
+    color:#666 !important;
+}
+.ptw-base-info  input::-webkit-input-placeholder,
+.ptw-base-info  textarea::-webkit-input-placeholder
+{   /* WebKit, Blink, Edge */
+    color: #aaa ;
+    font-size: 14px;
+}
+.ptw-base-info .base-border{
+    height: 30px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+.ptw-base-info .colorccc{
+    color:#ccc;
+}
+.bgf3{
+    background: #F3F3F3;
+}
+.ptw-base-info .label-bg{
+    height: 30px;
+    line-height: 30px;
+    padding-left: 9px;
+    border:1px solid #ddd;
+    border-right: none;
+    /*width: 90px;*/
+    /*margin-right: 20px;*/
+}
+.ptw-base-info .border-style-dashed{
+    border-style: dashed !important;
+}
+.ptw-base-info .border-radius-0{
+    border-radius: 0px !important;
+}
+.ptw-base-info .flex-flex-1{
+    flex:1;
+}
+.ptw-base-info .padding-botton-5{
+    padding-bottom: 5px;
+}
+.ptw-base-info .sign-time{
+    display: inline-block;width:90px;
+}
+.ptw-base-info .margin-right45{
+    margin-right: 10px;
+}
+.ptw-base-info .dashed-btn{
+    border-radius: 15px;
+    height: 30px;
+    line-height: 28px;
+    text-align: center;
+    color:#aaa;
+    border:1px dashed #d3d3d3;
+}
+.ptw-base-info .width250{
+    width:250px;
+}
+.select-div{
+    width:80px;
+    border:1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.ptw-base-info .ivu-checkbox-wrapper-flex .ivu-checkbox-wrapper{
+    display: flex !important;
+}
+.ptw-base-info .ivu-checkbox-wrapper-flex .ivu-checkbox{
+    margin-top:2px;
+}
+.ptw-base-info .checked-box-span{
+    color:#666;margin-left:0;display: inline-block;white-space: normal;word-break: break-all;padding-top:4px;
+}
+
+
+
+/*=================许可签发=====================*/
+.ptw-tab-title{
+    font-size: 14px;
+    font-weight: bold;
+}
+/*时间轴的圈圈*/
+.ptw-timeline-serialnumber {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 2em;
+    height: 2em;
+    border: solid 1.5px;
+    border-radius: 50%;
+}
+.ptw-license-rolebox{
+    border: solid 1px #f2f2f2;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 5px;
+    min-height: 200px;
+    margin-left: 20px;
+    width: 185px;
+    background: #f2f2f2;
+}
+
+.ptw-license-roleitemtitle{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: solid 1px #ddd;
+    border-radius: 13px;
+    padding:3px 2px 3px 6px ;
+    margin-bottom: 5px;
+
+}
+.ptw-license-roleitemtitle i{
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.ptw-license-roleitemcontent{
+    background: #f2f2f2;
+    padding: 5px;
+}
+.ptw-license-roleitemcontent .form-item-label{
+    flex-shrink: 0;
+    width: 110px;
+}
+.ptw-license-roleitemcontent .form-item-input{
+    flex-grow: 1;
+    borer:soild  #d7d7d7;
+    background: #fff;
+    color:#999999;
+    padding: 4px;
+}
+.ptw-license-roleitemcontent .form-item-btn{
+    flex-shrink: 0;
+    width: 4em;
+    margin-left: 4px;
+}
+.ptw-flex-start{
+    align-items: flex-start;padding-top: 4px
+}
+.ptw-roleitem-btn{
+    background: #fff;
+    padding: 4px;
+    border-radius: 13px ;
+    border: dashed 1.5px #ddd;
+    position: relative;
+    display: flex;
+    align-items: center
+}
+.ptw-icon-ios{
+    font-size: 20px;
+    font-weight: 600;
+}
+.ptw-role-span{
+    min-width: 90px;
+    border: solid 1px #ddd;
+    padding: 2px;
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.ptw-table-simple{
+    width: 100%;
+    border:solid 1px;
+}
+.ptw-table-simple td{
+    border:solid 1px;
+}
+.ptw-table-simple th{
+    background:#cccccc ;
+}
+.ptw-table-simple td,.ptw-table-simple th{
+    padding: 4px;
+}
+.ptw-table-simple th{
+    height: 30px;
+}
+.ptw-table-simple td>div{
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+
+
+
+/*许可签发填报*/
+.ptwfill-license-rolebox{
+    border: solid 1px #c3c3c3;
+    padding: 4px 10px;
+    margin-left:10px;
+    border-radius: 28px;
+    position: relative;
+    top: -10px;
+}
+.ptw-combine-box{
+    display:inline-flex;
+    /*height: 2em;*/
+    height: 1.5em;
+    padding-right: 10px;
+    margin-top: 2px;
+}
+
+.ptw-combine-box>div{
+    flex-shrink: 0;
+    align-items: center;
+    border:  1px solid #d9d9d9
+}
+.ptw-combine-enable{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 10px;
+      padding-right: 10px;
+}
+.ptw-combine-disable{
+    /*border: 1px solid #d7dde4;*/
+    background-color: #f3f3f3;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.ptw-combine-close{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2em;
+    background-color: #f3f3f3;
+}
+.child-ml10>div:nth-child(n+2){
+    margin-left: 10px;
+}
+.ptw-close-closebox{
+    border: solid 1px #ddd;
+    height: 2em;
+    display: inline-flex;
+    align-items: center;
+    background: #f2f2f2;
+}
+.ptw-close-close{
+    cursor:pointer; 
+    display: inline-flex;
+    align-items: center;
+    width: 2em;
+    justify-content: center;
+}
+.ptw-close-span{
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+
+.ptw-title{
+    background: #F2F2F2;width:100%;font-size: 14px !important;padding-left:15px !important;
+}
+.ptw-border{
+    border: 1px solid #ddd;
+    margin-top: -5px;
+    padding:8px;
+}
+
+/**作业关闭*/
+.tab-item{
+    border:1px solid #ddd;
+    padding: 5px 10px;
+}
+.tab-item.checked{
+    background-color: #19a3e7;
+    color: #fff;
+}
+
+/****** 许可签发 3.20 *****/
+.disable-style{
+    background:#f3f3f3 !important;
+    color:#ccc !important;
+    border:1px solid #ddd !important;
+}
+.disable-active-style{
+    color:#666 !important;
+    font-size:14px !important;
+    border:1px solid #ddd !important;
+    background: #fff !important;
+}
+.xuke-liebiao{
+    background: #fff;
+    margin-left: 100px;
+    border: 1px solid #ddd;
+}
+.detail-timeline-item{
+    margin-bottom: 10px;
+    min-height: 100px;
+    background-color: #fff;
+    padding: 10px 20px 0px 10px;
+    background-size: 80px 60px;
+    background-repeat: no-repeat;
+    background-position: 95% 5px;
+    border: 1px solid #eee;
+    border-radius: 3px;
+
+    width:80%;margin-right:5px;
+}
+.my-ivu-timeline-item-content .ivu-timeline-item-content{
+    padding: 1px 1px 0px 24px;
+    font-size: 14px;
+    position: relative;
+    top: 0px;
+}
+
+
+/*********   作业许可安全控制措施   *********/
+.security-groups{
+    width: 350px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    border: 1px solid #ddd;
+    text-indent: 10px;
+}
+
+.security-groups-itemIndex{
+    width: 50px;
+    height: 27px;
+    background: #EEEEEE;
+    color: #666666;
+    text-align: center;
+    font-size: 12px;
+    line-height: 27px;
+}
+
+.ivu-select-selection-none .ivu-select-selection{
+    border:none;
+    background: none;
+    box-shadow: none !important;
+}
+
+

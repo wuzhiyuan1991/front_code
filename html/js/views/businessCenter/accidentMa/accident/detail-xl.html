@@ -1,0 +1,135 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('report') && !mainModel.vo.investigation.id" type="ghost" @click="doGenerateReport ">生成调查报告</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:400px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item label="事故编码" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item label="事故名称" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="发生时间" prop="accidentTime" class="small-info-box" >
+						<date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.accidentTime" clearable></date-picker>
+						<!--<date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="formOrder.workStartTime" ></date-picker>-->
+						<iv-input v-else :value.sync="mainModel.vo.accidentTime" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="事故单位" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+
+				</iv-row>
+				<iv-row class="bip-content-item">
+
+					<el-form-item  label="事故单位负责人" prop="unitPrincipal.id" class="small-info-box" >
+						<input-select  :value="mainModel.vo.unitPrincipal" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowUnitPrincipalSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="手机号码" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.unitPrincipal.mobile" textonly></iv-input>
+					</el-form-item>
+
+					<el-form-item label="事故现场负责人" prop="scenePrincipal.id" class="small-info-box" >
+						<input-select  :value="mainModel.vo.scenePrincipal" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowScenePrincipalSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item label="手机号码" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.scenePrincipal.mobile" textonly></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="发生地点" prop="attr1" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.attr1" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="事故简要经过" prop="description" class="small-info-box-2span">
+						<iv-input :value.sync="mainModel.vo.description" type="textarea" :rows="5" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.casualtyCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>人员伤亡</span></p>
+				<a slot="extra" @click.prevent="cardModel.casualtyCardModel.showContent = !cardModel.casualtyCardModel.showContent;" >
+					<span v-if="cardModel.casualtyCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowCasualtyFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.casualtyTableModel"
+					@on-del-row="doRemoveCasualties"
+					@on-edit-row="doShowCasualtyFormModal4Update"
+					v-ref:casualty-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.economicLossCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>初步估计经济损失</span></p>
+				<a slot="extra" @click.prevent="cardModel.economicLossCardModel.showContent = !cardModel.economicLossCardModel.showContent;" >
+					<span v-if="cardModel.economicLossCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+					</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowEconomicLossFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+					:setting="tableModel.economicLossTableModel"
+					@on-del-row="doRemoveEconomicLosses"
+					@on-edit-row="doShowEconomicLossFormModal4Update"
+					v-ref:economicloss-table
+					>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<div class="rip-item">
+			<file-list-simple-card title="可能的原因" remark="尽可能列出可能的潜在原因" :data="fileModel.probableCause.data" :config="fileModel.probableCause.cfg"> </file-list-simple-card>
+		</div>
+		<div class="rip-item">
+			<file-list-simple-card title="其他" remark="如外部影响、媒体报道、即将采取的后续措施" :data="fileModel.other.data" :config="fileModel.other.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+
+</div>
+<scene-principal-select-modal :visible.sync="selectModel.scenePrincipalSelectModel.visible" :filter-data="selectModel.scenePrincipalSelectModel.filterData" single-select @do-save="doSaveScenePrincipal"></scene-principal-select-modal>
+<unit-principal-select-modal :visible.sync="selectModel.unitPrincipalSelectModel.visible" :filter-data="selectModel.unitPrincipalSelectModel.filterData" single-select @do-save="doSaveUnitPrincipal"></unit-principal-select-modal>
+
+<casualty-form-modal
+		:visible.sync="formModel.casualtyFormModel.show"
+		@do-save="doSaveCasualty"
+		@do-update="doUpdateCasualty"
+		:query-url="formModel.casualtyFormModel.queryUrl"
+		:hidden-fields="formModel.casualtyFormModel.hiddenFields"
+		v-ref:casualty-form-modal>
+</casualty-form-modal>
+<economicloss-form-modal
+		:visible.sync="formModel.economicLossFormModel.show"
+		@do-save="doSaveEconomicLoss"
+		@do-update="doUpdateEconomicLoss"
+		:query-url="formModel.economicLossFormModel.queryUrl"
+		:hidden-fields="formModel.economicLossFormModel.hiddenFields"
+		v-ref:economicloss-form-modal>
+</economicloss-form-modal>
+
+

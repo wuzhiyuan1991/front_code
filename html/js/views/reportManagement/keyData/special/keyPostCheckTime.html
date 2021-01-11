@@ -1,0 +1,34 @@
+<div style="height: 100%">
+    <div class="mp-header formTitle" style="margin-left: 10px;">
+        <div class="basic">{{qryInfoModel.title}}</div>
+    </div>
+    <div class="report-qry-head">
+        <el-form :model="qryInfoModel.vo" :rules="qryInfoModel.rules" is-label-vertical v-ref:ruleform>
+            <iv-row>
+                <iv-col span="5">
+                    <el-form-item prop="dateRange" style="width:100%;overflow: inherit;">
+                        <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryInfoModel.vo.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="7">
+                    <el-form-item prop="objRange" style="width:100%;overflow: inherit;">
+                        <obj-select type="frw" :values.sync="qryInfoModel.vo.objRange"></obj-select>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="3">
+                    <el-form-item  style="width:100%;overflow: inherit;">
+                        <i-select :model.sync="qryInfoModel.vo.orgType" v-ref:select :list="typeOfRanges" @on-change="changeTypeOfRange">
+                            <i-option v-for="item in typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                        </i-select>
+                    </el-form-item>
+                </iv-col>
+                <iv-col span="4" style="padding-top: 3px;">
+                    <iv-button @click="doQry">查询</iv-button>
+                </iv-col>
+            </iv-row>
+        </el-form>
+    </div>
+    <div class="reportChart">
+        <echart-component v-ref:echart :qry-param="qryInfoModel.vo" :data-limit="dataNumLimit"></echart-component>
+    </div>
+</div>

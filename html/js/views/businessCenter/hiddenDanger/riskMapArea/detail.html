@@ -1,0 +1,278 @@
+<Modal :visible.sync="visible" :footer-hide="true" width="1146" :closable="false" class-name="risk-map-box-modal" @on-close="close">
+    <div class="risk-map-box-content">
+        <div class="risk-map-box-left">
+            <ul>
+                <li @click="changeTemporaryMode('0')" class="risk-map-box-left-item" :class="{'active': temporaryMode === '0'}">固有风险点</li>
+                <li @click="changeTemporaryMode('10')" class="risk-map-box-left-item" :class="{'active': temporaryMode === '10'}" v-if="showRightDynamicRisk">临时风险点</li>
+            </ul>
+        </div>
+        <div class="sw-risk-map-modal">
+            <!--头部-->
+            <div class="header">
+                <!--属地列表-->
+                <i-select @on-change="doChangeArea" :list="dominationAreas" :model.sync="checkedDominationArea.id">
+                    <i-option v-for="item in dominationAreas" :value="item.id">{{ item.name }}</i-option>
+                </i-select>
+
+                <div class="map-modal-header-item">
+                    <span class="lab">静态风险: </span>
+                    <span class="risk-level-block" :style="doRenderBgColor(staticLevel)">{{doRenderLevelName(staticLevel)}}</span>
+                </div>
+
+                <div class="map-modal-header-item" v-if="showRightDynamicRisk">
+                    <span class="lab">动态风险: </span>
+                    <span class="risk-level-block" :style="doRenderBgColor(dynamicRiskLevel)">{{doRenderLevelName(dynamicRiskLevel)}}</span>
+                </div>
+
+                <div style="height: 100%;line-height: 48px;">
+                    <span style="margin-right: 30px;width: 150px;overflow: hidden;display: inline-block;white-space: nowrap;text-overflow: ellipsis;"><span style="color: #cceaff;">所属部门：</span>{{getDataDic('org', showOrgId)['deptName']}}</span>
+                    <span style="width: 150px;overflow: hidden;display: inline-block;white-space: nowrap;text-overflow: ellipsis;"><span style="color: #cceaff;">属地负责人：</span>{{dominationAreaUserName}}</span>
+                </div>
+                <div>
+                    <Icon style="cursor: pointer;margin-right: 10px;" type="refresh" @click="doRefresh"></Icon>
+                    <Icon style="cursor: pointer;" type="close-circled" @click="close"></Icon>
+                </div>
+            </div>
+
+
+            <!--分类过滤-->
+            <div class="map-catalog-box">
+                <div class="tit">风险点类型</div>
+                <div
+                        v-for="(index, item) in riskTypes"
+                        @click="doClickRiskPointType(index, item.id)"
+                        class="cata-item"
+                        :class="{'checked': cache.riskPointIndex === index}"
+                >{{item.name}}<span class="num">{{item.num}}</span></div>
+            </div>
+
+            <div class="map-catalog-box">
+                <div class="tit">重点关注类型</div>
+                <div
+                        v-for="(index, type) in focusTypes"
+                        @click="doClickFocusType(index, type.id)"
+                        class="cata-item"
+                        :class="{'checked': cache.focusTypeIndex === index}">
+                    {{type.name}}
+                    <span class="num">{{type.num}}</span>
+                </div>
+            </div>
+
+            <div class="map-risk-catalog-box" style="margin: 20px 0px 10px 0px;" v-if="!showRightDynamicRisk">
+                <div class="tit">
+                    <span class="risk-round" :style="doRenderBgColor(staticRisk)"></span>
+                    <span>静态风险:</span>
+                </div>
+                <div class="risk-cata-item"
+                     :class="{'checked': cache.staticIndex === index}"
+                     v-for="(index, item) in staticRisks"
+                     @click="doClickStaticRisk(index, item.level)"
+                >
+                    <span class="risk-round" :style="doRenderBgColor(item.level)"></span>
+                    <span>{{item.name}}</span>
+                    <span class="num">{{item.num}}</span>
+                </div>
+            </div>
+
+            <div class="map-risk-catalog-box" style="margin: 20px 0px 10px 0px;" v-if="showRightDynamicRisk">
+                <div class="tit">
+                    <span class="risk-round" :style="doRenderBgColor(staticRisk)"></span>
+                    <span>静态风险:</span>
+                </div>
+                <div class="risk-cata-item"
+                     :class="{'checked': cache.staticIndex === index}"
+                     v-for="(index, item) in staticRisks"
+                     @click="doClickStaticRisk(index, item.level)"
+                >
+                    <span class="risk-round" :style="doRenderBgColor(item.level)"></span>
+                    <span>{{item.name}}</span>
+                    <span class="num">{{item.num}}</span>
+                </div>
+            </div>
+
+            <div class="map-risk-catalog-box" style="margin-bottom: 20px;" v-if="showRightDynamicRisk">
+                <div class="tit">
+                    <span class="risk-round" :style="doRenderBgColor(dynamicRisk)"></span>
+                    <span>动态风险:</span>
+                </div>
+                <div
+                        class="risk-cata-item"
+                        :class="{'checked': cache.dynamicIndex === index}"
+                        v-for="(index, item) in dynamicRisks"
+                        @click="doClickDynamicRisk(index, item.level)"
+                >
+                    <span class="risk-round" :style="doRenderBgColor(item.level)"></span>
+                    <span>{{item.name}}</span>
+                    <span class="num">{{item.num}}</span>
+                </div>
+            </div>
+
+
+            <!--主体信息-->
+            <div class="map-body">
+
+                <!--左侧检查表-->
+                <div class="map-body-left" style="height: 360px">
+                    <div class="map-body-box">
+                        <table class="sw-risk-map-table" style="width: 377px;border-right: none;">
+                            <colgroup>
+                                <!--<col style="width: 180px;">-->
+                                <col>
+                                <col style="width: 66px;">
+                                <col style="width: 60px;" v-if="showRightDynamicRisk">
+                                <col style="width: 60px;" v-if="showRightDynamicRisk">
+                                <col style="width: 17px;">
+                            </colgroup>
+                            <thead>
+                            <tr class="sw-risk-map-tr">
+                                <th>风险点</th>
+                                <th>静态</th>
+                                <th v-if="showRightDynamicRisk">动态</th>
+                                <th v-if="showRightDynamicRisk">趋势</th>
+                                <th style="border-right: none;"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <div style="overflow-y: scroll;overflow-x: hidden;height: calc(100% - 29px); width:377px;">
+                            <table class="sw-risk-map-table" style="width: 366px;border-top: none;">
+                                <colgroup>
+                                    <!--<col style="width: 180px;">-->
+                                    <col>
+                                    <col style="width: 66px;">
+                                    <col style="width: 60px;" v-if="showRightDynamicRisk">
+                                    <col style="width: 60px;" v-if="showRightDynamicRisk">
+                                    <col style="width: 4px;">
+                                </colgroup>
+                                <tbody>
+                                <tr v-for="(index, item) in checkTables" class="sw-risk-map-tr">
+                                    <td @click="doClickCheckTable(index, item.id)" class="t_label" :class="{'checked': index === cache.checkTableIndex}">
+                                        <span>{{item.tableName}}</span>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <span class="risk-point-level-round" :style="doRenderBgColor(item.level)"></span>
+                                    </td>
+                                    <td style="text-align: center;" v-if="showRightDynamicRisk">
+                                        <span class="risk-point-level-round" :style="doRenderBgColor(item.dynamicLevel)"></span>
+                                    </td>
+                                    <td style="text-align: center;font-size: 18px;color: #999;" v-if="showRightDynamicRisk">
+                                        <Icon type="arrow-right-c" :style="doCalcTrendIcon(item.dynamicLevel, item.level)"></Icon>
+                                    </td>
+                                </tr>
+                                <tr v-for="n in fillLength2" class="sw-risk-map-tr">
+                                    <td></td>
+                                    <td></td>
+                                    <td v-if="showRightDynamicRisk"></td>
+                                    <td v-if="showRightDynamicRisk"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!--右侧图表或检查项-->
+                <div class="map-body-right" style="height: 360px">
+                    <div class="map-tog-box">
+                        <div class="map-tog-item" :class="{'checked': riskType === 'static'}"
+                             @click="doChangeRiskType('static')">
+                            <span v-if="temporaryMode === '10'">
+                                 静态风险
+                            </span>
+                            <span v-else>
+                                 静态风险
+                            </span>
+                           </div>
+                        <div class="map-tog-item" :class="{'checked': riskType === 'dynamic'}"
+                                @click="doChangeRiskType('dynamic')" v-if="showRightDynamicRisk">动态风险</div>
+                    </div>
+
+                    <!--动态风险-->
+                    <div v-show="riskType === 'dynamic' && showRightDynamicRisk" style="border: 1px solid #ddd; height: calc(100% - 28px);">
+                        <div class="date-range-select">
+                            <span>最近</span>
+                            <a href="javascript:void(0);" class="select-item" :class="{'checked': dateRangeId === '1'}" @click="doChangeDateRange('1')">十次</a>
+                            <a href="javascript:void(0);" class="select-item" :class="{'checked': dateRangeId === '2'}" @click="doChangeDateRange('2')">7天</a>
+                            <a href="javascript:void(0);" class="select-item" :class="{'checked': dateRangeId === '3'}" @click="doChangeDateRange('3')">30天</a>
+                            <a href="javascript:void(0);" class="select-item" :class="{'checked': dateRangeId === '4'}" @click="doChangeDateRange('4')">季度</a>
+                            <a href="javascript:void(0);" class="select-item" :class="{'checked': dateRangeId === '5'}" @click="doChangeDateRange('5')">半年</a>
+                            <a href="javascript:void(0);" class="select-item" :class="{'checked': dateRangeId === '6'}" @click="doChangeDateRange('6')">一年</a>
+                            <a href="javascript:void(0);" v-show="!showCustomDateRange" style="margin-left: 8px;" @click="doShowCustomDateRange">自定义</a>
+                            <div style="margin-left: 8px;" v-show="showCustomDateRange">
+                                <vi-date-picker type="daterange" :value.sync="dateRange" placeholder="选择日期范围" style="width:180px;display: inline-block;"></vi-date-picker>
+                                <a @click="doChangeDateRange('7')" href="javascript:void(0);" style="margin-left: 8px;">查询</a>
+                                <a @click="showCustomDateRange = false" href="javascript:void(0);" style="margin-left: 8px;">关闭</a>
+                            </div>
+                        </div>
+                        <div style="height: calc(100% - 36px);">
+                            <vuecharts :options="chartOpt" v-ref:line-chart style="height: 100%;"></vuecharts>
+                        </div>
+                    </div>
+
+                    <!--静态风险-->
+                    <div class="map-body-box" v-show="riskType === 'static'" style="height: calc(100% - 28px);">
+                        <table class="sw-risk-map-table" style="width: 640px;">
+                            <colgroup>
+                                <col style="width: 40px;">
+                                <col style="width: 40px;">
+                                <col style="width: 80px;">
+                                <col style="width: 260px;">
+                                <col style="width: 80px;">
+                                <col style="width: 80px;">
+                                <col style="width: 17px;">
+                            </colgroup>
+                            <thead>
+                            <tr class="sw-risk-map-tr">
+                                <th></th>
+                                <th></th>
+                                <th>风险等级</th>
+                                <th>风险场景</th>
+                                <th>危害因素</th>
+                                <th>管控层级</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <div style="overflow-y: scroll;overflow-x: hidden;height: calc(100% - 30px);">
+                            <table class="sw-risk-map-table" style="width: 624px;border-top: none;">
+                                <colgroup>
+                                    <col style="width: 40px;">
+                                    <col style="width: 40px;">
+                                    <col style="width: 80px;">
+                                    <col style="width: 260px;">
+                                    <col style="width: 80px;">
+                                    <col style="width: 80px;">
+                                    <!--<col style="width: 17px;">-->
+                                </colgroup>
+                                <tbody>
+                                <tr v-for="(index, item) in checkTableItems" class="sw-risk-map-tr">
+                                    <td style="text-align: center;">{{index + 1}}</td>
+                                    <td style="text-align: center;">
+                                        <span class="risk-point-level-round" :style="doRenderBgColor(item.attr2)"></span>
+                                    </td>
+                                    <td>{{item.riskLevel}}</td>
+                                    <td>{{item.scene}}</td>
+                                    <td>{{item.hazardFactor ? item.hazardFactor.name : ''}}</td>
+                                    <td>{{getDataDic("level_of_control", item.levelOfControl)}}</td>
+                                </tr>
+                                <tr v-for="n in fillLength" class="sw-risk-map-tr">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--loading-->
+    <div v-show="isDateQuerying"  style="text-align: center;padding-top: 250px;position: absolute;top: 0;left: 50px;height: 100%;width: calc(100% - 50px);background-color: rgba(255, 255, 255, 0.7);">
+        <div class="bg-rotate-loader"></div>
+    </div>
+</Modal>

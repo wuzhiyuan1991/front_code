@@ -1,0 +1,13 @@
+<Modal :visible.sync="visible" :title="mainModel.opType=='create'?'添加':'编辑'" width="500" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+            <el-form-item :label="mainModel.title" prop="content">
+                <iv-textarea :value.sync="mainModel.vo.content"></iv-textarea>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</Modal>

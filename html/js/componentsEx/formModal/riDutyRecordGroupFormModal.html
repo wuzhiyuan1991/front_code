@@ -1,0 +1,20 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('dutyRecordId') == -1)" label="值班记录" prop="dutyRecord.id">
+						<input-select :value="mainModel.vo.riDutyRecord" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('riDutyRecord') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowRiDutyRecordSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('groupId') == -1)" label="组" prop="groupId">
+						<iv-input :value.sync="mainModel.vo.groupId" :disabled="(disabledFields.indexOf('groupId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('groupName') == -1)" label="组名" prop="groupName">
+						<iv-input :value.sync="mainModel.vo.groupName" :disabled="(disabledFields.indexOf('groupName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

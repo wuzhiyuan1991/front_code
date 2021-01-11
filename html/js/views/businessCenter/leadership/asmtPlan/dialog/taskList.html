@@ -1,0 +1,24 @@
+<div class="d-task-list">
+    <ul class="d-task-list-left">
+        <li v-for="user in users" @click="changeUser(user.id)" :class="{'active': userId === user.id}">{{user.name}}</li>
+        <li class="empty" v-show="userEmpty">请选择自评人</li>
+    </ul>
+    <div class="d-task-list-right">
+        <div class="d-task-list-right-header">
+            <ul>
+                <li v-for="status in statusList" @click="changeStatus(status.id)" :class="{'active': statusId === status.id}">
+                    <span>{{status.value}}</span>
+                    <span class="num">{{status.num}}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="d-task-list-right-body">
+            <lite-table
+                    :values="values"
+                    :columns="columns"
+                    show-sequence
+                    show-page
+            ></lite-table>
+        </div>
+    </div>
+</div>

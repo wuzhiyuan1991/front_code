@@ -1,0 +1,140 @@
+<!--这个页面的样式和模板那边的一样，保留，，，若要换成这个样式，可参考实现-->
+
+    <div class="flex-layout">
+        <div class="flex-grow1">
+            <div class="flex-layout ml10 mt20">
+                <span class="tab-item" :class="{checked:tab.selectedIndex==0}" @click="tab.selectedIndex=0">作业完成</span>
+                <span class="tab-item" :class="{checked:tab.selectedIndex==1}" @click="tab.selectedIndex=1">作业取消</span>
+                <span class="tab-item" :class="{checked:tab.selectedIndex==2}"  @click="tab.selectedIndex=2" v-show="checkbox.renew">作业续签</span>
+                <span class="tab-item" :class="{checked:tab.selectedIndex==3}"  @click="tab.selectedIndex=3" v-show="checkbox.delay">作业延期</span>
+            </div>
+            <div class=" ml10" v-show="tab.selectedIndex==0">
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10">
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业完成声明">
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                            {{model.comments["7"]}}
+                                        </div>
+                                    </div>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div>
+                            <sign-view  type="2" :model="model" :permit-model="permitModel"></sign-view>
+                        </div>
+                    </div>
+            </div>
+            <div class="  ml10"  v-show="tab.selectedIndex==1">
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10">
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业取消原因">
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 form-disabled bgw h80">
+                                            <div class="ele-disabled-mask"></div>
+                                            <iv-checkbox-group class="group-vertical">
+                                                <iv-checkbox disabled v-for="item of cancelReasonList">{{item.name}}</iv-checkbox>
+                                                <iv-checkbox disabled>其他________________（填写）</iv-checkbox>
+                                            </iv-checkbox-group>
+
+                                        </div>
+                                        <div class="link-ele pdl5 flex-noshrink"  @click="doCustomContent(5)">定制内容</div>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业取消声明">
+                                    <div class="flex-layout">
+                                        <div class="flex-grow1 flex-flex-1 form-disabled bgw h80">
+                                            {{model.comments["6"]}}
+                                        </div>
+                                        <div class="link-ele pdl5"  @click="gotoDic(2)">定制内容</div>
+                                    </div>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div>
+                            <sign-view :need-info="false" type="3" :model="model" :permit-model="permitModel"></sign-view>
+                        </div>
+                    </div>
+            </div>
+            <div class="  ml10"  v-show="tab.selectedIndex==2">
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10" >
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业续签期限">
+                                    <div class="flex-layout">
+                                        <iv-input  type="number" :value.sync="model.extensionTime">
+                                            <i-select :popper-fixed="false" slot="append"
+                                                      :model.sync="model.extensionUnit" :list="extensionTypeList"
+                                                      style="width: 100px"
+                                            >
+                                                <i-option v-for="item of  extensionTypeList"
+                                                          :value="item.value">{{item.name}}</i-option>
+                                            </i-select>
+                                        </iv-input>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="" label-width=0>
+                                    <div style="width:100%;border-top:1px solid #ddd;">
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="作业续签期限">
+                                    <div class="  form-disabled ">
+                                        自___年___月___日___时___分始， 至___年___月___日___时___分止
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业续签理由">
+                                    <div class="  form-disabled ">
+                                        手动录入
+                                    </div>
+                        </el-form-item>
+                            </el-form>
+                        </div>
+                        <div>
+                            <sign-view :need-info="false" type="4" :model="model" :permit-model="permitModel"v-ref:renew></sign-view>
+                        </div>
+                    </div>
+            </div>
+            <div class=" ml10" v-show="tab.selectedIndex==3">
+                    <div style="border:1px solid #ddd;width:710px;" class="pdb10 pdr10" >
+                        <div class="form-disabled-mask"></div>
+                        <div class="pad-form-item">
+                            <el-form class="width-auto-ipt" label-width="160px">
+                                <el-form-item label="作业延期期限">
+                                    <div class="  form-disabled ">
+                                        自___年___月___日___时___分始， 至___年___月___日___时___分止                                        </div>
+                                </el-form-item>
+                                <el-form-item label="作业延期理由">
+                                    <div class="  form-disabled ">
+                                        手动录入
+                                    </div>
+                                </el-form-item>
+                                <el-form-item label="作业申请人签名">
+                                    <span class="form-disabled mr10 width250">人员签名</span>
+                                    <span class="form-disabled ml10 width250">签名日期时间</span>
+                                </el-form-item>
+                                <el-form-item label="" label-width=0>
+                                    <div style="width:100%;border-top:1px solid #ddd;">
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="xxx人员签名">
+                                    <span class="form-disabled mr10 width250">人员签名</span>
+                                    <span class="form-disabled ml10 width250">签名日期时间</span>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div>
+                            <sign-view :need-info="false" type="4" :model="model" :permit-model="permitModel" v-ref:delay></sign-view>
+                        </div>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+

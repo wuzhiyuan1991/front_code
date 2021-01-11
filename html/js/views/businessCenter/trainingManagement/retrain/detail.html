@@ -1,0 +1,57 @@
+<div class="detail-container">
+
+    <div class="few-info-panel pull-left">
+
+        <div class="fip-header">
+            <Icon type="ios-photos"></Icon>
+            <span>{{mainModel.title}}</span>
+        </div>
+
+        <div class="fip-content">
+            <div style="font-size: 16px;padding-bottom: 5px;border-bottom: 1px solid #e8e8e8;">设定系统后台发送课程复培提醒的规则</div>
+
+            <div style="display: flex;justify-content: space-between;align-items: center;margin: 10px 0;">
+                <iv-checkbox :checked.sync="autoSendNotice" @on-change="changeAutoSend">启用后台自动发送提醒</iv-checkbox>
+                <iv-button type="ghost" @click="appendRule">添加</iv-button>
+            </div>
+            <vue-bootstrap-table
+                    :url="tableModel.remindModel.url"
+                    :columns="tableModel.remindModel.columns"
+                    :show-empty-row="false"
+                    :use-default-global-filter="false"
+                    :lazy-load="true"
+                    @on-del-row="doRemoveRemind"
+                    v-ref:remind-table
+            >
+            </vue-bootstrap-table>
+
+
+            <div style="font-size: 16px;padding-bottom: 5px;border-bottom: 1px solid #e8e8e8;margin-top: 30px;">课程管理员角色设定</div>
+            <div style="display: flex;align-items: center;margin: 10px 0;">
+                <iv-button type="ghost" @click="appendAdmin">添加</iv-button>
+            </div>
+            <vue-bootstrap-table
+                    :url="tableModel.adminModel.url"
+                    :columns="tableModel.adminModel.columns"
+                    :show-empty-row="false"
+                    :use-default-global-filter="false"
+                    :lazy-load="true"
+                    @on-del-row="doRemoveAdmin"
+                    v-ref:admin-table
+            >
+            </vue-bootstrap-table>
+
+        </div>
+    </div>
+    <div class="few-info-sider pull-right">
+        <iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+        <iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+    </div>
+
+
+    <remind-form-modal :visible.sync="remindFormModel.visible" @do-save="doSaveRemind"></remind-form-modal>
+    <user-select-modal :visible.sync="userSelectModel.visible" @do-save="doSaveAdmins"></user-select-modal>
+</div>
+
+
+

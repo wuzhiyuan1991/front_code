@@ -1,0 +1,34 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('place') == -1)" label="培训地点" prop="place">
+						<iv-input :value.sync="mainModel.vo.place" :disabled="(disabledFields.indexOf('place') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('teacher') == -1)" label="讲师" prop="teacherId">
+						<input-select :value="mainModel.vo.teacher" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('teacher') != -1)" @click="(!mainModel.isReadOnly) && (doShowTeacherSelectModel())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('participantLimit') == -1)" label="报名人数" prop="participantLimit">
+						<iv-input :value.sync="mainModel.vo.participantLimit" :disabled="(disabledFields.indexOf('participantLimit') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('applyDeadline') == -1)" label="报名截止日期" prop="applyDeadline">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.applyDeadline" :disabled="(disabledFields.indexOf('applyDeadline') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.applyDeadline" :disabled="(disabledFields.indexOf('applyDeadline') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('startTime') == -1)" label="开始时间" prop="startTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startTime" :disabled="(disabledFields.indexOf('startTime') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startTime" :disabled="(disabledFields.indexOf('startTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('endTime') == -1)" label="结束时间" prop="endTime">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endTime" :disabled="(disabledFields.indexOf('endTime') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endTime" :disabled="(disabledFields.indexOf('endTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<teacher-select-modal single-select :visible.sync="selectModel.teacherSelectModel.visible" :filter-data="selectModel.teacherSelectModel.filterData"  @do-save="doSaveTeacher"></teacher-select-modal>

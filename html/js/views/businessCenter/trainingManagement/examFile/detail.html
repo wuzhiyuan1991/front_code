@@ -1,0 +1,119 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<div v-if="mainModel.opType != 'create'">
+						<el-form-item label="编码" >
+							<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item label="姓名">
+							<iv-input :value.sync="mainModel.vo.user.name" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item label="部门">
+							<iv-input  :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item :label="$t('bd.trm.testName')">
+							<iv-input :value.sync="mainModel.vo.examPaper.name" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item label="组卷方式">
+							<span>{{getDataDic("paper_create_type",mainModel.vo.examPaper.createType)}}</span>
+						</el-form-item>
+						<el-form-item label="试卷总分">
+							<span>{{mainModel.vo.examPaper.score}}分</span>
+						</el-form-item>
+						<el-form-item label="考试时长">
+							<span>{{mainModel.vo.examPaper.replyTime}}分钟</span>
+						</el-form-item>
+						<el-form-item  label="考试状态">
+							<!--	<iv-input :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>-->
+							<span>{{statusValue}}</span>
+						</el-form-item>
+						<el-form-item label="交卷时间" >
+							<iv-input :value.sync="mainModel.vo.paperRecord.createDate" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item label="答题时长">
+							<span>{{testTime}}</span>
+						</el-form-item>
+						<el-form-item label="得分">
+							<span>{{userScore}}</span>
+						</el-form-item>
+						<el-form-item label="通过情况">
+							<span v-if="mainModel.vo.paperRecord.id || mainModel.vo.status == 2">{{getDataDic("exam_result",mainModel.vo.result)}}</span>
+
+						</el-form-item>
+						<el-form-item label="评估人">
+							<span>{{mainModel.vo.attr1}}</span>
+						</el-form-item>
+						<!--<el-form-item :label="$t('gb.common.placeExamination')">-->
+							<!--<iv-input :value.sync="mainModel.vo.exam.place" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<!--</el-form-item>-->
+						<!--<el-form-item :label="$t('gb.common.remarks')">-->
+							<!--<iv-input :value.sync="mainModel.vo.exam.remarks" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<!--</el-form-item>-->
+					</div>
+					<!--<div  v-else>
+						<el-form-item :label="$t('gb.common.questionsChoice')">
+							<div class="custom">
+								<div>
+									<div style="float: left; width: 27%;"><iv-checkbox :checked.sync="customPaperTopic.type" style="font-size: 12px" :disabled="mainModel.isReadOnly">单选题</iv-checkbox></div>
+									<div style="float: left; width: 30%"><iv-input  type="number" :disabled="!customPaperTopic.type" :value.sync="customPaperTopic.num" :textonly="mainModel.isReadOnly" style="width: 65%"></iv-input><span style="font-size: 12px; padding-left: 5px;">题</span></div>
+									<div style="float: left; width: 43%"><span style="font-size: 12px;padding-right: 5px">每题</span><iv-input :disabled="!customPaperTopic.type" type="number"  :value.sync="customPaperTopic.score" :textonly="mainModel.isReadOnly" style="width: 58%"></iv-input><span style="font-size: 12px;padding-left: 5px;">分</span></div>
+								</div>
+								<div>
+									<div style="float: left; width: 27%;"><iv-checkbox :checked.sync="multiplePaperTopic.type" style="font-size: 12px" :disabled="mainModel.isReadOnly">多选题</iv-checkbox></div>
+									<div style="float: left; width: 30%"><iv-input  type="number" :disabled="!multiplePaperTopic.type" :value.sync="multiplePaperTopic.num" :textonly="mainModel.isReadOnly" style="width: 65%"></iv-input><span style="font-size: 12px; padding-left: 5px;">题</span></div>
+									<div style="float: left; width: 43%"><span style="font-size: 12px;padding-right: 5px">每题</span><iv-input :disabled="!multiplePaperTopic.type" type="number"  :value.sync="multiplePaperTopic.score" :textonly="mainModel.isReadOnly" style="width: 58%"></iv-input><span style="font-size: 12px;padding-left: 5px;">分</span></div>
+								</div>
+								<div>
+									<div style="float: left; width: 27%;"><iv-checkbox :checked.sync="judgmentPaperTopic.type"  style="font-size: 12px" :disabled="mainModel.isReadOnly">判断题</iv-checkbox></div>
+									<div style="float: left; width: 30%"><iv-input  type="number" :disabled="!judgmentPaperTopic.type" :value.sync="judgmentPaperTopic.num" :textonly="mainModel.isReadOnly" style="width: 65%"></iv-input><span style="font-size: 12px; padding-left: 5px;">题</span></div>
+									<div style="float: left; width: 43%"><span style="font-size: 12px;padding-right: 5px">每题</span><iv-input :disabled="!judgmentPaperTopic.type"  type="number" :value.sync="judgmentPaperTopic.score" :textonly="mainModel.isReadOnly" style="width: 58%"></iv-input><span style="font-size: 12px;padding-left: 5px;">分</span></div>
+								</div>
+							</div>
+							</el-form-item>
+						<el-form-item :label="$t('bd.trm.examInfoScore')">
+							&lt;!&ndash;<iv-input :value.sync="total" :textonly="mainModel.isReadOnly" disabled></iv-input>&ndash;&gt;
+							<iv-input v-if="!mainModel.isReadOnly" :value.sync="mainModel.vo.score" disabled ></iv-input>
+							<span v-else>{{mainModel.vo.score}}分</span>
+						</el-form-item>
+					</div>-->
+				</el-form>
+			</simple-card>
+			<!--<simple-card class="fip-content-item" v-if="mainModel.vo.status!=1 && mainModel.vo.status!=2">
+				<p slot="title"><i class="basicPng"></i><span>{{$t("bd.trm.testCenter")}}</span></p>
+				&lt;!&ndash;v-show="mainModel.opType != 'create'"&ndash;&gt;
+				<a slot="extra" @click.prevent="doShowExamPaperSelectModal()" >
+					<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+				</a>
+				<vue-bootstrap-table
+						:columns="tableModel.examPointTableModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:lazy-load="true"
+						@on-del-row="doRemoveExamPoints"
+						:values="mainModel.vo.examPoints"
+				>
+				</vue-bootstrap-table>
+			</simple-card>-->
+
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t("gb.common.practice")}}</iv-button>
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button @click="doShowReport" type="ghost" v-if="mainModel.vo.paperRecord.id != '' || (mainModel.vo.status==2 && mainModel.vo.examPaper.createType == 0 )">{{$t("bd.trm.resolutionView")}}</iv-button>
+
+	</div>
+</div>

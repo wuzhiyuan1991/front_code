@@ -1,0 +1,69 @@
+<Modal :visible.sync="visible" :title="!detailId?'编辑法规':'编辑章节'" width="520" :footer-hide="true">
+    <div  class="edit-pop-container">
+
+        <div style="overflow-y: visible;z-index: 1;background-color: #fff;padding:10px 20px;">
+            <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+                <el-form-item label="上级分类" prop="parentId">
+                    <iv-tree-select v-if='spareId=="main"' style="width: 260px;" :model.sync="mainModel.vo.parentId" :list="parentList" id-attr="id"
+                        display-attr="name" placeholder="请选择父级分类" clearable @on-change="doChangeParent">
+                        <iv-tree style="width: 230px;" :model="parentList" :selected-datas.sync="selectedDatas" id-attr="id"
+                            pid-attr="parentId" display-attr="name" serch-filterable single-select show-checkbox
+                            allow-parent-checked>
+                        </iv-tree>
+                    </iv-tree-select>
+                    <iv-tree-select v-else style="width: 260px;" :model.sync="mainModel.vo.parentId" :list="charpterParentList" id-attr="id"
+                    display-attr="name" placeholder="请选择父级分类" clearable @on-change="doChangechapterParent">
+                    <iv-tree style="width: 230px;" :model="charpterParentList" :selected-datas.sync="charpterSelectedDatas" id-attr="id"
+                        pid-attr="parentId" display-attr="name" serch-filterable single-select show-checkbox
+                        allow-parent-checked>
+                    </iv-tree>
+                </iv-tree-select>
+                </el-form-item>
+
+                <!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+                        <code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+                    </el-form-item> -->
+                <el-form-item :label="$t('gb.common.name')" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+                <el-form-item label="排序位置" prop="insertPointObjId">
+                    <!-- <span>当前节点之后</span>
+                        <i-select :model.sync="mainModel.vo.insertPointObjId" clearable :list="orderList" style="width: 180px;margin-left: 3px;">
+                            <i-option  v-for = "upper in orderList" :value="upper.id">{{upper.name}}</i-option>
+                        </i-select> -->
+                    <div class="flex-v-center  ivu-select-100pre" style="width: 260px;">
+                        <span
+                            :style="positionKey=='middle'?'width:50%;display: inline-block;':'width:130px;display: inline-block;'">
+                            <i-select :model.sync="positionKey" :popper-fixed="false" :list="positionList">
+                                <i-option v-for="position of positionList" :value="position.key">{{position.name}}
+                                </i-option>
+                            </i-select>
+                        </span>
+
+                        <span v-if='spareId=="main"&&positionKey=="middle"' style="width:130px;display: inline-block;margin-left:1%;" >
+                            <i-select class="flex-grow1" style="z-index: 10;" :popper-fixed="false"
+                                :model.sync="mainModel.vo.insertPointObjId" clearable :list="orderList">
+                                <i-option v-for="upper in orderList" :value="upper.id">{{upper.name}}</i-option>
+                            </i-select>
+                        </span>
+                        <span  v-if='spareId=="detail"&&positionKey=="middle"' style="width:130px;display: inline-block;margin-left:1%;" v-if="positionKey=='middle'">
+                            <i-select class="flex-grow1" style="z-index: 10;" :popper-fixed="false"
+                                :model.sync="mainModel.vo.insertPointObjId" clearable :list="chapterOrderList">
+                                <i-option v-for="upper in chapterOrderList" :value="upper.id">{{upper.name}}</i-option>
+                            </i-select>
+                        </span>
+                    </div>
+                </el-form-item>
+            </el-form>
+            
+        </div>
+
+
+      
+    </div>
+    <div class="epc-footer" >
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+        <!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+    </div>
+</Modal>

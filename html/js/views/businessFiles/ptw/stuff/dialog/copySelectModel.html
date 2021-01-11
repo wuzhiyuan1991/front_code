@@ -1,0 +1,26 @@
+<Modal :visible.sync="visible"  :title="title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div style="background: #fff">
+            <!--    <div class="flex-v-center title-simplecard base-border-bottom mb5">安全措施</div>-->
+            <el-form  style=";padding: 20px" class="pdt10">
+                <div class="el-form-item__content">
+                    <div class="base-border-bottom mb10" style="width: 100px" v-show="list.length"><iv-checkbox :checked.sync="selAll" @on-change="doChangeAll">全选</iv-checkbox></div>
+                    <div  class="group-vertical ivu-checkbox-group" >
+                        <iv-checkbox v-for="(index,item) of list"
+                                     :checked.sync="item.attr1" true-value="1" false-value="0"
+                                     style="display: flex" :class="{'flex-v-center':list.length==index+1}">
+                            <span>{{item.name}}</span>
+                            <span v-if="item.isExtra==1" style="width: 300px">
+                                <iv-input   size="small" class="ml5" :value.sync="item.content"></iv-input>
+                            </span>
+                        </iv-checkbox>
+                    </div>
+                </div>
+            </el-form>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+                <vi-button type="primary" @click="doCancel" class="pull-right">关闭</vi-button>
+            </div>
+        </div>
+    </div>
+</Modal>

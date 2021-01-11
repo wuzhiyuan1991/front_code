@@ -1,0 +1,40 @@
+<div >
+    <div style="min-width:170px;" class="text-center mr15" >
+        <!--<div style="width:260px;text-align: left;">-->
+            <!--<company-tree-select :id.sync="filterData.compId" placeholder="请选择公司"></company-tree-select>-->
+        <!--</div>-->
+        <div class="left main-special-box-1 " style="line-height: 1;padding-top: 10px;padding-bottom:15px;cursor: pointer;">
+            <span class="main-special-item" :class="{'checked':type=='1'}" @click="changeType('1')">气体检测人</span>
+            <span class="main-special-item" :class="{'checked':type=='2'}" @click="changeType('2')">能量隔离人</span>
+        </div>
+    </div>
+    <div class="flex-grow1" style="padding-right: 15px;background: #fff;width:600px;clear: both;">
+        <div v-show='filterData.compId' class="flex-layout-between list-li-h"  style="padding-bottom:8px;height: 35px;">
+            <div class="flex-v-center">
+                <iv-Checkbox  @on-change="changeCheck" true-value='2' false-value="1" :checked.sync="checkVal">启用</iv-Checkbox>
+            </div>
+            <div class="flex-v-center">
+                <vi-button type="text" style="color:#56b5ff;font-size:14px;" @click="doAddUser" v-if="!isTop">添加</vi-button>
+            </div>
+        </div>
+        <div style="background: #fff;width:100%;">
+            <!--<vue-bootstrap-table-->
+                 <!--show-empty-row=false-->
+                 <!--show-pager-->
+                 <!--:lazy-load="true"-->
+                 <!--:columns="tableModel.columns"-->
+                 <!--:values.sync="tableModel.values"-->
+                 <!--@on-del-row="doDeleteInfo"-->
+            <!--&gt;</vue-bootstrap-table>-->
+            <lite-table
+                    :columns='tableModel.columns'
+                    :values.sync="tableModel.values"
+                    @on-delete="doDelItem"
+                    :tools="['del']"
+            ></lite-table>
+        </div>
+
+
+    </div>
+</div>
+<user-select-modal  :visible.sync="selectModel.user.show" @do-save="doSaveUser" :filter-data="filterData" ></user-select-modal>

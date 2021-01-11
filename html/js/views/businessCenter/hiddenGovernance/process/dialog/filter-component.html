@@ -1,0 +1,67 @@
+<simple-card class="fip-content-item" filter :filter-when="canChange" >
+    <p slot="title">
+        <i class="basicPng"></i><span>流程角色</span>
+    </p>
+    <a slot="extra" @click.prevent="doShowApproval">
+        <Icon type="plus"></Icon><span>默认审批人</span>
+    </a>
+    <a slot="extra" v-show="canChange" @click.prevent="doAddPerson">
+        <Icon type="plus"></Icon><span>添加人员</span>
+    </a>
+    <iv-dropdown slot="extra" trigger="click" placement="bottom-end" class="right">
+        <vi-button type="text" icon="more">更多</vi-button>
+        <iv-dropdown-menu slot="list">
+            <iv-dropdown-item>
+                <a href="javascript:void(0);" @click="doChangeDisableBatch('0')" style="padding-left: 0;">
+                    <Icon type="checkmark-circled"></Icon>批量生效
+                </a>
+            </iv-dropdown-item>
+            <iv-dropdown-item>
+                <a href="javascript:void(0);" @click="doChangeDisableBatch('1')" style="padding-left: 0;">
+                    <Icon type="close-circled"></Icon>批量失效
+                </a>
+            </iv-dropdown-item>
+        </iv-dropdown-menu>
+    </iv-dropdown>
+    <vue-bootstrap-table :url="tableModel.url" :columns="tableModel.itemColumns" :show-pager="tableModel.showPager"
+        @on-del-row="delItemRelRowHandler" @on-click-cell="doTableCellClick"
+        :default-filter-value="tableModel.defaultFilterValue" :reset-trigger-flag="tableModel.resetTriggerFlag"
+        :use-default-global-filter="false" :lazy-load="true" :show-empty-row="false" v-ref:select-person-table>
+    </vue-bootstrap-table>
+</simple-card>
+<!-- 弹框选人 -->
+<user-select-modal :visible.sync="personModel.show" :filter-data="personFilterData" @do-save="doSavePersonSelect">
+</user-select-modal>
+<!-- 弹框 -->
+<Modal :visible.sync="conditionModel.show" :title="conditionModel.title" width="580" height="500px" :footer-hide="true"
+    @on-cancel="doClose">
+    <condition-component :model.sync="conditionModel.model" :express.sync="conditionModel.express">
+    </condition-component>
+</Modal>
+<modal :visible.sync="approval.show" title="设置默认审批人" :footer-hide="true" width="700">
+    <div class="epc-content" style="position: relative;background-color: white;">
+        <simple-card filter filter-when >
+            <p slot="title" style="padding-bottom: 20px;">
+            </p>
+            <a slot="extra" v-show="canChange" @click.prevent="doAddPerson2">
+                <Icon type="plus"></Icon><span>添加人员</span>
+            </a>
+            <vue-bootstrap-table style="width: 100%;" :url="userModel.url" :columns="userModel.columns" :show-empty-row="true"
+                @on-del-row="doRemoveItems" lazy-load v-ref:approval>
+            </vue-bootstrap-table>
+        </simple-card>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="approval.show=false" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+
+    </div>
+
+</modal>
+<style>
+    .fip-content-item .simple-card-input-box .ivu-input-wrapper {
+        width: 150px;
+        position: absolute;
+        left: 100px;
+        top: 8px;
+    }
+</style>

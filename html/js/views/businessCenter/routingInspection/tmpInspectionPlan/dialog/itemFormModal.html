@@ -1,0 +1,52 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+
+                <el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="工作内容" prop="name">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <!--<el-form-item v-if="(hiddenFields.indexOf('riskTypeName') == -1)" class="small-info-box" :label="$t('gb.common.riskClassificat')" prop="riskTypeName" v-else>-->
+                    <!--<iv-input :value.sync="riskTypeName" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" :label="$t('gb.common.type')" prop="type" class="small-info-box">-->
+                    <!--<i-select :model.sync="mainModel.vo.type" :list="mainModel.typeList" v-else>-->
+                        <!--<i-option v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>-->
+                    <!--</i-select>-->
+                <!--</el-form-item>-->
+
+                <!--<el-form-item  v-if="(hiddenFields.indexOf('compId') == -1) && !!mainModel.opType" :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >-->
+                    <!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+                    <!--<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>-->
+                <!--</el-form-item>-->
+
+                <!--<el-form-item v-if="(hiddenFields.indexOf('riskType.id') == -1)" :label="$t('gb.common.checkItemClass')" class="small-info-box" prop="riskTypeId"   v-if="!mainModel.isReadOnly">-->
+                    <!--<iv-tree-select :model.sync="mainModel.vo.riskType.id"-->
+                                    <!--:list="riskTypeList"-->
+                                    <!--id-attr="id"-->
+                                    <!--clearable-->
+                                    <!--display-attr="name" >-->
+                        <!--<iv-tree :model="riskTypeList"-->
+                                 <!--:selected-datas.sync="selectedDatas"-->
+                                 <!--:serch-filterable="true"-->
+                                 <!--id-attr="id"-->
+                                 <!--pid-attr="parentId"-->
+                                 <!--display-attr="name"-->
+                                 <!--:single-select="true"-->
+                                 <!--:allow-parent-checked="true"-->
+                        <!--&gt;</iv-tree>-->
+                    <!--</iv-tree-select>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" :label="$t('gb.common.describe')" prop="remarks" class="small-info-box" >-->
+                    <!--<iv-input :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item  :label="$t('gb.common.riskGrade')" prop="riskModel" class="small-info-box" >-->
+                    <!--<risk-model :model.sync="mainModel.riskModel"></risk-model>-->
+                <!--</el-form-item>-->
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

@@ -1,0 +1,33 @@
+<div class="edit-pop-container">
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<!--<el-form-item :label="$t('gb.common.subjectObj')" prop="checkObjectId">-->
+				<!--<iv-input display-type="popselect" :value.sync="mainModel.vo.checkObjectName"  @click="selectCheckObject" ></iv-input>-->
+			<!--</el-form-item>-->
+			<el-form-item :label="$t('gb.common.riskLevel')" prop="riskResult">
+				<risk-model  :model.sync="riskModel"></risk-model>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.type')" prop="type">
+			    <i-select :model.sync="mainModel.vo.type" :list="mainModel.typeList" >
+			      	 <i-option v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>
+			     </i-select>
+			</el-form-item>
+			<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId">
+				<company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.dept')" prop="orgId">
+				<department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.equipmentAndFacilities')">
+				<input-select :value="mainModel.vo.equipment" id-field="id" display-field="name" @click="doShowEquipmentSelectModal()" ></input-select>
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>	
+</div>
+	<!--<Modal :visible.sync="tableModel.show" width="900" :title="tableModel.title" :footer-hide="true" class="userSelectModal">
+		<tableComponent @do-check-table-finshed="doCheckTableFinshed"></tableComponent>
+	</Modal>-->
+<equipment-select-modal single-select :visible.sync="mainModel.showEquipmentSelectModal"  @do-save="doSaveEquipment"></equipment-select-modal>

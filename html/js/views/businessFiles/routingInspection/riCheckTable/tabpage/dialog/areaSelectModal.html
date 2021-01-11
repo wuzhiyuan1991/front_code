@@ -1,0 +1,55 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container">
+
+        <div class="epc-content" style="max-height: 614px;position: relative;">
+            <!--<ul class="sw-co-condition" style="display: flex;height: 30px;">-->
+                <!--<li>-->
+                    <!--<company-tree-select :id.sync="vo.compId"></company-tree-select>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<department-tree-select :id.sync="vo.orgId" :comp-id.sync="vo.compId" clearable></department-tree-select>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<input-select-->
+                            <!--:value="vo.dominationArea"-->
+                            <!--id-field="id"-->
+                            <!--display-field="name"-->
+                            <!--@click="doShowSelectModal"-->
+                            <!--clearable-->
+                            <!--@do-clear-input="doClearDominationArea"-->
+                    <!--&gt;</input-select>-->
+                <!--</li>-->
+            <!--</ul>-->
+            <iv-button @click="doAddArea" style="position: absolute;right: 20px;top: 33px;z-index: 2;">新增</iv-button>
+
+
+            <vue-bootstrap-table
+                    :url="tableModel.url"
+                    :columns="tableModel.columns"
+                    :filter-column="tableModel.filterColumn"
+                    show-pager
+                    :selected-datas.sync="mainModel.selectedDatas"
+                    :reset-trigger-flag="tableModel.resetTriggerFlag"
+                    :default-filter-value="tableModel.defaultFilterValue"
+                    @on-dbclick-cell="onDbClickCell"
+                    :is-cache-selected-data="isCacheSelectedData"
+                    lazy-load
+                    show-filter
+                    resizeable
+                    v-ref:table
+            >
+            </vue-bootstrap-table>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<!--属地选择器-->
+<!--<dominationarea-select-modal-->
+        <!--single-select-->
+        <!--:visible.sync="dominationAreaSelectModel.visible"-->
+        <!--:filter-data="dominationAreaSelectModel.filterData"-->
+        <!--@do-save="doSaveDominationArea"-->
+<!--&gt;</dominationarea-select-modal>-->

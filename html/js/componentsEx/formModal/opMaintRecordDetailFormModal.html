@@ -1,0 +1,47 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('stepName') == -1)" label="工序名称" prop="stepName">
+						<iv-input :value.sync="mainModel.vo.stepName" :disabled="(disabledFields.indexOf('stepName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('stepId') == -1)" label="维检修工序" prop="stepId">
+						<iv-input :value.sync="mainModel.vo.stepId" :disabled="(disabledFields.indexOf('stepId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" :label="$t('gb.common.state')" prop="disable">
+						<span v-if="mainModel.isReadOnly">{{getDataDic('disable', mainModel.vo.disable)}}</span>
+						<i-select :model.sync="mainModel.vo.disable" :list="getDataDicList('disable')" v-else></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('equipNo') == -1)" label="设备号" prop="equipNo">
+						<iv-input :value.sync="mainModel.vo.equipNo" :disabled="(disabledFields.indexOf('equipNo') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('itemContent') == -1)" label="操作内容" prop="itemContent">
+						<iv-input :value.sync="mainModel.vo.itemContent" :disabled="(disabledFields.indexOf('itemContent') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('itemOrderNo') == -1)" label="工序明细序号" prop="itemOrderNo">
+						<iv-input :value.sync="mainModel.vo.itemOrderNo" :disabled="(disabledFields.indexOf('itemOrderNo') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('itemId') == -1)" label="工序明细" prop="itemId">
+						<iv-input :value.sync="mainModel.vo.itemId" :disabled="(disabledFields.indexOf('itemId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('recordId') == -1)" label="作业记录" prop="recordId">
+						<input-select :value="mainModel.vo.opRecord" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('opRecord') != -1)" @click="(!mainModel.isReadOnly) && (doShowOpRecordSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('cardId') == -1)" label="维检修作业卡" prop="cardId">
+						<iv-input :value.sync="mainModel.vo.cardId" :disabled="(disabledFields.indexOf('cardId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('stepOrderNo') == -1)" label="工序序号" prop="stepOrderNo">
+						<iv-input :value.sync="mainModel.vo.stepOrderNo" :disabled="(disabledFields.indexOf('stepOrderNo') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<oprecord-select-modal :visible.sync="selectModel.opRecordSelectModel.visible" :filter-data="selectModel.opRecordSelectModel.filterData" single-select @do-save="doSaveOpRecord"></oprecord-select-modal>

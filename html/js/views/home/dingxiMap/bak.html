@@ -1,0 +1,30 @@
+<div style='width:100%;overflow-x: scroll;white-space: nowrap;'>
+    <div style="height: 670px;width:1461px;overflow: hidden;display: inline-block;">
+        <!--<div style='text-align: center;padding-bottom: 10px;' >西苑幼儿园安全风险分级管控四色分布图</div>-->
+        <div style='position: relative;width:1461px;'>
+            <img src='css/images/test/newBg.png' style='width:100%;' />
+
+            <div class="testBody">
+                <div class="testBtnGroups">
+                    <!--<div  style='margin-top: -40px'>-->
+                        <!--<div class="testBtn"  @click='doChangeImg(1)' style='margin-left: 16px;margin-bottom: -20px'><img src='css/images/test/2.png' /></div>-->
+                        <!--<div class="testBtn"   @click='doChangeImg(0)'><img src='css/images/test/1.png' /></div>-->
+                    <!--</div>-->
+
+                    <!--<div class="testBtn"  @click='itemIndex=2' style='margin-left: 0px; margin-top: 24px;width: 176px;' ><img src='css/images/test/3.png' /></div>-->
+                </div>
+                <div class="detailImgShow">
+                    <div class="testDetailImg" v-if="itemIndex==0" ><img  src='css/images/test/11.png' /></div>
+                    <div class="testDetailImg" v-if="itemIndex==1" ><img  src='css/images/test/22.png' /></div>
+                    <div class="testDetailImg" v-if="itemIndex==2" ><img  src='css/images/test/33.png' /></div>
+                    <div class="testclose" @click='itemIndex=-1' ></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="testRight" style='display: inline-block;'>
+        <img src="css/images/test/rightImg.png" style='    position: absolute;top: -640px;right: 5px' />
+    </div>
+
+</div>

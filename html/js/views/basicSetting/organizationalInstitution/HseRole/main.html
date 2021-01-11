@@ -1,0 +1,73 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default :showdept="true">
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('import')" class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item>
+                                <!--<iv-dropdown-item>-->
+                                <!--<vue-file-upload file-ext="xls,xlsx" :url="uploadModel.url" @on-success-upload="doSuccessUpload" vue-file-upload custom-style>-->
+                                <!--<div v-if="hasPermission('1020005004')" class="uploadAport"><a>{{$t("gb.common.import")}}</a></div>-->
+                                <!--</vue-file-upload>-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item>
+                                    <div v-if="hasAuth('export')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    <div class="import" v-if="hasAuth('import')"><a>{{$t("gb.common.import")}}</a></div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                    <!--<vi-button v-if="hasPermission('100010298')" type="text" class="mp-header-item-btn" @click="doAlotPos">岗位分配</vi-button>-->
+                    <!--<vi-button v-if="hasPermission('100010145')" type="text" class="mp-header-item-btn" @click="doExport">{{$t("gb.common.export")}}</vi-button>-->
+                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn" @click="doAdd4Copy2">复制</vi-button>
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table :default-filter-value="tableModel.defaultFilterValue" $main-center-table-attr-default>
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<!-- 右滑弹框 -->
+<!-- 右滑弹框 -->
+<aside :show.sync="detailModel.show" placement="right" width="860px">
+    <detailComponent></detailComponent>
+</aside>
+<!-- 弹框 -->
+<Modal :visible.sync="chooisePosModel.show" :title="chooisePosModel.title" width="800" height="800" :footer-hide="true">
+    <editposcomponent @do-edit-pos-finshed="doEditPosFinshed"></editposcomponent>
+</Modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+<Modal :visible.sync="copyModel.visible" :title="copyModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <iv-checkbox :checked.sync="copyModel.isNeedCopyUser">复制【人员】</iv-checkbox>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveCopy" class="pull-right">确定</vi-button>
+        </div>
+    </div>
+</Modal>

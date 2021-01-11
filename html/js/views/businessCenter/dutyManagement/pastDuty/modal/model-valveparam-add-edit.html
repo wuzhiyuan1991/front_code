@@ -1,0 +1,64 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true" width='600' @on-cancel="doClose">
+    <div class="modal-box-default modal-valve-param" style="background: #fff;">
+		<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+		    <el-form-item label="阀室号" prop="number">
+				<div style="width: 433px;" class="ivu-select-dropdown-width433">
+					<i-select :model.sync="mainModel.number">
+						<i-option v-for="item in mainModel.valveNum" :value="item">{{ item }}</i-option>
+						<i-option value="newAdd" v-if="mainModel.showSelect">新增</i-option>
+					</i-select>
+					<iv-input v-if="mainModel.number == 'newAdd'" type="textarea" :rows="1" :value.sync="mainModel.vo.number" placeholder="请输入"></iv-input>
+				</div>
+		    </el-form-item>
+		    <el-form-item label="天气、其他内容" prop="weather">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.weather" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="汇报时间" prop="reportTime">
+				<date-picker format="yyyy-MM-dd HH:mm:ss" :begin="reportTime":selected-date.sync="mainModel.vo.reportTime" time-zero type="datetime"></date-picker>
+		    </el-form-item>
+		    <el-form-item label="温 度" prop="temperature">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.temperature" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="压 力" prop="pressure">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.pressure" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="气缸压力" prop="cylinderPressure">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.cylinderPressure" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="电池电压" prop="batteryPressure">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.batteryPressure" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="直流电压" prop="directVoltage">
+		        <iv-input type="textarea" :rows="1" :value.sync="mainModel.vo.directVoltage" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		</el-form>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<style>
+	.modal-valve-param .ivu-select-dropdown-width433 .ivu-select-dropdown {
+		width: 433px;
+	}
+	
+	.modal-valve-param .el-form {
+		width: 100%;
+	}
+	
+	.modal-valve-param .el-form-item__label {
+		width: 150px !important;
+	}
+	
+	.modal-valve-param .el-form-item__content {
+		margin-left: 150px !important;
+	}
+</style>

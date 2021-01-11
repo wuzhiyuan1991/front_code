@@ -1,0 +1,129 @@
+<div class="tab-container" style="position: relative;" @keyup.13='searchLaws'>
+    <div style="height: 80px;">
+        <div v-show='isSearch' class="link-ele" style="position: absolute;right: 10%;top: 60px;">共为你找到{{total}}条结果</div>
+        <div id="search">
+            <iv-input :value.sync="input" size='large'>
+                <i-select slot="prepend" :model.sync="select" :list="list" style="width: 170px;"></i-select>
+                <iv-button @click='searchLaws' slot="append"
+                    style="background-color: #0075d3;color: #fff;font-size: 20px;font-weight: 700;" icon="ios-search">
+                </iv-button>
+            </iv-input>
+        </div>
+    </div>
+
+    <div v-show='isSearch' class="searchContent">
+        <div v-if='searchType==1'>
+            <div class="searchByChapter" v-for='item in data' @click='goto(item)'>
+                <div style="font-size: 20px;"><span
+                        v-html='item.name'>{{item.name}}</span>({{item.publishDate.substr(0,4)}}修订)</div>
+                <div style="color: #aaa;"><span
+                        v-if="item.type==3">{{ getDataDic('standard_effective_level', item.effectiveLevel) }}</span><span
+                        v-if="item.type==1">{{ getDataDic('icm_effective_level', item.effectiveLevel) }}</span><span
+                        v-if="item.type!=2">|</span><span v-if="item.type==1">{{item.publishAuthority}}</span><span
+                        v-if="item.type==1">|</span><span>{{item.publishDate.substr(0,10)}}发布</span><span>|</span><span>{{item.effectiveDate.substr(0,10)}}实施</span>
+                </div>
+            </div>
+
+        </div>
+        <div v-else>
+            <div class="searchByContent" v-for='(index,item) in data' @click='goto(item)'>
+                <div style="font-size: 20px;"><span>{{item.name}}({{item.publishDate.substr(0,4)}}修订)</span>
+                    <div style="color: #aaa;display: inline-block;font-style: 12px;">
+                        <span v-if="item.type==1"
+                            style="font-size: 14px;">{{ getDataDic('icm_effective_level', item.effectiveLevel) }}</span>
+                        <span v-if="item.type==1">|</span><span v-if="item.type==1"
+                            style="font-size: 14px;">{{item.publishAuthority}}</span><span
+                            v-if="item.type==1">|</span><span
+                            style="font-size: 14px;">{{item.publishDate.substr(0,10)}}发布</span><span>|</span><span
+                            style="font-size: 14px;">{{item.effectiveDate.substr(0,10)}}实施</span> </div>
+                </div>
+                <Icon
+                    style="cursor: pointer;;position: absolute;bottom: 10px;right: -5px; color: #0075d3;font-size: 18px;z-index:5"
+                    :type="item.more?'arrow-down-b':'arrow-up-b'" @click.stop='doMore(index)'></Icon>
+                <div v-html='item.content' class="computedHeight">
+                    <!-- :class="item.more?'scontent':''" -->
+                    {{item.content}}
+                </div>
+            </div>
+        </div>
+        <div v-if='total==0' class="none">
+            暂无数据
+        </div>
+        <div v-if="refreshPage" style="position: absolute;bottom: 20px;width: 95%;">
+            <div style="float: right;text-align: right;">
+                <page :total='total' @on-change='pageChange'></page>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+<style>
+    #search {
+        width: 40%;
+        position: absolute;
+        left: 50%;
+        top: 30%;
+        transform: translate(-50%, -50%);
+        z-index: 5
+    }
+
+    .ivu-input-large {
+        height: 44px !important;
+    }
+
+    .ivu-input-group-append {
+        background-color: #0075d3;
+    }
+
+    .searchContent {
+
+        width: calc(100% - 20px);
+        border-top: 2px solid #0075d3;
+        margin: 10px;
+        padding: 20px 50px;
+        height: calc(100vh - 250px);
+        overflow-y: auto;
+    }
+
+    .none {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        text-align: center;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        color: #0075d3;
+
+    }
+
+    .searchContent span {
+        margin: 0 5px;
+    }
+
+    .searchByChapter,
+    .searchByContent {
+        cursor: pointer;
+        border-radius: 2px;
+        position: relative;
+        margin: 10px 0;
+        padding: 10px;
+        z-index: 1;
+    }
+
+    .searchByChapter:hover,
+    .searchByContent:hover {
+        box-shadow: 0px 0px 5px #0075d3;
+    }
+
+    .searchByContent .scontent {
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+</style>

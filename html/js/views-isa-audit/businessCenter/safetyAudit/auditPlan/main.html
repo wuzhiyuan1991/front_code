@@ -1,0 +1,52 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+
+                        <iv-dropdown trigger="click" placement="bottom-end">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <!--<iv-dropdown-item>-->
+                                    <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <!--<iv-dropdown-item>-->
+                                    <!--$main-header-div-tag-download-excel-->
+                                <!--</iv-dropdown-item>-->
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" v-if="showOperationBtns && hasAuth('edit')" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
+                    <vi-button type="text" v-if="showOperationBtns && hasAuth('publish')" class="mp-header-item-btn" @click="doPublish">{{$t("gb.common.release")}}</vi-button>
+                    <vi-button type="text" v-if="showOperationBtns && hasAuth('delete')" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
+                    <a v-if="!showOperationBtns" v-link="{path: '/isaAllotAudit', query: {id: selectId, mode: 'show'}}" target="_blank">
+                        <vi-button type="text" class="mp-header-item-btn" style="padding-left: 20px;">明细</vi-button>
+                    </a>
+                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn" @click="doAdd4Copy">复制</vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>

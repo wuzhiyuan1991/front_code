@@ -1,0 +1,46 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item  label="名称" prop="name">
+                    <!--<iv-input v-if="modify" :value.sync="mainModel.vo.name"  textonly></iv-input>-->
+                    <iv-input v-else :value.sync="mainModel.vo.name"  :textonly="mainModel.isReadOnly || !modify"></iv-input>
+                    <Icon type="plus" @click="(!mainModel.isReadOnly) && (doShowEmerResourceSelectModal())" title="选择应急资源" style="cursor: pointer;top: 0px; width: 32px; height: 32px; line-height: 32px; font-size: 16px; text-align: center; color: #9ea7b4; position: absolute; right: 0; z-index: 1"></Icon>
+                </el-form-item>
+
+                <el-form-item label="资源类型" prop="type">
+                    <span v-if="!modify">{{getDataDic('iem_emer_resource_type1',mainModel.vo.type)}}</span>
+                    <i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('iem_emer_resource_type1')" ></i-select>
+                </el-form-item>
+                <!--<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" :label="$t('gb.common.name')" prop="name">-->
+                    <!--<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+                <!--<el-form-item v-if="(hiddenFields.indexOf('exerciseSchemeId') == -1)" label="演练方案" prop="exerciseScheme.id">-->
+                    <!--<input-select :value="mainModel.vo.exerciseScheme" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('exerciseScheme') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowExerciseSchemeSelectModal())" ></input-select>-->
+                <!--</el-form-item>-->
+                <el-form-item v-if="(hiddenFields.indexOf('specification') == -1)" label="规格型号" prop="specification">
+                    <span v-if="!modify">{{mainModel.vo.specification}}</span>
+                    <iv-input v-else :value.sync="mainModel.vo.specification"  :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('quantity') == -1)" label="数量" prop="quantity">
+                    <!--<span v-if="!modify">{{mainModel.vo.quantity}}</span>-->
+                    <iv-input type="number"  v-else :value.sync="mainModel.vo.quantity" :disabled="(disabledFields.indexOf('quantity') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('quantity') == -1)" label="单位" prop="unit">
+                    <span v-if="!modify">{{mainModel.vo.unit}}</span>
+                    <iv-input v-else :value.sync="mainModel.vo.unit" :disabled="(disabledFields.indexOf('quantity') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <!--<el-form-item v-if="(hiddenFields.indexOf('emerResourseId') == -1)" label="应急资源" prop="emerResourse.id">-->
+                    <!--<input-select :value="mainModel.vo.emerResource" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('emerResource') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowEmerResourceSelectModal())" ></input-select>-->
+                <!--</el-form-item>-->
+
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<emerresource-select-modal :visible.sync="selectModel.emerResourceSelectModel.visible" :filter-data="selectModel.emerResourceSelectModel.filterData" single-select @do-save="doSaveEmerResource"></emerresource-select-modal>
+<exercisescheme-select-modal :visible.sync="selectModel.exerciseSchemeSelectModel.visible" :filter-data="selectModel.exerciseSchemeSelectModel.filterData" single-select @do-save="doSaveExerciseScheme"></exercisescheme-select-modal>

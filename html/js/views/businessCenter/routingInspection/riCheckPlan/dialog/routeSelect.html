@@ -1,0 +1,195 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="1200" :footer-hide="true" class="userSelectModal">
+    <div class="sw-modal-body">
+        <el-form style="width: 100%; display: flex;border-bottom: 1px solid #ddd;padding-bottom: 2px;margin-bottom: 10px;">
+            <el-form-item label="选择巡检表">
+                <!--<input-select :value="vo.checkTable" id-field="id" display-field="name" @click="showSelectModal"></input-select>-->
+                <div class="ivu-input" style="width: 300px;display: flex;align-items: center;justify-content: space-between;cursor: pointer;" @click="showSelectModal">
+                    <span @click.stop="openNewTab" class="text-ellipsis" :title="vo.checkTable.name" style="color: blue;text-decoration: underline;cursor: pointer;margin-right: 24px;">{{vo.checkTable.name}}</span>
+                    <i class="ivu-icon ivu-icon-plus ivu-input-icon"></i>
+                </div>
+            </el-form-item>
+            <!--<iv-button type="text" @click="openNewTab" style="height: 32px;margin-top: 2px;">编辑巡检表</iv-button>-->
+            <el-form-item label="选择巡检类型" style="margin-left: 30px;">
+                <i-select :model.sync="vo.riCheckTypes" multiple :list="checkTypes" @on-change="doChangeCheckType" :disabled="!vo.checkTable.id"
+                          style="width: 300px;">
+                    <i-option v-for="item in checkTypes" :value="item.id">{{item.name}}</i-option>
+                </i-select>
+            </el-form-item>
+        </el-form>
+
+
+
+        <ul class="layout-tabs" @click="doChangeTab">
+            <li data-key="1" class="layout-tab" :class="{'checked': tabKey === '1'}">全部（{{totalNum}}）</li>
+            <li data-key="2" class="layout-tab" :class="{'checked': tabKey === '2'}">已选（{{checkedNum}}）</li>
+            <iv-input
+                    @on-click="setFilterValue"
+                    @on-enter="setFilterValue"
+                    :value.sync="cacheKeyWord"
+                    placeholder="输入后回车搜索"
+                    v-show="tabKey === '1' && vo.checkTable.id && showSearchInput"
+                    icon="ios-search"
+                    style="position: absolute;width: 300px;right: 120px;top: 2px;"
+            ></iv-input>
+
+            <iv-button
+                    @click="toggleSearchInput"
+                    v-show="showSearchInput"
+                    type="text"
+                    icon="power"
+                    style="position: absolute;right: 50px;top: 8px;"
+            >折叠</iv-button>
+
+            <iv-button
+                    @click="toggleSearchInput"
+                    v-show="!showSearchInput"
+                    type="text"
+                    icon="search"
+                    style="position: absolute;right: 50px;top: 8px;"
+            >搜索</iv-button>
+
+            <iv-button
+                    @click="doRefresh"
+                    v-show="tabKey === '1' && vo.checkTable.id"
+                    type="text"
+                    icon="refresh"
+                    style="font-size: 18px;position: absolute;right: 0;top: 4px;"
+            ></iv-button>
+        </ul>
+
+        <!--全部-->
+        <div class="lr-layout" style="padding: 0;background-color: #fff;height: 500px;position: relative;" v-if="tabKey === '1'">
+            <div class="lr-layout-l" style="border: 1px solid #ddd;">
+                <div class="title">巡检区域</div>
+                <ul>
+                    <li v-for="(index, area) in areas" class="lr-layout-li" :class="{'checked': index === checkedAreaIndex}" @click="doSelectArea(index)">
+                        <span style="display: inline-block;width: 25px;">{{index + 1}}</span>{{area.riCheckAreaTpl.name}}
+                    </li>
+                </ul>
+            </div>
+            <div class="lr-layout-r" style="overflow-y: auto;height: 500px;border: 1px solid #ddd;">
+                <div class="layout-body">
+                    <div v-for="(index, point) in checkedArea.riCheckPoints">
+                        <div class="body-header">
+                            <div style=" border-bottom: 1px solid green;">
+                                <span>巡检点: {{displayPointName(point)}}</span>
+                            </div>
+                        </div>
+                        <table class="layout-table" v-if="point.riCheckPointItemRels.length > 0">
+                            <colgroup>
+                                <col style="width: 50px;">
+                                <col style="width: 50px;">
+                                <col style="width: 250px;">
+                                <col>
+                                <col style="width: 150px;">
+                                <col style="width: 120px;">
+                                <col style="width: 90px;">
+                            </colgroup>
+                            <thead>
+                            <tr class="layout-table-tr">
+                                <th class="text-center" style="white-space: normal;">
+                                    <iv-checkbox
+                                            v-show="!keyWord"
+                                            :checked.sync="point.isChecked"
+                                            @on-change="toggleAll(point)"
+                                    ></iv-checkbox>
+                                </th>
+                                <th>序号</th>
+                                <th>巡检内容</th>
+                                <th>巡查评判标准</th>
+                                <th>巡检类型</th>
+                                <th>巡检结果</th>
+                                <th>合格填写描述</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(i, item) in point.riCheckPointItemRels | filter-kw keyWord" class="layout-table-tr">
+                                <td class="text-center" style="white-space: normal;">
+                                    <iv-checkbox :checked.sync="item.isChecked" @on-change="toggleOne(point)"></iv-checkbox>
+                                </td>
+                                <td>{{i + 1}}</td>
+                                <td>{{item.riCheckItem.name}}</td>
+                                <td>{{item.riCheckItem.checkBasis}}</td>
+                                <td>{{displayCheckType(item.riCheckItem)}}</td>
+                                <td>{{displayCheckResult(item.riCheckItem)}}</td>
+                                <td class="text-center">{{displayIsQualifiedRemarkWrite(item.riCheckItem)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div v-show="showLoading" class="table-spin">
+                <div class="bg-rotate-loader"></div>
+            </div>
+        </div>
+
+        <!--已选-->
+        <div class="lr-layout" style="padding: 0;background-color: #fff;height: 500px;" v-if="tabKey === '2'">
+            <div class="lr-layout-l"  style="border: 1px solid #ddd;">
+                <div class="title">巡检区域</div>
+                <ul>
+                    <li v-for="(index, area) in filterAreas" class="lr-layout-li" :class="{'checked': index === filterCheckedAreaIndex}"
+                        @click="doSelectFilterArea(index)"><span style="display: inline-block;width: 25px;">{{index + 1}}</span>{{area.name}}
+                    </li>
+                </ul>
+            </div>
+            <div class="lr-layout-r" style="overflow-y: auto;height: 500px;border: 1px solid #ddd;">
+                <div class="layout-body">
+                    <div v-for="(index, point) in filterCheckedArea.riCheckPoints">
+                        <div class="body-header">
+                            <div>
+                                <span>巡检点: {{point.name}}</span>
+                            </div>
+                        </div>
+                        <table class="layout-table" v-if="point.checkItems.length > 0">
+                            <colgroup>
+                                <col style="width: 50px;">
+                                <col style="width: 250px;">
+                                <col>
+                                <col style="width: 150px;">
+                                <col style="width: 120px;">
+                                <col style="width: 90px;">
+                            </colgroup>
+                            <thead>
+                            <tr class="layout-table-tr">
+                                <th>序号</th>
+                                <th>巡检内容</th>
+                                <th>巡查参考依据</th>
+                                <th>巡检类型</th>
+                                <th>巡检结果</th>
+                                <th>合格填写描述</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(i, item) in point.checkItems" class="layout-table-tr">
+                                <td>{{i + 1}}</td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.checkBasis}}</td>
+                                <td>{{displayCheckType(item)}}</td>
+                                <td>{{displayCheckResult(item)}}</td>
+                                <td class="text-center">{{displayIsQualifiedRemarkWrite(item.riCheckItem)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="sw-co-footer">
+            <iv-button type="primary" @click="doSave" style="margin-right: 20px;">确定</iv-button>
+            <iv-button @click="doClose">取消</iv-button>
+        </div>
+    </div>
+</Modal>
+
+<check-table-select-modal
+        single-select
+        :visible.sync="checkTableSelectModel.visible"
+        :filter-data="checkTableSelectModel.filterData"
+        @do-save="doSaveCheckTable"
+></check-table-select-modal>

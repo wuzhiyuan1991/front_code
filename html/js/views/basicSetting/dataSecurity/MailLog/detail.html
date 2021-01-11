@@ -1,0 +1,40 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{$t('gb.common.detail')}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item :label="$t('das.oniu.recipient')" prop="code">
+						<iv-input :value.sync="mainModel.vo.email" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('das.oniu.title')" prop="zhValue">
+						<iv-input :value.sync="mainModel.vo.title" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.content')" prop="enValue">
+						<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('das.oniu.sendTime')" prop="moduleName">
+						<iv-input :value.sync="mainModel.vo.createDate" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('das.oniu.sendStatus')" prop="remarks">
+						<iv-input type="textarea" :value.sync="mainModel.vo.status" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item :label="$t('das.oniu.errorLog')" prop="remarks">-->
+						<!--<iv-input type="textarea" :value.sync="mainModel.vo.deleteFlag" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+				</el-form>
+			</simple-card>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+	</div>
+</div>

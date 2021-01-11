@@ -1,0 +1,19 @@
+<div style="height: 100%;">
+    <div style="height: 100%;" id="allmap"></div>
+    <div style="position: absolute;z-index:6;right: 30px;top: 20px;">
+        <span style="background-color: #fff;padding: 10px;font-size: 16px;">地图缩放层级：{{mapZoomLevel}}</span>
+    </div>
+    <div style="position: absolute;z-index:6;left: 30px;top: 20px;">
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="clear">清空</button>
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="generatePolygon">生成多边形</button>
+        <button class="ivu-btn" type="button" style="padding: 4px 15px 3px;" @click="showResult">显示结果</button>
+    </div>
+    <Modal :visible.sync="showResultModal" :footer-hide="true" width="720" title="结果显示" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 720px">
+            <div class="epc-content">
+                <p style="word-break: break-all;">{{resultString}}</p>
+            </div>
+            <div class="epc-footer"></div>
+        </div>
+    </Modal>
+</div>

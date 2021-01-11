@@ -1,0 +1,80 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" v-ref:tree :footer-hide="true" class="userSelectModal">
+
+    <iv-row type="flex">
+        <iv-col span="6" style="background-color: #eaf0f5;padding: 20px 0 0 20px;">
+            <iv-input :value="treeModel.keyword" icon="ios-search" @on-click="doFilterLeft" @on-enter="doFilterLeft"></iv-input>
+            <div class="member-select-left-tree" v-el:mtree>
+                <div class="loading-text" v-if="treeModel.showLoading">加载中</div>
+                <iv-tree
+                        id-attr="id"
+                        pid-attr="parentId"
+                        display-attr="name"
+                        :model="treeModel.data"
+                        :selected-datas.sync="treeModel.selectedData"
+                        :show-checkbox="false"
+                        :single-select="true"
+                        :trigger-parent-event="true"
+                        :data-query="treeModel.keyword"
+                        @on-tree-node-click="doTreeNodeClick"
+                ></iv-tree>
+            </div>
+
+        </iv-col>
+        <iv-col span="18" style="background-color: #eaf0f5;padding-top: 20px;">
+            <div style="padding: 0 10px;">
+                <iv-input
+                        :value.sync="tableModel.keyword"
+                        placeholder="姓名、公司、部门、岗位、安全角色"
+                        icon="ios-search"
+                        @on-click="doFilterRight"
+                        @on-enter="doFilterRight"
+                        style="width: 230px;"
+                ></iv-input>
+
+                <i-select
+                        @on-change="doSelectFilter"
+                        :list="typesList"
+                        :model.sync="tableModel.type"
+                        style="width: 220px;font-size: 12px;line-height: 28px;"
+                        placeholder="任务类型"
+                        multiple
+                >
+                    <!--<i-option v-for="item in typesList" :value="item.id">{{ item.value }}</i-option>-->
+                </i-select>
+
+                <i-select
+                        @on-change="doSelectFilter"
+                        :list="statusList"
+                        :model.sync="tableModel.status"
+                        style="width: 190px;font-size: 12px;line-height: 28px;"
+                        placeholder="培训状态"
+                        multiple
+                >
+                    <!--<i-option v-for="item in statusList" :value="item.id">{{ item.value }}</i-option>-->
+                </i-select>
+
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table
+                            :columns="tableModel.columns"
+                            :filter-column="tableModel.filterColumn"
+                            :show-pager="true"
+                            :selected-datas.sync="tableModel.selectedDatas"
+                            :url="tableModel.url"
+                            :is-single-check="isSingleSelect"
+                            :default-filter-value="tableModel.defaultFilterValue"
+                            @on-dbclick-cell="onDbClickCell"
+                            is-cache-selected-data
+                            lazy-load
+                            resizeable
+                            v-ref:table>
+                    </vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+    </iv-row>
+</Modal>

@@ -1,0 +1,36 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('batteryPressure') == -1)" label="电池压力" prop="batteryPressure">
+						<iv-input :value.sync="mainModel.vo.batteryPressure" :disabled="(disabledFields.indexOf('batteryPressure') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('cylinderPressure') == -1)" label="气缸压力" prop="cylinderPressure">
+						<iv-input :value.sync="mainModel.vo.cylinderPressure" :disabled="(disabledFields.indexOf('cylinderPressure') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('directVoltage') == -1)" label="直流电压" prop="directVoltage">
+						<iv-input :value.sync="mainModel.vo.directVoltage" :disabled="(disabledFields.indexOf('directVoltage') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('groupId') == -1)" label="组" prop="group.id">
+						<input-select :value="mainModel.vo.riDutyRecordGroup" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('riDutyRecordGroup') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowRiDutyRecordGroupSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('itemId') == -1)" label="项" prop="itemId">
+						<iv-input :value.sync="mainModel.vo.itemId" :disabled="(disabledFields.indexOf('itemId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('pressure') == -1)" label="压力" prop="pressure">
+						<iv-input :value.sync="mainModel.vo.pressure" :disabled="(disabledFields.indexOf('pressure') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reportTime') == -1)" label="汇报时间" prop="reportTime">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.reportTime" :disabled="(disabledFields.indexOf('reportTime') != -1)" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.reportTime)" :disabled="(disabledFields.indexOf('reportTime') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('temperature') == -1)" label="温度" prop="temperature">
+						<iv-input :value.sync="mainModel.vo.temperature" :disabled="(disabledFields.indexOf('temperature') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

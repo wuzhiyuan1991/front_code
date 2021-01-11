@@ -1,0 +1,34 @@
+<!--<form role="form" action="#" id="form2" method="post"  class="rectificationDetail">-->
+    <!--<div class="col-xs-12">-->
+        <!--<div class="basicBody">-->
+            <!--<div class="titAdd"> <i class="basicPng"></i><span class="addTil">基本信息</span></div>-->
+            <!--<table id="sample-table-3" class="table table-hover">-->
+                <!--<thead>-->
+                <!--<tr class="remindTh4">-->
+                    <!--<th class="remindTh4">节点</th>-->
+                    <!--<th class="remindTh4">时间</th>-->
+                <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                <!--<tr v-for=" obj in mainModel.vo.desps">-->
+                    <!--<td>{{obj.desp}}</td>-->
+                    <!--<td>{{obj.date}}</td>-->
+                <!--</tr>-->
+                <!--</tbody>-->
+            <!--</table>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</form>-->
+<simple-card class="fip-content-item">
+    <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+    <!--</table>-->
+    <vue-bootstrap-table
+            :columns="historyColumns"
+            :show-filter="false"
+            :show-column-picker="false"
+            :show-pager="true"
+            :show-empty-row="false"
+            :values="mainModel.vo.desps"
+            >
+    </vue-bootstrap-table>
+</simple-card>

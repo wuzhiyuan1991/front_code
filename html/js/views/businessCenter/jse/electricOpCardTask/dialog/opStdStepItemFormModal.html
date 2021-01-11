@@ -1,0 +1,17 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item label="操作项目" v-if="(hiddenFields.indexOf('content') == -1)" prop="content">
+					<iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.content"></iv-input>
+				</el-form-item>
+<!--				<el-form-item label="风险及控制措施" v-if="(hiddenFields.indexOf('risk') == -1)" prop="risk">-->
+<!--					<iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.risk"></iv-input>-->
+<!--				</el-form-item>-->
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

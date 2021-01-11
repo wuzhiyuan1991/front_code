@@ -1,0 +1,78 @@
+/*.base-border{
+  border:solid 1px @bottom-borderColor;
+}*/
+.list-box .list-head {
+  height: 30px;
+}
+.list-box .list-item {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  border-bottom: solid 1px #ddd;
+}
+.list-box .list-item.selected {
+  background: #19a3e7;
+  color: white;
+}
+.list-box:last-child {
+  border-bottom: none;
+}
+.list-box-border {
+  border: solid 1px #ddd;
+}
+/*下面根據iv-view 組件扩展的样式*/
+/*在 checkbox-group group-vertical-vertical 类换行布局 */
+.ivu-checkbox-group.group-vertical > .ivu-checkbox-wrapper {
+  display: block;
+}
+.ivu-checkbox-group.group-vertical > .ivu-checkbox-wrapper + .ivu-checkbox-wrapper {
+  margin-left: 0;
+}
+.ivu-checkbox-group.group-vertical > .ivu-checkbox-wrapper:nth-of-type(n+2) {
+  margin-top: 5px;
+}
+.ivu-radio-group.group-vertical > .ivu-radio-wrapper {
+  display: flex;
+  width: 100%;
+}
+.ivu-radio-group.group-vertical > .ivu-radio-wrapper + .ivu-radio-wrapper {
+  margin-left: 0;
+}
+/**componentsEx/multiInputSelector/main")*/
+.diy-select {
+  width: 20px;
+  flex-grow: 1;
+}
+.diy-select .ivu-tag {
+  max-width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+.diy-select .ivu-tag-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.diy-select.ivu-select-multiple .ivu-select-selection {
+  height: 30px;
+  overflow: hidden;
+}
+.ivu-select-selection-copy {
+  position: absolute;
+  width: 100%;
+  display: none;
+  z-index: 2;
+  background-color: #fff;
+  padding: 5px;
+  border: solid #33adea 1px;
+  border-radius: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 250px;
+}
+.ivu-select-selection:hover + div > .ivu-select-selection-copy,
+.ivu-select-selection-copy:hover {
+  display: block;
+}
+/*# sourceMappingURL=components.css.map */

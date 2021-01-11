@@ -1,0 +1,496 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div style="background-color: white;">
+        <div class="selectCheckTable">
+            <span @click="type=1" :class="type==1?'checked':''">工艺设备变更申请审批表
+            </span>
+            <span @click="type=2" :class="type==2?'checked':''">
+                变更检查表
+            </span>
+            <span @click="type=3" :class="type==3?'checked':''">变更验收报告</span>
+
+
+        </div>
+    </div>
+
+    <div class="preview-box" id="section-to-print" v-if='type==1'>
+        <div style="font-size: 12px;">程序-工艺技术及设备变更管-01-记录-01</div>
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center">工艺设备变更申请审批表</h4>
+        <div style="margin-left: 350px;">
+            <span
+                style="width: 200px;display: inline-block;">部门：{{getDataDic('org', previewData.pecapplication.orgId)['deptName']}}</span>
+
+            <span style="width: auto;display: inline-block;">编号：{{previewData.pecapplication.code}}</span>
+        </div>
+        <!-- font-bold -->
+        <table class="preview-box-table">
+            <colgroup>
+                <col style="width: 150px;">
+                <col>
+                <col style="width: 150px;">
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>变更项目</td>
+                    <td>{{previewData.pecapplication.projectName}}</td>
+                    <td>变更所在功能区</td>
+                    <td>{{previewData.pecapplication.functionalZone}}</td>
+                </tr>
+                <tr>
+                    <td>申请单位</td>
+                    <td>{{getDataDic('org', previewData.pecapplication.orgId)['deptName']}}</td>
+                    <td>申请日期</td>
+                    <td>{{previewData.pecapplication.applyDate.substring(0,10)}}</td>
+                </tr>
+                <tr>
+                    <td>变更起止日期</td>
+                    <td>{{previewData.pecapplication.startTime.substring(0,10)+'至'+previewData.pecapplication.endTime.substring(0,10)}}
+                    </td>
+                    <td>变更期限</td>
+                    <td>{{previewData.pecapplication.changeDeadline.substring(0,10)||'永久变更'}}</td>
+                </tr>
+                <tr>
+                    <td>变更申请人</td>
+                    <td colspan="3">{{previewData.pecapplication.user.name}}</td>
+
+                </tr>
+                <tr>
+                    <td colspan="4" style=" min-height: 90px;">
+                        <div style=" min-height: 90px;">
+                            变更事由：<br>
+                            <div style="white-space: pre-line;">
+                                {{previewData.pecapplication.changeReason}}
+                            </div>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        潜在的影响及控制措施
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="preview-box-table ">
+            <colgroup>
+                <col style="width: 280px;">
+                <col style="width: 140px;">
+
+                <col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>内容</td>
+                    <td>是否有关</td>
+                    <td>结论</td>
+                </tr>
+                <tr>
+                    <td>安全与健康（参见变更检查表）</td>
+                    <td>{{previewData.pecapplication.pecDetail.safetyInfluence==1?'是':'否'}}</td>
+                    <td>{{previewData.pecapplication.pecDetail.safetySummary}}</td>
+                </tr>
+                <tr>
+                    <td>环境影响（参见变更检查表）</td>
+                    <td>{{previewData.pecapplication.pecDetail.envInfluence==1?'是':'否'}}</td>
+                    <td>{{previewData.pecapplication.pecDetail.envSummary}}</td>
+                </tr>
+                <tr>
+                    <td>对成本/效益的考虑</td>
+                    <td>{{previewData.pecapplication.pecDetail.benefitInfluence==1?'是':'否'}}</td>
+                    <td>{{previewData.pecapplication.pecDetail.benefitSummary}}</td>
+                </tr>
+                <tr>
+                    <td>其他影响（能耗、法律等）</td>
+                    <td>{{previewData.pecapplication.pecDetail.otherInfluence==1?'是':'否'}}</td>
+                    <td>{{previewData.pecapplication.pecDetail.otherSummary}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style=" min-height: 90px;">
+                        <div style=" min-height: 90px;">
+                            变更带来的问题陈述：<br>
+                            <div style="white-space: pre-line;">
+                                {{previewData.pecapplication.pecDetail.problem}}</div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style=" min-height: 90px;">
+                        <div style=" min-height: 90px;">
+                            变更的技术依据(预期改善的性质、实施此项变更的安全性、评审支持性的实验或工艺数据等) <br>
+                            <div style="white-space: pre-line;">
+                                {{previewData.pecapplication.pecDetail.technicalBase}}</div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style=" min-height: 90px;">
+                        <div style="min-height: 90px;">
+                            工艺设备变更详细说明（包括操作程序、试验日志、关键的工艺变量值等）<br>
+                            <div style="white-space: pre-line;">
+                                {{{previewData.pecapplication.pecDetail.description}}}
+                            </div>
+
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="min-height: 40px;">
+                        <div style=" min-height: 40px;">
+                            审核结论：{{user2.result==0?'通过':'不通过'}}
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="preview-box-table ">
+            <colgroup>
+
+                <col style="width: 140px;">
+                <col>
+
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td rowspan="2">变更评估与 审核</td>
+                    <td>变更等级评估：
+                        <span v-show="previewData.pecapplication.status>1">
+                            <Icon v-if="previewData.pecapplication.level==2" type="android-checkbox-outline-blank"
+                                style="margin-right: 20px;">一般变更</Icon>
+                            <Icon v-else type="android-checkbox-outline" style="margin-right: 20px;">一般变更</Icon>
+                            <Icon v-if="previewData.pecapplication.level==2" type="android-checkbox-outline"
+                                style="margin-right: 20px;">重大变更</Icon>
+                            <Icon v-else type="android-checkbox-outline-blank" style="margin-right: 20px;">重大变更</Icon>
+                        </span>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style=" min-height: 150px;">
+                        <div style=" min-height: 150px;">
+                            <div style="height: 50px;position: relative;">
+                                评估人：{{previewData.pecAssessment.user.name}}<span
+                                    style="position: absolute;right: 100px;top: 30px;">日期：{{timestampToTime(previewData.pecAssessment.assessTime)}}</span>
+                            </div>
+                            <div style="height: 50px;position: relative;">
+                                审核人：{{user1.user.name}}<span
+                                    style="position: absolute;right: 100px;top: 30px;">日期：{{timestampToTime(user1.auditTime)}}</span>
+                            </div>
+                            <div style="height: 50px;position: relative;">
+                                复审人：{{user2.name}}<span
+                                    style="position: absolute;right: 100px;top: 30px;">日期：{{timestampToTime(user2.auditTime)}}</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>变更审批</td>
+                    <td style="height: 60px;">
+                        <div style="height: 60px;">
+                            <div style="height: 20px;position: relative;">
+                                所属各单位主管领导：{{user3.user.name}}<span
+                                    style="position: absolute;right: 100px;top: 2px;">日期：{{timestampToTime(user3.auditTime)}}</span>
+                            </div>
+                            <div style="height: 20px;position: relative;">
+                                公司专业部门领导：<span
+                                  >{{user4.user.name}}</span><span
+                                    style="position: absolute;right: 100px;top: 2px;">日期：<span
+                                      >{{timestampToTime(user4.auditTime)}}</span></span>
+                            </div>
+                            <div style="height: 20px;position: relative;">
+                                公司领导：<span style="position: absolute;right: 100px;top: 2px;">日期：</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="text-align: right;padding: 0 50px;">保存期限: 一年</div>
+    </div>
+    <div class="preview-box" id="section-to-print" v-if='type==2'>
+        <div style="font-size: 12px;">程序-工艺技术及设备变更管-01-记录-02</div>
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center">变更检查表</h4>
+        <div style="margin-left: 600px;">
+            <span
+                style="width: 250px;display: inline-block;">部门：{{getDataDic('org', previewData.pecapplication.orgId)['deptName']}}</span>
+
+
+        </div>
+        <table class="preview-box-table">
+            <colgroup>
+
+                <col style="width: 50px;">
+                <col>
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+                <col style="width: 100px;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td colspan="2" style="text-align: center;">检查项目</td>
+                    <td style="text-align: center;">是</td>
+                    <td style="text-align: center;">否</td>
+                    <td style="text-align: center;">不适用</td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="text-align: center;">安全健康</td>
+                </tr>
+
+                <tr v-for=" item in safeList">
+                    <td colspan="2">{{item.name}}</td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 1"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank">*</i><i
+                            v-if="item.checkResult == '1'" class="ivu-icon ivu-icon-android-checkbox-outline">*</i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 0"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i><i
+                            v-if="item.checkResult == '0'" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 2"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i> <i
+                            v-if="item.checkResult == 2" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="5" style="text-align: center;">环境影响</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">1</td>
+                    <td colspan="4" style="text-align: center;">空气问题</td>
+                </tr>
+                <tr v-for=" item in airList">
+                    <td colspan="2">{{item.name}}</td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 1"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank">*</i><i
+                            v-if="item.checkResult == '1'" class="ivu-icon ivu-icon-android-checkbox-outline">*</i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 0"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i><i
+                            v-if="item.checkResult == '0'" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 2"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i> <i
+                            v-if="item.checkResult == 2" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2</td>
+                    <td colspan="4" style="text-align: center;">废水问题</td>
+                </tr>
+                <tr v-for=" item in waterList">
+                    <td colspan="2">{{item.name}}</td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 1"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank">*</i><i
+                            v-if="item.checkResult == '1'" class="ivu-icon ivu-icon-android-checkbox-outline">*</i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 0"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i><i
+                            v-if="item.checkResult == '0'" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 2"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i> <i
+                            v-if="item.checkResult == 2" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">3</td>
+                    <td colspan="4" style="text-align: center;">废弃物问题</td>
+                </tr>
+                <tr v-for=" item in thingList">
+                    <td colspan="2">{{item.name}}</td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 1"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank">*</i><i
+                            v-if="item.checkResult == '1'" class="ivu-icon ivu-icon-android-checkbox-outline">*</i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 0"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i><i
+                            v-if="item.checkResult == '0'" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 2"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i> <i
+                            v-if="item.checkResult == 2" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">4</td>
+                    <td colspan="4" style="text-align: center;">其它问题</td>
+                </tr>
+                <tr v-for=" item in otherList">
+                    <td colspan="2">{{item.name}}</td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 1"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank">*</i><i
+                            v-if="item.checkResult == '1'" class="ivu-icon ivu-icon-android-checkbox-outline">*</i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 0"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i><i
+                            v-if="item.checkResult == '0'" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                    <td style="text-align: center;"><i v-if="item.checkResult != 2"
+                            class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i> <i
+                            v-if="item.checkResult == 2" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <div>注 1：以上检查表由申请人组织确认。</div>
+                        <div>注 2：若选择结果带星号(*)，则应在《工艺设备变更申请审批表》中工艺设备变更详细说 明一栏做出说明。</div>
+                        <div>注 3：以上问题若涉及对工艺安全的不利影响，应考虑有无必要进行系统的工艺危害分析。</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="text-align: right;padding: 0 50px;">保存期限: 一年</div>
+    </div>
+    <div class="preview-box" id="section-to-print" v-if='type==3'>
+
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center">变更验收报告</h4>
+        <div style="margin-left: 50px;">
+            <span style="margin-right: 250px;">表单号：程序-工艺技术及设备变更管-01-记录-04</span>
+            <span
+                style="width: 250px;display: inline-block;">部门：{{getDataDic('org', previewData.pecapplication.orgId)['deptName']}}</span>
+
+
+        </div>
+        <table class="preview-box-table">
+            <colgroup>
+
+                <col style="width: 150px;">
+                <col>
+                <col style="width: 150px;">
+                <col>
+
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>变更项目</td>
+                    <td colspan="3">{{previewData.pecapplication.projectName}}</td>
+                </tr>
+                <tr>
+                    <td>实施部门</td>
+                    <td>{{getDataDic('org', previewData.pecapplication.orgId)['deptName']}}</td>
+                    <td>变更级别</td>
+                    <td>
+                        <div v-show="previewData.pecapplication.status>1">
+                            <Icon v-if="previewData.pecapplication.level==2" type="android-checkbox-outline-blank"
+                                style="margin-right: 20px;">一般变更</Icon>
+                            <Icon v-else type="android-checkbox-outline" style="margin-right: 20px;">一般变更</Icon>
+                            <Icon v-if="previewData.pecapplication.level==2" type="android-checkbox-outline"
+                                style="margin-right: 20px;">重大变更</Icon>
+                            <Icon v-else type="android-checkbox-outline-blank" style="margin-right: 20px;">重大变更</Icon>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div style=" min-height: 120px;">
+                            实施情况：<br>
+                            <div style="white-space: pre-line;"> {{previewData.implementation.presentation}}</div>
+
+                        </div>
+                        <div style="margin-left: 650px;">实施部门负责人：{{previewData.principals}}</div>
+                        <div style="margin-left: 700px;">{{timestampToTime(previewData.implementation.submitTime)}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">实施日期：{{previewData.implementation.implStartTime.substring(0,10)}}</td>
+                    <td colspan="2">完成日期：{{previewData.implementation.implEndTime.substring(0,10)}}</td>
+                </tr>
+            </tbody>
+            <tr>
+                <td colspan="4">
+                    <div style=" min-height: 180px;">
+                        效果验证：（验证变更项目的完整性、适用性、有效性、安全可靠性及对环境的影响）<br>
+                        <div style="white-space: pre-line;"> {{previewData.acceptance.description}}</div>
+
+                    </div>
+                    <div>在变更过程或者变更发生后，是否更新了以下信息：</div>
+                    <div id="preview-box-table-tr">
+                        <span style="margin-right: 30px;line-height: 20px;display: inline-block;"
+                            v-for="(index, item) in previewData.acceptance.pecAcceptDetails ">{{index+1}}.{{item.name}}<i
+                                v-if="item.result==1" class="ivu-icon ivu-icon-android-checkbox-outline"></i>
+                            <i v-else class="ivu-icon ivu-icon-android-checkbox-outline-blank"></i></span>
+
+                    </div>
+                    <div style="margin-left: 650px;padding: 15px 0;">效果验证负责人：{{previewData.accprincipals}}</div>
+                    <div style="margin-left: 700px;"> {{timestampToTime(previewData.acceptance.acceptDate)}}</div>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align: right;padding: 0 50px;">保存期限: 一年</div>
+    </div>
+</Modal>
+<style>
+    .selectCheckTable {
+        width: 600px;
+        margin: 0 auto;
+
+    }
+
+    .selectCheckTable .checked {
+        color: #3c8dbc;
+        border-bottom: 1px solid #3c8dbc;
+    }
+
+    .selectCheckTable span {
+        margin: 0 30px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #preview-box-table-tr .ivu-icon-android-checkbox-outline {
+        margin-left: 10px;
+        position: relative;
+        top: 1px
+    }
+
+    #preview-box-table-tr .ivu-icon-android-checkbox-outline-blank {
+        margin-left: 10px;
+        position: relative;
+        top: 1px
+    }
+
+    .preview-box-table tr,
+    .preview-box-table td {
+        height: 22px;
+    }
+    @media print {
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .preview-box {
+            width: 100%;
+        }
+
+        table {
+            /* width: 1060px !important; */
+            margin-left: 0;
+        }
+
+        /* .preview-box-sub-title {
+            margin-top: 50px;
+            margin-bottom: 15px;
+        } */
+    }
+
+    @page {
+        margin-bottom: 0mm;
+        margin-top: 0mm;
+        /*margin-left:10mm;*/
+        /*margin-right:10mm;*/
+    }
+</style>

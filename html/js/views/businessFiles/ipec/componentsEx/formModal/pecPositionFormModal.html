@@ -1,0 +1,26 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('level') == -1)" label="级别" prop="level">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ipec_position_level', mainModel.vo.level) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.level" :list="getDataDicList('ipec_position_level')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="岗位" prop="type">
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ipec_position_type', mainModel.vo.type) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.type" :list="getDataDicList('ipec_position_type')" clearable></i-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('remarks') == -1)" :label="$t('gb.common.remarks')" prop="remarks" full-width>
+						<iv-textarea :rows="4" :value.sync="mainModel.vo.remarks" :readonly="mainModel.isReadOnly"></iv-textarea>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

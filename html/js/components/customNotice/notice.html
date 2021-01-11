@@ -1,0 +1,9 @@
+<div class="ivu-notice-notice" transition="move-right">
+    <div class="ivu-notice-notice-content">
+        <div class="ivu-notice-custom-content">
+            <div class="ivu-notice-title">{{title}}</div>
+            <div class="ivu-notice-desc" style="max-height: 100px;overflow-y: auto;"><slot></slot></div>
+        </div>
+    </div>
+    <a href="javascript:;" class="ivu-notice-notice-close" @click="remove"><i class="ivu-icon ivu-icon-ios-close-empty"></i></a>
+</div>

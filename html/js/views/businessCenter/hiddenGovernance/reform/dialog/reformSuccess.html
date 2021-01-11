@@ -1,0 +1,82 @@
+
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform >
+            <el-form-item label="整改方案(措施)" prop="dealStep">
+                <iv-input type="textarea" :value.sync="mainModel.vo.dealStep"></iv-input>
+                <!--<textarea class="form-control" rows="3" v-model="mainModel.vo.dealStep" required></textarea>-->
+            </el-form-item>
+            <el-form-item :label="$t('hag.hazc.interimRemed')" prop="emergencyStep">
+                <iv-input type="textarea" :value.sync="mainModel.vo.emergencyStep"></iv-input>
+                <!--<textarea class="form-control" rows="3" v-model="mainModel.vo.emergencyStep" required></textarea>-->
+            </el-form-item>
+            <el-form-item label="整改费用" prop="rectificationCost">
+                <iv-input type="number" max-length=50 :value.sync="mainModel.vo.rectificationCost"></iv-input>
+                <!--<input type="number" v-model='mainModel.vo.rectificationCost' />-->
+            </el-form-item>
+            <el-form-item label="治理责任部门" prop="respOrgId" v-if="mainModel.enableRespOrgId">
+                <department-tree-select :id.sync="mainModel.vo.respOrgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+            </el-form-item>
+            <el-form-item label="进度详情" prop="scheduleList">
+                <div class="schedule">
+                    <div v-for="(index, item) in mainModel.vo.scheduleList">
+                        <iv-input type="text" :value.sync="item.detail" :disabled="!!item.operatorName"></iv-input>
+                    </div>
+                    <p @click="addSchedule" v-if="showAdd" style="cursor: pointer">添加</p>
+                </div>
+            </el-form-item>
+            <!--<el-form-item :label="$t('hat.hazt.Verifier')" prop="accepterId">-->
+                <!--<iv-tree-select :model.sync="mainModel.vo.accepterId"-->
+                                <!--:list="mainModel.userList"-->
+                                <!--:disabled="true"-->
+                                <!--id-attr="id"-->
+                                <!--display-attr="name">-->
+                    <!--<iv-tree :model="mainModel.userList"-->
+                             <!--:selected-datas.sync="mainModel.selectedDatas"-->
+                             <!--:serch-filterable="true"-->
+                             <!--id-attr="id"-->
+                             <!--pid-attr="parentId"-->
+                             <!--display-attr="name"-->
+                             <!--:single-select="true">-->
+                    <!--</iv-tree>-->
+                <!--</iv-tree-select>-->
+            <!--</el-form-item>-->
+            <el-form-item :label="$t('gb.common.picture')" prop="pictures">
+                <lite-box v-for="(index,pic) in mainModel.vo.pictures" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.pictures)" @click="doPic(pic)">
+                    <img :src="convertImagePath(pic)">
+                </lite-box>
+                <vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload"
+                                 :filters="pictures.filters" class="file_upload" v-if="mainModel.vo.pictures.length < 9"></vue-file-upload>
+            </el-form-item>
+            <el-form-item :label="$t('gb.common.video')" prop="mainModel.videos">
+                <lite-box v-for="(index,video) in mainModel.videos" @on-close="doDeleteFile(video.fileId,index,mainModel.videos)" @click="doPlay(video)">
+                    <img :src="convertPath(video.fileId)">
+                </lite-box>
+                <vue-file-upload :params="videos.params"  @on-success-upload="doVideosSuccessUpload"
+                                 :filters="videos.filters" class="file_upload" v-if="mainModel.videos.length < 1"></vue-file-upload>
+            </el-form-item>
+
+            <el-form-item :label="$t('bc.hal.enclosure')" prop="mainModel.files" class="file_upload_text">
+                <lite-box v-for="(index,file) in mainModel.files" @on-close="doDeleteFile(file.fileId,index,mainModel.files)">
+                    <i class="ivu-icon  ivu-icon-document-text file_upload_text_ico"></i><a v-text="file.orginalName" target="_blank" style="width: 90px; margin: 2px;" :href="convertFilePath(file)"></a>
+                </lite-box>
+
+                <vue-file-upload :custom-style="true" :events="files.events" :params="files.params" @on-success-upload="doFileSuccessUpload" :filters="files.filters" class="file_upload_buttom">
+                    <slot><span class="file_tps"><i class="ivu-icon ivu-icon-link"></i>添加附件</span></slot>
+                </vue-file-upload>
+            </el-form-item>
+
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSubmit" class="pull-right">提交</vi-button>
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+
+    </div>
+</div>
+<Modal  class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal  class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+    <img v-if="picModel.show" :src="convertImagePath(picModel.file,'original')">
+</Modal>

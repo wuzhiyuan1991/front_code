@@ -1,0 +1,39 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item :label="$t('gb.common.code')" prop="code">
+						<iv-input  :value.sync="mainModel.vo.code"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('bd.trm.fullName')" prop="username">
+						<iv-input  :value.sync="mainModel.vo.username"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('das.oniu.mobile')" prop="mobile">
+						<iv-input :value.sync="mainModel.vo.mobile" :disabled="(disabledFields.indexOf('mobile') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('das.oniu.mail')" prop="email">
+						<iv-input :value.sync="mainModel.vo.email" :disabled="(disabledFields.indexOf('email') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				<el-form-item :label="$t('ori.perm.leader')">
+					<iv-tree-select :model.sync="mainModel.vo.leaderId"
+									:list="mainModel.userList"
+									id-attr="id"
+									display-attr="name">
+						<iv-tree :model="mainModel.userList"
+								 :selected-datas.sync="mainModel.selectedDatas"
+								 :serch-filterable="true"
+								 id-attr="id"
+								 pid-attr="parentId"
+								 display-attr="name"
+								 :single-select="true">
+						</iv-tree>
+					</iv-tree-select>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+

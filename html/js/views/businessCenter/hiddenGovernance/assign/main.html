@@ -1,0 +1,73 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <!--<iv-col $main-header-condition-div-attr-default >-->
+                <!--<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>-->
+                <!--</iv-col>-->
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-mixBusiness>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <!--<iv-col $main-header-func-div-attr-default>-->
+                    <!--<div class="prelative addButton pull-right export-btn">-->
+                        <!--<vi-button @click="doExportExcel" v-if="hasPermission('5010002005')">{{$t("gb.common.export")}}</vi-button>-->
+                    <!--</div>-->
+                    <!--$main-header-refresh-button-->
+                <!--</iv-col>-->
+
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button @click="doExportExcel" v-if="hasAuth('assignExport')">{{$t("gb.common.export")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end" v-if="hasAuth('assignImport') || hasAuth('templateSet')">
+                            <vi-button type="ghost" icon="chevron-down"></vi-button>
+                            <iv-dropdown-menu slot="list">
+                                <iv-dropdown-item v-if="hasAuth('assignImport')">
+                                    <div class="uploadAport" @click="doImport"><a>{{$t("gb.common.import")}}</a></div>
+                                </iv-dropdown-item>
+                                <!--<iv-dropdown-item v-if="mainModel.showTempSetting && hasAuth('templateSet')">-->
+                                    <!--<div class="uploadAport">-->
+                                        <!--<a href="javascript:void(0);" @click="showTemplateSetting">导出模板设置</a>-->
+                                    <!--</div>-->
+                                <!--</iv-dropdown-item>-->
+                                $main-header-dropdown-item-tag-common-display
+                            </iv-dropdown-menu>
+                        </iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doProcessReform" v-if="hasAuth('assignReform')">{{$t("gb.common.troubleDealing")}}</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doDelegate" v-if="hasAuth('assignDelegate')">委托</vi-button>
+                    <vi-button type="text" class="mp-header-item-btn" @click="doDelete" v-if="hasAuth('assignDelete')">{{$t("gb.common.del")}}</vi-button>
+                </iv-col>
+            </iv-row>
+
+        </div>
+
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" @on-data-loaded="onTableDataLoaded">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<aside :show.sync="detailModel.show" placement="right">
+    <detail-component @do-audit="doProcessReform" @do-delegate="doDelegate"></detail-component>
+</aside>
+
+<export-template title="导出模版设置" :visible.sync="templateModel.visible"></export-template>
+<!--<Modal :visible.sync="reformModel.show" :title="reformModel.title" footer-hide>-->
+<!--<reform-component></reform-component>-->
+<!--</Modal>-->
+<Modal :visible.sync="processReform.show" :title="processReform.title" @on-cancel="doCloseProcessReform" footer-hide>
+    <pool-treatment-component :form-type="processReform.formType" :pool-id="processReform.poolId"></pool-treatment-component>
+</Modal>
+<Modal :visible.sync="delegateModel.show" :title="delegateModel.title" @on-cancel="doCloseDelegateModel" footer-hide>
+    <pool-delegate-component :pool-id="delegateModel.poolId"></pool-delegate-component>
+</Modal>
+<import-progress @do-export-excel="doExportExcel" :url="uploadModel.url" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>

@@ -1,0 +1,119 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="baseRules" v-ref:ruleform>
+					<!-- <el-form-item :label="$t('gb.common.code')" prop="code">
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item> -->
+					<!--<el-form-item :label="$t('gb.common.name')" prop="name">-->
+						<!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item label="法律法规与其他要求名称" prop="irlLegalRegulation.id">
+						<input-select :value.sync="mainModel.vo.irlLegalRegulation" display-field="name" @click="(!mainModel.isReadOnly) && (doSelectLaws())" :textonly="mainModel.isReadOnly"></input-select>
+					</el-form-item>
+					<el-form-item label="编号" prop="irlLegalRegulation.identifier">
+						<iv-input :value.sync="mainModel.vo.irlLegalRegulation.identifier" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="适用的文件" prop="applicableDocuments">
+						<iv-input :value.sync="mainModel.vo.applicableDocuments" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="适用的条款" prop="applicableProvisions">
+						<iv-input :value.sync="mainModel.vo.applicableProvisions" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+					<el-form-item  label="实施情况" prop="implementation">
+						<div class="ivu-select-100pre">
+                            <iv-textarea :rows="8" :value.sync="mainModel.vo.implementation" :width="380" :readonly="mainModel.isReadOnly"></iv-textarea>
+                        </div>
+						<!-- <iv-textarea :rows="8" :value.sync="mainModel.vo.implementation" :readonly="mainModel.isReadOnly"></iv-textarea> -->
+					</el-form-item>
+					<!-- <el-form-item label="使用的条款" prop="usedProvisions">
+						<iv-input :value.sync="mainModel.vo.usedProvisions" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item> -->
+
+					<el-form-item label="符合性" prop="evaluation">
+						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.evaluation">
+							<i-option value="1">符合</i-option>
+							<i-option value="0">不符合</i-option>
+						</i-select>
+						<iv-input v-else :value.sync="mainModel.vo.evaluation=='1'?'符合':'不符合'" textonly></iv-input>
+					</el-form-item>
+					<el-form-item label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<input-select v-else :value.sync="getDataDic('org', mainModel.vo.compId)"
+						 id-field="id" display-field="compName" textonly  ></input-select>
+					</el-form-item>
+					<!-- <el-form-item label="所属部门" prop="orgId">
+						<input-select :value.sync="getDataDic('org', mainModel.vo.orgId)"
+						id-field="id" display-field="deptName" :textonly="mainModel.isReadOnly"  clearable @click="(!mainModel.isReadOnly) && (doSelectDept())"></input-select>
+						
+					</el-form-item> -->
+				</el-form>
+			</simple-card>
+
+			<div class="rel-info-panel" :class="{'rel-info-panel-mask': false}">
+				<file-list-simple-card title="附件" class="fip-content-item" readonly :data="fileModel.file.data" :config="fileModel.file.cfg"> </file-list-simple-card>
+			</div>
+
+
+			<!--<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">-->
+				<!--<simple-card class="fip-content-item"  filter filter-when>-->
+					<!--<p slot="title"><i class="basicPng"></i><span>参会人</span></p>-->
+					<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowTestUserSelectModal()" >-->
+						<!--<span><Icon type="plus"></Icon>添加</span>-->
+					<!--</a>-->
+					<!--<vue-bootstrap-table-->
+							<!--:setting="tableModel.attendeesTableModel"-->
+							<!--@on-del-row="doRemoveTestUser"-->
+							<!--@on-move-row="doMoveTestUser"-->
+							<!--v-ref:attendees-table-->
+					<!--&gt;-->
+					<!--</vue-bootstrap-table>-->
+				<!--</simple-card>-->
+			<!--</div>-->
+
+			<!--<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">-->
+				<!--<simple-card class="fip-content-item"  filter filter-when>-->
+					<!--<p slot="title"><i class="basicPng"></i><span>抄送人</span></p>-->
+					<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowTestUserSelectModal()" >-->
+						<!--<span><Icon type="plus"></Icon>添加</span>-->
+					<!--</a>-->
+					<!--<vue-bootstrap-table-->
+							<!--:setting="tableModel.ccUserTableModel"-->
+							<!--@on-del-row="doRemoveTestUser"-->
+							<!--@on-move-row="doMoveTestUser"-->
+							<!--v-ref:ccuser-table-->
+					<!--&gt;-->
+					<!--</vue-bootstrap-table>-->
+				<!--</simple-card>-->
+			<!--</div>-->
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">发布</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">提交</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">审批</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>-->
+		<!-- <vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button> -->
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+
+<company-select-model @do-save='doSaveCompany' :visible.sync="companySelectModel.show"
+	:filter-data="companySelectModel.filterData" single-select></company-select-model>
+	<dept-select-modal :visible.sync="deptSelectModel.visible" @do-save="doSaveDepts" single-select
+	:filter-data="deptSelectModel.filterData"></dept-select-modal>
+	<select-laws :visible.sync="lawsSelectModel.visible"  @do-save="doSaveLaw"></select-laws>

@@ -1,0 +1,292 @@
+<div class="detail-container">
+	<div class="few-info-panel pull-left" >
+		<div style="display: flex;display: flex;align-items:center;">
+			<Icon type="ios-photos" style="font-size: 18px;"></Icon>
+			<span style="font-size:18px;color:#666;display: block;margin-left:15px;margin-right:15px;font-weight: 600;">{{mainModel.title}}</span>
+
+			<span v-if="mainModel.currentVersionList.length>0" style="display: inline-block;width:150px;" class="emerPlanSelectTitle">
+				<i-select v-else :model.sync="mainModel.currentVersionId" :list="mainModel.currentVersionList" @on-select="doOnSelect" ></i-select>
+			</span>
+		</div>
+		<div class="fip-content emerPlan680">
+
+			<simple-card class="fip-content-item" v-if="parseInt(mainModel.vo.status)<7 && mainModel.currentVersionId == mainModel.vo.lastVersionId">
+				<ul  class="layout-timeline layout-timeline-6" style="border:1px dashed #ddd;border-radius: 6px;">
+					<li v-for="(i, item) in getItemList" class="layout-timeline-item" :class="calcClass(i, item)">
+						<div class="name" :title="item.name">{{item.name}}</div>
+						<div class="line"></div>
+						<div :class="calcItemClass(item)" :style="getStyle(item)" :title="getTitle(item)">{{item.num}}</div>
+					</li>
+				</ul>
+			</simple-card>
+
+			<div style="text-align: right;padding-right:10px;" v-show="parseInt(mainModel.vo.status)<7 && mainModel.currentVersionId == mainModel.vo.lastVersionId">
+				<a  v-show="mainModel.opType != 'create'" @click.prevent="doShowHistortList" >
+					<span><Icon type="search"></Icon>历史详情</span>
+				</a>
+			</div>
+
+
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item" v-if="parseInt(mainModel.vo.status)<7 && mainModel.currentVersionId == mainModel.vo.lastVersionId">
+				<!--<p slot="title"><i class="basicPng"></i>-->
+					<!--<span></span>-->
+				<!--</p>-->
+				<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowHistortList" >-->
+					<!--<span><Icon type="plus"></Icon>历史详情</span>-->
+				<!--</a>-->
+				<div style="margin-top: -10px;padding-top: 5px;border: 1px solid #ddd;border-radius: 6px;padding-bottom: 15px;">
+					<div class="emerPlanHead">
+						<div class="pull-left emerPlanHeadTitle">
+							<div class="inneremerPlanHeadTitle" >
+								{{mainModel.statusListOne[parseInt(mainModel.vo.status)-1].name}}
+							</div>
+						</div>
+						<div class="pull-right" style="width:145px">
+							<vi-button type="primary" v-if="hasAuth('submit')" @click="doSaveEmerStatus" class="pull-right">提交</vi-button>
+							<vi-button style="margin-right:10px;" v-if="hasAuth('rollback') && mainModel.vo.status !='1'" type="primary" @click="doShowBacnNode" class="pull-right">回退</vi-button>
+						</div>
+					</div>
+
+					<!-- 内部评审 -->
+					<el-form v-if=" parseInt(mainModel.vo.status)===2 || parseInt(mainModel.vo.status)===3 || parseInt(mainModel.vo.status)===4 || parseInt(mainModel.vo.status)===5 || parseInt(mainModel.vo.status)===6"
+							 class="fip-content-item-form" :model="mainModel.emerPlanHistory" style="margin-left:10px;"
+							 :rules="mainModel.rules" v-ref:ruleform>
+						<el-form-item label="处理结果" prop="result">
+							<i-select v-else :model.sync="mainModel.emerPlanHistory.result" :list="getDataDicList('iem_emer_plan_result')" @on-select="doFileTypeChangeResult" ></i-select>
+						</el-form-item>
+						<el-form-item label="回退节点" prop="rollbackStep" v-if="mainModel.emerPlanHistory.result=='1'">
+							<i-select v-else :model.sync="mainModel.emerPlanHistory.rollbackStep" :list="getList" ></i-select>
+						</el-form-item>
+						<el-form-item :label="getLabel" prop="participant">
+							<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.participant" readonly=false :width="260"></iv-textarea>
+						</el-form-item>
+						<el-form-item label="过程详情备注描述" prop="remark" full-width>
+							<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.remark" readonly=false :width="260"></iv-textarea>
+						</el-form-item>
+						<el-form-item label="操作人" prop="user" full-width>
+							<span v-if="mainModel.emerPlanHistory.user && mainModel.emerPlanHistory.user.name">{{mainModel.emerPlanHistory.user.name}}</span>
+							<!--<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.user.name" readonly=false :width="380"></iv-textarea>-->
+						</el-form-item>
+						<el-form-item label="评审日期"  full-width>
+							<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.emerPlanHistory.editDate"></date-picker>
+							<iv-input v-else :value.sync="mainModel.emerPlanHistory.editDate" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="操作时间" prop="operateTime" full-width>
+							<span>{{getOperateTime(mainModel.emerPlanHistory.operateTime)}}</span>
+							<!--<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.operateTime" readonly=true :width="380"></iv-textarea>-->
+						</el-form-item>
+						<el-form-item label="附件资料"  full-width>
+							<ul>
+								<li v-for="(index, file) in mainModel.emerPlanHistory.fileList" class="cert-file-item" @click="doClickFile(index)">
+									<div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+									<Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+								</li>
+							</ul>
+							<iv-button type="text" style="padding:0;color:#33A6FF"  @click="uploadClicked" >上传</iv-button>
+						</el-form-item>
+					</el-form>
+
+					<!-- 没有这个页面报错   方案编制   -->
+					<el-form v-else class="fip-content-item-form" :model="mainModel.emerPlanHistory" style="margin-left:10px;"
+							 :rules="baseRules" v-ref:ruleform>
+						<!--<el-form-item :label="$t('gb.common.code')" >-->
+							<!--&lt;!&ndash;<span v-if="mainModel.isReadOnly || mainModel.vo.isInitial == '0'" >{{mainModel.vo.code}}</span>&ndash;&gt;-->
+							<!--&lt;!&ndash;<code-input :value.sync="mainModel.emerPlanHistory.code" readonly=false :allow-empty="allowEmpty" style="width:260px;" v-ref:code-input></code-input>&ndash;&gt;-->
+							<!--<span v-if="mainModel.isReadOnly || mainModel.vo.isInitial == '0' || mainModel.opType!='create' ">{{ mainModel.vo.code }}</span>-->
+
+							<!--<iv-input v-else :placeholder="'手输或自动生成'" :value.sync="mainModel.emerPlanHistory.code" style="width:260px;"  :readonly="mainModel.isReadOnly"></iv-input>-->
+
+						<!--</el-form-item>-->
+
+						<el-form-item label="预案名称" prop="name">
+							<iv-input :value.sync="mainModel.emerPlanHistory.name" style="width:260px;" readonly=false></iv-input>
+						</el-form-item>
+						<!--<el-form-item label="评审状态" prop="status">-->
+							<!--&lt;!&ndash;<span v-if="mainModel.isReadOnly">{{ getDataDic('iem_emer_plan_status', mainModel.vo.status) }}</span>&ndash;&gt;-->
+							<!--<i-select v-else :model.sync="mainModel.vo.status" :list="getDataDicList('iem_emer_plan_status')" ></i-select>-->
+						<!--</el-form-item>-->
+						<!--<el-form-item :label="$t('gb.common.state')" prop="disable">-->
+						<!--<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>-->
+						<!--</el-form-item>-->
+						<!--<el-form-item label="" prop="lastVersionId">-->
+							<!--<iv-input :value.sync="mainModel.vo.lastVersionId" readonly=false></iv-input>-->
+						<!--</el-form-item>-->
+						<el-form-item label="预案类型" prop="type">
+							<span v-if="mainModel.isReadOnly || mainModel.vo.isInitial == '0' || mainModel.opType!='create' ">{{ getDataDic('iem_emer_plan_type', mainModel.vo.type) }}</span>
+							<i-select v-else :model.sync="mainModel.emerPlanHistory.type" :list="getDataDicList('iem_emer_plan_type')"  @on-select="doFileTypeChange"  clearable></i-select>
+						</el-form-item>
+						<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+							<!--<iv-input v-if="mainModel.isReadOnly || mainModel.vo.isInitial == '0' || mainModel.opType!='create'" :value="getDataDic('org', mainModel.emerPlanHistory.compId)['compName']"  style="width:260px;"  textonly></iv-input>-->
+							<span v-if="mainModel.isReadOnly || mainModel.vo.isInitial == '0' || mainModel.opType!='create'" style="width:260px;"  textonly>{{getDataDic('org', mainModel.emerPlanHistory.compId)['compName']}}</span>
+
+							<company-tree-select v-else :id.sync="mainModel.emerPlanHistory.compId"></company-tree-select>
+						</el-form-item>
+						<el-form-item label="方案编制日期"  full-width>
+							<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.emerPlanHistory.editDate"></date-picker>
+							<iv-input v-else :value.sync="mainModel.emerPlanHistory.editDate" textonly class="inp"></iv-input>
+						</el-form-item>
+						<el-form-item label="修订频率" prop="reviseFrequence">
+							<iv-input  isInteger=true :value.sync="mainModel.emerPlanHistory.reviseFrequence" style="width:220px;"  :textonly="mainModel.isReadOnly"></iv-input>
+							年
+						</el-form-item>
+
+						<el-form-item v-if="mainModel.vo.isInitial == '0'" label="修订理由" prop="reviseType" >
+							<iv-radio-group :model.sync="mainModel.emerPlanHistory.reviseType">
+								<iv-radio value="1">
+									<span>定期修订</span>
+								</iv-radio>
+								<iv-radio value="2">
+									<span>不定期修订</span>
+								</iv-radio>
+							</iv-radio-group>
+						</el-form-item>
+
+						<el-form-item v-if="mainModel.emerPlanHistory.reviseType=='2'"  prop="reviseReasonList">
+							<di >
+								<iv-checkbox-group :model="mainModel.emerPlanHistory.reviseReasonList" style="padding-left:8px;">
+									<iv-checkbox value="1" :middle="isHalfCheck" :disabled="checkBox.disabled"  style="padding-left:8px !important;" >制定预案所依据的法律、法规、规章、标准发生重大变化</iv-checkbox>
+									<iv-checkbox value="2" :middle="isHalfCheck" :disabled="checkBox.disabled"   >应急指挥机构及其职责发生调整</iv-checkbox>
+									<iv-checkbox value="3" :middle="isHalfCheck" :disabled="checkBox.disabled"   >安全生产面临的风险发生重大变化</iv-checkbox>
+									<iv-checkbox value="4" :middle="isHalfCheck" :disabled="checkBox.disabled"  >重要应急资源发生重大变化</iv-checkbox>
+									<iv-checkbox value="5" :middle="isHalfCheck" :disabled="checkBox.disabled"   >在预案演练或者应急救援中发现需要修订预案的重大问题</iv-checkbox>
+									<iv-checkbox value="6" :middle="isHalfCheck" :disabled="checkBox.disabled"   >其他应当修订的情形</iv-checkbox>
+								</iv-checkbox-group>
+							</di>
+						</el-form-item>
+
+						<el-form-item :label="$t('gb.common.remarks')" prop="remark" full-width>
+							<iv-textarea :rows="4" :value.sync="mainModel.emerPlanHistory.remark" :readonly="mainModel.isReadOnly" :width="260"></iv-textarea>
+						</el-form-item>
+
+						<el-form-item label="操作时间"  full-width>
+							<span>{{ getOperateTime(mainModel.emerPlanHistory.operateTime) }}</span>
+						</el-form-item>
+						<el-form-item label="版本号" prop="verNo">
+							<iv-input :value.sync="mainModel.emerPlanHistory.verNo"  style="width:260px;" :textonly="mainModel.isReadOnly"></iv-input>
+						</el-form-item>
+						<el-form-item label="附件资料" >
+							<ul>
+								<li v-for="(index, file) in mainModel.emerPlanHistory.fileList" class="cert-file-item" @click="doClickFile(index)">
+									<div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+									<Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+								</li>
+							</ul>
+							<iv-button type="text" v-if="mainModel.emerPlanHistory.fileList.length<9" style="padding:0;color:#33A6FF" @click="uploadClicked" >上传</iv-button>
+						</el-form-item>
+					</el-form>
+
+				</div>
+			</simple-card>
+			<simple-card class="fip-content-item" v-else >
+				<history-list  :comp-id="mainModel.vo.compId" :list="dialogModel.historyList.list"></history-list>
+			</simple-card>
+
+			<!--<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">-->
+				<!--<simple-card class="fip-content-item"  filter filter-when>-->
+					<!--<p slot="title"><i class="basicPng"></i><span>全部版本</span></p>-->
+					<!--<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doShowEmerPlanVersionFormModal4Create" >-->
+						<!--<span><Icon type="plus"></Icon>添加</span>-->
+					<!--</a>-->
+					<!--<vue-bootstrap-table-->
+						<!--:setting="tableModel.emerPlanVersionTableModel"-->
+						<!--@on-del-row="doRemoveEmerPlanVersion"-->
+						<!--@on-edit-row="doShowEmerPlanVersionFormModal4Update"-->
+						<!--v-ref:emerplanversion-table-->
+						<!--&gt;-->
+					<!--</vue-bootstrap-table>-->
+				<!--</simple-card>-->
+			<!--</div>-->
+		</div>
+	</div>
+	<div class="few-info-sider pull-right" >
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>-->
+		<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+		<iv-button v-if="mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete()" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+		<iv-button v-if="mainModel.vo.status>6 && mainModel.currentVersionId == mainModel.vo.lastVersionId && !isCheckKind && hasAuth('revise') &&  mainModel.vo.status>6" type="ghost" @click.stop="doModify" icon="android-document">修订{{mianModel.vo.status}}</iv-button>
+		<iv-button v-if="mainModel.vo.status<=6 && mainModel.currentVersionId == mainModel.vo.lastVersionId && !isCheckKind && hasAuth('cancelRevise') && mainModel.vo.isInitial!='1' && mainModel.opType!='create'" type="ghost" @click.stop="cancelRevise" icon="android-document">取消修订</iv-button>
+
+		<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		<!--<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>
+
+
+<back-node :visible.sync="dialogModel.backNode.visible" :vo="mainModel.vo" @do-save="saveBackNode"></back-node>
+
+<emerplanversion-form-modal
+		:visible.sync="formModel.emerPlanVersionFormModel.show"
+		@do-save="doSaveEmerPlanVersion"
+		@do-update="doUpdateEmerPlanVersion"
+		:query-url="formModel.emerPlanVersionFormModel.queryUrl"
+		:hidden-fields="formModel.emerPlanVersionFormModel.hiddenFields"
+		v-ref:emerplanversion-form-modal>
+</emerplanversion-form-modal>
+
+
+<Modal :visible.sync='dialogModel.historyList.visible' width="850" :title='"历史详情"' :footer-hide="true">
+	<div style="width:100%;background: #fff;padding-left:20px;height: 550px;overflow: auto;">
+		<history-list :comp-id="mainModel.vo.compId" :list="dialogModel.historyList.list"></history-list>
+	</div>
+</Modal>
+
+<!-----   文件相关  ----->
+<vue-file-upload
+		v-ref:uploader
+		style="display: none;"
+		:multi-selection="true"
+		:params="uploadModel.params"
+		@on-before-upload="doUploadBefore"
+		@on-success-upload="doUploadSuccess"
+		@on-upload-complete="onUploadComplete"
+		:filters="uploadModel.filters">
+</vue-file-upload>
+
+<style>
+	.emerPlan680 .el-form-item__label{
+		/*width:662px;*/
+		width:125px !important;
+	}
+	.emerPlan680 .el-form-item__content{
+		width:350px !important;
+	}
+	.emerPlan680 .el-form-item__content .ivu-poptip-rel{
+		width:85% !important;
+	}
+	.emerPlan680 .simple-card-head{
+		display: none;
+	}
+
+
+
+
+	.emerPlanHead{
+		width: 100%;
+		display: inline-flex;
+		align-items: center;
+		margin-bottom: 20px;
+		padding-right:10px;
+		padding-left:10px;
+	}
+	.emerPlanHeadTitle{
+		height: 40px;
+		font-size: 32px;
+		width: 430px
+	}
+	.emerPlanHead{
+
+	}
+	.inneremerPlanHeadTitle{
+		width: 374px;
+		border-bottom: 1px solid #ddd;
+		padding: 5px;
+		padding-left: 0px;
+		font-size: 18px;
+		margin-left: 8px;
+	}
+	.emerPlanSelectTitle .ivu-select-dropdown{
+		width:150px;
+	}
+</style>
+

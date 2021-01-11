@@ -1,0 +1,669 @@
+<div class="detail-large-container" style="background: #fff;">
+
+	<div class="base-info-panel" >
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+				<span class="btn-red" v-show="mainModel.vo.status=='0'">未发布</span>
+				<span class="btn-green" v-show="mainModel.vo.status=='1'">已发布</span>
+				<span class="btn-green" v-show="mainModel.vo.status=='2'">已实施</span>
+				<span class="btn-green" v-show="mainModel.vo.status=='3'">已完成</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button type="ghost"  @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+				<iv-button type="ghost"  v-if="mainModel.isReadOnly && mainModel.vo.status=='0' && hasAuth('publish')" @click.stop="beforeDoPublish" >发布</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && filterTabId==0 && mainModel.vo.status=='0'" type="ghost" @click.stop="doEdit" >{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy') && filterTabId==0" type="ghost" @click="doAdd4Copy" >复制</iv-button>
+				<!--<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable') && filterTabId==0" type="ghost" icon="ios-minus-outline" @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>-->
+				<iv-button v-if="mainModel.vo.status=='1' && mainModel.isReadOnly" type="ghost" @click="confirmEnd">演练已实施</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete') && filterTabId==0" type="ghost" @click="doDelete('doDelete')" >{{$t("gb.common.del")}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && filterTabId==0" type="ghost" @click="doSave" >{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus && filterTabId==0 && !isNewCopy" type="ghost"  @click="doCancel" >{{$t("gb.common.cancel")}}</vi-button>
+				<!--<vi-button v-if="maiModel.vo.status=='1'" type="ghost" class="mp-header-item-btn" @click="doFilterBySpecial(0)" >方案</vi-button>-->
+				<!--<iv-button v-if="mainModel.vo.status=='1'" type="ghost" @click="doFilterBySpecial(1,1)" >演练自评</iv-button>-->
+				<!--<iv-button v-if="mainModel.vo.status=='1'" type="ghost" @click="doFilterBySpecial(2,1)" >演练评估</iv-button>-->
+				<!--<iv-button v-if="mainModel.vo.status=='1'" type="ghost" @click="doFilterBySpecial(3,1)" >演练总结</iv-button>-->
+
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && (filterTabId==2 ) && !isEdit " type="ghost" @click.stop="doPageEdit" >编辑演练评估</iv-button>
+				<vi-button v-if="mainModel.isReadOnly && (filterTabId==2 ) && isEdit" type="ghost"  @click="doPageCancel" >取消编辑</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && (filterTabId==2 ) && isEdit" type="ghost" @click="doPageSave" >保存演练评估</iv-button>
+
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && ( filterTabId==3) && !isEdit && mainModel.vo.status !=='3'" type="ghost" @click.stop="doFinish" >报告已完成</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && ( filterTabId==3) && !isEdit " type="ghost" @click.stop="doPageEdit" >编辑演练总结</iv-button>
+				<vi-button v-if="mainModel.isReadOnly && ( filterTabId==3) && isEdit" type="ghost"  @click="doPageCancel" >取消编辑</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && ( filterTabId==3) && isEdit" type="ghost" @click="doPageSave" >保存演练总结</iv-button>
+
+			</div>
+		</div>
+		<div class="bip-content simple-card-head-padding-20" >
+			<!--<div class="main-special-box-1 myStyleBottomBorderShadow" style="float:none;padding-left:28px;" v-if="mainModel.vo.status == '1'">-->
+				<!--<div class="myStyleBottomBorder">-->
+					<!--<a @click="doFilterBySpecial(0)" :style="filterTabId == 0?'color:#33a6ff;':'color:#666;'" :class="getClass(0)" href="javascript:void(0);">演练方案</a>-->
+					<!--<a @click="doFilterBySpecial(1)" :style="filterTabId == 1?'color:#33a6ff;':'color:#666;'" :class="getClass(1)"  href="javascript:void(0);">演练自评</a>-->
+					<!--<a @click="doFilterBySpecial(2)" :style="filterTabId == 2?'color:#33a6ff;':'color:#666;'" :class="getClass(2)" href="javascript:void(0);">演练评估</a>-->
+					<!--<a @click="doFilterBySpecial(3)" :style="filterTabId == 3?'color:#33a6ff;':'color:#666;'" :class="getClass(3)" href="javascript:void(0);">演练总结</a>-->
+				<!--</div>-->
+
+			<!--</div>-->
+			<div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;" v-if="mainModel.vo.status > 0">
+				<ul style="display: inline-flex;position: relative">
+					<li v-if="mainModel.vo.status > 0" class="lr-layout-li" :class="{'checked': filterTabId === 0}" style="width: 100px;text-align: center;" @click="doFilterBySpecial(0)"><span style="font-size: 14px;">演练方案</span></li>
+					<li v-if="mainModel.vo.status > 1" class="lr-layout-li" :class="{'checked': filterTabId === 1}" style="width: 100px;text-align: center;" @click="doFilterBySpecial(1)"><span style="font-size: 14px;">演练自评</span></li>
+					<li v-if="mainModel.vo.status > 1" class="lr-layout-li" :class="{'checked': filterTabId === 2}" style="width: 100px;text-align: center;" @click="doFilterBySpecial(2)"><span style="font-size: 14px;">演练评估</span></li>
+					<li v-if="mainModel.vo.status > 1" class="lr-layout-li" :class="{'checked': filterTabId === 3}" style="width: 100px;text-align: center;" @click="doFilterBySpecial(3)"><span style="font-size: 14px;">演练总结</span></li>
+				</ul>
+			</div>
+			<simple-card v-show="filterTabId === 0">
+				<p slot="title"><i class="basicPng"></i><span style="color:#666;font-size:16px;">基本信息</span></p>
+				<el-form class="bip-content-form locationTarget" v-show="filterTabId == 0" class="bip-content-form"  is-label-vertical :model="mainModel.vo"
+					 :rules="!mainModel.isReadOnly && mainModel.rules" v-ref:ruleform>
+				<iv-row class="bip-content-item">
+<!--					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box">-->
+<!--						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+<!--					</el-form-item>-->
+					<el-form-item label="演练时间" prop="exerciseDate" class="small-info-box">
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd HH:mm:ss" type="datetime" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.exerciseDate" ></date-picker>
+						<!--<date-picker v-if="!mainModel.isReadOnly"  format="yyyy-MM-dd" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.exerciseDate" ></date-picker>-->
+						<!--<iv-input v-else :value.sync="getDateInfo(mainModel.vo.exerciseDate)" textonly class="inp"></iv-input>-->
+						<iv-input v-else :value.sync="mainModel.vo.exerciseDate" textonly class="inp"></iv-input>
+
+					</el-form-item>
+					<el-form-item label="演练时长" prop="hour" class="small-info-box">
+						<span style=";display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{mainModel.vo.hour}}&nbsp;时&nbsp;{{mainModel.vo.minute}}分 </span>
+						<div v-if="!mainModel.isReadOnly">
+							<iv-input-number is-auto-corr=false  :isInteger=true :value.sync="mainModel.vo.hour" style="width:110px;" :textonly="mainModel.isReadOnly"></iv-input-number>时
+							&nbsp;&nbsp;<iv-input-number is-auto-corr=false :isInteger=true :max="59" :value.sync="mainModel.vo.minute"  style="width:110px;" :textonly="mainModel.isReadOnly"></iv-input-number>分
+						</div>
+					</el-form-item>
+					<el-form-item label="演练形式" prop="form" class="small-info-box">
+						<span style=";display:block;word-break: break-all;word-wrap: break-word;" v-if="mainModel.isReadOnly">{{ getDataDic('iem_exercise_scheme_form', mainModel.vo.form) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.form" :list="getDataDicList('iem_exercise_scheme_form')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="演练科目" prop="subjects" class="small-info-box">
+						<iv-input style=";display:block;word-break: break-all;word-wrap: break-word;" :value.sync="mainModel.vo.subjects" :textonly="true"></iv-input>
+					</el-form-item>
+					<!--<el-form-item label="演练时长（分）" isInteger="true" prop="minute" class="small-info-box">-->
+						<!--<iv-input-number isInteger :max="59" :value.sync="mainModel.vo.minute"  :textonly="mainModel.isReadOnly"></iv-input-number>-->
+					<!--</el-form-item>-->
+				</iv-row>
+
+				<iv-row class="bip-content-item ">
+					<el-form-item label="演练科目类型" prop="subjectType" class="small-info-box">
+						<iv-input style=";display:block;word-break: break-all;word-wrap: break-word;" :value.sync="mainModel.vo.subjectType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="演练地点" prop="exerciseAddress" class="small-info-box" style="width:598px;">
+						<iv-input  :value.sync="mainModel.vo.exerciseAddress" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="计划实施延迟的原因" prop="attr1" class="small-info-box">
+						<iv-input style=";display:block;word-break: break-all;word-wrap: break-word;" :value.sync="mainModel.vo.attr1" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+
+			</el-form>
+			</simple-card>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" v-show="filterTabId == 0" :class="{'rel-info-panel-mask': showPanelMask}">
+
+		<!---- 样式调整 ---->
+		<div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>演练目的</span></p>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.purpose && mainModel.vo.status<1" @click.prevent="doUpdateInfo('purpose')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.purpose" @click.prevent="doSaveInfo('purpose')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform1  >
+					<el-form-item prop="purpose">
+						<!--<iv-textarea :value.sync="mainModel.vo.announcements" :readonly="!isUpdateInfo"  ></iv-textarea>-->
+
+						<iv-input v-if="isUpdateInfo.purpose" :rows="10" type="textarea" :value.sync="mainModel.vo.purpose"  :textonly="!isUpdateInfo.purpose"></iv-input>
+						<!--<pre style="font-size:14px;" v-else>{{mainModel.vo.announcements}}</pre>-->
+						<!--<iv-textarea v-else :value.sync="mainModel.vo.purpose" readonly  ></iv-textarea>-->
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.purpose}}</span>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+
+		<div class="rip-item" style="clear: both;">
+			<simple-card class="fip-content-item"  >
+				<!--<p slot="title"><i class="basicPng"></i><span>演练物资</span></p>-->
+				<p slot="title"><i class="basicPng"></i><span>演练物资准备</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.status<1" @click.prevent="doShowExerciseResourceFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<vue-bootstrap-table
+						:setting="tableModel.exerciseResourceTableModel"
+						@on-del-row="doRemoveExerciseResource"
+						@on-edit-row="doShowExerciseResourceFormModal4Update"
+						v-ref:exerciseresource-table
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+
+		<div  class="rip-item" style="clear: both;">
+			<!--<simple-card :show-content.sync="cardModel.riskAnalysisCardModel.showContent">-->
+				<!--<p slot="title"><i class="basicPng"></i><span>危险性分析</span></p>-->
+				<!--&lt;!&ndash;<a slot="extra" @click.prevent="cardModel.riskAnalysisCardModel.showContent = !cardModel.riskAnalysisCardModel.showContent;" >&ndash;&gt;-->
+					<!--&lt;!&ndash;&lt;!&ndash;<span v-if="cardModel.riskAnalysisCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>&ndash;&gt;&ndash;&gt;-->
+					<!--&lt;!&ndash;<span v-else><Icon type="arrow-down-b"></Icon>展开</span>&ndash;&gt;-->
+				<!--&lt;!&ndash;</a>&ndash;&gt;-->
+				<!--<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.status!='1'" @click.prevent="doShowRiskAnalysisFormModal4Create" >-->
+					<!--<span><Icon type="plus"></Icon>添加</span>-->
+				<!--</a>-->
+				<!--<vue-bootstrap-table-->
+						<!--:setting="tableModel.riskAnalysisTableModel"-->
+						<!--show-pager=false-->
+						<!--@on-del-row="doRemoveRiskAnalysis"-->
+						<!--@on-edit-row="doShowRiskAnalysisFormModal4Update"-->
+						<!--v-ref:riskanalysis-table-->
+				<!--&gt;-->
+				<!--</vue-bootstrap-table>-->
+			<!--</simple-card>-->
+
+			<simple-card :show-content.sync="cardModel.riskAnalysisCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>危险性分析</span></p>
+				<!--<a slot="extra" @click.prevent="cardModel.riskAnalysisCardModel.showContent = !cardModel.riskAnalysisCardModel.showContent;" >-->
+				<!--&lt;!&ndash;<span v-if="cardModel.riskAnalysisCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>&ndash;&gt;-->
+				<!--<span v-else><Icon type="arrow-down-b"></Icon>展开</span>-->
+				<!--</a>-->
+				<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.status <1" @click.prevent="doShowRiskAnalysisFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<div class="analyseListTable">
+					<div class="analyseListTableRowTitle">
+						<div class="analyseListTableRowTitleItem" style="width:8%;border-left:none;">序号</div>
+						<div class="analyseListTableRowTitleItem" style="width:15%">事故类型</div>
+						<div class="analyseListTableRowTitleItem" >事故发生的区域、地点或装置的名称</div>
+						<div class="analyseListTableRowTitleItem" style="width:18%">事故发生的可能时间，事故危害严重程度及其影响范围</div>
+                        <div class="analyseListTableRowTitleItem" >可能发生的次生衍生事故</div>
+                        <div class="analyseListTableRowTitleItem" style="width:19%">事故前可能发生的征兆</div>
+						<div class="analyseListTableRowTitleItem" style="width:8%"></div>
+					</div>
+					<div class="analyseListTableRow" v-for="(index, item) in mainModel.analyseList">
+						<div class="analyseListTableRowTitleItem" style="width:8%;">{{index+1}}</div>
+						<div class="analyseListTableRowTitleItem" style="width:15%"><iv-textarea :value="item.accidentPattern" readonly></iv-textarea></div>
+						<div class="analyseListTableRowTitleItem" ><iv-textarea :value="item.possibleEquipments" readonly></iv-textarea></div>
+						<div class="analyseListTableRowTitleItem" style="width:18%"><iv-textarea :value="item.possibleScenarios" readonly></iv-textarea></div>
+                        <div class="analyseListTableRowTitleItem" ><iv-textarea :value="item.possibleDerivativeAccidents" readonly></iv-textarea></div>
+                        <div class="analyseListTableRowTitleItem" style="width:19%"><iv-textarea :value="item.possibleSigns" readonly></iv-textarea></div>
+						<div class="analyseListTableRowTitleItem" style="width:8%;border-right:1px solid #ddd;">
+							<div v-show="mainModel.vo.status != '1'" style="display: flex;align-items: center;justify-content: center;">
+								<a style="color:#666;margin-right: 9px;font-size: 14px;"><Icon style="font-size:14px;" type="compose" size="14" @click="doShowRiskAnalysisFormModal4Update(item)"></Icon></a>
+								<a style="color:#666;font-size: 14px;"><Icon style="font-size:14px;" type="trash-a" @click="doRemoveRiskAnalysis(item)"></Icon></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</simple-card>
+		</div>
+
+		<!---  人员列表  --->
+		<div class="rip-item" style="clear: both;">
+			<simple-card class="fip-content-item" >
+				<p slot="title"><i class="basicPng"></i><span>应急小组职责描述</span></p>
+				<!--<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.status<1" @click.prevent="doShowExerciseParticipantFormModal4Create" >-->
+					<!--<span><Icon type="plus"></Icon>添加</span>-->
+				<!--</a>-->
+				<!-------人员种类 按钮------>
+				<div style="margin-bottom: 10px;border-bottom: 1px solid #e8e8e8;">
+					<ul style="display: inline-flex;">
+						<li v-for="(index, item) in userType"
+							class="lr-layout-li"
+							:class="{'checked': index === userTypeIndex}"
+							style="width: 100px;text-align: center;"
+							@click="doChangeUserType(index)">
+							<span style="font-size: 14px;">{{item.name}}</span>
+						</li>
+					</ul>
+				</div>
+
+				<div v-if="userTypeIndex==1 || mainModel.vo.status<1 " class="main-special-box-1" style="float:none;padding-bottom: 10px;margin-right:0;height: 40px;">
+					<!--<a @click="doChangeInsider(0)" :style="insiderIndex == 0?'color:#33A6FF;':'color:#666;'" :class="{'checked': insiderIndex === '0'}" class="main-special-item" href="javascript:void(0);">内部人员</a>-->
+					<!--<a @click="doChangeInsider(1)" :style="insiderIndex == 1?'color:#33A6FF;':'color:#666;'" :class="{'checked': insiderIndex === '1'}" class="main-special-item"  href="javascript:void(0);">外部人员</a>-->
+					<div  style="display: flex;justify-content: flex-end;align-items: center;margin-top: 6px;">
+						<span style="padding-left:5px;padding-right:5px;background: #ddd;" v-show="mainModel.opType != 'create'  && userTypeIndex==1" >{{getSelfEvaluationMode}}</span>
+						<Icon style="padding:7px;border:1px solid #ddd;cursor: pointer;" @click="doShowSelfModel" v-show="mainModel.opType != 'create' && mainModel.vo.status<1 && userTypeIndex==1"  type="edit"></Icon>
+						<!--<a v-show="userTypeIndex==1 && mainModel.opType != 'create' && mainModel.vo.status<1 " @click.prevent="doShowExerciseParticipantFormModal4Create"  style="margin-left:10px;"><span><Icon type="plus"></Icon>从公司人员添加</span></a>-->
+						<a v-show="userTypeIndex==1 && mainModel.opType != 'create' && mainModel.vo.status<1 " @click="doShowInternalFormModell" style="margin-left:10px;"><span><Icon type="plus"></Icon>从应急组织添加</span></a>
+						<a v-show="insiderIndex == 0 && userTypeIndex==0 && mainModel.opType != 'create' && mainModel.vo.status<1 " @click="doCopyOrganizationPerson" style="margin-left:10px;"><span><Icon type="plus"></Icon>引用演练计划“演练组织人”</span></a>
+						<a v-show="mainModel.opType != 'create' && mainModel.vo.status<1" @click.prevent="doShowExerciseParticipantFormModal4Create" style="margin-left:10px;">
+                            <span><Icon type="plus"></Icon>添加</span>
+                        </a>
+                    </div>
+				</div>
+				<div class="lr-layout" style="background: #fff;padding:0;">
+						<ul style="margin-right:15px;border-right:1px solid #ddd;border-top:1px solid #ddd;">
+							<li
+									class="lr-layout-li"
+									style="width:150px;border-bottom: 1px solid #ddd;border-left:1px solid #ddd;"
+									:class="{'checked': 0 === insiderIndex}"
+									@click="doChangeInsider(0)"
+							>
+								<span >内部人员</span>
+								<!--<i class="ivu-icon ivu-icon-information-circled" :title="group.remarks" style="margin-right: 17px; margin-top: 4px;float: right;"></i>-->
+							</li>
+							<li
+									class="lr-layout-li"
+									style="border-bottom: 1px solid #ddd;border-left:1px solid #ddd;"
+									:class="{'checked': 1 === insiderIndex}"
+									@click="doChangeInsider(1)"
+							>
+								<span >外部人员</span>
+								<!--<i class="ivu-icon ivu-icon-information-circled" :title="group.remarks" style="margin-right: 17px; margin-top: 4px;float: right;"></i>-->
+							</li>
+						</ul>
+					<div style="background: #fff;border:1px solid #ddd;">
+						<vue-bootstrap-table
+								v-show="insiderIndex == 0"
+								:setting="tableModel.exerciseParticipantTableModel1"
+								@on-del-row="doRemoveExerciseParticipant"
+								@on-edit-row="doShowExerciseParticipantFormModal4Update"
+								@on-click-cell="selectInner"
+								@on-data-loaded="doSavePersonList"
+								v-ref:exerciseparticipant-table1
+						>
+						</vue-bootstrap-table>
+						<vue-bootstrap-table
+								v-show="insiderIndex == 1"
+								:setting="tableModel.exerciseParticipantTableModel2"
+								@on-del-row="doRemoveExerciseParticipant"
+								@on-edit-row="doShowExerciseParticipantFormModal4Update"
+								v-ref:exerciseparticipant-table2
+						>
+						</vue-bootstrap-table>
+					</div>
+
+				</div>
+				<!-- 内部员工  外部员工 -->
+				<!--<ul>-->
+					<!--<li-->
+							<!--v-for="(index, group) in insider"-->
+							<!--class="lr-layout-li"-->
+							<!--style="border-bottom: 1px solid #ddd;"-->
+							<!--:class="{'checked': index === insiderIndex}"-->
+							<!--@click="doChangeInsider(index)"-->
+							<!--:title="group.name"-->
+					<!--&gt;-->
+						<!--<span style="margin-left: 17px;">{{group.name}}</span>-->
+						<!--&lt;!&ndash;<i class="ivu-icon ivu-icon-information-circled" :title="group.remarks" style="margin-right: 17px; margin-top: 4px;float: right;"></i>&ndash;&gt;-->
+					<!--</li>-->
+				<!--</ul>-->
+				<!--  neibu --->
+
+
+			</simple-card>
+		</div>
+
+		<div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>应急演练组织机构</span></p>
+				<a slot="extra" v-show="mainModel.vo.pictures.length<9 && !isAll && mainModel.isReadOnly && !isUpdateInfo.exerciseOrgan && mainModel.vo.status<1" @click.prevent="uploadClicked()" >
+					<span><Icon type="plus-round"></Icon>添加图片</span>
+				</a>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.exerciseOrgan && mainModel.vo.status<1" @click.prevent="doUpdateInfo('exerciseOrgan')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.exerciseOrgan" @click.prevent="doSaveInfo('exerciseOrgan')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform2  >
+					<el-form-item prop="exerciseOrgan">
+						<!--<iv-textarea :value.sync="mainModel.vo.announcements" :readonly="!isUpdateInfo"  ></iv-textarea>-->
+                        <div style="padding-bottom: 35px" v-if="isUpdateInfo.exerciseOrgan">
+                            <iv-input  :rows="10" type="textarea" :value.sync="mainModel.vo.exerciseOrgan"  :textonly="!isUpdateInfo"></iv-input>
+                        </div>
+						<!--<pre style="font-size:14px;" v-else>{{mainModel.vo.announcements}}</pre>-->
+						<!--<iv-textarea v-else :value.sync="mainModel.vo.exerciseOrgan" readonly  ></iv-textarea>-->
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.exerciseOrgan}}</span>
+					</el-form-item>
+				</el-form>
+                <image-view  @on-close="removeFile" :images="mainModel.vo.pictures" :show-close="mainModel.vo.status<1"></image-view>
+				<vue-file-upload
+						v-ref:uploader
+						style="display: none;"
+						:multi-selection="true"
+						:params="uploadModel.params"
+						@on-before-upload="doUploadBefore"
+						@on-success-upload="doUploadSuccess"
+						@on-upload-complete="onUploadComplete"
+						:filters="uploadModel.filters">
+				</vue-file-upload>
+			</simple-card>
+		</div>
+
+		<!-- <div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>0演练参加人员职责</span></p>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.participantDuty && mainModel.vo.status<1" @click.prevent="doUpdateInfo('participantDuty')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.participantDuty" @click.prevent="doSaveInfo('participantDuty')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform3  >
+					<el-form-item prop="participantDuty">
+						
+
+						<iv-input v-if="isUpdateInfo.participantDuty" :rows="10" type="textarea" :value.sync="mainModel.vo.participantDuty"  :textonly="!isUpdateInfo"></iv-input>
+					
+				
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.participantDuty}}</span>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div> -->
+
+		<div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>场景概述</span></p>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.scenarioOverview && mainModel.vo.status<1" @click.prevent="doUpdateInfo('scenarioOverview')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.scenarioOverview" @click.prevent="doSaveInfo('scenarioOverview')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform4  >
+					<el-form-item prop="scenarioOverview">
+						<!--<iv-textarea :value.sync="mainModel.vo.announcements" :readonly="!isUpdateInfo"  ></iv-textarea>-->
+
+						<iv-input v-if="isUpdateInfo.scenarioOverview" :rows="10" type="textarea" :value.sync="mainModel.vo.scenarioOverview"  :textonly="!isUpdateInfo"></iv-input>
+						<!--<pre style="font-size:14px;" v-else>{{mainModel.vo.announcements}}</pre>-->
+						<!--<iv-textarea v-else :value.sync="mainModel.vo.scenarioOverview" readonly  ></iv-textarea>-->
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.scenarioOverview}}</span>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+
+		<div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>演练实施步骤</span></p>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.executionStep && mainModel.vo.status<1" @click.prevent="doUpdateInfo('executionStep')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.executionStep" @click.prevent="doSaveInfo('executionStep')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform5  >
+					<el-form-item prop="executionStep">
+						<!--<iv-textarea :value.sync="mainModel.vo.announcements" :readonly="!isUpdateInfo"  ></iv-textarea>-->
+
+						<iv-input v-if="isUpdateInfo.executionStep" :rows="10" type="textarea" :value.sync="mainModel.vo.executionStep"  :textonly="!isUpdateInfo"></iv-input>
+						<!--<pre style="font-size:14px;" v-else>{{mainModel.vo.announcements}}</pre>-->
+						<!--<iv-textarea v-else :value.sync="mainModel.vo.executionStep" readonly  ></iv-textarea>-->
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.executionStep}}</span>
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+
+		<div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>演练注意事项</span></p>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.announcements && mainModel.vo.status<1" @click.prevent="doUpdateInfo('announcements')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.announcements" @click.prevent="doSaveInfo('announcements')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform6  >
+					<el-form-item prop="announcements">
+						<!--<iv-textarea :value.sync="mainModel.vo.announcements" :readonly="!isUpdateInfo"  ></iv-textarea>-->
+
+						<iv-input v-if="isUpdateInfo.announcements" :rows="10" type="textarea" :value.sync="mainModel.vo.announcements"  :textonly="!isUpdateInfo"></iv-input>
+						<!--<pre style="font-size:14px;" v-else>{{mainModel.vo.announcements}}</pre>-->
+						<!--<iv-textarea v-else :value.sync="mainModel.vo.announcements" readonly  ></iv-textarea>-->
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.announcements}}</span>
+
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+
+		<div class="rip-item emerCardWidth1100" style="clear: both;">
+			<simple-card>
+				<p slot="title"><i class="basicPng"></i><span>备注</span></p>
+				<a slot="extra" v-show="!isAll && mainModel.isReadOnly && !isUpdateInfo.remarks && mainModel.vo.status<1" @click.prevent="doUpdateInfo('remarks')" >
+					<span><Icon type="compose"></Icon>编辑</span>
+				</a>
+				<a slot="extra" v-show="mainModel.isReadOnly && isUpdateInfo.remarks" @click.prevent="doSaveInfo('remarks')" >
+					<span><Icon type="android-document"></Icon>保存</span>
+				</a>
+				<el-form class="boat-from" :model="mainModel.vo" is-label-vertical :rules="updateRules"  v-ref:ruleform7  >
+					<el-form-item prop="remarks">
+						<!--<iv-textarea :value.sync="mainModel.vo.announcements" :readonly="!isUpdateInfo"  ></iv-textarea>-->
+
+						<iv-input v-if="isUpdateInfo.remarks" :rows="10" type="textarea" :value.sync="mainModel.vo.remarks"  :textonly="!isUpdateInfo"></iv-input>
+						<!--<pre style="font-size:14px;" v-else>{{mainModel.vo.announcements}}</pre>-->
+						<!--<iv-textarea v-else :value.sync="mainModel.vo.remarks" readonly  ></iv-textarea>-->
+						<span v-else style="color:#666;font-size:14px;white-space: pre-wrap;line-height: 1.6;display: block;">{{mainModel.vo.remarks}}</span>
+
+					</el-form-item>
+				</el-form>
+			</simple-card>
+		</div>
+
+
+		<div class="rip-item" style="clear: both;">
+			<simple-card class="fip-content-item"  >
+				<p slot="title"><i class="basicPng"></i><span>参演人员问卷</span></p>
+				<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.status<1" @click.prevent="doShowSelfEvaluationQuestionFormModal4Create" >
+					<span><Icon type="plus"></Icon>添加</span>
+				</a>
+				<a slot="extra" v-show="mainModel.opType != 'create' && mainModel.vo.status<1" @click.prevent="doImport" >
+					<span>导入</span>
+				</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'" @click.prevent="doExportExcel" >
+					<Icon type="archive">导出</Icon>
+				</a>
+				<vue-bootstrap-table
+						:setting="tableModel.selfEvaluationQuestionTableModel"
+						@on-del-row="doRemoveSelfEvaluationQuestion"
+						@on-edit-row="doShowSelfEvaluationQuestionFormModal4Update"
+						@on-move-row="doMoveQuestion"
+						v-ref:selfevaluationquestion-table
+						:init-fun="updateFun"
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+
+	<!-- 演练自评 -->
+	<div class="locationTarget" style="margin-left:30px;margin-right:30px;" v-show="filterTabId == 1">
+		<self-evaluation-task v-ref:selfevaluationquestion  :visible.sync="dialogModel.selfEvaluationTaskFormModel.visible" :vo="mainModel.vo"></self-evaluation-task>
+	</div>
+
+	<div class="locationTarget" style="margin-left:30px;margin-right:30px;" v-show="filterTabId == 2">
+		<assessment-task :is-edit.sync="isEdit"  @updateassessment="updateassessment" v-ref:assessment :vo="mainModel.vo"></assessment-task>
+	</div>
+
+	<div class="locationTarget" style="margin-left:30px;margin-right:30px;" v-show="filterTabId == 3">
+		<exercisesummary  :is-edit.sync="isEdit"  @updatesummary="updatesummary" v-ref:exercisesummary :vo="mainModel.vo"></exercisesummary>
+	</div>
+</div>
+
+
+<exerciseplan-select-modal :visible.sync="selectModel.exercisePlanSelectModel.visible" :filter-data="selectModel.exercisePlanSelectModel.filterData" single-select @do-save="doSaveExercisePlan"></exerciseplan-select-modal>
+
+<riskanalysis-form-modal
+		:visible.sync="formModel.riskAnalysisFormModel.show"
+		@do-save="doSaveRiskAnalysis"
+		@do-update="doUpdateRiskAnalysis"
+		:query-url="formModel.riskAnalysisFormModel.queryUrl"
+		:hidden-fields="formModel.riskAnalysisFormModel.hiddenFields"
+		v-ref:riskanalysis-form-modal>
+</riskanalysis-form-modal>
+<selfevaluationquestion-form-modal
+		:visible.sync="formModel.selfEvaluationQuestionFormModel.show"
+		@do-save="doSaveSelfEvaluationQuestion"
+		@do-update="doUpdateSelfEvaluationQuestion"
+		:query-url="formModel.selfEvaluationQuestionFormModel.queryUrl"
+		:hidden-fields="formModel.selfEvaluationQuestionFormModel.hiddenFields"
+		v-ref:selfevaluationquestion-form-modal>
+</selfevaluationquestion-form-modal>
+<selfevaluationtask-form-modal
+		:visible.sync="formModel.selfEvaluationTaskFormModel.show"
+		@do-save="doSaveSelfEvaluationTask"
+		@do-update="doUpdateSelfEvaluationTask"
+		:query-url="formModel.selfEvaluationTaskFormModel.queryUrl"
+		:hidden-fields="formModel.selfEvaluationTaskFormModel.hiddenFields"
+		v-ref:selfevaluationtask-form-modal>
+</selfevaluationtask-form-modal>
+<exerciseparticipant-form-modal
+		:visible.sync="formModel.exerciseParticipantFormModel.show"
+		@do-save="doSaveUserInner"
+		@do-update="doUpdateExerciseParticipant"
+		:query-url="formModel.exerciseParticipantFormModel.queryUrl"
+		:hidden-fields="formModel.exerciseParticipantFormModel.hiddenFields"
+		v-ref:exerciseparticipant-form-modal>
+</exerciseparticipant-form-modal>
+<exerciseresource-form-modal
+		:visible.sync="formModel.exerciseResourceFormModel.show"
+		@do-save="doSaveExerciseResource"
+		@do-update="doUpdateExerciseResource"
+		:query-url="formModel.exerciseResourceFormModel.queryUrl"
+		:hidden-fields="formModel.exerciseResourceFormModel.hiddenFields"
+		v-ref:exerciseresource-form-modal>
+</exerciseresource-form-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" @do-save="doSaveUserInner"></user-select-modal>
+
+<do-self-form-modal :vo="mainModel.vo" @do-update="doSaveSelfModel" :visible.sync="formModel.doSelfFormModel.visible" ></do-self-form-modal>
+
+<import-progress :init-fun="updateFun" @do-export-excel="doExportExcel" :url="uploadModel.url" :init-fun="updateFun" :templete-url="templete.url" :import-model.sync="importProgress.show"></import-progress>
+
+<!--   内部人员选择   -->
+<internal-organization @do-save="doSaveUserInner" :visible.sync="formModel.internalFormModel.show" ></internal-organization>
+<out-organization @do-save="doSaveUserOUter" :visible.sync="formModel.internalFormModel2.show"></out-organization>
+
+<style>
+	.emerCardWidth1100 .el-form-item_vertical{
+		width:100%;
+	}
+	.emerCardWidth1100 .ivu-textarea-wrapper{
+		width:100% !important;
+		min-height:250px;
+	}
+	.emerCardWidth1100 .textarea{
+		min-height: 250px;
+		max-height:450px;
+	}
+
+	.simple-card-head-padding-20 .simple-card-head{
+		padding-top:10px !important;
+	}
+
+	/****    分割线   ****/
+
+	.myStyleBottomBorderShadow{
+		border-bottom: 1px solid #ddd;
+	}
+	.myStyleBottomBorder{
+		width:100%;
+		display: flex;
+		position: relative;
+		bottom: -1px;
+	}
+	.myStyleBottomBorder a{
+		text-decoration: none;
+		padding:5px 10px;
+		font-size:14px;
+		text-align: center;
+		width:100px;
+	}
+
+	.myStyleBottomBorder .activexx{
+		border-top:1px solid #ddd;
+		border-left:1px solid #ddd;
+		border-right:1px solid #ddd;
+		border-bottom:1px solid #fff;
+		background-color: #19a3e7;
+		color: #fff !important;
+	}
+
+	.width950 .divContenteditable{
+		background-color: #fff;
+		height: 30px;
+		line-height: 1.5;
+		padding: 4px 7px;
+		font-size: 12px;
+		border: 1px solid #d7dde4;
+		border-radius: 6px;
+		color: #657180;
+		background-image: none;
+		position: relative;
+		cursor: text;
+		min-height: 180px;
+	}
+	.width950 .ivu-textarea-wrapper{
+		width:860px !important;
+	}
+	.exerciseSchemeLargeInput{
+		padding-left: 40px;
+	}
+	.width950 .small-info-box{
+		width:900px !important;
+	}
+
+	.analyseListTableRowTitle{
+		width:100%;
+		display: flex;
+		border-bottom:1px solid #ddd;
+	}
+	.analyseListTableRow{
+		width:100%;
+		display: flex;
+		/*border-left:1px solid #ddd;*/
+		/*border-right:1px solid #ddd;*/
+	}
+	.analyseListTableRow:hover{
+		background: #f5f5f5;
+	}
+	.analyseListTableRow:nth-child(even){
+		background: #f9f9f9;
+	}
+	.analyseListTableRowTitle .analyseListTableRowTitleItem{
+		background: #EEF3F5;
+		font-size: 14px;
+		font-weight: 600;
+		/*margin-right: 1px;*/
+		/*text-align: center;*/
+		/* line-height: 25px; */
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		/*width: 260px;*/
+		width:16%;
+		padding: 6px;
+		flex:0 0 auto;
+		padding-left:15px;
+		border-left:1px solid #fff;
+	}
+	.analyseListTableRow .analyseListTableRowTitleItem{
+		font-size: 14px;
+		text-align: center;
+		/* line-height: 25px; */
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		/*width: 230px;*/
+		width:16%;
+		padding: 6px;
+		border-left:1px solid #eef3f5;
+		border-bottom:1px solid #eef3f5;
+		padding-left:15px;
+		flex:0 0 auto
+	}
+
+	.analyseListTableRowTitleItem .ivu-textarea-wrapper div{
+		text-align: left;
+	}
+
+</style>
+

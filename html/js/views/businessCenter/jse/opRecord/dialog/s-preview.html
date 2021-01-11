@@ -1,0 +1,100 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;"  class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div class="preview-box" id="section-to-print">
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center">{{vo.name}}</h4>
+        <div class="preview-box-sub-title">
+            <span>站场：{{vo.orgName}}</span>
+            <span>{{vo.year}}年{{vo.month}}月{{vo.date}}日</span>
+            <span>编号：{{vo.attr1}}</span>
+        </div>
+
+        <table class="preview-box-table font-bold">
+            <colgroup>
+                <col style="width: 150px;">
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td>流程操作名称</td>
+                <td colspan="3" style="font-weight: normal;">{{vo.content}}</td>
+            </tr>
+            <tr v-if="showEquipment">
+                <td>设备名称</td>
+                <td>{{vo.equipName}}</td>
+                <td>设备位号</td>
+                <td>{{vo.equipNos}}</td>
+            </tr>
+            <tr>
+                <td>流程操作地点</td>
+                <td>{{vo.site}}</td>
+                <td>
+                    审批人（站场负责人）签字
+                </td>
+                <td>
+                    <span v-if="vo.faceSignName4">{{vo.faceSignName4}}</span>
+                    <img v-for="s in beginSignPic" :src="s" alt=""  height="30">
+                </td>
+            </tr>
+            <tr>
+                <td>操作人签字</td>
+                <td>
+                    <span v-if="vo.faceSignName1">{{vo.faceSignName1}}</span>
+                    <img v-for="s in opSign" :src="s" alt=""  height="30">
+                </td>
+                <td>监护人签字</td>
+                <td>
+                    <span v-if="vo.faceSignName2">{{vo.faceSignName2}}</span>
+                    <img v-for="s in suSign" :src="s" alt=""  height="30">
+                </td>
+            </tr>
+            <tr>
+                <td>操作时间</td>
+                <td colspan="3">
+                    <div style="float: left;width: 50%;">开始时间：{{vo.startTime}}</div>
+                    <div>完成时间：{{vo.endTime}}</div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="preview-box-table">
+            <colgroup>
+                <col style="width: 15%">
+                <col style="width: 29%">
+                <col style="width: 29%">
+                <col style="width: 14%">
+                <col style="width: 14%">
+            </colgroup>
+            <tbody>
+            <tr class="font-bold">
+                <td class="text-center">操作步骤</td>
+                <td class="text-center">操作内容</td>
+                <td class="text-center">风险及控制措施</td>
+                <!--<td class="text-center">控制措施</td>-->
+                <td class="text-center">操作人<br>（√）</td>
+                <td class="text-center">监护人<br>（√）</td>
+            </tr>
+            <template v-for="(index, item) in items">
+                <tr v-for="(i, tr) in item.items">
+                    <td :rowspan="item.items.length" v-if="i === 0" class="font-bold">{{item.name}}</td>
+                    <td>{{{tr.content}}}</td>
+                    <td>{{{tr.risk}}}</td>
+                    <!--<td>{{{tr.ctrlMethod}}}</td>-->
+                    <td style="text-align: center;">{{{tr.icons}}}</td>
+                    <td style="text-align: center;">{{{tr.icons}}}</td>
+                </tr>
+            </template>
+            <tr class="font-bold">
+                <td colspan="6">审批人确认签字：
+                    <span v-if="vo.faceSignName5"> {{ vo.faceSignName5}}</span>
+                    <img v-for="s in afterSignPic" :src="s" alt=""  height="30">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</Modal>

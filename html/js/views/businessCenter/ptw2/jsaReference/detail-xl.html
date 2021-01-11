@@ -1,0 +1,177 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div v-if="mainModel.isReadOnly" style="display: inline-flex;align-items: center;margin-left: 5px" class="share-box-1">
+				<div style="border-radius: 10px;font-size: 12px;padding: 5px 10px;margin-left: 2px;" :style="disableButtonStyle">
+					<span style="color: white;">{{disableButtonTitle}}</span>
+				</div>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('exportDetail')" type="ghost" @click.stop="doExportDetail">导出JSA</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.vo.disable === '1'" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form"   :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+<!--					<el-form-item label="分析小组组长" prop="analyseLeader" class="small-info-box" >-->
+<!--						<iv-input :value.sync="mainModel.vo.analyseLeader" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item label="分析人员" prop="analysePerson" class="small-info-box" >-->
+<!--						<iv-input :value.sync="mainModel.vo.analysePerson" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--					</el-form-item>-->
+					<el-form-item class="small-info-box" label="分析小组组长" prop="leaderUsers">
+						<div v-if="mainModel.isReadOnly" class="exam-paper-point">
+							<div class="ivu-tag" v-for="tag in mainModel.vo.leaderUsers">
+								<span class="ivu-tag-text">{{tag.name}}</span>
+							</div>
+						</div>
+						<div v-else class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point" @click.prevent="doShowLeaderUserSelectModal">
+							<div class="ivu-select-selection" style="line-height: 24px;">
+								<div class="ivu-tag" v-for="(index, tag) in mainModel.vo.leaderUsers">
+									<span class="ivu-tag-text">{{tag.name}}</span>
+									<i class="ivu-icon ivu-icon-ios-close-empty" @click.stop="doRemoveLeaderUsers(index)"></i>
+								</div>
+							</div>
+							<span style="font-size: 16px;" class="select-ico-add">
+                                <i class="ivu-icon ivu-icon-plus"></i>
+                            </span>
+						</div>
+					</el-form-item>
+
+					<el-form-item class="small-info-box" label="分析人员" prop="teamUsers">
+						<div v-if="mainModel.isReadOnly" class="exam-paper-point">
+							<div class="ivu-tag" v-for="tag in mainModel.vo.teamUsers">
+								<span class="ivu-tag-text">{{tag.name}}</span>
+							</div>
+						</div>
+						<div v-else class="ivu-select-top ivu-select ivu-select-multiple exam-paper-point" @click.prevent="doShowTeamUserSelectModal">
+							<div class="ivu-select-selection" style="line-height: 24px;">
+								<div class="ivu-tag" v-for="(index, tag) in mainModel.vo.teamUsers">
+									<span class="ivu-tag-text">{{tag.name}}</span>
+									<i class="ivu-icon ivu-icon-ios-close-empty" @click.stop="doRemoveTeamUsers(index)"></i>
+								</div>
+							</div>
+							<span style="font-size: 16px;" class="select-ico-add">
+                                <i class="ivu-icon ivu-icon-plus"></i>
+                            </span>
+						</div>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="作业内容" prop="taskContent" class="small-info-box" >
+						<iv-input type="textarea" :rows="4" :value.sync="mainModel.vo.taskContent" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel" :class="{'rel-info-panel-mask': showPanelMask}">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.ptwJsaReferenceDetailCardModel.showContent" >
+				<p slot="title"><i class="basicPng"></i><span>步骤分析</span></p>
+				<a slot="extra" @click.prevent="cardModel.ptwJsaReferenceDetailCardModel.showContent = !cardModel.ptwJsaReferenceDetailCardModel.showContent;" >
+					<span v-if="cardModel.ptwJsaReferenceDetailCardModel.showContent"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+				</a>
+				<div>
+					<div style="display: flex;justify-content: space-between;margin-bottom: 10px;align-items: center;">
+						<div style="display: inline-flex;">
+							<span style="padding: 4px 8px;border: 1px solid #ddd;background-color: #e8e8e8;">作业阶段</span>
+							<span style="padding: 4px 8px;border: 1px solid #ddd;width: 300px;border-left: none;">作业前</span>
+						</div>
+						<a  @click.prevent="doShowPtwJsaReferenceDetailFormModal4Create('0')" >
+							<span><Icon type="plus"></Icon>添加步骤</span>
+						</a>
+					</div>
+					<lite-table
+							:columns="tableModel.ptwJsaReferenceDetailTableModel.columns"
+							:values="beforeValues"
+							:tools=tableTools
+							:page-size-opts="[1000]"
+							show-sequence
+							@on-update="doShowPtwJsaReferenceDetailFormModal4Update"
+							@on-delete="doRemovePtwJsaReferenceDetail"
+							@on-move="doMovePtwJsaReferenceDetail"
+					></lite-table>
+				</div>
+
+				<div>
+					<div style="display: flex;justify-content: space-between;margin-bottom: 10px;align-items: center;">
+						<div style="display: inline-flex;">
+							<span style="padding: 4px 8px;border: 1px solid #ddd;background-color: #e8e8e8;">作业阶段</span>
+							<span style="padding: 4px 8px;border: 1px solid #ddd;width: 300px;border-left: none;">作业中</span>
+						</div>
+						<a @click.prevent="doShowPtwJsaReferenceDetailFormModal4Create('1')" >
+							<span><Icon type="plus"></Icon>添加步骤</span>
+						</a>
+					</div>
+					<lite-table
+							:columns="tableModel.ptwJsaReferenceDetailTableModel.columns"
+							:values="middleValues"
+							:tools=tableTools
+							:page-size-opts="[1000]"
+							show-sequence
+							@on-update="doShowPtwJsaReferenceDetailFormModal4Update"
+							@on-delete="doRemovePtwJsaReferenceDetail"
+							@on-move="doMovePtwJsaReferenceDetail"
+					></lite-table>
+				</div>
+
+				<div>
+					<div style="display: flex;justify-content: space-between;margin-bottom: 10px;align-items: center;">
+						<div style="display: inline-flex;">
+							<span style="padding: 4px 8px;border: 1px solid #ddd;background-color: #e8e8e8;">作业阶段</span>
+							<span style="padding: 4px 8px;border: 1px solid #ddd;width: 300px;border-left: none;">作业后</span>
+						</div>
+						<a  @click.prevent="doShowPtwJsaReferenceDetailFormModal4Create('2')" >
+							<span><Icon type="plus"></Icon>添加步骤</span>
+						</a>
+					</div>
+					<lite-table
+							:columns="tableModel.ptwJsaReferenceDetailTableModel.columns"
+							:values="afterValues"
+							:tools=tableTools
+							:page-size-opts="[1000]"
+							show-sequence
+							@on-update="doShowPtwJsaReferenceDetailFormModal4Update"
+							@on-delete="doRemovePtwJsaReferenceDetail"
+							@on-move="doMovePtwJsaReferenceDetail"
+					></lite-table>
+				</div>
+			</simple-card>
+		</div>
+
+		<div class="rip-item">
+			<file-list-simple-card title="附件列表" :data="fileModel.default.data" :config="fileModel.default.cfg"> </file-list-simple-card>
+		</div>
+	</div>
+
+</div>
+
+<ptwjsareferencedetail-form-modal
+		:visible.sync="formModel.ptwJsaReferenceDetailFormModel.show"
+		@do-save="doSavePtwJsaReferenceDetail"
+		@do-update="doUpdatePtwJsaReferenceDetail"
+		:query-url="formModel.ptwJsaReferenceDetailFormModel.queryUrl"
+		:hidden-fields="formModel.ptwJsaReferenceDetailFormModel.hiddenFields"
+		v-ref:ptwjsareferencedetail-form-modal>
+</ptwjsareferencedetail-form-modal>
+<member-select-modal :is-single-select="false":visible.sync="selectModel.leaderUserSelectModel.visible" :filter-data="selectModel.leaderUserSelectModel.filterData"  @do-save="doSaveLeaderUsers"></member-select-modal>
+<member-select-modal :is-single-select="false" :visible.sync="selectModel.teamUserSelectModel.visible" :filter-data="selectModel.teamUserSelectModel.filterData"  @do-save="doSaveTeamUsers"></member-select-modal>
+
+

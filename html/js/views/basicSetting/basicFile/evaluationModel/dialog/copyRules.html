@@ -1,0 +1,22 @@
+
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" label-width="110px" v-ref:ruleform >
+            <el-form-item label="所属公司" prop="compId">
+                <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+            </el-form-item>
+            <el-form-item label="评估模型名称" prop="name">
+                <iv-input :value.sync="mainModel.vo.name"></iv-input>
+            </el-form-item>
+            <el-form-item label="状态" prop="state">
+                <span>停用</span>
+            </el-form-item>
+            <el-form-item label="描述" prop="description">
+                <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.description"></iv-input>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>

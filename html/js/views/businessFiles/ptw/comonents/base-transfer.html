@@ -1,0 +1,40 @@
+
+<Modal v-if="load" :visible.sync="visible" :title="modalTitle" width="900" @on-cancel="doClose" class="userSelectModal" :footer-hide="true">
+        <div class="modal-box-default">
+            <div style="color:#33a6ff;padding-bottom: 5px">
+                <a  class="btn-link-a" style="margin-left:328px;" type="text" @click="doRefleshStuff">刷新</a>
+                <a  class="btn-link-a" type="text" @click="gotoStuff">编辑</a>
+            </div>
+        <Transfer
+                :titles="['待选','已选']"
+                show-edit-icon
+                :data="data"
+                :target-keys="targetKeys"
+                :list-style="listStyle"
+                @on-change="handleChange"
+                v-ref:transfer
+        >
+<!--                <template slot="leftheader" >-->
+<!--                <span class="text-link">编辑</span>-->
+<!--                </template>-->
+        </Transfer>
+    </div>
+         <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+<!--            <vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>-->
+        </div>
+        </div>
+<!--        <div slot="footer">-->
+<!--            <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--            <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--        </div>-->
+</Modal>
+
+<style>
+    .btn-link-a{
+        font-size: 14px;margin-left:15px;color:#33a6ff;
+        padding-bottom:5px;
+    }
+</style>
+

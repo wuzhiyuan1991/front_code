@@ -1,0 +1,15 @@
+<div class="edit-pop-container" >
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="rules"  v-ref:ruleform >
+            <el-form-item :label="$t('gb.common.setPsd')" prop="password">
+                <iv-input  :value.sync="mainModel.vo.password"></iv-input>
+                <div style="font-size: 12px">{{tpsName}}</div>
+                <!--<input type="text" v-model="mainModel.vo.code">-->
+            </el-form-item>
+        </el-form>
+
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doOk" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>

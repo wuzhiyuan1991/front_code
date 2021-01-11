@@ -1,0 +1,500 @@
+<simple-card class="ul-style-none el-form-item__label-light simple-card-body-padding-top0" style="width:750px;">
+  <p slot="title" class="ptw-title">基本信息</p>
+  <el-form style="width:680px;">
+    <template v-for="(index, item) in jsonList">
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='1' && item.disable=='0'" :label="item.name" prop="permitCode"
+        :required="true">
+        <div class="el-form-item ">{{item.value}}</div>
+      </el-form-item>
+
+      <!---------  多行文本 -------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='2' && item.disable=='0'" :label="item.name" prop="">
+        <div class="el-form-item ">{{item.value}}</div>
+      </el-form-item>
+
+      <!---------  整数 -------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='3' && item.disable=='0'" :label="item.name" prop="">
+        <div class="el-form-item ">{{item.value}}</div>
+      </el-form-item>
+
+      <!---------  小数 -------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='4' && item.disable=='0'" :label="item.name" prop="permitCode">
+        <div class="el-form-item ">{{item.value}}</div>
+      </el-form-item>
+
+      <!---------  日期 -------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='5' && item.disable=='0'" :label="item.name" :label="item.name"
+        prop="permitCode">
+        <!--<date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="item.value" ></date-picker>-->
+        <div class="el-form-item ">{{item.value}}</div>
+      </el-form-item>
+
+      <!---------  日期区间 -------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='6' && item.disable=='0'" :label="item.name" prop="permitCode">
+        <!--<date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="item.value1" ></date-picker>-->
+        <span v-if="item.value">{{item.value.value1}}</span>
+        <span v-if="item.value" style="width: 30px;" class="text-center">~</span>
+        <span v-if="item.value">{{item.value.value2}}</span>
+        <!--<date-picker format="yyyy-MM-dd HH:mm:ss" type="datetime"  :selected-date.sync="item.value2" ></date-picker>-->
+      </el-form-item>
+
+      <!-------------  人员选择  ------------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='7' && item.disable=='0'" :label="item.name" prop="permitCode">
+        <!--<multi-input-select v-else placeholder="请选择人员"  :-->
+        <!--overflow-hover="false"-->
+        <!--:values="item.value"-->
+        <!--field-name="name"-->
+        <!--@click.stop.prevent="showSelUser('4',true, '', index)"></multi-input-select>-->
+        <!--<span v-for="(index, tir) in item.value">-->
+        <!--{{tir.name}}-->
+        <!--<span v-show='index < item.value.length-1'>，</span>-->
+        <!--</span>-->
+        <span>{{getPersonVal1(item.value, 'username')}}</span>
+      </el-form-item>
+
+      <!-------------  承包商人员选择  ------------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='8' && item.disable=='0'" :label="item.name" prop="permitCode">
+        <!--<multi-input-select v-else placeholder="请选择人员"  :-->
+        <!--overflow-hover="false"-->
+        <!--:values="item.value"-->
+        <!--field-name="name"-->
+        <!--@click.stop.prevent="showSelUser('4',true, '', index)"></multi-input-select>-->
+        <!--<span v-for="(index, tir) in item.value">-->
+        <!--{{tir.name}}-->
+        <!--<span v-show='index < item.value.length-1'>，</span>-->
+        <!--</span>-->
+        <span>
+          {{getPersonVal(item.value, 'name')}}
+        </span>
+      </el-form-item>
+      <!-------------  承包商人员选择  ------------->
+      <el-form-item :class="{'is-required':item.isRequired=='1'}"
+        v-if="item.isInherent!='1' && item.dataType=='9' && item.disable=='0'" :label="item.name" prop="permitCode">
+        <!--<multi-input-select v-else placeholder="请选择人员"  :-->
+        <!--overflow-hover="false"-->
+        <!--:values="item.value"-->
+        <!--field-name="name"-->
+        <!--@click.stop.prevent="showSelUser('4',true, '', index)"></multi-input-select>-->
+        <!--<span v-for="(index, tir) in item.value">-->
+        <!--{{tir.name}}-->
+        <!--<span v-show='index < item.value.length-1'>，</span>-->
+        <!--</span>-->
+        <span>
+          {{getPersonVal(item.value.value1, 'username')}}
+        </span>
+        <span>
+          {{getPersonVal(item.value.value2, 'name')}}
+        </span>
+      </el-form-item>
+
+      <!-----------  固话 ----------->
+      <el-form-item v-if="item.code=='code' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        label="许可证编码">
+        <div class="el-form-item ">{{workcard.vo.code}}</div>
+      </el-form-item>
+
+      <el-form-item v-if="item.code=='workCatalog' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+        <div class="el-form-item">{{model.workCatalog.name}}
+          <template v-if="model.workLevel&&model.workLevel.name">({{model.workLevel.name}}）</template>
+        </div>
+      </el-form-item>
+      <!---------  作业方式  ---------->
+      <el-form-item
+        v-if="item.code=='operatingType' && item.disable=='0' && item.isInherent=='1' && model.workTpl.enableOperatingType=='1'"
+        :label="item.name" prop="code">
+        <div class="el-form-item">
+          <ul class="ul-inside">
+            <li v-for="item of operateList">
+              <input type="checkbox" disabled :checked="item.attr1 == '1'" class="width-auto" />
+              {{getItemName(item, 1)}}</li>
+          </ul>
+        </div>
+      </el-form-item>
+
+      <!---------  申请单位  ---------->
+      <el-form-item v-if="item.code=='applUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item ">{{applyName}}</div>
+      </el-form-item>
+
+      <!---------  作业单位  ---------->
+      <el-form-item v-if="item.code=='workUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item">
+          <!--<div v-if="model.workDepts&&model.workDepts.length>0" class="mb10">-->
+          <!--&lt;!&ndash;<p>内部作业单位</p>&ndash;&gt;-->
+          <!--<div class="ml5">-->
+          <!--<ul class="">-->
+          <!--<li v-for="item of model.workDepts">-->
+          <!--{{item.label}}</li>-->
+          <!--</ul>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div v-if="model.workContractors&&model.workContractors.length>0">-->
+          <!--&lt;!&ndash;<p>承包商作业单位</p>&ndash;&gt;-->
+          <!--<div class="ml5">-->
+          <!--<ul class="">-->
+          <!--<li v-for="item of model.workContractors">-->
+          <!--{{item.deptName}}</li>-->
+          <!--</ul>-->
+          <!--</div>-->
+          <!--</div>-->
+          <div>
+            <ul class="flex-layout flex-warp">
+              <li v-for="(index,item) in workDeptslist">
+                {{item.deptName?item.deptName:item.label || ''}}
+                <span v-show="index<workDeptslist.length-1">，</span>
+
+              </li>
+            </ul>
+          </div>
+        </div>
+      </el-form-item>
+
+      <!---------  生产单位  ---------->
+      <el-form-item v-if="item.code=='prodUnitId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item ">{{getDataDic('org', model.prodUnitId)['deptName']}}</div>
+      </el-form-item>
+
+      <!---------  作业地点  ---------->
+      <el-form-item v-if="item.code=='workPlace' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item " style="min-height: 3rem">{{model.workPlace}}</div>
+      </el-form-item>
+
+      <!---------  作业所在的设备  ---------->
+      <el-form-item v-if="item.code=='workEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item" style="min-height: 3rem">{{model.workEquipment}}</div>
+      </el-form-item>
+
+      <!---------  作业所在的设备  ---------->
+      <el-form-item v-if="item.code=='workEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item" style="min-height: 3rem">{{model.workContent}}</div>
+      </el-form-item>
+
+      <!---------  作业申请人  ---------->
+      <el-form-item v-if="item.code=='createBy' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item" style="min-height: 3rem">
+          <!--<span v-for="item in applyPerson"></span>-->
+          {{applyPerson}}
+        </div>
+      </el-form-item>
+
+      <!---------  作业人员  ---------->
+      <el-form-item v-if="item.code=='worker' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item">
+          <!--<div v-if="model.selworkPersonnels['4']&&model.selworkPersonnels['4'].length>0" class="mb10">-->
+          <!--&lt;!&ndash;<p>内部作业人员</p>&ndash;&gt;-->
+          <!--<div class="ml5">-->
+          <!--<ul class="">-->
+          <!--<li v-for="item of model.selworkPersonnels['4']">-->
+          <!--{{item.user.name}}</li>-->
+          <!--</ul>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div v-if="model.selworkPersonnels['5']&&model.selworkPersonnels['5'].length>0">-->
+          <!--&lt;!&ndash;<p>承包商作业人员</p>&ndash;&gt;-->
+          <!--<div class="ml5">-->
+          <!--<ul class="">-->
+          <!--<li v-for="item of model.selworkPersonnels['5']">-->
+          <!--{{item.user.name}}</li>-->
+          <!--</ul>-->
+          <!--</div>-->
+          <!--</div>-->
+          <div>
+            <ul class="flex-layout flex-warp">
+              <li v-for="(index,item) in workPersonList">
+                {{item.user.name}} <span v-show="index<workPersonList.length-1">，</span></li>
+            </ul>
+          </div>
+        </div>
+      </el-form-item>
+
+      <!---------  作业中所使用的主要工具/设备  ---------->
+      <el-form-item v-if="item.code=='mainEquipment' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item">
+          <ul class="ul-inside">
+            <li v-for="item of equipmentList">
+              <input type="checkbox" disabled :checked="item.attr1 == '1'" class="width-auto" />
+              {{getItemName(item)}}</li>
+          </ul>
+        </div>
+      </el-form-item>
+
+      <!---------  特种作业人员/特种设备操作人员资格证  ---------->
+      <el-form-item v-if="item.code=='specialWorker' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item">
+          <ul class="ul-inside ">
+            <li v-for="item of certificateList " class="lite-box-21">
+              <input type="checkbox" disabled :checked="item.attr1 == '1'" class="width-auto" />
+              {{getItemName(item)}}
+              <span class="lite-box-21" v-if="item.person && certificatePerson(item.person)"
+                style="display: inline-flex;flex-wrap: wrap;padding-left:15px">
+                (
+                <span v-for='(index,person) in item.person' style="display: inline-flex;">
+                  <span v-if="person.contractorEmp">{{person.contractorEmp.name}}</span>
+                  <span v-else>
+                    {{person.user.name}}
+                  </span>
+                  <span>
+                    <image-view v-show="person.cloudFiles" :image-style="imageStyle" :images="person.cloudFiles"
+                      :show-close="false"></image-view>
+                  </span>
+                  <span v-show='index<item.person.length-1'>，</span>
+                </span>
+
+                )
+                <!--<span v-for="p in item.person.users"></span>-->
+              </span>
+            </li>
+          </ul>
+        </div>
+      </el-form-item>
+
+      <!---------  检维修人员  ---------->
+      <el-form-item v-if="item.code=='maintainer' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+        <div class="el-form-item">
+          <ul class="ul-inside flex-layout flex-warp lite-box-21">
+            <li v-for="(index,item) in repairPersonList" class="flex-layout flex-warp " style="height: 30px;">
+              <span class="mr10">{{item.user.name}}</span>
+              <image-view :image-style="imageStyle" :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false">
+              </image-view>
+              <!--<span v-show="index<repairPersonList.length-1">，</span>-->
+            </li>
+            <!--<a v-show="repairPersonList.length>0" class="link-btn-color" style="text-decoration: underline;padding-left:10px;">查看签字</a>-->
+          </ul>
+        </div>
+      </el-form-item>
+
+      <!---------  实施安全教育人  ---------->
+      <el-form-item v-if="item.code=='safetyEducator' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+        <div class="el-form-item">
+          <ul class="ul-inside flex-layout flex-warp">
+            <li v-for="(index,item) in securityEducationPersonList" class="flex-layout flex-warp">
+              <div v-if="item.user.name" class="flex-layout flex-warp" style="height: 30px;">
+                <span class="mr10">{{item.user.name}}</span>
+                <!--<image-view :image-style="imageStyle" :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false"></image-view>-->
+                <span v-show="index<securityEducationPersonList.length-1">，</span>
+              </div>
+            </li>
+            <!--<li @click="gotoShowEducationDetail"><a>查看</a></li>-->
+            <li class="btn-link" style="cursor: pointer;color:#33a6ff;" @click="gotoShowEducationDetail"
+              v-show="securityEducationPersonList.length>0">查看</li>
+            <!--<a v-show="securityEducationPersonList.length>0" class="link-btn-color" style="text-decoration: underline;padding-left:10px;">查看签字</a>-->
+          </ul>
+        </div>
+      </el-form-item>
+
+      <!---------  作业监护人  ---------->
+      <el-form-item v-if="item.code=='supervisior' && item.disable=='0' && item.isInherent=='1'" :label="item.name">
+        <div class="el-form-item">
+          <ul class="ul-inside flex-layout flex-warp">
+            <li v-for="(index,item) in custodyPersonList" class="flex-layout flex-warp">
+              <div v-if="item.user && item.user.name" class="flex-layout flex-warp" style="height: 30px;">
+                <span class="mr10">{{item.user.name}}</span>
+                <!--<image-view :image-style="imageStyle" :images="getFiles(item.cloudFiles,'PTW11')" :show-close="false"></image-view>-->
+                <span v-show="index<custodyPersonList.length-1">，</span>
+              </div>
+            </li>
+            <li style="cursor: pointer;color:#33a6ff;" @click="tableModel.visible=true" class="btn-link">监护记录</li>
+          </ul>
+        </div>
+      </el-form-item>
+
+      <!---------  作业时限  ---------->
+      <el-form-item v-if="item.code=='permitTime' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item">{{model.permitStartTime}}&nbsp;&nbsp; 至 &nbsp;&nbsp;{{model.permitEndTime}}</div>
+      </el-form-item>
+
+      <!--<el-form-item label="作业有效期" prop="code">-->
+      <!--<div class="el-form-item" v-show="model.extensionTime">-->
+      <!--&lt;!&ndash;{{model.validityStartTime}}至{{model.validityEndTime}}&ndash;&gt;-->
+      <!--<span v-if="model.extensionTime">-->
+      <!--{{model.extensionTime}}  {{model.extensionUnit==1?'小时':'天'}}-->
+      <!--</span>-->
+      <!--</div>-->
+      <!--</el-form-item>-->
+
+      <!---------  工作安全分析  ---------->
+      <el-form-item v-if="item.code=='jsaMasterId' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <div class="el-form-item">
+          {{model.jsaMaster.name}}
+        </div>
+      </el-form-item>
+
+      <!---------  备注  ---------->
+      <el-form-item v-if="item.code=='remark' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <!--<el-form-item label="备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注" prop="code">-->
+        <div class="el-form-item">
+          {{model.remark}}
+        </div>
+      </el-form-item>
+
+      <!---------  作业计划书/方案  ---------->
+      <el-form-item v-if="item.code=='workPlan' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <!--<lite-box style="border:none;"  v-for="(index,pic) in model.schemeFiles" :show-close="false">-->
+        <a style="display: block;" v-for="(index,pic) in model.schemeFiles" v-text="pic.orginalName" target="_blank"
+          :href="convertFilePath(pic)"></a>
+        <!--</lite-box>-->
+      </el-form-item>
+
+      <!---------  应急救援预案  ---------->
+      <el-form-item v-if="item.code=='emerScheme' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+
+        <!--<lite-box  v-for="(index,pic) in model.planFiles" :show-close="false">-->
+        <a style="display: block;" v-for="(index,pic) in model.planFiles" v-for="(index,pic) in model.planFiles"
+          v-text="pic.orginalName" target="_blank" :href="convertFilePath(pic)"></a>
+        <!--</lite-box>-->
+      </el-form-item>
+
+      <!---------  附     图  ---------->
+      <el-form-item v-if="item.code=='attachedPicture' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <!--<el-form-item label="附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;图" prop="code">-->
+        <image-view :images="model.figureFiles" :show-close="false"></image-view>
+      </el-form-item>
+
+      <!---------  其它附件  ---------->
+      <el-form-item v-if="item.code=='otherAttachment' && item.disable=='0' && item.isInherent=='1'" :label="item.name"
+        prop="code">
+        <!--<lite-box v-for="(index,pic) in model.otherFiles" :show-close="false">-->
+        <a style="display: block;" v-for="(index,pic) in model.otherFiles" v-text="pic.orginalName" target="_blank"
+          :href="convertFilePath(pic)"></a>
+        <!--</lite-box>-->
+      </el-form-item>
+    </template>
+
+  </el-form>
+</simple-card>
+
+<Modal title="安全教育详情" :visible.sync="educationModel.visible" footer-hide width="550">
+  <div class="edit-pop-container">
+    <div class="epc-content el-form-item__label-light simple-card-body" style="background: #fff;">
+      <el-form :model="mainModel.vo" v-ref:ruleform>
+        <el-form-item label="安全教育内容">
+          <iv-input style="font-size:14px;color:#666;padding-top:0.2em;" v-for="item in securityEducationPersonList"
+            :value.sync="item.signOpinion" textonly></iv-input>
+        </el-form-item>
+        <el-form-item label="签名">
+          <image-view class="lite-box-21" :image-style="imageStyle" v-for="item in securityEducationPersonList"
+            :images="getFiles(item.cloudFiles,'PTW9')" :show-close="false"></image-view>
+        </el-form-item>
+        <el-form-item label="图片">
+          <image-view v-for="item in securityEducationPersonList" :images="getFiles(item.cloudFiles,'PTW20')"
+            :show-close="false"></image-view>
+        </el-form-item>
+        <el-form-item label="视频">
+          <lite-box v-for="item in securityEducationPersonList" :show-close="false">
+            <img :src="convertPath(video.id)" v-for="video in getFiles(item.cloudFiles,'PTW22')" @click="doPlay(video)">
+          </lite-box>
+        </el-form-item>
+      </el-form>
+    </div>
+    <!--<div class="epc-footer">-->
+    <!--<vi-button type="primary" @click="educationModel.visible=false" class="pull-right">{{$t("gb.common.ok")}}</vi-button>-->
+    <!--</div>-->
+  </div>
+
+</Modal>
+
+<Modal title="作业监护记录" :visible.sync="tableModel.visible" footer-hide width="1000">
+  <div class="layout-table-box" style="background: #fff;padding:50px 20px;max-height: 600px;overflow: auto;">
+
+    <table class="layout-table tableTr">
+      <colgroup>
+        <col style="width: 50px;">
+        <col v-for="col in tableModel.columns" :style="{'width': col.width}" v-if="!col.hide">
+      </colgroup>
+      <thead>
+        <tr class="layout-table-tr">
+          <th>序号</th>
+          <th v-for="col in tableModel.columns">{{col.title}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="line-height: 0;" v-for="(i, item) in workcard.vo.superviseRecords" class="layout-table-tr">
+          <td>{{(i+1)}}</td>
+          <td :data-index="index" :data-num="i" style="line-height: 1.2;">{{item.superviseTime || ''}}</td>
+          <td :data-index="index" :data-num="i" style="line-height: 1.2;">{{item.superviseContent || ''}}</td>
+          <td class="pointer" :data-index="index" :data-num="i">
+            <div style="height: 100%;">
+              <image-view image-style="width:40px;height:40px;" :images="getFiles(item.cloudFiles, 'PTW12')"
+                :show-close="false"></image-view>
+            </div>
+          </td>
+          <td class="pointer" :data-index="index" :data-num="i">
+            <div style="height: 100%;">
+              <lite-box v-for="video in getFiles(item.cloudFiles, 'PTW13')" :show-close="false" @click="doPlay(video)">
+                <img style="width:40px;height:40px;min-height: 40px;" :src="convertPath(video.id)">
+              </lite-box>
+            </div>
+          </td>
+          <td class="pointer" :data-index="index" :data-num="i">
+            <div style="height: 100%;" class="lite-box-height-auto">
+
+              <image-view image-style="width:auto;height:20px;" :images="getFiles(item.cloudFiles, 'PTW11')"
+                :show-close="false"></image-view>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!--<div v-if="showPageBox">-->
+    <!--<Page-->
+    <!--:current.sync="pageObj.curPage"-->
+    <!--:total="pageObj.totalSize"-->
+    <!--:page-size.sync="pageObj.pageSize"-->
+    <!--:page-size-opts="pageSizeOpts"-->
+    <!--@on-change="doPageChanged"-->
+    <!--show-sizer-->
+    <!--show-total-->
+    <!--&gt;</Page>-->
+    <!--</div>-->
+
+  </div>
+</Modal>
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+  <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+
+<style>
+  .tableTr .lite-box {
+    height: 40px;
+    width: 40px;
+  }
+
+  .lite-box-height-auto {
+    display: flex;
+    align-items: center;
+  }
+
+  .lite-box-height-auto .lite-box {
+    height: auto;
+  }
+
+  .simple-card-body-padding-top0 .simple-card-body {
+    padding-top: 0px !important;
+  }
+</style>

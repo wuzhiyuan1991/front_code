@@ -1,0 +1,47 @@
+ <div class="form-dialog" id="dialog-form" style="height: 417px;">
+  <form id="form_org" class="form-horizontal" role="form">
+      <div class="form-group">
+        <label for="password" class="col-sm-2 control-label">{{$t("gb.common.code")}}</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" placeholder="请输入方法名称" v-model="mainModel.vo.code">
+          <span for="checkbox1" class="error"></span>
+        </div>
+      </div>
+      <div class="form-group">
+          <label for="password" class="col-sm-2 control-label">{{$t("bd.ria.moduleName")}}</label>
+          <div class="col-sm-10">
+              <input type="text" class="form-control" placeholder="请输入方法名称" v-model="mainModel.vo.name">
+              <span for="checkbox1" class="error"></span>
+          </div>
+      </div>
+      <div class="form-group">
+          <label for="name" class="col-sm-2 control-label">{{$t("gb.common.ownedComp")}}</label>
+          <div class="col-sm-10">
+              <i-select :model.sync="mainModel.vo.orgId" :list="orgList" style="width:240px">
+		          <i-option v-for="item in orgList" :value="item.id">{{ item.name }}</i-option>
+		      </i-select>
+          </div>
+      </div>
+      <div class="form-group">
+          <label for="name" class="col-sm-2 control-label">{{$t("gb.common.state")}}</label>
+          <div class="col-sm-10">
+          	  <i-select :model.sync="mainModel.vo.disable" :list="stateList" style="width:240px">
+		          <i-option v-for="item in stateList" :value="item.value">{{ item.label }}</i-option>
+		      </i-select>
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="msg" class="col-sm-2 control-label">{{$t("gb.common.describe")}}</label>
+        <div class="col-sm-10">
+          <textarea class="form-control" rows="3" v-model="mainModel.vo.description"></textarea>
+        </div>
+      </div>
+     <div class="pop_up_bottom">
+     	<div class="pop_up_botton">
+     		<button type="button" class="btn pop_up_button" @click="doPrint">{{$t("bd.ria.print")}}</button>
+     		<button type="button" class="btn pop_up_button" @click="doSave">{{$t("gb.common.ok")}}</button>
+     		<!--<button type="button" class="btn btn-default pop_up_button" @click="doCancel">{{$t("gb.common.cancel")}}</button>-->
+     	</div>
+     </div>
+</form>
+</div>

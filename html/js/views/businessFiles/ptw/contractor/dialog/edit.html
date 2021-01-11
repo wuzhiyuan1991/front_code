@@ -1,0 +1,88 @@
+<Modal :visible.sync="visible"  :title="title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content" style="height:400px; ">
+            <el-form :model="mainModel.vo" :rules="visible?rules:{}" v-ref:ruleform>
+
+                <!-- <el-form-item label="任职/资质证书" prop="lookUpValue" full-width> -->
+                    <!--<div v-if="mainModel.isReadOnly" class="exam-paper-point">-->
+                        <!--<div class="ivu-tag" v-for="item in mainModel.vo.lookUpValue">-->
+                            <!--<span class="ivu-tag-text">{{ getDataDic('iptw_cert', item) }}</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!-- <i-select v-else  clearable :model.sync="mainModel.vo.lookUpValue" :list="mainModel.vo.lookUpVal"  ></i-select>
+                    <div @click="doAdd1" style=" position: absolute;top: 6px;right:-30px; font-size: 14px;color:#33a6ff;cursor: pointer;">新增</div>
+                </el-form-item> -->
+                <el-form-item label="任职/资质证书" prop="lookUpValue" full-width >
+                    <iv-tree-select
+                    v-if="visible&&!addModel.show"
+                    :model.sync="mainModel.vo.lookUpValue"
+                    :list="mainModel.vo.lookUpVal"
+                    id-attr="id"
+                    display-attr="label">
+                <iv-tree
+                        :model="mainModel.vo.lookUpVal"
+                        :serch-filterable="true"
+                        id-attr="id"
+                        :selected-datas.sync="[{id: mainModel.vo.lookUpValue}]"
+                        display-attr="label"
+                        :single-select="true"></iv-tree>
+            </iv-tree-select>
+        </el-form-item>
+        <div @click="doAdd1" style=" position: absolute;top: 93px;right:93px; font-size: 14px;color:#33a6ff;cursor: pointer;">新增</div>
+                <el-form-item label="证书有效期" prop="expirationDate" full-width>
+                    <date-picker default-date="false" v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.expirationDate" ></date-picker>
+                </el-form-item>
+                <el-form-item label="证书编号" prop="certificateNo" full-width>
+                    <iv-input :value.sync="mainModel.vo.certificateNo" class="inp"></iv-input>
+                </el-form-item>
+                <el-form-item label="证书附件"  full-width>
+                    <ul>
+                        <li v-for="(index, file) in mainModel.vo.fileList" class="cert-file-item" @click="doClickFile(index)">
+                            <div class="cert-file-name  my-file-item" :title="file.orginalName">{{file.orginalName}}</div>
+                            <Icon  class="opcity0"  type="close-circled"  @click.stop="removeFile(file.id, index)"></Icon>
+                        </li>
+                    </ul>
+                    <iv-button type="text" style="padding:0;color:#33A6FF"  @click="uploadClicked" >上传文件</iv-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+    <!-----   文件相关  ----->
+    <vue-file-upload
+            v-ref:uploader
+            style="display: none;"
+            :multi-selection="true"
+            :params="uploadModel.params"
+            @on-before-upload="doUploadBefore"
+            @on-success-upload="doUploadSuccess"
+            @on-upload-complete="onUploadComplete"
+            :filters="uploadModel.filters">
+    </vue-file-upload>
+</Modal>
+<Modal
+		:visible.sync="addModel.show" width="520" 
+        v-ref:addModal
+        :title="title" 
+        :footer-hide="true"
+        >
+        <div class="edit-pop-container">
+            <div class="epc-content" style="height:222px; ">
+                <el-form :model="mainModel.vo" :rules="rules1" v-ref:ruleform1>
+                    <el-form-item label="任职/资质证书" prop="lookUpValueAdd" full-width>
+                        <iv-input :value.sync="mainModel.vo.lookUpValueAdd" class="inp"></iv-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div class="epc-footer">
+                <vi-button type="primary" @click="doClose1" class="pull-right">取消</vi-button>
+                <vi-button type="primary" @click="doSave1" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+            </div>
+        </div>
+</Modal>
+
+
+
+

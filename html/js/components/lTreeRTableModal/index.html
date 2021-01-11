@@ -1,0 +1,47 @@
+<Modal :visible.sync="visible" :title="title" width="1000" v-ref:tree :footer-hide="true" class="userSelectModal">
+
+    <iv-row type="flex">
+        <iv-col span="6" style="background-color: #eaf0f5;padding: 20px 0 0 20px;">
+            <iv-input :value="treeModel.keyword" icon="ios-search" @on-click="doFilterTree" @on-enter="doFilterTree"></iv-input>
+            <div class="member-select-left-tree" v-el:mtree>
+                <div class="loading-text" v-if="treeModel.showLoading">加载中</div>
+                <iv-tree
+                    :id-attr="idAttr"
+                    :pid-attr="pidAttr"
+                    :display-attr="displayAttr"
+                    :model="treeModel.data"
+                    :selected-datas.sync="treeModel.selectedData"
+                    :show-checkbox="false"
+                    :single-select="true"
+                    :trigger-parent-event="true"
+                    :data-query="treeModel.keyword"
+                    @on-tree-node-click="doTreeNodeClick"
+                ></iv-tree>
+            </div>
+
+        </iv-col>
+        <iv-col span="18" style="background-color: #eaf0f5;padding-top: 20px;">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModel.keyword" placeholder="" icon="ios-search" @on-click="doFilterTable" @on-enter="doFilterTable"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table
+                        :columns="columns"
+                        :show-pager="true"
+                        :selected-datas.sync="tableModel.selectedDatas"
+                        :url="url"
+                        :is-single-check="singleSelect"
+                        :default-filter-value="tableModel.defaultFilterValue"
+                        @on-dbclick-cell="onDbClickCell"
+                        lazy-load
+                        v-ref:table
+                    ></vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+    </iv-row>
+</Modal>

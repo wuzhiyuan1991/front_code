@@ -1,0 +1,24 @@
+<div class="edit-pop-container" >
+	<div class="epc-content">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item :label="$t('gb.common.code')" prop="code">
+				<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+			</el-form-item>
+			<el-form-item label="名称" prop="name">
+				<iv-input :value.sync="mainModel.vo.name"></iv-input>
+			</el-form-item>
+			<el-form-item :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box">
+				<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" clearable
+										:comp-id.sync="mainModel.vo.compId"></department-tree-select>
+				<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+			</el-form-item>
+			<el-form-item label="排序" prop="attr1">
+				<iv-input :value.sync="mainModel.vo.attr1"></iv-input>
+			</el-form-item>
+		</el-form>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+		<!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+	</div>
+</div>

@@ -1,0 +1,261 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.disable != 1 && hasPermission('2060001002')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly && hasPermission('2060001001')" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<iv-button v-if="mainModel.vo.disable != 1 && mainModel.isReadOnly && hasPermission('2060001201')"  type="ghost" @click="doPublish">{{$t('gb.common.release')}}</iv-button>
+				<!--<iv-button v-if="mainModel.isReadOnly" type="ghost" @click="doPreview">预览</iv-button>-->
+				<!--<iv-button  type="ghost" @click="doPublish">{{$t('gb.common.release')}}</iv-button>-->
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.vo.disable != 1 && hasPermission('2060001003')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content bip-content1">
+			<el-form class="bip-content-form" style="height:auto;"  :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<!--<el-form-item  label="" prop="code" class="small-info-box" >-->
+					<!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<el-form-item class="small-info-box" :label="$t('gb.common.checkPlanName')" prop="name">
+						<iv-input placeholder="请输入名称" :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.startTime')" prop="startDate" class="small-info-box" >
+						<date-picker  format="yyyy-MM-dd 00:00:00"  v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate" :end.sync="mainModel.vo.endDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.endTime')" prop="endDate" class="small-info-box" >
+						<date-picker format="yyyy-MM-dd 23:59:59" v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate" :begin.sync="mainModel.vo.startDate"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+					</el-form-item>
+                    <el-form-item label="计划类型"  class="small-info-box" prop="type">
+                        <i-select  v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.type"  :list="getDataDicList('planType')">
+                            <i-option  v-for = "type in getDataDicList('planType')" :value="type.id">{{type.value}}</i-option>
+                        </i-select>
+                        <span v-if="mainModel.isReadOnly">{{getDataDic('planType', mainModel.vo.type)}}</span>
+                    </el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item class="small-info-box" :label="$t('gb.common.state')" prop="disable">
+						<span>{{getDataDic('isPublished', mainModel.vo.disable)}}</span>
+						<!--<input class="inp" :value="getDataDic('isPublished', mainModel.vo.disable)" readOnly>-->
+					</el-form-item>
+
+					<!--<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+					<el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.remarks')" prop="remarks" class="small-info-box" >
+						<iv-input placeholder="请输入备注" v-else :value.sync="mainModel.vo.remarks" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item  label="类型" prop="checkType" class="small-info-box" >-->
+					<!--<iv-input :value.sync="mainModel.vo.checkType" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item v-if="mainModel.isReadOnly" :label="$t('gb.common.founder')"  class="small-info-box" >
+						<iv-input   :value="mainModel.vo.creater.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  :label="$t('gb.common.frequencyType')"  class="small-info-box" prop="checkType">
+						<i-select  v-if="!mainModel.isReadOnly"  @on-change="dochangeCheckType" :model.sync="mainModel.vo.checkType"  :list="getDataDicList('check_type')" >
+							<i-option  v-for = "type in getDataDicList('check_type')" :value="type.id">{{type.value}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly">{{getDataDic('check_type', mainModel.vo.checkType)}}</span>
+					</el-form-item>
+                    <el-form-item class="small-info-box" :label="$t('gb.common.check')"  prop="tpaCheckTable.name">
+                        <input-select :value="mainModel.vo.tpaCheckTable" id-field="id" :disabled="mainModel.checkPlanChange" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowCheckTableSelectModal())" ></input-select>
+                    </el-form-item>
+
+					<el-form-item class="small-info-box" label="设备设施"  prop="tpaBoatEquipment.name">
+						<input-select :value="mainModel.vo.tpaBoatEquipment" id-field="id" :disabled="mainModel.checkTableChange" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowTpaBoatEquipmentSelectModal())" ></input-select>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item" v-if = "showSpecialty || showPlanType">
+					<el-form-item  :label="$t('gb.common.profession')" prop="specialty" class="small-info-box" v-if = "showSpecialty">
+						<i-select v-if="!mainModel.isReadOnly"  :model.sync="mainModel.vo.specialty"  :list="mainModel.specialtyList" >
+							<i-option  v-for = "specialty in mainModel.specialtyList" :value="specialty.id">{{specialty.name}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly" >{{getDataDic('plan_specialty', mainModel.vo.specialty)}}</span>
+					</el-form-item>
+					<el-form-item  label="计划类型" prop="planType" class="small-info-box" v-if = "showPlanType">
+						<i-select  v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.planType"  :list="getDataDicList('plan_type')" >
+							<i-option  v-for = "type in getDataDicList('plan_type')" :value="type.id">{{type.value}}</i-option>
+						</i-select>
+						<span v-if="mainModel.isReadOnly">{{getDataDic('plan_type', mainModel.vo.planType)}}</span>
+					</el-form-item>
+				</iv-row>
+				<div v-if="!frequencyModelShow && mainModel.isReadOnly">
+					<iv-row class="bip-content-item" style="border-top:1px solid  #e9e9e9" >
+						<span class="spanTips" style="padding-left: 40px">执行频率</span>
+						<span class="spanCon">{{frequencyModel.detail.frequencyTypeName}}</span>
+						<span class="spanTips" v-if="frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">包含周六日</span>
+						<span class="spanTips" v-if="!frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">不包含周六日</span>
+					</iv-row>
+					<iv-row class="bip-content-item" v-if="frequencyModel.common.isNoRepeat">
+						<span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
+						<span class="spanCon">执行一次</span>
+					</iv-row>
+					<iv-row class="bip-content-item" v-if="frequencyModel.common.isRepeat && !frequencyModel.detail.definedTime">
+						<span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
+						<span class="spanCon">执行多次</span>
+						<span class="spanTips">间隔</span>
+						<span class="spanCon">{{frequencyModel.planSetting.period}}</span>
+						<span class="spanCon">{{frequencyModel.detail.unitName}}</span>
+						<span class="spanTips">开始时间</span>
+						<span class="spanCon">{{frequencyModel.planSetting.startTime}}</span>
+						<span class="spanTips">结束时间</span>
+						<span class="spanCon">{{frequencyModel.planSetting.endTime}}</span>
+					</iv-row>
+					<iv-row class="bip-content-item" v-if="frequencyModel.detail.definedTime">
+						<span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
+						<span class="spanTips">间隔</span>
+						<span class="spanCon">{{frequencyModel.planSetting.period}}</span>
+						<span class="spanCon">{{frequencyModel.detail.unitName}}</span>
+					</iv-row>
+				</div>
+				<div v-if="frequencyModelShow && !mainModel.isReadOnly">
+					<iv-row class="bip-content-item" style="border-top:1px solid  #e9e9e9" >
+						<span style="float: left;line-height: 80px;padding-left: 40px;">执行频率</span>
+						<el-form-item label="&nbsp;" class="small-info-box" style="width: 150px;">
+							<i-select v-if="!mainModel.isReadOnly" style="width:100px" @on-change="dochangefrequencyType" :model.sync="frequencyModel.planSetting.frequencyType"  :list="mainModel.frequencyTypeList" >
+								<i-option  v-for = "type in mainModel.frequencyTypeList" :value="type.id">{{type.name}}</i-option>
+							</i-select>
+						</el-form-item>
+						<el-form-item  label="&nbsp;" class="small-info-box" style="padding: 0 20px" >
+							<iv-checkbox class="radios" v-if="frequencyModel.planSetting.frequencyType == 1" :checked.sync="frequencyModel.add.isWeekendInculedFlag" :disabled = "mainModel.isReadOnly">包含周六日</iv-checkbox>
+						</el-form-item>
+					</iv-row>
+					<iv-row class="bip-content-item bip-content-item1" >
+						<div style="width:100%;overflow: hidden" v-if="frequencyModel.add.isShowOnce">
+							<span style="float: left;padding-left: 40px;line-height: 40px;">{{frequencyModel.common.frequencyName}}</span>
+							<iv-radio v-if="!mainModel.isReadOnly" :checked.sync="frequencyModel.common.isNoRepeat" @change="doOnce" style="min-width:90px;display: block;margin: 10px 0 0 133px;" >&nbsp;执行一次</iv-radio>
+						</div >
+						<div class="peroidCon" v-if="frequencyModel.add.isShowDay">
+							<span class="radio-style"><iv-radio  v-if="!mainModel.isReadOnly" :checked.sync="frequencyModel.common.isRepeat" @change="doMuch" style="min-width:90px;float: left;padding-top: 9px" :disabled = "mainModel.isReadOnly">&nbsp;执行多次</iv-radio></span>
+							<el-form-item   class="doMuchStyle" style="width:244px" >
+								<span class="requireTip" >间隔</span>
+								<span  style="float: left">
+									<iv-input  :disabled="!(frequencyModel.planSetting.frequencyType==1 && frequencyModel.common.isRepeat)"  style="width:70px;margin: 0 10px;" placeholder="请输入" v-else :value.sync="frequencyModel.planSetting.period" v-if="!mainModel.isReadOnly"></iv-input>
+									<i-select  :disabled="!(frequencyModel.planSetting.frequencyType==1 && frequencyModel.common.isRepeat)" v-if="!mainModel.isReadOnly" style="width:100px;" :model.sync="frequencyModel.planSetting.unit"  :list="mainModel.unitList1" >
+										<i-option  v-for = "type in mainModel.unitList1" :value="type.id">{{type.name}}</i-option>
+									</i-select>
+								</span>
+							</el-form-item>
+							<span class="spanStyle requireTip" >开始时间</span>
+							<el-form-item  class="small-info-box" >
+
+								<vi-time-picker :disabled="!(frequencyModel.planSetting.frequencyType==1 && frequencyModel.common.isRepeat)" :editable ="false" v-if="!mainModel.isReadOnly"  @on-change = "startTime"
+												:value="frequencyModel.planSetting.startTime" ></vi-time-picker>
+								<!--<iv-input v-else :value.sync="frequencyModel.planSetting.startTime" textonly class="inp"></iv-input>-->
+							</el-form-item>
+							<span class="requireTip" style="float: left;line-height: 40px">结束时间</span>
+							<el-form-item  class="small-info-box"  >
+
+								<vi-time-picker :disabled="!(frequencyModel.planSetting.frequencyType ==1 && frequencyModel.common.isRepeat)" :editable ="false"  v-if="!mainModel.isReadOnly" @on-change = "endTime" :value="frequencyModel.planSetting.endTime"></vi-time-picker>
+								<!--<iv-input  :value="frequencyModel.planSetting.endTime" disabled class="inp"></iv-input>-->
+							</el-form-item>
+						</div>
+						<div class="peroidCon" v-if="frequencyModel.add.isShowMy  && !frequencyModel.add.isShowOnce">
+							<span style="position:absolute;left:0;top:0;padding-left: 40px;line-height: 63px;">{{frequencyModel.common.frequencyName}}</span>
+							<el-form-item   class="doMuchStyle" style="width:244px" >
+								<span class="requireTip" style="float: left;">间隔</span>
+								<span  style="float: left">
+									<iv-input  style="width:70px;margin: 0 10px;" placeholder="请输入" v-else :value.sync="frequencyModel.planSetting.period" v-if="!mainModel.isReadOnly"></iv-input>
+									<i-select v-if="!mainModel.isReadOnly" style="width:100px;" :model.sync="frequencyModel.planSetting.unit"  :list="mainModel.unitList" >
+										<i-option  v-for = "type in mainModel.unitList" :value="type.id">{{type.name}}</i-option>
+									</i-select>
+								</span>
+							</el-form-item>
+						</div>
+					</iv-row>
+				</div>
+			</el-form>
+		</div>
+	</div>
+
+	<div class="rel-info-panel">
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.userCardModel.showContent">
+				<p slot="title"><i class="personPng"></i><span>{{$t('gb.common.inspectPerson')}}</span></p>
+				<a slot="extra" @click.prevent="cardModel.userCardModel.showContent = !cardModel.userCardModel.showContent;" >
+					<span v-if="cardModel.userCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t('bc.ria.packUp')}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t('bd.ria.open')}}</span>
+				</a>
+				<a slot="extra" v-show="mainModel.opType != 'create'&& mainModel.vo.disable != 1" @click.prevent="doAppend">
+					<span><Icon type="plus"></Icon>{{$t('bc.ria.append')}}</span>
+				</a>
+				<vue-bootstrap-table
+						:url="tableModel.userTableModel.url"
+						:columns="tableModel.userTableModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:lazy-load="true"
+						@on-del-row="doRemoveUsers"
+						v-ref:user-table
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+		<div class="rip-item">
+			<simple-card :show-content.sync="cardModel.checkTaskCardModel.showContent">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.inspectTask')}}</span></p>
+				<a slot="extra" @click.prevent="cardModel.checkTaskCardModel.showContent = !cardModel.checkTaskCardModel.showContent;" >
+					<span v-if="cardModel.checkTaskCardModel.showContent"><Icon type="arrow-up-b"></Icon>{{$t('bc.ria.packUp')}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t('bd.ria.open')}}</span>
+				</a>
+				<div class="taskContent">
+					<el-form v-if="inspectTaskModel.isShow && mainModel.isReadOnly" :model="mainModel" class="fip-content-item-form" >
+						<el-form-item :label="$t('gb.common.inspectPerson')" >
+							<i-select @on-change="doChooseUser" :list="inspectTaskModel.taskUsers" :model.sync="inspectTaskModel.taskUser" style="width: 211px;margin-bottom: 20px;line-height: 28px;font-size: 12px;">
+								<i-option   v-for="item in inspectTaskModel.taskUsers" :value="item.id">{{ item.name }}</i-option>
+							</i-select>
+						</el-form-item>
+						<el-form-item :label="$t('gb.common.taskStatus')" >
+							<i-select @on-change="doChangeStatus" :list="mainModel.typeList" :model.sync="inspectTaskModel.selectType" style="width: 211px;margin-bottom: 20px;line-height: 28px;font-size: 12px;">
+								<i-option   v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>
+							</i-select>
+						</el-form-item>
+					</el-form>
+				</div>
+				<vue-bootstrap-table v-show="inspectTaskModel.taskShow"
+									 :url="tableModel.checkTaskTableModel.url"
+									 :columns="tableModel.checkTaskTableModel.columns"
+									 :show-empty-row="false"
+									 :use-default-global-filter="false"
+									 :lazy-load="true"
+									 @on-del-row="doRemoveCheckTasks"
+									 @on-edit-row="doShowCheckTaskFormModal4Update"
+									 @on-click-cell="doTableCellClick"
+									 v-ref:checktask-table
+				>
+				</vue-bootstrap-table>
+				<vue-bootstrap-table v-show="!inspectTaskModel.taskShow"
+									 :url="tableModel.preCheckTaskTableModel.url"
+									 :columns="tableModel.preCheckTaskTableModel.columns"
+									 :show-empty-row="false"
+									 :use-default-global-filter="false"
+									 :lazy-load="true"
+									 @on-del-row="doRemoveCheckTasks"
+									 @on-edit-row="doShowCheckTaskFormModal4Update"
+									 v-ref:pre-checktask-table
+				>
+				</vue-bootstrap-table>
+			</simple-card>
+		</div>
+	</div>
+
+</div>
+<tpachecktable-select-modal single-select :show-collect="true" :visible.sync="selectModel.tpaCheckTableSelectModel.visible" :filter-data="selectModel.tpaCheckTableSelectModel.filterData"  @do-save="doSaveCheckTable"></tpachecktable-select-modal>
+<boat-select-modal :visible.sync="selectModel.tpaBoatEquipmentSelectModel.visible"   @do-save="doSaveTpaBoatEquipment" :filter-data="selectModel.tpaBoatEquipmentSelectModel.filterData"></boat-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible"  @do-save="doSaveUsers"></user-select-modal>

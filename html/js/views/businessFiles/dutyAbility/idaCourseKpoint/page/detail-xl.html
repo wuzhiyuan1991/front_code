@@ -1,0 +1,98 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<i class="recordPng"></i><span>{{mainModel.title}}</span>
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit">{{$t('gb.common.edition')}}</iv-button>
+				<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click.stop="doAdd4Copy">复制</iv-button>
+				<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave">{{$t('gb.comnon.save')}}</iv-button>
+				<vi-button v-if="mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('enable')" type="ghost"  @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}</vi-button>
+				<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete">{{$t("gb.common.del")}}</iv-button>
+				<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" @click="doCancel">{{$t("gb.common.cancel")}}</vi-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+			</div>
+		</div>
+		<div class="bip-content">
+			<el-form class="bip-content-form" style="height:200px;"  :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+				<iv-row class="bip-content-item">
+					<el-form-item :label="$t('gb.common.code')" prop="code" class="small-info-box" >
+						<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.name')" prop="name" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable" class="small-info-box" >
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" :show-input="mainModel.opType === 'update'"></disable-select>
+					</el-form-item>
+					<el-form-item label="文本" prop="content" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.content" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="课程" prop="courseId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.courseId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="课件类型" prop="fileType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.fileType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="是否可以试听" prop="isFree" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ida_course_kpoint_is_free', mainModel.vo.isFree) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.isFree" :list="getDataDicList('ida_course_kpoint_is_free')" clearable></i-select>
+					</el-form-item>
+					<el-form-item label="节点类型" prop="kpointType" class="small-info-box" >
+						<span v-if="mainModel.isReadOnly">{{ getDataDic('ida_course_kpoint_kpoint_type', mainModel.vo.kpointType) }}</span>
+						<i-select v-else :model.sync="mainModel.vo.kpointType" :list="getDataDicList('ida_course_kpoint_kpoint_type')" clearable></i-select>
+					</el-form-item>
+				</iv-row>
+<!--
+				<iv-row class="bip-content-item">
+					<el-form-item label="直播开始时间" prop="liveBeginTime" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.liveBeginTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.liveBeginTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="直播结束时间" prop="liveEndTime" class="small-info-box" >
+						<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.liveEndTime" clearable></date-picker>
+						<iv-input v-else :value="formatYMD(mainModel.vo.liveEndTime)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item label="直播地址" prop="liveUrl" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.liveUrl" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="页数" prop="pageCount" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.pageCount" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="课后作业版本号" prop="paperVersion" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.paperVersion" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="父级" prop="parentId" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.parentId" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="播放次数" prop="playCount" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.playCount" type="number" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="播放时间" prop="playTime" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.playTime" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+				</iv-row>
+				<iv-row class="bip-content-item">
+					<el-form-item label="视频类型" prop="videoType" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.videoType" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item label="视频地址" prop="videoUrl" class="small-info-box" >
+						<iv-input :value.sync="mainModel.vo.videoUrl" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+-->
+			</el-form>
+		</div>
+	</div>
+
+
+
+</div>
+
+
+
+

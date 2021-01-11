@@ -1,0 +1,77 @@
+<style>
+
+    .cp-form {
+        width: 100%;
+        display: flex;
+        padding: 20px 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    .cp-form .el-form-item {
+        width: 360px;
+        margin-right: 30px;
+        overflow:inherit;
+    }
+</style>
+
+<div class="lr-layout">
+    <div class="lr-layout-r">
+        <div>
+            <div class="text-right">
+                <iv-button @click="doSave" style="margin-left: 5px;">保存</iv-button>
+                <iv-button @click="doPreview" style="margin-left: 5px;">预览</iv-button>
+                <iv-button @click="doClosePage" style="margin-left: 5px;">关闭</iv-button>
+            </div>
+            <el-form class="cp-form" :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+                <el-form-item label="编码" label-width="80px" prop="code">
+                    <code-input v-ref:code-input :value.sync="mainModel.vo.code" :allow-empty="false"></code-input>
+                </el-form-item>
+                <el-form-item label="试卷名称" label-width="80px" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+                <el-form-item label="所属公司" label-width="80px" prop="compId">
+                    <company-tree-select :id.sync="mainModel.vo.compId"></company-tree-select>
+                </el-form-item>
+                <el-form-item label="试卷总分" label-width="80px" prop="score">
+                    <iv-input type="number" :value.sync="mainModel.vo.score" disabled>
+                        <span slot="append">分</span>
+                    </iv-input>
+                </el-form-item>
+                <el-form-item label="考试时长" label-width="80px" prop="replyTime">
+                    <iv-input type="number" :value.sync="mainModel.vo.replyTime">
+                        <span slot="append" style="white-space: nowrap;">分钟</span>
+                    </iv-input>
+                </el-form-item>
+                <el-form-item label="试卷类型" label-width="80px" prop="type">
+                    <i-select  :model.sync="mainModel.vo.type" :list="getDataDicList('paper_type')">
+                        <i-option v-for="item in getDataDicList('paper_type')" :value="item.id">{{item.value}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item  label="对应课程" prop="course.id"  label-width="80px">
+                    <input-select :value.sync="mainModel.vo.course" @do-clear-input="doClearCourseInput" :clearable="true" id-field="id" display-field="name" @click="doShowCourseSelectModal()" ></input-select>
+                </el-form-item>
+                <el-form-item  label="对应章节"  label-width="80px" prop="courseKpoint.id" v-if="showCourseKpoint">
+                    <input-select :value.sync="mainModel.vo.courseKpoint" @do-clear-input="doClearCourseKpointInput" :clearable="true" id-field="id" display-field="name"  @click="doShowKpointModel()" ></input-select>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <div class="cp-question-box">
+
+            <!--单选题-->
+            <question :data.sync="single" :total="singleTotal" :courseid="mainModel.vo.course.id"></question>
+            <!--多选题-->
+            <question :data.sync="multiple" :total="multipleTotal" :courseid="mainModel.vo.course.id"></question>
+            <!--判断题-->
+            <question :data.sync="choice" :total="choiceTotal" :courseid="mainModel.vo.course.id"></question>
+        </div>
+    </div>
+</div>
+
+<course-select-modal single-select :visible.sync="selectModel.courseSelectModel.visible"  :filter-data="selectModel.courseSelectModel.filterData" @do-save="doSaveCourse"></course-select-modal>
+
+<Modal :visible.sync="kpoint.show" :title="kpoint.title" width="1000" height="800" :footer-hide="true">
+    <kpo-int-modal @do-save-kpoint="doSaveKpoint"></kpo-int-modal>
+</Modal>

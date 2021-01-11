@@ -1,0 +1,97 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+  <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+    <iv-button @click="doPrint">打印</iv-button>
+    <iv-button @click="doClose">关闭</iv-button>
+  </div>
+  <div class="preview-box" id="section-to-print">
+    <div v-for="(i, item) in itemPage">
+      <div class="text-right"><span style="margin-right: 300px;">编号:</span></div>
+      <h4 style="font-weight: bold;word-break: break-all; margin-bottom: 20px;" class="text-center">电气操作票</h4>
+      <table class="preview-box-table">
+
+        <tbody>
+          <tr>
+            <td class="text-center">单位</td>
+            <td colspan="3" class="text-center">{{vo.orgName}}</td>
+            <td class="text-center">编号</td>
+            <td colspan="3" class="text-center">{{convertCode(i+1)}}</td>
+          </tr>
+          <tr>
+            <td class="text-center">发令人</td>
+            <td class="text-center">{{vo.dispatcherName}}</td>
+            <td class="text-center">受令人</td>
+            <td class="text-center">{{vo.receiverName}}</td>
+            <td class="text-center">发令时间</td>
+            <td colspan="3" class="text-center">{{{dispatchTime}}}</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-left">操作开始时间：</td>
+            <td colspan="4" class="text-left">操作结束时间：</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-center">{{{beginOpTime}}}</td>
+            <td colspan="4" class="text-center">{{{endOpTime}}}</td>
+          </tr>
+          <tr>
+            <td colspan="8" class="text-center">
+              <span style="margin-right: 100px;">(✓)监护下操作</span>
+              <span style="margin-right: 100px;">(&nbsp;&nbsp;)单人操作</span>
+              <span style="margin-right: 100px;">(&nbsp;&nbsp;)检修人员操作</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="1" style="border-right: 0px" class="text-left"> 操作任务：</td>
+            <td colspan="6" style="border-left: 0px;border-right: 0px" class="text-center">
+              <span>{{i == 0 ? vo.name: convertCode(i)}}</span>
+            </td>
+            <td colspan="1" style="border-left: 0px;" class="text-left"></td>
+          </tr>
+          <tr>
+            <td class="text-center">顺序</td>
+            <td colspan="6" class="text-center">操作项目</td>
+            <td class="text-center">✓</td>
+          </tr>
+          <tr style="height: 50px" v-for="(j, it) in item">
+            <td class="text-center">{{it.orderNo}}</td>
+            <td colspan="6" :class="calcClass(trm)">{{it.content}}</td>
+            <td class="text-center">{{it.finish?"✓":""}}</td>
+          </tr>
+          <tr style="height: 100px">
+            <td colspan="8" style="text-align:left;"><span
+                style="display: block;height: 100%;padding-top: 10px;">备注：{{convertCode(i+2)}}</span></td>
+          </tr>
+          <tr>
+            <td colspan="8" class="text-left">
+              <div style="display: inline-block;width: 30%;">
+                <span>操作人：</span>
+                <img v-for="s in operatorSignatures" :src="s" alt="" width="80" height="32" v-if="showSignature">
+              </div>
+              <div style="display: inline-block;width: 30%;">
+                <span>监护人：</span>
+                <img v-for="s in supervisorSignatures" :src="s" alt="" width="80" height="32" v-if="showSignature">
+              </div>
+              <div style="display: inline-block;width: 30%;">
+                <span>值班负责人(值长)：</span>
+                <img v-for="s in auditorSignatures" :src="s" alt="" width="80" height="32" v-if="showSignature">
+              </div>
+
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <p style="margin-top: 20px;">保存单位：{{vo.orgName}}</p>
+        <p style="margin-top: 20px;">保存期限：一年</p>
+      </div>
+    </div>
+
+
+  </div>
+</Modal>
+<style media="print">
+  @page {
+    size: auto;
+    margin: 0mm;
+  }
+</style>

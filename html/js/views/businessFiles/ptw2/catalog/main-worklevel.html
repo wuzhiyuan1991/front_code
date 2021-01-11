@@ -1,0 +1,43 @@
+<div class="flex-layout">
+    <div style="min-width:170px;height: calc(100vh - 165px)" class="text-center mr15" >
+        <base-according :values="workTypeList"
+                        :current-index.sync="workTypeSelectedIndex"
+                        @on-selected="onSelectedType"
+                        v-ref:according
+        ></base-according>
+    </div>
+    <div class="flex-grow1" style="padding-right: 15px;background: #fff;">
+        <div class="flex-layout-between list-li-h"  style="padding-bottom:8px;height: 35px;">
+            <div class="flex-v-center">
+                <!--<vi-button  type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>-->
+                <!--<vi-button type="text" class="mp-header-item-btn" @click="doUpdate" >{{$t("gb.common.edition")}}</vi-button>-->
+                <vi-button type="text" v-if="tableModel.selectedDatas.length>0 && tableModel.values && tableModel.values.length>0" class="mp-header-item-btn"  @click="doDeleteVarious">{{$t("gb.common.del")}}</vi-button>
+            </div>
+            <div class="flex-v-center">
+                <vi-button @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+            </div>
+        </div>
+        <div style="background: #fff;">
+            <vue-bootstrap-table v-ref:table-task-level
+                                 show-empty-row=false
+                                 :show-pager="false"
+                                 :lazy-load="true"
+                                 :columns="tableModel.columns"
+                                 :values.sync="tableModel.values"
+                                 @on-edit-row="doUpdateInfoBefore"
+                                 @on-del-row="doDeleteInfo"
+                                 :selected-datas.sync="tableModel.selectedDatas"
+            ></vue-bootstrap-table>
+        </div>
+
+        <!--                                    <lite-new-table :columns='tableModel.columns'-->
+        <!--                                                    :values="tableModel.values"-->
+        <!--                                                    @on-add-row="doAddRow"-->
+        <!--                                                    @on-save="doSave"-->
+        <!--                                                    @on-del="doDelItem"-->
+        <!--                                    ></lite-new-table>-->
+    </div>
+</div>
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel v-ref:detail-model></detail-panel>
+</aside>

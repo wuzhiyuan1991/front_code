@@ -1,0 +1,80 @@
+<Modal :visible.sync="visible" width='600' :title="modalTitle" @on-cancel="doClose" :footer-hide="true">
+    <div class="modal-box-default" style="background: #fff;">
+		 <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+		    <iv-checkbox class="radios" :checked.sync="selectChecked" :disabled="">已经阅读并了解当前待移交的班次的值班记录详情</iv-checkbox>
+			<a @click="viewDetails">（浏览详情）</a>
+		 </div>
+        <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+            <div class="form-item-label required-before" style="width: 200px;">{{title}}</div>
+            <div>
+                <!-- <iv-radio-group class="group-vertical" :model.sync="selectedWorkCatalogId"> -->
+                    <iv-radio  class="mb10 flex-h-start" :value="item.id" v-for="item of workCatalogList" style="word-break: break-all;white-space: normal;width:500px;">
+                        <div class="flex-layout">
+                            <span style="cursor: pointer;min-width: 75px;margin-right:5px;flex-grow:1;flex-shrink:0">
+                                {{item.name}}
+                            </span>
+                            <span v-if="item.levelList&&item.levelList.length>0&&selectedWorkCatalogId==item.id">
+                                <iv-radio-group  :model.sync="selectedWorLevelId">
+                                    (  <iv-radio :value="level.id" v-for="(index,level) of item.levelList">
+                                    <span style="cursor: pointer;">{{level.name}}</span>
+                                    <span v-if="index==item.levelList.length-1">）</span>
+                                </iv-radio>
+                                </iv-radio-group>
+                            </span>
+                        </div>
+
+                    </iv-radio>
+                <!-- </iv-radio-group> -->
+              <div class="">{{ nextDateTime }}</div>
+          </div>
+        </div>
+		<div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+		    <div class="form-item-label required-before label100">接班时间</div>
+		      <div class="label-mar">
+				  <span>{{ time.Format("yyyy-MM-dd hh:mm:ss") }}</span>
+			  </div>
+		</div>
+		<div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+		    <div class="form-item-label required-before label100">接班意见</div>
+		      <div style="width:100px;" class="label-mar">
+				  <span>
+				  	<iv-radio-group :model.sync="selectModelType">
+				  		<iv-radio value="0" @change="shiftSuccession(0, 'key')">同意（同意接班，交接班完成）</iv-radio>
+				  		<iv-radio value="1" @change="shiftSuccession(1, 'key')">不同意（不同意接班，系统会回退给交班人）</iv-radio>
+				  	</iv-radio-group>
+				  </span>
+			  </div>
+		</div>
+		<div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+		    <div class="form-item-label label100"></div>
+			<el-form-item label="" style="width: 100%" class="width85">
+				<iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.remark"></iv-input>
+			</el-form-item>
+		</div>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<style>
+    .ivu-radio-cursor .ivu-radio {
+        cursor: pointer;
+    }
+    .ivu-select-dropdown-width280 .ivu-select-dropdown {
+        width:280px;
+    }
+	.label280 {
+		width: 280px;
+	}
+	.width85 .el-form-item__content .ivu-input {
+		width: 85%;
+	}
+</style>

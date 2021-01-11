@@ -1,0 +1,67 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col span="12">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col span="12">
+                    <div class="main-special-box-1">
+                        <a @click="doFilterBySpecial('all')" :class="{'checked': filterTabId === 'all'}" class="main-special-item"  href="javascript:void(0);">所有</a>
+                        <span>|</span>
+                        <a @click="doFilterBySpecial('4')" :class="{'checked': filterTabId === '4'}" class="main-special-item"  href="javascript:void(0);">已分享</a>
+                        <span>|</span>
+                        <a @click="doFilterBySpecial( '2')" :class="{'checked': filterTabId === '2'}" class="main-special-item"  href="javascript:void(0);">已转隐患</a>
+                        <span>|</span>
+                        <a @click="doFilterBySpecial('3')" :class="{'checked': filterTabId === '3'}" class="main-special-item"  href="javascript:void(0);">被否决</a>
+                        <div class="prelative addButton pull-right">
+                            <iv-dropdown trigger="click" placement="bottom-end">
+                                <vi-button type="ghost" icon="chevron-down"></vi-button>
+                                <iv-dropdown-menu slot="list">
+                                    <iv-dropdown-item>
+                                        <div v-if="hasAuth('exportDealt')" class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>
+                                    </iv-dropdown-item>
+                                    $main-header-dropdown-item-tag-common-display
+                                </iv-dropdown-menu>
+                            </iv-dropdown>
+                        </div>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <!--<vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button type="text" v-if="hasAuth('edit') && tableModel.selectedDatas && tableModel.selectedDatas[0] && tableModel.selectedDatas[0].status == 1 && [tableModel.selectedDatas.length] == 1" class="mp-header-item-btn" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
+                    <vi-button v-if="hasAuth('convert') && [tableModel.selectedDatas.length] == 1" type="text" class="mp-header-item-btn" @click="doConvert">{{$t("gb.common.examine")}}</vi-button>
+                    <vi-button v-if="hasAuth('vedo') && [tableModel.selectedDatas.length] == 1" type="text" class="mp-header-item-btn" @click="doVedo">{{$t("hai.rano.close")}}</vi-button>
+                    <iv-button type="text" v-if="hasAuth('delete')" class="mp-header-item-btn" @click="doDelete">{{$t("gb.common.del")}}</iv-button>-->
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+            <vue-bootstrap-table $main-center-table-attr-default :show-scroll="true"></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+<Modal :visible.sync="exportModel.visible" :title="exportModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <iv-checkbox :checked.sync="exportModel.exportType == 1" @on-change="changeExportType()">导出图片</iv-checkbox>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doExport" class="pull-right">确定</vi-button>
+        </div>
+    </div>
+</Modal>
+<!--
+<Modal :visible.sync="convertModel.show" :title="convertModel.title" :footer-hide="true">
+    <convert-component @do-convert-finshed="doConvertFinshed"></convert-component>
+</Modal>-->

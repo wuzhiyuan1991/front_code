@@ -1,0 +1,36 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+				<el-form-item v-if="(hiddenFields.indexOf('type') == -1)" label="试题类型" prop="type">
+					<!--<iv-input :value.sync="mainModel.vo.type" :disabled="(disabledFields.indexOf('type') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<i-select  :model.sync="mainModel.vo.type" :list="getDataDicList('question_type')">
+						<i-option  v-for = "qstType in getDataDicList('question_type')"  :value="qstType.id">{{qstType.value}}</i-option>
+					</i-select>
+				</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="大题名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="禁用标识，" prop="disable">-->
+						<!--<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item v-if="(hiddenFields.indexOf('num') == -1)" label="数量" prop="num">-->
+						<!--<iv-input :value.sync="mainModel.vo.num" :disabled="(disabledFields.indexOf('num') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+					<!--</el-form-item>-->
+						<!--<el-form-item v-if="(hiddenFields.indexOf('examPaper') == -1)" label="外键关联试卷" prop="paperId">-->
+							<!--<input-select :value="mainModel.vo.examPaper" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('examPaper') != -1)" @click="(!mainModel.isReadOnly) && (doShowExamPaperSelectModal())" ></input-select>-->
+						<!--</el-form-item>-->
+					<el-form-item v-if="(hiddenFields.indexOf('score') == -1)" label="每题的分数" prop="score">
+						<iv-input :value.sync="mainModel.vo.score" type="number" :disabled="(disabledFields.indexOf('score') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('title') == -1)" label="说明" prop="title">
+						<iv-input type="textarea" :value.sync="mainModel.vo.title" :disabled="(disabledFields.indexOf('title') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>

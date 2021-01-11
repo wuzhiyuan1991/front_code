@@ -1,0 +1,81 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<!--<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+						<!--<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+					<!--</el-form-item>-->
+				<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">
+					<company-tree-select v-if="!mainModel.isReadOnly" disabled :id.sync="mainModel.vo.compId"></company-tree-select>
+					<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">
+					<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>
+					<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+				</el-form-item>
+
+				<el-form-item v-if="(hiddenFields.indexOf('checkerId') == -1)" label="检查人" prop="checker.id">
+					<input-select :value="mainModel.vo.checker" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('checker') != -1)" @click="(!mainModel.isReadOnly) && (doShowCheckerSelectModal())" ></input-select>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('checkDate') == -1)" label="检查时间" prop="checkDate">
+					<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" :selected-date.sync="mainModel.vo.checkDate" :disabled="(disabledFields.indexOf('checkDate') != -1)"></date-picker>
+					<iv-input v-else :value.sync="mainModel.vo.checkDate" :disabled="(disabledFields.indexOf('checkDate') != -1)" textonly class="inp"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('legalRegulationId') == -1)" label="检查依据" prop="legalRegulation.id">
+					<input-select :value="mainModel.vo.legalRegulation" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('legalRegulation') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowLegalRegulationSelectModal())" ></input-select>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('content') == -1)" label="不符合项" prop="content">
+					<iv-input type="textarea" :value.sync="mainModel.vo.content" :disabled="(disabledFields.indexOf('content') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+
+
+
+				<el-form-item :label="$t('gb.common.picture')">
+					<image-view :images=" mainModel.vo.pictures" @on-close="doDeleteFile"></image-view>
+
+					<vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload" class="file_upload"
+									 :filters="pictures.filters" v-if="mainModel.vo.pictures.length < 9"></vue-file-upload>
+				</el-form-item>
+				<el-form-item :label="$t('gb.common.video')">
+					<lite-box v-for="(index,video) in mainModel.vo.videos" @click="doPlay(video.fileId)"  @on-close="doDeleteVideo(video.fileId, index)">
+						<img :src="convertPath()">
+					</lite-box>
+					<vue-file-upload :params="videos.params" v-if="mainModel.vo.videos.length < 1" :filters="videos.filters"
+									 @on-success-upload="doVideosSuccessUpload" class="file_upload"></vue-file-upload>
+				</el-form-item>
+				<!---->
+				<!--<el-form-item :label="$t('gb.common.picture')">-->
+					<!--<image-view :images=" mainModel.vo.pictures"></image-view>-->
+					<!--<vue-file-upload :params="pictures.params" @on-success-upload="doPicSuccessUpload" class="file_upload"-->
+									 <!--:filters="pictures.filters" v-if="mainModel.vo.pictures.length < 9"></vue-file-upload>-->
+				<!--</el-form-item>-->
+
+				<!--<el-form-item :label="$t('gb.common.video')">-->
+					<!--<lite-box v-for="(index,video) in mainModel.vo.videos" @click="doPlay(video.fileId)">-->
+						<!--<img :src="convertPath()">-->
+					<!--</lite-box>-->
+					<!--<vue-file-upload :params="videos.params" v-if="mainModel.vo.videos.length < 1" :filters="videos.filters"-->
+									 <!--@on-success-upload="doVideosSuccessUpload" class="file_upload"></vue-file-upload>-->
+				<!--</el-form-item>-->
+
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+	<div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+<Modal class="type-pic" :visible.sync="picModel.show" width="400" footer-hide>
+	<img v-if="picModel.show" :src="convertPicPath(picModel.id,'watermark')">
+</Modal>
+<user-select-modal :visible.sync="selectModel.checkerSelectModel.visible" :filter-data="selectModel.checkerSelectModel.filterData" single-select @do-save="doSaveChecker"></user-select-modal>
+<check-basis-select-modal
+		single-select
+		:visible.sync="checkBasis.visible"
+		:filter-data="checkBasis.filterData"
+		@do-save="doSaveLegalRegulations"
+></check-basis-select-modal>

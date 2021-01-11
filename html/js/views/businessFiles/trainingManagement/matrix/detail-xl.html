@@ -1,0 +1,199 @@
+<div class="detail-large-container ">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>详情</span>
+            </div>
+            <div class="bip-header-btn-group ">
+                <iv-button type="ghost" @click="doEditCourse" v-show="mainModel.type === 'course'">{{$t('gb.common.edition')}}</iv-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" is-label-vertical v-ref:ruleform>
+
+                <!--岗位/角色详情-->
+                <iv-row class="bip-content-item" v-if="mainModel.type ==='position'">
+
+                    <el-form-item :label="$t('bs.orl.post')" class="small-info-box" v-if="mainModel.vo.postType == 0">
+                        <span>{{mainModel.vo.name}}</span>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('ori.perm.role')"  class="small-info-box" v-if="mainModel.vo.postType == 1">
+                        <span>{{mainModel.vo.name}}</span>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('gb.common.ownedComp')" class="small-info-box">
+                        <span>{{getDataDic('org', mainModel.vo.compId)['compName']}}</span>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('gb.common.ownedDept')" class="small-info-box" v-if="mainModel.vo.postType === '0'">
+                        <span>{{getDataDic('org', mainModel.vo.orgId)['deptName']}}</span>
+                    </el-form-item>
+
+                </iv-row>
+
+                <!--课程详情-->
+                <iv-row class="bip-content-item" v-if="mainModel.type ==='course'">
+
+                    <el-form-item :label="$t('bd.trm.courseName')" prop="name">
+                        <span>{{mainModel.vo.name}}</span>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('gb.common.ownedComp')" class="small-info-box">
+                        <span>{{getDataDic('org', mainModel.vo.compId)['compName']}}</span>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('gb.common.ownedDept')" class="small-info-box">
+                        <span>{{getDataDic('org', mainModel.vo.orgId)['deptName']}}</span>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('bd.trm.coursetType')" class="small-info-box">
+                        <span>{{mainModel.vo.attr1}}</span>
+                    </el-form-item>
+
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+
+    <!--总计-->
+    <div class="rel-info-panel" v-if="mainModel.type === 'course'">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.paperTopicCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>总计</span></p>
+                <vue-bootstrap-table
+                        :values="tableModel.countModel.values"
+                        :columns="tableModel.countModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        :show-pager="false"
+                        v-ref:course-count-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+
+    <!--岗位课程详情-->
+    <div class="rel-info-panel" v-if="mainModel.type === 'position'">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.paperTopicCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>对应课程</span></p>
+                <a slot="extra" href="javascript:void(0);" @click.prevent="doShowCourseSelectModal" >
+                    <span><Icon type="plus"></Icon>添加</span>
+                </a>
+                <vue-bootstrap-table
+                        :values="tableModel.courseModel.values"
+                        :columns="tableModel.courseModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        :show-pager="false"
+                        @on-click-cell="doClickCell"
+                        v-ref:position-count-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+
+
+    <!--课程岗位详情-->
+    <div class="rel-info-panel" v-if="mainModel.type === 'course'">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.paperTopicCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>对应岗位</span></p>
+                <a slot="extra" href="javascript:void(0);" @click.prevent="doShowPositionSelectModal('0')" >
+                    <span><Icon type="plus"></Icon>添加</span>
+                </a>
+                <vue-bootstrap-table
+                        :values="tableModel.positionModel.values"
+                        :columns="tableModel.positionModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        :show-pager="false"
+                        :page-size-opts="[999]"
+                        @on-click-cell="doClickCell"
+                        v-ref:position-statistic-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+
+    <!--课程安全角色详情-->
+    <div class="rel-info-panel" v-if="mainModel.type === 'course'">
+        <div class="rip-item">
+            <simple-card :show-content.sync="cardModel.paperTopicCardModel.showContent">
+                <p slot="title"><i class="basicPng"></i><span>对应安全角色</span></p>
+                <a slot="extra" href="javascript:void(0);" @click.prevent="doShowPositionSelectModal('1')" >
+                    <span><Icon type="plus"></Icon>添加</span>
+                </a>
+                <vue-bootstrap-table
+                        :values="tableModel.roleModel.values"
+                        :columns="tableModel.roleModel.columns"
+                        :show-empty-row="false"
+                        :use-default-global-filter="false"
+                        :lazy-load="true"
+                        :show-pager="false"
+                        :page-size-opts="[999]"
+                        @on-click-cell="doClickCell"
+                        v-ref:role-statistic-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+<!--修改弹窗-->
+<Modal :visible.sync="editModel.show" :title="editModel.title" :footer-hide="true" width="420">
+    <div class="epc-content riskAddCon">
+        <el-form :model="editModel.vo" :rules="rules" v-ref:ruleform>
+
+            <el-form-item label="课程名称">
+                <span>{{editModel.vo.course.name}}</span>
+            </el-form-item>
+
+            <el-form-item :label="isHseEdit ? '安全角色' : '岗位'">
+                <span>{{editModel.vo.position.name}}</span>
+            </el-form-item>
+
+            <el-form-item label="培训期限" prop="period" v-if="editModel.vo.course.type == 1">
+                <iv-input type="number" :value.sync="editModel.vo.period">
+                    <span slot="append">天</span>
+                </iv-input>
+            </el-form-item>
+
+            <el-form-item label="复培周期" prop="frequence">
+                <iv-input type="number" :value.sync="editModel.vo.frequence" :disabled="needlessChecked">
+                    <span slot="append" style="white-space: nowrap;">个月</span>
+                </iv-input>
+            </el-form-item>
+            <div style="text-align:right;line-height: 20px;">
+                <iv-checkbox :checked.sync="needlessChecked" @on-change="changeFrequence"></iv-checkbox>无需复培
+            </div>
+        </el-form>
+    </div>
+
+
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</Modal>
+
+<course-select-modal
+        :visible.sync="selectModel.courseSelectModel.visible"
+        :filter-data="selectModel.courseSelectModel.filterData"
+        @do-save="doSaveCourse"
+></course-select-modal>
+
+<position-tree-select-modal
+        :visible.sync="selectModel.positionSelectModel.visible"
+        :filter-data="selectModel.positionSelectModel.filterData"
+        :post-type="postType"
+        @do-save="doSavePosition"
+></position-tree-select-modal>

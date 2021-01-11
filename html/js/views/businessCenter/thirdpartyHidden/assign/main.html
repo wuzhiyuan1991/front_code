@@ -1,0 +1,58 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <!--<iv-col $main-header-condition-div-attr-default >-->
+                <!--<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>-->
+                <!--</iv-col>-->
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-mixBusiness>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right export-btn">
+                        <vi-button @click="doExportExcel" v-if="hasPermission('2070002005')">{{$t("gb.common.export")}}</vi-button>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doReform" v-if="hasPermission('5010002009')">{{$t("hag.tasa.assign")}}</vi-button>-->
+                    <vi-button v-if="hasPermission('2070002009')" type="text" class="mp-header-item-btn" @click="doProcessReform" >{{$t("gb.common.troubleDealing")}}</vi-button>
+                    <vi-button v-if="hasPermission('2070002003')" type="text" class="mp-header-item-btn" @click="doDelete" >{{$t("gb.common.del")}}</vi-button>
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="doExportExcel">{{$t("gb.common.export")}}</vi-button>-->
+                </iv-col>
+            </iv-row>
+            <!--<iv-row type="flex" align="middle" class="mp-header-item" v-show="tableModel.selectedDatas.length != 0">-->
+            <!--<iv-col span="24">-->
+            <!--<div>-->
+            <!--<div class="topTool"><a class="">已经选中{{tableModel.selectedDatas.length}}项</a></div>-->
+            <!--<div class="topTool" @click="doReform" v-if="hasPermission('100010200')"><a class="">分配人员</a>-->
+            <!--</div>-->
+            <!--<div class="topTool" @click="doExport" v-if="hasPermission('100010202')"><a class="">导出</a>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</iv-col>-->
+            <!--</iv-row>-->
+
+        </div>
+
+        <div class="mp-content">
+            <vue-bootstrap-table show-loading $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+<aside :show.sync="detailModel.show" placement="right">
+    <detail-component></detail-component>
+</aside>
+<!--<Modal :visible.sync="reformModel.show" :title="reformModel.title" footer-hide>-->
+<!--<reform-component></reform-component>-->
+<!--</Modal>-->
+<Modal :visible.sync="processReform.show" :title="processReform.title" @on-cancel="doCloseProcessReform" footer-hide>
+    <pool-treatment-component :form-type="processReform.formType" :pool-id="processReform.poolId"></pool-treatment-component>
+</Modal>

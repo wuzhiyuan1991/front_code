@@ -1,0 +1,67 @@
+<div class="report train-chart">
+    <div class="train-content">
+        <div class="train-tit">{{qryInfoModel.title}}</div>
+        <div class="train-filter">
+            <div class="train-date-range">
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange" placeholder="选择日期范围"></vi-date-picker>
+            </div>
+
+            <div class="train-obj-select" style="top: 0;">
+                <i-select :model.sync="qryParam.typeOfRange" v-ref:select :list="typeOfRanges" @on-change="changeTypeOfRange">
+                    <i-option v-for="item in typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                </i-select>
+            </div>
+
+            <div class="train-obj-select">
+                <obj-select :type="qryParam.typeOfRange" :values.sync="qryParam.objRange"></obj-select>
+            </div>
+
+            <div class="train-obj-select" style="top: 0;">
+                <i-select :model.sync="qryParam.specialityType" v-ref:select :list="specialtyTypes" placeholder="专业">
+                    <i-option v-for="item in specialtyTypes" :value="item.value">{{item.label}}</i-option>
+                </i-select>
+            </div>
+
+            <div class="train-obj-select" style="top: 0;">
+                <i-select :model.sync="qryParam.opCardType" v-ref:select :list="opCardTypes" placeholder="票卡">
+                    <i-option v-for="item in opCardTypes" :value="item.value">{{item.label}}</i-option>
+                </i-select>
+            </div>
+
+            <iv-button type="primary" @click="doQuery">查询</iv-button>
+        </div>
+
+        <div style="overflow-y: auto;height: calc(100% - 110px);">
+            <vuecharts :options="pieChartOpt" @chartclick="clickPieChart" v-ref:pie-chart style="min-height: 500px;"></vuecharts>
+            <vuecharts :options="barChartOpt" @chartclick="clickBarChart" v-ref:bar-chart style="min-height: 500px;"></vuecharts>
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- 撰取 -->
+    <Modal v-if="drillModel.show" :visible.sync="drillModel.show" mask-closable :title="drillModel.title" width="900"
+           :footer-hide="true" class="userSelectModal">
+        <div class="edit-pop-container" style="width: 900px">
+            <div class="epc-header"></div>
+            <div class="epc-content">
+                <iv-button @click="doExportData" style="position: absolute;right: 20px;top:93px;z-index: 10;">导出</iv-button>
+
+                <vue-bootstrap-table
+                        :columns="drillModel.table.columns"
+                        :url="drillModel.table.url"
+                        :default-filter-value="drillModel.table.qryParam"
+                        :show-filter="true"
+                        :filter-column="drillModel.table.filterColumns"
+                        :show-column-picker="false"
+                        :show-pager="true"
+                        resizeable
+                        v-ref:rpt-details-table>
+                </vue-bootstrap-table>
+            </div>
+        </div>
+    </Modal>
+</div>

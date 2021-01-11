@@ -1,0 +1,102 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <!--<all-classification $main-header-classification-attr-default></all-classification>-->
+                    <span style="font-size: 16px;">我的票卡包</span>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+                                $main-header-dropdown-item-tag-common-display
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+        </div>
+
+        <div class="mp-content" style="padding: 0;display: flex;background: #ecf0f4;">
+
+            <!--<div class="lr-layout-l" style="margin-right: 5px;">-->
+                <!--<ul style="padding-top: 10px;">-->
+                    <!--<li class="lr-layout-li" :class="{'checked': bagIndex === index}" v-for="(index, bag) in bagTypes">{{bag.name}}</li>-->
+                <!--</ul>-->
+            <!--</div>-->
+
+            <div class="lr-layout-r card-bag-box">
+                <div>
+                    <iv-button type="primary" @click="doAddBag">添加文件夹</iv-button>
+                    <iv-button type="primary" @click="doShowOpCardSelectModal">添加操作票</iv-button>
+                    <iv-button type="primary" @click="doShowOpMCardSelectModal">添加维修卡</iv-button>
+                    <iv-button type="primary" @click="doShowOpECardSelectModal">添加应急卡</iv-button>
+                </div>
+
+                <iv-breadcrumb>
+                    <breadcrumb-item v-for="(index, path) in paths" @click="doClickBreadItem(index, path)">{{path.name}}</breadcrumb-item>
+                </iv-breadcrumb>
+
+                <ul class="card-bag-ul">
+                    <li v-for="bag in bags" class="card-bag-item">
+                        <div @click="doClickBag(bag)" class="card-bag-text">
+                            <Icon :type="renderIcon(bag)"></Icon>
+                            <span v-if="bag.type === '1'" class="text-ellipsis">{{bag.name}}</span>
+                            <span v-if="bag.type === '2'" class="text-ellipsis">{{bag.opCard.attr1}} - {{bag.opCard.name}} </span>
+                            <span v-show="bag.type === '2'"> 【 {{bag.opCard.disable === '0' ? '启用' : '停用'}}<i v-show="bag.opCard.disable === '0'" class="ivu-icon ivu-icon-checkmark-round" style="font-weight: bold;color: #aacd03;margin-left: 5px;margin-right: 0;font-size: 14px;"></i>
+                            <i v-show="bag.opCard.disable === '1'" class="ivu-icon ivu-icon-close-round" style="font-weight: bold;color: #f03;margin-left: 5px;margin-right: 0;font-size: 14px;"></i>】</span>
+                        </div>
+                        <div style="min-width: 100px;text-align: right;">
+                            <a href="javascript:void(0);" @click="doMove(-1, bag)"><i class="ivu-icon ivu-icon-arrow-up-a"></i></a>
+                            <a href="javascript:void(0);" @click="doMove(1, bag)"><i class="ivu-icon ivu-icon-arrow-down-a"></i></a>
+                            <a href="javascript:void(0);" @click="doUpdate(bag)" v-if="bag.type === '1'"><i class="ivu-icon ivu-icon-edit"></i></a>
+                            <a href="javascript:void(0);" @click="doConfirmCallback('doDelete', '确定删除该文件夹或文件?', bag)"><i class="ivu-icon ivu-icon-trash-a"></i></a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<opcard-select-modal
+        :visible.sync="opCardSelectModel.visible"
+        :filter-data="opCardSelectModel.filterData"
+        @do-save="doSaveOpCard"
+></opcard-select-modal>
+
+<op-mcard-select-modal
+        :visible.sync="opMCardSelectModel.visible"
+        :filter-data="opMCardSelectModel.filterData"
+        @do-save="doSaveOpCard"
+></op-mcard-select-modal>
+
+<op-ecard-select-modal
+        :visible.sync="opECardSelectModel.visible"
+        :filter-data="opECardSelectModel.filterData"
+        @do-save="doSaveOpCard"
+></op-ecard-select-modal>
+
+<Modal :visible.sync="formModel.visible" title="文件夹" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <el-form-item label="文件夹名称" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveBag" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+<std-preview-modal :visible.sync="stdPreviewModel.visible" :id="cardId"></std-preview-modal>
+<maint-preview-modal :visible.sync="maintPreviewModel.visible" :id="cardId"></maint-preview-modal>
+<emer-preview-modal :visible.sync="emerPreviewModel.visible" :id="cardId"></emer-preview-modal>
+

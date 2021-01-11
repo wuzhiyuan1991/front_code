@@ -1,0 +1,88 @@
+
+<simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+	<p slot="title"><img src="images/details/basic.png"><span>{{$t("gb.common.basicInfo")}}</span></p>
+	<el-form :model="mainModel.vo" :rules="rules" class="fip-content-item-form" v-ref:ruleform>
+		<el-form-item :label="$t('bs.bac.userName')" >
+			<iv-input :value.sync="mainModel.vo.username" textonly></iv-input>
+		</el-form-item>
+		<el-form-item label="登陆名" >
+			<iv-input :value.sync="mainModel.vo.loginName" textonly></iv-input>
+		</el-form-item>
+		<el-form-item :label="$t('ori.perm.gender')" >
+			<span>{{doSex}}</span>
+			<!--<i-select  v-else :list="mainModel.dosexlist" :model.sync="mainModel.vo.userDetail.sex">-->
+				<!--<i-option v-for="item in mainModel.dosexlist" :value="item.sex">{{item.name}}</i-option>-->
+			<!--</i-select>-->
+		</el-form-item>
+		<el-form-item label="手机" >
+			<iv-input textonly :value.sync="mainModel.vo.mobile"></iv-input>
+		</el-form-item>
+		<el-form-item :label="$t('ori.perm.maritalStatus')">
+			<!--<iv-input :textonly="mainModel.vo.operationType"    :value.sync="doMaritalStatushuan" ></iv-input>-->
+			<span >{{doMaritalStatushuan}}</span>
+			<!--<i-select v-else  :list="mainModel.doMaritalStatushuan" :model.sync="mainModel.vo.userDetail.maritalStatushuan">-->
+				<!--<i-option v-for="item in mainModel.doMaritalStatushuan " :value="item.maritalStatushuan">{{ item.name }}</i-option>-->
+			<!--</i-select>-->
+		</el-form-item>
+		<el-form-item :label="$t('ori.perm.degreeEducat')" >
+			<!--<iv-input :textonly="mainModel.vo.operationType" placeholder="" :value.sync="doEducation" ></iv-input>-->
+			<span >{{doEducation}}</span>
+			<!--<i-select v-else  :list="mainModel.education" :model.sync="mainModel.vo.userDetail.education">-->
+				<!--<i-option v-for="item in mainModel.education " :value="item.edu">{{ item.name }}</i-option>-->
+			<!--</i-select>-->
+		</el-form-item>
+		<el-form-item :label="$t('bs.bac.identificationNumber')" >
+			<iv-input textonly :value.sync="mainModel.vo.userDetail.idcard" ></iv-input>
+
+		</el-form-item>
+		<el-form-item :label="$t('ori.perm.placeOrigin')" prop="verifierName">
+			<iv-input textonly :value.sync="mainModel.vo.userDetail.nativePlace" ></iv-input>
+
+		</el-form-item>
+		<el-form-item :label="$t('ori.perm.presentResidence')" >
+			<iv-input textonly :value.sync="mainModel.vo.userDetail.address" ></iv-input>
+
+		</el-form-item>
+		<!--<el-form-item :label="$t('ori.perm.emergencyContact')" >-->
+			<!--<iv-input textonly :value.sync="mainModel.vo.userDetail.emergencyPeople" ></iv-input>-->
+
+		<!--</el-form-item>-->
+		<!--<el-form-item :label="$t('ori.perm.emergencyTelephone')" >-->
+			<!--<iv-input textonly :value.sync="mainModel.vo.userDetail.emergencyTelephone" ></iv-input>-->
+
+		<!--</el-form-item>-->
+		<!--机构-->
+		<el-form-item :label="$t('gb.common.ownedDept')" >
+			<span >{{mainModel.vo.org.name}}</span>
+			<!--<i-select v-else :model.sync="mainModel.vo.orgId" :list="mainModel.vo.deptList" :disabled="disabled" >-->
+				<!--<i-option v-for="item in mainModel.vo.deptList" :value="item.id">{{ item.name }}</i-option>-->
+			<!--</i-select>-->
+		</el-form-item>
+		<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+			<!--<company-tree-select  :id.sync="mainModel.vo.compId" v-if="!mainModel.isReadOnly"></company-tree-select>-->
+			<!--<iv-input v-else :value.sync="getDataDic('org',this.mainModel.vo.compId)['compName']" textonly></iv-input>-->
+			<span>{{compName}}</span>
+		</el-form-item>
+		<el-form-item :label="$t('ori.perm.leader')"  >
+			<!--<iv-input  :textonly="mainModel.vo.operationType" :value.sync="mainModel.vo.leader.username"></iv-input>-->
+			<span >{{mainModel.vo.leader.username}}</span>
+				<!--<div v-show="!mainModel.vo.operationType">-->
+					<!--<iv-tree-select  :model.sync="mainModel.vo.leaderId"-->
+									 <!--:list="mainModel.vo.userList"-->
+									<!--id-attr="id"-->
+									<!--display-attr="name">-->
+						<!--<iv-tree :model="mainModel.vo.userList"-->
+								 <!--:selected-datas.sync="mainModel.selectedDatas"-->
+								 <!--id-attr="id"-->
+								 <!--pid-attr="parentId"-->
+								 <!--display-attr="name"-->
+								 <!--:single-select="true">-->
+						<!--</iv-tree>-->
+					<!--</iv-tree-select>-->
+				<!--</div>-->
+		</el-form-item>
+		<el-form-item :label="$t('gb.common.remarks')">
+			<iv-input textonly type="textarea" :value.sync="mainModel.vo.remarks"></iv-input>
+		</el-form-item>
+	</el-form>
+</simple-card>

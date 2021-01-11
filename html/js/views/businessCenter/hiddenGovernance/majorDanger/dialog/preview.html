@@ -1,0 +1,213 @@
+<Modal v-if="load" :visible.sync="show" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;" class="print-hidden">
+        <iv-button @click="doPrint(false)" v-if="allImages.length>0">带图打印</iv-button>
+        <iv-button @click="doPrint(true)" ><span v-if="allImages.length>0">无图</span>打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+        {{isPrintImg}}
+    </div>
+    <div class="preview-box" id="section-to-print">
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center">{{data.topCompName}}</h4>
+        <h4 style="font-weight: bold;word-break: break-all;" class="text-center mt5">安全检查报告</h4>
+        <div class="table-tip">
+            <span class="code"><span v-if="data.topCompCode">{{data.topCompCode}}-</span><span>{{data.beCheckDeptCode}}-</span>{{year}}-{{month}}</span>
+        </div>
+        <table class="preview-box-table txt-center">
+            <colgroup>
+                <col style="width:2.5rem;">
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td colspan="2">检单查位/部门</td>
+                <td colspan="2">{{data.checkCompanyName}}</td>
+                <td>检查日期</td>
+                <td>{{data.checkDate}}</td>
+            </tr>
+
+            <tr>
+                <td :rowspan="data.items.length+1">检查人员</td>
+                <td>姓名</td>
+                <td>部门</td>
+                <td>职务（职称）</td>
+                <td colspan="2">检查内容</td>
+            </tr>
+            <tr v-for="(index,item) of data.items">
+
+                <td>{{item.userName}}</td>
+                <td>{{item.orgName}}</td>
+                <td>
+                    <p v-for="position of item.positionList">{{position.name}}</p>
+                </td>
+                <td colspan="2" :rowspan="data.items.length" v-if="index===0">
+                    <p v-for="areaname of areanames">{{areaname}}</p>
+                </td>
+            </tr>
+            <!--            下面是检查人员-->
+            <tr>
+                <td colspan="2" rowspan="2">受检单位/项目</td>
+                <td colspan="4" class="txt-center">{{data.becheckCompanyName}}</td>
+            </tr>
+            <tr>
+                <td>单位负责人签名</td>
+                <td></td>
+                <td>部门负责人签名</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>检查记录</td>
+                <td colspan="5" class="table-td-auto">
+                    <div  class="txt-left check-content-body">
+                        <p v-for="(index,item) of data.items">
+                            <strong>{{item.areaName}}</strong><br/>&nbsp;&nbsp;
+                            <span class="mr15">{{index+1}}.</span>
+                            <span>{{item.checkItem}}</span>
+                            <span>
+                                <span v-for="regular of item.legalRegulations">{{regular.name}}&nbsp;&nbsp;</span>
+                                <span v-for="imgs of checkImages[index]">(图{{imgs.index+1}})</span>
+                            </span>
+<!--                            <span>;</span>-->
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>整改要求</td>
+                <td colspan="5" class=" table-td-auto">
+                    <div class="check-content-body"  :class="data.items.length===1?'content-one':'conent-muti'">
+                        <div class="check-content-section">
+                            <div class="check-content-item mb5" v-for="(index,item) of data.items">
+                                <p class="content-item-num mr15" >{{index+1}}.</p>
+                                <div class="item-requires">
+<!--                                    <p class="content-item-require" v-if="item.checkRecordDetailProblems.length<1">-->
+
+<!--                                    </p>-->
+                                    <div class="content-item-require">
+                                        <p>
+                                           {{item.dealDemand}}
+                                        </p>
+<!--                                          <p   v-for="require of item.checkRecordDetailProblems">-->
+<!--                                            {{require.remark ? require.remark:''}};-->
+<!--                                          </p>-->
+                                    </div>
+
+                                    <div class="txt-right">
+                                        <span  v-if="item.reformMaxDealDate">&nbsp;&nbsp;整改期限：
+                                            <span class="date-margin">{{item.reformMaxDealDate.year}}年</span>
+                                            <span class="date-margin">{{item.reformMaxDealDate.month}}月</span>
+                                            <span class="date-margin">{{item.reformMaxDealDate.day}}日</span>
+                                        </span>
+                                        <span v-else>&nbsp;&nbsp;整改期限：
+                                            <span class="date-margin">年</span>
+                                            <span class="date-margin">月</span>
+                                            <span class="date-margin">日</span>
+                                        </span></div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>复查意见</td>
+                <td colspan="5" class="table-td-auto">
+                    <div class="check-content-body">
+                        <p class="grow1 check-content-suggest"></p>
+                        <p class="txt-right check-bottom">
+                            <span>复查人签名：</span>
+                            <span>
+                                <span>年</span><span class="date-margin">月</span><span class="date-margin">日</span>
+                            </span>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="mt10 txt-center" :class="{'print-hidden':hidePrintImg}" v-if="allImages.length>0">
+            <p>现场隐患图片</p>
+            <div class="check-hidden">
+<!--                http://192.168.88.205:8081/file/image/fgxusw8pt0/scale-->
+                <p v-for="(index,img) of allImages">
+                    <img :src="'/file/image/'+img.id+'/scale11'" :alt="'图'+（index+1）"><br/>
+                    <span>图{{index+1}}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</Modal>
+<style>
+    .table-tip {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        padding-right: 40px;
+    }
+
+    .table-tip-code {
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+    .check-content-body{
+        display: flex;
+        flex-direction: column;
+        padding-top:5px;
+        text-align: left;
+        min-height: 150px;
+    }
+    .check-content-section{
+
+    }
+    .content-one   .check-content-section{
+        flex-grow: 1;
+        flex-wrap: wrap;
+    }
+    .check-content-item{
+        display: flex;
+    }
+    .item-requires{
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 150px;
+    }
+    .check-content-item .item-requires>p{
+    }
+    .check-bottom{
+        display: flex;
+        justify-content: space-between;
+    }
+    .check-content-suggest{
+        height: 100px;
+    }
+    .content-item-num{
+        /*margin-left: -15px;*/
+    }
+    .content-item-require{
+        flex-grow: 1;
+    }
+    .date-margin{
+        display: inline-block;
+        width:50px;
+        text-align:right;
+    }
+    .check-item{
+        margin-left: 20px;
+    }
+    .check-hidden p{
+       max-width: 900px;
+    }
+    .check-hidden img{
+        min-height: 50px;
+        min-width: 300px;
+        max-width: 860px;
+    }
+    .grow1{
+        flex-grow: 1;
+    }
+</style>

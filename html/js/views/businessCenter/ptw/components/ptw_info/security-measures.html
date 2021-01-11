@@ -1,0 +1,63 @@
+
+<div>
+
+<!--    <div class="flex-v-center title-simplecard base-border-bottom mb5">安全措施</div>-->
+    <el-form  style="width:580px;padding-bottom: 20px" class="pdt10">
+        <!--<div class="el-form-item__content">-->
+            <!--<div class="base-border-bottom mb10" style="width: 100px" v-show="kongzhicsList.length"><iv-checkbox :checked.sync="selAll" @on-change="doChangeAll">全选</iv-checkbox></div>-->
+            <!--<div  class="group-vertical ivu-checkbox-group" >-->
+                <!--<iv-checkbox v-for="(index,item) of kongzhicsList"-->
+                             <!--:checked.sync="item.attr1" true-value="1" false-value="0"-->
+                             <!--style="display: flex" :class="{'flex-v-center':kongzhicsList.length==index+1}">-->
+                    <!--<span v-if="item.isExtra!=1" class="input-group-name" v-html="getInputInfo(item)"></span>-->
+                    <!--<span v-else class="input-group-name"> 其他 </span>-->
+                    <!--<span v-if="item.isExtra==1" style="width: 300px">-->
+                        <!--<iv-input   size="small" class="ml5" :value.sync="item.content"></iv-input>-->
+                    <!--</span>-->
+                <!--</iv-checkbox>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div  v-if="model.enableCtrlMeasureGroup == '1'" style="padding-left:9px;" v-for="(index,item) in groupItemModel.list">
+            <div  class="flex-layout-between">
+                <div class="flex-layout mb10">
+                    <div class="security-groups-itemIndex" >分组</div>
+                    <div class="security-groups">{{item.name}}</div>
+                </div>
+            </div>
+            <div>
+                <lite-table
+                        :page-size-opts="[1000]"
+                        :is-show-page-box="false"
+                        show-sequence="false"
+                        :columns="tableModel.columns"
+                        :values="item.children"
+                        @on-click="onRowClicked"
+                ></lite-table>
+            </div>
+        </div>
+
+        <div  v-if="model.enableCtrlMeasureGroup != '1'" style="padding-left:9px;" >
+            <div>
+                <lite-table
+                        :page-size-opts="[1000]"
+                        :is-show-page-box="false"
+                        show-sequence="false"
+                        :columns="tableModel.columns"
+                        :values="tableModel.list"
+                        @on-click="onRowClicked"
+                ></lite-table>
+            </div>
+        </div>
+
+    </el-form>
+</div>
+
+<style>
+    .on-input-value{
+        border: none;
+        margin-left: 5px;
+        margin-right: 5px;
+        border-bottom: 1px solid #ddd;
+    }
+</style>

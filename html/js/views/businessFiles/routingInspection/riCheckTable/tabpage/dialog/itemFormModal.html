@@ -1,0 +1,99 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="width: 380px;">
+                <el-form-item label="巡检内容" label-width="120px" prop="name">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+                <el-form-item label="巡查评判标准" label-width="120px" prop="checkBasis">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.checkBasis"></iv-input>
+                </el-form-item>
+
+                <el-form-item label="适用设备状态" label-width="120px" prop="equipmentStates" v-if="showEquipmentState">
+                    <iv-checkbox-group :model="mainModel.vo.equipmentStates" style="line-height: 36px;">
+                        <iv-checkbox value="0">在用</iv-checkbox>
+                        <iv-checkbox value="1">备用</iv-checkbox>
+                        <iv-checkbox value="2">维修</iv-checkbox>
+                    </iv-checkbox-group>
+                </el-form-item>
+                <el-form-item label="是否读取现场参数值" label-width="150px">
+                    <div style="line-height: 36px;">
+                        <iv-checkbox :checked.sync="isMeterReadingNeeded"></iv-checkbox>
+                    </div>
+                </el-form-item>
+
+                <div v-if="isMeterReadingNeeded">
+                    <el-form-item label="现场读数核对" label-width="120px">
+                        <div style="line-height: 36px;">
+                            <iv-radio-group :model.sync="mainModel.vo.attr2">
+                                <iv-radio value="1">
+                                    <span>标准值</span>
+                                </iv-radio>
+                                <iv-radio value="2">
+                                    <span>最大值</span>
+                                </iv-radio>
+                                <iv-radio value="3">
+                                    <span>最小值</span>
+                                </iv-radio>
+                                <iv-radio value="4">
+                                    <span>区间范围</span>
+                                </iv-radio>
+                                <iv-radio value="5">
+                                    <span>双重区间范围</span>
+                                </iv-radio>
+                                <iv-radio value="6">
+                                    <span>录入数值</span>
+                                </iv-radio>
+                            </iv-radio-group>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="最大值" label-width="120px" prop="riCheckItemParam.value1" v-if="showValue1">
+                        <iv-input type="number" :value.sync="mainModel.vo.riCheckItemParam.value1"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="较大值" label-width="120px" prop="riCheckItemParam.value2" v-if="showValue2">
+                        <iv-input type="number" :value.sync="mainModel.vo.riCheckItemParam.value2"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="标准值" label-width="120px" prop="riCheckItemParam.value3" v-if="showValue3">
+                        <iv-input type="number" :value.sync="mainModel.vo.riCheckItemParam.value3"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="较小值" label-width="120px" prop="riCheckItemParam.value4" v-if="showValue2">
+                        <iv-input type="number" :value.sync="mainModel.vo.riCheckItemParam.value4"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="最小值" label-width="120px" prop="riCheckItemParam.value5" v-if="showValue5">
+                        <iv-input type="number" :value.sync="mainModel.vo.riCheckItemParam.value5"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="单位" label-width="120px" prop="riCheckItemParam.unit">
+                        <iv-input :value.sync="mainModel.vo.riCheckItemParam.unit"></iv-input>
+                    </el-form-item>
+                </div>
+                <el-form-item label="巡检类型" label-width="120px" prop="riCheckTypes">
+                    <i-select :model.sync="mainModel.vo.riCheckTypes" multiple :list="checkTypes" placement="top-start">
+                        <i-option v-for="item in checkTypes" :value="item.id">{{item.name}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <div v-if="!isMeterReadingNeeded">
+                    <el-form-item label="巡检结果(正确)" label-width="120px" prop="rightResult">
+                        <i-select :model.sync="mainModel.vo.rightResult" :list="rightResults" as-input filterable :query.sync="newRightResultName">
+                            <i-option v-for="item in rightResults" :value="item.id">{{item.name}}</i-option>
+                        </i-select>
+                        <!--<iv-input type="text" v-if="!selectRight" :placeholder="请输入巡检结果名称" :value.sync="newRightResultName"></iv-input>-->
+                        <!--<Icon :type="selectRight ? 'edit' : 'ios-undo'" :title="selectRight ? '新增' : '返回选择'" @click="toggleSelectWay('1')" style="position: absolute;top: 2px;right: 3px;font-size:16px;height: 28px; width: 22px;line-height: 28px;background-color: #fff;text-align: center;cursor: pointer;"></Icon>-->
+                    </el-form-item>
+                    <el-form-item label="巡检结果(错误)" label-width="120px" prop="wrongResult">
+                        <i-select :model.sync="mainModel.vo.wrongResult" :list="wrongResults" as-input filterable :query.sync="newErrorResultName">
+                            <i-option v-for="item in wrongResults" :value="item.id">{{item.name}}</i-option>
+                        </i-select>
+                        <!--<iv-input type="text" v-if="!selectError" :placeholder="请输入巡检结果名称" :value.sync="newErrorResultName"></iv-input>-->
+                        <!--<Icon :type="selectError ? 'edit' : 'ios-undo'" :title="selectRight ? '新增' : '返回选择'" @click="toggleSelectWay('0')" style="position: absolute;top: 2px;right: 3px;font-size:16px;height: 28px; width: 22px;line-height: 28px;background-color: #fff;text-align: center;cursor: pointer;"></Icon>-->
+                    </el-form-item>
+                </div>
+                <el-form-item  label="合格填写描述" label-width="120px" v-if="showValue6">
+                    <i-select :model.sync="mainModel.vo.isQualifiedRemarkWrite" :list="getDataDicList('is_qualified_remark_write')"></i-select>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

@@ -1,0 +1,73 @@
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title" style="padding-left: 5px;">
+                <i class="recordPng"></i><span>{{mainModel.title}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <vi-button v-if="mainModel.isReadOnly" type="ghost" @click="doClose">{{$t("gb.common.close")}}</vi-button>
+            </div>
+        </div>
+        <div class="bip-content">
+            <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="mainModel.rules" v-ref:ruleform>
+                <iv-row class="bip-content-item">
+                    <el-form-item label="姓名" prop="username" class="small-info-box">
+                        <iv-input :value.sync="mainModel.vo.username" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="sex" class="small-info-box">
+                        <iv-input :value="mainModel.vo.sexText" type="number" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item label="年龄" prop="age" class="small-info-box" >
+                        <iv-input :value="mainModel.vo.age" type="number" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item label="手机号码" class="small-info-box" >
+                        <iv-input :value="mainModel.vo.mobile" textonly></iv-input>
+                    </el-form-item>
+                </iv-row>
+                <iv-row class="bip-content-item">
+                    <el-form-item :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box">
+                        <iv-input  :value="getDataDic('org', mainModel.vo.compId)['compName']" textonly></iv-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('bs.orl.post')" prop="posId" class="small-info-box">
+                        <!--<iv-input :value.sync="mainModel.vo.posId" :textonly="mainModel.isReadOnly"></iv-input>-->
+                        <span style="max-height: 40px;overflow: hidden;float: left;text-overflow:ellipsis;width: 260px;white-space: nowrap;">{{mainModel.vo.positionText}}</span>
+                    </el-form-item>
+                </iv-row>
+            </el-form>
+        </div>
+    </div>
+<!--    培训信息-->
+    <div class="rel-info-panel" >
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title"><i class="personPng"></i><span>培训信息</span></p>
+                <vue-bootstrap-table
+                    :url="tableModel.training.url"
+                    :columns="tableModel.training.columns"
+                    :show-empty-row="false"
+                    :lazy-load="true"
+                    :use-default-global-filter="false"
+                    v-ref:training-table
+                    :show-column-picker="false"
+                    :show-pager="true"
+                    :resizeable="true"
+                    :auto-width="false"
+            >
+            </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+    <!--工作信息-->
+    <div class="rel-info-panel" >
+        <div class="rip-item" style="padding-bottom: 50px;min-height: 350px">
+            <simple-card>
+                <p slot="title"><i class="personPng"></i><span>工作信息</span></p>
+                <div style="display: flex;justify-content: flex-end;margin-bottom: 5px">
+                    <vi-date-picker type="year" clearable=false  placeholder="选择年份" style="width: 200px" :value.sync="queryYear"></vi-date-picker>
+                </div>
+                <work-table :values.sync="tableModel.work.data"></work-table>
+            </simple-card>
+        </div>
+    </div>
+</div>
+

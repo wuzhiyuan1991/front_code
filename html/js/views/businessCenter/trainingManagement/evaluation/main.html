@@ -1,0 +1,73 @@
+<div style="background-color: #fff;overflow-y: auto;height: 100%;">
+    <div class="my-evaluation-box">
+        <div style="border-bottom: 1px solid #33a6ff;padding-bottom: 8px;margin-bottom: 10px;font-size: 16px;">{{courseName}}</div>
+        <div class="my-evaluation">
+            <div class="tit"><Icon type="navicon-round"></Icon>我的评价</div>
+            <ul>
+                <li class="my-evaluation-item">
+                    <span>课件质量</span>
+                    <rate :value.sync="mainModel.vo.qualityGrade" :disabled="saved"></rate>
+                </li>
+                <li class="my-evaluation-item">
+                    <a href="javascript:void(0);" :class="{'active': isActive('course', index)}" @click="toggleCheck('course', index)" class="label-item" v-for="(index, label) in courseLabels">{{label.name}}</a>
+                </li>
+                <li class="my-evaluation-item">
+                    <span>讲师水平</span>
+                    <rate :value.sync="mainModel.vo.teacherGrade" :disabled="saved"></rate>
+                </li>
+                <li class="my-evaluation-item">
+                    <a href="javascript:void(0);" :class="{'active': isActive('teacher', index)}" @click="toggleCheck('teacher', index)" class="label-item" v-for="(index, label) in teacherLabels">{{label.name}}</a>
+                </li>
+                <li class="my-evaluation-item">
+                    <span>环境体验</span>
+                    <rate :value.sync="mainModel.vo.envirGrade" :disabled="saved"></rate>
+                </li>
+                <li class="my-evaluation-item">
+                    <a href="javascript:void(0);" :class="{'active': isActive('envir', index)}" @click="toggleCheck('envir', index)" class="label-item" v-for="(index, label) in envirLabels">{{label.name}}</a>
+                </li>
+            </ul>
+            <div style="margin-top: 10px;">
+                <iv-input :value.sync="mainModel.vo.content" type="textarea" :rows="6" :textonly="saved"></iv-input>
+            </div>
+            <div style="text-align: right;margin-top: 12px;" v-show="!saved && (!haveToPassFirst || (haveToPassFirst && hasPassedTraining))">
+                <iv-button type="primary" @click="doSave">提交评价</iv-button>
+            </div>
+            
+            <div style="text-align: right;margin-top: 12px;" v-show="!saved && haveToPassFirst && !hasPassedTraining">
+                <iv-button  >培训通过后才能评价</iv-button>
+            </div>
+        </div>
+
+        <div class="my-evaluation" style="margin: 20px 0;">
+            <div class="tit"><Icon type="navicon-round"></Icon>全部评价</div>
+            <ul style="margin-top: 10px;">
+                <li class="all-evaluation-item">
+                    <span>课件质量</span>
+                    <span style="margin: 0 10px;">{{avgModel.qualityGrade}}</span>
+                    <rate disabled :value="avgModel.qualityGrade_float"></rate>
+                </li>
+                <li class="all-evaluation-item">
+                    <span>讲师水平</span>
+                    <span style="margin: 0 10px;">{{avgModel.teacherGrade}}</span>
+                    <rate disabled :value="avgModel.teacherGrade_float"></rate>
+                </li>
+                <li class="all-evaluation-item">
+                    <span>环境体验</span>
+                    <span style="margin: 0 10px;">{{avgModel.envirGrade}}</span>
+                    <rate disabled :value="avgModel.envirGrade_float"></rate>
+                </li>
+            </ul>
+        </div>
+
+        <vue-bootstrap-table
+                :url="tableModel.url"
+                :columns="tableModel.columns"
+                :show-empty-row="false"
+                :use-default-global-filter="false"
+                :default-filter-value="tableModel.defaultFilterValue"
+                :lazy-load="true"
+                v-ref:comment-table
+        ></vue-bootstrap-table>
+    </div>
+
+</div>

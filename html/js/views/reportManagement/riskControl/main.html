@@ -1,0 +1,32 @@
+
+<div class="tab-container report">
+	<div class="main-panel">
+		<div class="mp-content">
+			<iv-row style="height:100%;">
+				<iv-col span="4" style="height:100%;">
+					<div class="mp-header formTitle" style="position: relative ;padding-left: 14px">
+						<div class="basic" style="cursor: pointer;padding: 20px 12px 20px 0px">查询方案</div>
+					</div>
+					<div class="ivu-transfer-list-body report_left" style="min-height: 340px">
+						<div style="height: 100%; overflow:auto">
+							<div style="min-width: 80px">
+								<ul class="riskControl">
+									<li v-for="(index, item) in qryInfoModel.list" @click="qryInfoClick(index)" class="custom-vi-tree-item custom-tree-star item" :class="{active:index ==qryInfoModel.activeIndex}">
+										<span class="tree-center custom-vi-tree-item-select-obj" :title="item.name">{{item.name}}</span>
+										<span class="tree-star-icon" v-if="item.enableStar != false" @click.stop="setHome(item);">
+											<b  v-if="!item.homeRpt"><Icon type="ios-star-outline"></Icon></b>
+											<b  v-else><Icon type="ios-star"></Icon></b>
+										</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</iv-col>
+				<iv-col span="20" style="height:100%;">
+                    <component v-if="reportModel.show" :is="reportCptName" :qry-info-detail="reportModel.detailInfo"></component>
+				</iv-col>
+			</iv-row>
+		</div>
+	</div>
+</div>

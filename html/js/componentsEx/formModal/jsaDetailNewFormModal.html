@@ -1,0 +1,46 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform style="width: 410px;">
+                <!--<el-form-item v-if="(hiddenFields.indexOf('step') == -1)" label="步骤号" prop="step">-->
+                <!--<iv-input :value.sync="mainModel.vo.step" :disabled="(disabledFields.indexOf('step') != -1)" type="number" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+                <el-form-item v-if="(hiddenFields.indexOf('phase') == -1)" label-width="150px" label="作业阶段" prop="phase">
+                    <div>{{phaseText}}</div>
+                    <!--<span v-if="mainModel.isReadOnly">{{ getDataDic('jsa_detail_new_phase', mainModel.vo.phase) }}</span>-->
+                    <!--<i-select v-else :model.sync="mainModel.vo.phase" :list="getDataDicList('jsa_detail_new_phase')" clearable></i-select>-->
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('stepDesc') == -1)" label-width="150px" label="步骤" prop="stepDesc">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.stepDesc" :disabled="(disabledFields.indexOf('stepDesc') != -1)" textonly></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('harmDesc') == -1)" label-width="150px" label="危害描述" prop="harmDesc">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.harmDesc" :disabled="(disabledFields.indexOf('harmDesc') != -1)"
+                              :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('result') == -1)" label-width="150px" label="后果及影响" prop="result">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.result" :disabled="(disabledFields.indexOf('result') != -1)"
+                              :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('riskScore') == -1)" label-width="150px" label="风险值" prop="riskScore">
+                    <!--<iv-input :value.sync="mainModel.vo.riskScore" :disabled="(disabledFields.indexOf('riskScore') != -1)" type="number"-->
+                              <!--:textonly="mainModel.isReadOnly"></iv-input>-->
+                    <risk-model :model.sync="riskModelObj" @do-confirm="doRiskConfirm"></risk-model>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('currentControl') == -1)" label-width="150px" label="现有控制措施" prop="currentControl">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.currentControl" :disabled="(disabledFields.indexOf('currentControl') != -1)"
+                              :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('improveControl') == -1)" label-width="150px" label="建议改进措施" prop="improveControl">
+                    <iv-input type="textarea" :rows="3" :value.sync="mainModel.vo.improveControl" :disabled="(disabledFields.indexOf('improveControl') != -1)"
+                              :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="(hiddenFields.indexOf('riskAccept') == -1)" label-width="150px" label="残余风险是否可接受" prop="riskAccept">
+                    <i-select :model.sync="mainModel.vo.riskAccept" :list="acceptList"></i-select>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

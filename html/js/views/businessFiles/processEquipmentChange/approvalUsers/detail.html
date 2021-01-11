@@ -1,0 +1,175 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left" style="min-height: 100%;">
+		<div class="fip-header">
+
+			<i class="recordPng"></i><span>基层站队长</span>
+
+		</div>
+		<div class="fip-content" id="approvalUsersDetail" style="position: relative;">
+			<!-- 模型基础信息 -->
+			<div style="width: 240px;overflow: hidden;">
+				配置基层站队参与变更流程的人员
+				<company-tree-select :id.sync="mainModel.vo.compId" placeholder="请选择公司"></company-tree-select>
+			</div>
+
+
+
+
+			<div
+				style="position: absolute;top: 67px;left: 10px;z-index: 5; display: flex;width: 120px;border-radius: 5px;border: 1px solid #ccc;line-height: 28px;color: #666;cursor: pointer;">
+				<div @click="type=0" style="flex: 1;text-align: center;" :class="type==0?'checked':''">
+					按人员
+				</div>
+				<div @click="type=1" style="flex: 1;text-align: center;;" :class="type==1?'checked':''">
+					按站队
+				</div>
+				
+			</div>
+			<div v-if='type==0' style="position: relative;width: 800px;margin-top: 30px;">
+				<simple-card class="fip-content-item fixed-table-card">
+					<p slot="title"><span></span></p>
+					<a slot="extra"  v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'"
+						@click.prevent="doAdduser">
+						<span >
+							<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+						</span>
+					</a>
+					<vue-bootstrap-table :columns="tableModel.userTableModel.columns"
+						:values='tableModel.userTableModel.values' :show-empty-row="false"
+						:use-default-global-filter="false" :lazy-load="true" @on-edit-row="doEdit"
+						@on-del-row="doRemove" v-ref:user-table>
+					</vue-bootstrap-table>
+				</simple-card>
+
+
+
+			</div>
+			<div v-else style="position: relative;width: 800px;margin-top: 30px;">
+				<simple-card class="fip-content-item fixed-table-card">
+					<p slot="title"><span></span></p>
+					<a slot="extra" v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'"
+						@click.prevent="doAdduser">
+						<span>
+							<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
+						</span>
+					</a>
+					<vue-bootstrap-table :columns="tableModel.deptTableModel.columns"
+						:values='tableModel.deptTableModel.values' :show-empty-row="false"
+						:use-default-global-filter="false" :lazy-load="true" @on-edit-row="doEdit"
+						@on-del-row="doRemove" v-ref:user-table>
+					</vue-bootstrap-table>
+				</simple-card>
+
+
+
+			</div>
+
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose">{{$t("gb.common.close")}}</iv-button>
+	</div>
+
+</div>
+<dept-select-modal :visible.sync="deptSelectModel.visible" @do-save="doSaveDepts" :single-select="type==1?true:false"
+	:filter-data="deptSelectModel.filterData"></dept-select-modal>
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false" @do-save="doSaveUsers"
+	:filter-data="type==0?selectModel.userSelectModel.filterData:{}" :single-select="type==0?true:false">
+</user-select-modal>
+<!-- 
+<dependency-tree :visible.sync="dependencyTreeModel.visible" :id.sync="mainModel.vo.dependencyId"
+	:comp-id.sync="mainModel.vo.compId" :org-id="mainModel.vo.orgId" @do-save="doSaveDependencyInfo"
+	@do-cancel="closeDependencyInfo" clearable>
+</dependency-tree> -->
+<style>
+	#approvalUsersDetail .simple-card-body {
+		min-height: 20px;
+	}
+	#approvalUsersDetail .table-scroll-main-body{
+		min-height: 130px;
+	}
+	#approvalUsersDetail .table-scroll-main{
+		background-color: transparent;
+	}
+	#approvalUsersDetail .checked {
+		/* padding: 2px 3px;
+		border: 1px solid #aaa; */
+		background-color: #aacd03;
+		color: white !important;
+	}
+
+	#appravalModel .el-form-item__label {
+		width: 150px !important;
+	}
+
+	#appravalModel .el-form-item__content {
+		margin-left: 150px !important;
+	}
+
+	#appravalModel .simple-card-head {
+		padding: 5px 15px 0 9px;
+	}
+</style>
+
+<company-select-model @do-save='doSaveCompany' :visible.sync="companySelectModel.show"
+	:filter-data="companySelectModel.filterData" single-select></company-select-model>
+
+<Modal :visible.sync="selectModal.show" footer-hide title="配置" width="700" id="appravalModel">
+
+	<div v-show='type==0' class="epc-content" style="background-color: white;max-height: 630px;">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item label="操作票签发人" prop="name">
+				<multi-input-select :values="users" @click="doSelectUser" v-ref:user-select>
+				</multi-input-select>
+			</el-form-item>
+
+		</el-form>
+		<simple-card>
+			<p slot="title" style="font-weight: normal;">负责审批的站场/队</p>
+			<a slot="extra" @click.prevent="doAddDept">
+				<span>
+					<Icon type="plus"></Icon>添加部门
+				</span>
+			</a>
+			<div class="epc-content epc-content-scroll" style="padding: 0;">
+				<vue-bootstrap-table :setting="deptTable"  @on-del-row="doDelDept" :values='deptTable.values' resizeable
+					v-ref:dept-table>
+				</vue-bootstrap-table>
+			</div>
+
+		</simple-card>
+
+
+	</div>
+	<div v-show='type==1' class="epc-content" style="background-color: white;max-height: 630px;">
+		<el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+			<el-form-item label="站场/队（部门）" prop="name">
+				<multi-input-select :values="depts" @click="doSelectDept" v-ref:dept-select></multi-input-select>
+			</el-form-item>
+
+		</el-form>
+		<simple-card>
+			<p slot="title" style="font-weight: normal;">审批当前部门的人员</p>
+			<a slot="extra" @click.prevent="doAddDeptUser">
+				<span>
+					<Icon type="plus"></Icon>添加人员
+				</span>
+			</a>
+			<div class="epc-content epc-content-scroll" style="padding: 0;">
+				<vue-bootstrap-table :setting="deptUserTable"   @on-del-row="doDelDeptUser" :values='deptUserTable.values'
+					resizeable>
+				</vue-bootstrap-table v-ref:dept-user-table>
+			</div>
+
+		</simple-card>
+
+
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="selectModal.show=false" class="pull-right">{{$t("gb.common.cancel")}}
+		</vi-button>
+		<vi-button type="primary" @click="doSaveData" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+	</div>
+
+</Modal>

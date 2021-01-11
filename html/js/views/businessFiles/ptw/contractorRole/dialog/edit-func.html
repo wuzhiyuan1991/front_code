@@ -1,0 +1,74 @@
+<!-- <div class="form-dialog" id="dialog-form" style="height: 600px;width: 535px;"> -->
+<div class="edit-pop-container">
+	<div class="epc-content">
+
+		<iv-row>
+			<iv-col span="12" >
+	            <!--<div class="menuFor8 mr16">-->
+	                <!--<div class="not">模块选择</div>-->
+	                <!--<iv-tree :model="mainModel.vo.data"-->
+	                         <!--:selected-datas.sync="mainModel.selectedDatas"-->
+	                         <!--:single-select="true"-->
+	                         <!--id-attr="id"-->
+	                         <!--pid-attr="parentId"-->
+	                         <!--display-attr="name"-->
+							 <!--:show-checkbox="false"-->
+	                         <!--@on-tree-node-click="doChangeGroup" >-->
+	                <!--</iv-tree>-->
+	            <!--</div>-->
+				<div class="ivu-tree-fun">
+					<div class="ivu-transfer-edit">
+					<div class="ivu-transfer-list">
+						<div class="ivu-transfer-list-header">
+							<span>{{$t("bs.orl.modelSel")}}</span>
+						</div>
+						<div class="ivu-transfer-list-body">
+							<div style="height: 100%; overflow:auto;">
+							<iv-tree :model="mainModel.vo.data"
+									 :selected-datas.sync="mainModel.selectedDatas"
+									 :serch-filterable="true"
+									 :single-select="true"
+									 id-attr="id"
+									 pid-attr="parentId"
+									 display-attr="name"
+									 :show-checkbox="false"
+									 :open="false"
+									 @on-tree-node-click="doChangeGroup" >
+							</iv-tree>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+	        </iv-col>
+	        <iv-col span="12">
+	            <!--<div  class="col-xs-12 menuFor8">-->
+					<!--<div class="not">功能选择</div>-->
+	                <!--<div>-->
+	                    <!--<iv-checkbox-group :model.sync="mainModel.checkedList" addclasses="checkboxGrou">-->
+	                        <!--<iv-checkbox  v-for="a in mainModel.vo.list" :value="a.id">{{a.name}}</iv-checkbox>-->
+	                    <!--</iv-checkbox-group>-->
+	                <!--</div>-->
+	            <!--</div>-->
+				<div class="ivu-transfer-edit ivu-transfer-edit-left">
+				<List
+						:prefix-cls="prefixCls + '-list'"
+						:data="mainModel.vo.list"
+						:render-format="renderFormat"
+						:title="titles"
+						:checked-keys.sync="mainModel.vo.authList"
+						:filter-method="filterMethod"
+						:valid-keys-count.sync="validKeysCount"
+						@on-toggle-select-all="doToggleSelectAll"
+						>
+					<!--:showcount="false"-->
+					<!--<slot></slot>-->
+				</List>
+	        	</div>
+		 </iv-col>
+		</iv-row>
+	</div>
+	<div class="epc-footer">
+		<vi-button type="primary" @click="doSave" class="pull-right">{{$t("bd.ria.preservation")}}</vi-button>
+	</div>	
+</div>	

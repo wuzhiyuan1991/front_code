@@ -1,0 +1,118 @@
+<style>
+.ivu-select-selection:hover {
+    /*overflow: auto;*/
+    /*max-height: 50px;*/
+    overflow-x: hidden;
+    height: auto !important;
+    z-index: 3;
+    max-height: 110px;
+}
+</style>
+<div class="report train-chart">
+
+    <!--左侧-->
+    <div class="train-content">
+        <div class="train-tit">考试分析</div>
+
+        <div class="train-filter">
+
+            <!-- <div class="train-select">
+                <i-select :model.sync="qryParam.typeOfRange" v-ref:select :list="typeOfRanges" @on-change="changeTypeOfRange">
+                    <i-option v-for="item in typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                </i-select>
+            </div> -->
+
+            <!-- <div class="train-obj-select">
+                <obj-select :type="qryParam.typeOfRange" :values.sync="qryParam.objRange"></obj-select>
+            </div> -->
+
+            <!-- <div class="train-date-range">
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="qryParam.dateRange" placeholder="选择日期范围"></vi-date-picker>
+            </div> -->
+
+
+            <div class="train-obj-select" style="width:700px;">
+	            <div class="select-tree">
+	            	<div  class="ivu-select-top ivu-select ivu-select-multiple">
+		                <div class="ivu-select-selection">
+		                    <div class="ivu-tag" v-for="(index, tag) in qryParam.exams">
+		                        <span class="ivu-tag-text">{{tag.examPaper != null ? (tag.examPaper.name + ":" + tag.examDate) : ""}}</span>
+		                        <i class="ivu-icon ivu-icon-ios-close-empty" @click="doRemoveExam(index)"></i>
+		                    </div>
+                            <span class="ivu-select-placeholder" v-show="qryParam.exams.length === 0">请选择考试计划</span>
+                        </div>
+		                <span style="font-size: 16px;" class="select-ico-add" @click.prevent="doShowExamModal()">
+		                    <i class="ivu-icon ivu-icon-plus-round"></i>
+		                </span>
+	            	</div>
+	            </div>
+            </div>
+
+            <iv-button type="primary" @click="doQuery">查询</iv-button>
+        </div>
+
+        <!-- <iv-row type="flex" justify="end" style="padding: 0;">
+            <iv-col>
+                <iv-button type="text" @click="changeMethod('abs');" :class="{active:method == 'abs'}">绝对值</iv-button>
+                <span>|</span>
+                <iv-button type="text" v-if="qryParam.typeOfRange != 'per'" @click="changeMethod('avg');" :class="{active:method == 'avg'}">平均值</iv-button>
+                <span v-if="qryParam.typeOfRange != 'per'">|</span>
+                <iv-button type="text" @click="showMore" style="margin-right: 20px;">更多...</iv-button>
+            </iv-col>
+        </iv-row> -->
+        
+		<iv-col span="30" style="height:calc(100% - 110px);background: #fff;margin-right: 10px">
+	        	<vuecharts :options="charts.opt" style="height: 100%" @chartclick="chartClick" v-ref:echarts></vuecharts>
+        </iv-col>
+    </div>
+
+    <!--右侧-->
+    <div class="rank-box" style="width:40%">
+        <div class="text-right" style="margin-bottom: 10px;">
+            <iv-button @click="doExportExcel">导出</iv-button>
+        </div>
+        <div class="rank-item" style="border-bottom: 1px solid #ccc;padding: 0 10px;">
+            <span class="rank-name" style="">知识点</span>
+            <span class="rank-name text-center" style="flex: none;width: 75px;">正确率（%）</span>
+            <span class="rank-name text-center" style="flex: none;width: 60px;">正确题数</span>
+            <span class="rank-name text-center" style="flex: none;width: 65px;">全部题数</span>
+        </div>
+        <ul style="height: calc(100% - 90px);">
+            <li class="rank-item" v-for="(index, item) in items">
+                <span class="rank-name">{{item.xName}}</span>
+                <span class="rank-name text-center" style="flex: none;width: 75px;">{{item.yValues.yValue3}}%</span>
+                <span class="rank-name text-center" style="flex: none;width: 60px;">{{item.yValues.yValue1}}</span>
+                <span class="rank-name text-center" style="flex: none;width: 65px;">{{item.yValues.yValue2}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<exam-modal
+        :visible.sync="selectModel.examSelectModel.visible"
+        :filter-data="selectModel.examSelectModel.filterData"
+        @do-save="doSaveExams"
+></exam-modal>
+
+	<!-- 更多 -->
+	<Modal v-if="detailModel.show" class="userSelectModal" :visible.sync="detailModel.show" mask-closable :title="detailModel.title" width="1000" :footer-hide="true">
+		<div class="edit-pop-container" style="width: 1000px">
+            <div class="epc-header" style="background-color: #eaf0f5;text-align: right;padding: 10px 20px 0;">
+                <iv-button @click="doExport">导出</iv-button>
+            </div>
+            <div class="epc-content integral-table" style="padding-top: 10px;">
+				<vue-bootstrap-table
+                     :columns="detailModel.table.columns"
+                     :url="detailModel.table.url"
+                     :default-filter-value="detailModel.table.qryParam"
+                     :show-filter="false"
+                     :filter-column="detailModel.table.filterColumns"
+                     :show-column-picker="false"
+                     :show-pager="true"
+                     show-loading
+                     resizeable
+                     v-ref:rpt-details-table>
+				</vue-bootstrap-table>
+			</div>
+		</div>
+	</Modal>

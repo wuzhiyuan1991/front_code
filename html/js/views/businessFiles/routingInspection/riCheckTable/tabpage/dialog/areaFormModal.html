@@ -1,0 +1,46 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true" class="userSelectModal">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+                <!--<el-form-item label="编码" prop="code">-->
+                    <!--<iv-input :value.sync="mainModel.vo.code"></iv-input>-->
+                <!--</el-form-item>-->
+                <el-form-item label="巡检区域名称" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                </el-form-item>
+                <el-form-item label="所属公司" prop="compId">
+                    <company-tree-select :id.sync="mainModel.vo.compId" disabled></company-tree-select>
+                </el-form-item>
+                <el-form-item label="所属部门" prop="orgId">
+                    <department-tree-select :id.sync="mainModel.vo.orgId" :disabled="enableDeptFilter || isUpdate" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+                </el-form-item>
+                <el-form-item label="属地" prop="dominationArea.id">
+                    <input-select
+                            :value="mainModel.vo.dominationArea"
+                            id-field="id"
+                            display-field="name"
+                            @click="doShowSelectModal"
+                            :disabled="isUpdate"
+                    ></input-select>
+                </el-form-item>
+                <el-form-item label="状态" prop="disable">
+                    <span>启用</span>
+                </el-form-item>
+                <el-form-item label="备注" prop="remarks">
+                    <iv-input :value.sync="mainModel.vo.remarks" type="textarea" :rows="3"></iv-input>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+
+<!--属地选择器-->
+<dominationarea-select-modal
+        single-select
+        :visible.sync="dominationAreaSelectModel.visible"
+        :filter-data="dominationAreaSelectModel.filterData"
+        @do-save="doSaveDominationArea"
+></dominationarea-select-modal>

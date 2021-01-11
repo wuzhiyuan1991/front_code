@@ -1,0 +1,66 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="800" :footer-hide="true" class="userSelectModal">
+    <div class="sw-modal-body">
+        <div class="sw-cts-box">
+            <div class="sw-cts-left" style="width: 350px;">
+                <!--选择属地-->
+                <div class="sw-co-center sw-row">
+                    <div style="flex: 1;">
+                        <div class="sw-co-bar">
+                            <span>部门：</span>
+                            <div>
+                                <iv-input :value.sync="orgKey"></iv-input>
+                                <iv-button @click="doQueryOrg">查询</iv-button>
+                            </div>
+                        </div>
+                        <vue-bootstrap-table
+                                :url="organizationModel.url"
+                                :columns="organizationModel.columns"
+                                :filter-column="organizationModel.filterColumn"
+                                :show-pager="true"
+                                :is-single-check="true"
+                                :selected-datas.sync="organizationModel.selectedDatas"
+                                :default-filter-value="organizationModel.defaultFilterValue"
+                                lazy-load
+                                @on-data-loaded="selectedOrg"
+                                v-ref:organization-table
+                                style="height: 493px;"
+                        >
+                        </vue-bootstrap-table>
+                    </div>
+                </div>
+            </div>
+            <div class="sw-cts-right">
+                <div class="sw-co-bar">
+                    <span>属地：</span>
+                    <div>
+                        <iv-input :value.sync="areaKey"></iv-input>
+                        <iv-button @click="doQueryArea">查询</iv-button>
+                    </div>
+                </div>
+                <vue-bootstrap-table
+                        :url="dominationAreaModel.url"
+                        :columns="dominationAreaModel.columns"
+                        :filter-column="dominationAreaModel.filterColumn"
+                        :show-pager="true"
+                        :selected-datas.sync="dominationAreaModel.selectedDatas"
+                        :default-filter-value="dominationAreaModel.defaultFilterValue"
+                        @on-click-cell="doCheckTableRowClick"
+                        @on-dbclick-cell="onDbClickCell"
+                        lazy-load
+                        :show-page-number="true"
+                        :show-filter="false"
+                        v-ref:dominationarea-table
+                        @on-data-loaded="selectAll"
+                        style="height: 493px;"
+                >
+                </vue-bootstrap-table>
+            </div>
+        </div>
+
+
+        <div class="sw-co-footer">
+            <iv-button type="primary" @click="doSave" style="margin-right: 20px;">确定</iv-button>
+            <iv-button @click="doClose">取消</iv-button>
+        </div>
+    </div>
+</Modal>

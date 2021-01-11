@@ -1,0 +1,206 @@
+<!--<div class="detail-large-container">-->
+	<!--<div class="base-info-panel">-->
+		<!--<div class="bip-header">-->
+			<!--<div class="bip-header-title">-->
+				<!--<i class="recordPng"></i><span>{{mainModel.title}}</span>-->
+			<!--</div>-->
+			<!--<div class="bip-header-btn-group">-->
+				<!--<iv-button type="ghost" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>-->
+				<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.vo.status == '0'" type="ghost" @click.stop="doEdit" >{{$t('gb.common.edition')}}</iv-button>-->
+				<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSubmitDetail(1)" >{{$t('gb.comnon.save')}}</iv-button>-->
+				<!--<iv-button v-if="mainModel.vo.status=='0' && hasAuth('submit') " type="ghost" @click="doSubmitDetail(0)" >提交</iv-button>-->
+				<!--<iv-button v-if="hasAuth('viewScheme') " type="ghost" @click="doVeiwScheme" >查看演练方案</iv-button>-->
+				<!--<vi-button v-if="!mainModel.isReadOnly && isEditStatus"  @click="doCancel" type="ghost"  >{{$t("gb.common.cancel")}}</vi-button>-->
+			<!--</div>-->
+		<!--</div>-->
+		<!--<div class="bip-content selfEvaluationDetailTable">-->
+			<!--<div class="selfEvaluationDetailTableHead1">-->
+				<!--<div  class="selfEvaluationDetailTableHeadItem" style="border-right:1px solid #ddd;width:259px;">评价内容</div>-->
+				<!--<div  class="selfEvaluationDetailTableHeadItem" style="width:580px;">答案集合</div>-->
+			<!--</div>-->
+			<!--<el-form class="bip-content-form"   :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>-->
+				<!--<iv-row class="bip-content-item" v-for="(index,item) in mainModel.selfEvaluationQuestions">-->
+					<!--<el-form-item :label="getLabelName(item, index)"  >-->
+						<!--<iv-radio-group :model.sync="item.values" v-if="item.type == '1'">-->
+							<!--<iv-radio :value="opt.id" v-for="opt in item.selfEvaluationOpts" :disabled="mainModel.isReadOnly" >-->
+								<!--<span>{{opt.content}}</span>-->
+							<!--</iv-radio>-->
+						<!--</iv-radio-group>-->
+						<!--<iv-checkbox-group :model.sync="item.values" v-if="item.type == '2'">-->
+							<!--<iv-checkbox :value="opt.id" style="margin-left:0px;" v-for="(optIndex,opt) in item.selfEvaluationOpts" :middle="isHalfCheck" :disabled="mainModel.isReadOnly">{{opt.content}}</iv-checkbox>-->
+						<!--</iv-checkbox-group>-->
+						<!--<div v-if="item.type == '3'">-->
+							<!--<span v-if="mainModel.isReadOnly">{{item.values}}</span>-->
+							<!--<iv-input :rows="8" type="textarea" v-else :value.sync="item.values"  class="inp"></iv-input>-->
+						<!--</div>-->
+					<!--</el-form-item>-->
+				<!--</iv-row>-->
+
+			<!--</el-form>-->
+		<!--</div>-->
+	<!--</div>-->
+
+<!--</div>-->
+
+
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+		<div class="fip-content">
+			<div class="bip-content selfEvaluationDetailTable" style="position: relative;">
+				<div style="z-index: 1;position: absolute;height: 100%;width: 1px;border-left: 1px solid #DDD;left: 186px;"></div>
+				<div class="selfEvaluationDetailTableHead1">
+					<div  class="selfEvaluationDetailTableHeadItem" style="border-right:1px solid #ddd;width:259px;">评价内容</div>
+					<div  class="selfEvaluationDetailTableHeadItem" style="width:580px;">答案集合</div>
+				</div>
+				<el-form class="bip-content-form"   :model="mainModel.vo" is-label-vertical :rules="baseRules"  v-ref:ruleform>
+					<iv-row class="bip-content-item" v-for="(index,item) in mainModel.selfEvaluationQuestions">
+						<div :class="getBgColor(index)">
+							<el-form-item :label="getLabelName(item, index)"  >
+								<iv-radio-group :model.sync="item.values" v-if="item.type == '1'">
+									<iv-radio :value="opt.id" v-for="opt in item.selfEvaluationOpts" :disabled="mainModel.isReadOnly" >
+										<span>{{opt.content}}</span>
+									</iv-radio>
+								</iv-radio-group>
+								<iv-checkbox-group :model.sync="item.values" v-if="item.type == '2'">
+									<iv-checkbox :value="opt.id" style="margin-left:0px;" v-for="(optIndex,opt) in item.selfEvaluationOpts" :middle="isHalfCheck" :disabled="mainModel.isReadOnly">{{opt.content}}</iv-checkbox>
+								</iv-checkbox-group>
+								<div v-if="item.type == '3'">
+									<span style="font-size: 14px;white-space: pre;" v-if="mainModel.isReadOnly">{{item.values}}</span>
+									<iv-textarea :rows="8" type="textarea" v-else :value.sync="item.values"  class="inp"></iv-textarea>
+									<!--<iv-input type="textarea" v-else :value.sync="item.values" ></iv-input>-->
+								</div>
+							</el-form-item>
+						</div>
+					</iv-row>
+				</el-form>
+			</div>
+		</div>
+	</div>
+	<div class="few-info-sider pull-right" style="width:180px;">
+		<!--<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy" icon="android-document">复制</iv-button>-->
+		<!--<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && mainModel.isReadOnly && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>-->
+		<!--<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		<!--<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>-->
+
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.vo.status == '0'" icon="android-document" type="ghost" @click.stop="doEdit" >填写自评</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSubmitDetail(1)"  icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.vo.status=='0' && hasAuth('submit') " type="ghost" @click="doSubmitDetail(0)" icon="android-document" >提交签名</iv-button>
+		<iv-button v-if="hasAuth('viewScheme') " type="ghost" @click="doVeiwScheme" icon="folder" >查看演练方案</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus"  @click="doCancel" type="ghost" icon="ios-information-outline " >{{$t("gb.common.cancel")}}</vi-button>
+	</div>
+</div>
+
+
+
+
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :filter-data="selectModel.userSelectModel.filterData" single-select @do-save="doSaveUser"></user-select-modal>
+<exercisescheme-select-modal :visible.sync="selectModel.exerciseSchemeSelectModel.visible" :filter-data="selectModel.exerciseSchemeSelectModel.filterData" single-select @do-save="doSaveExerciseScheme"></exercisescheme-select-modal>
+
+<selfevaluationdetail-form-modal
+		:visible.sync="formModel.selfEvaluationDetailFormModel.show"
+		@do-save="doSaveSelfEvaluationDetail"
+		@do-update="doUpdateSelfEvaluationDetail"
+		:query-url="formModel.selfEvaluationDetailFormModel.queryUrl"
+		:hidden-fields="formModel.selfEvaluationDetailFormModel.hiddenFields"
+		v-ref:selfevaluationdetail-form-modal>
+</selfevaluationdetail-form-modal>
+
+
+<style>
+	.selfEvaluationDetailTableTitle{
+		display: flex;
+		background: #EAF0F5;
+		align-items: center;
+		border:1px solid #ddd;
+	}
+	.selfEvaluationDetailTableTitle div{
+		margin-left: 23px;
+		padding: 5px 0;
+		font-size: 14px;
+	}
+	.selfEvaluationDetailTableHeadItem{
+		text-align: center;
+		padding:5px ;
+	}
+	.selfEvaluationDetailTableHead1{
+		display: flex;
+		background: #EEF3F5;
+		width: 600px;
+		color: #666;
+		font-weight: 600;
+		font-size: 14px;
+		border:1px solid #ddd;
+	}
+
+	.selfEvaluationDetailTable .el-form_vertical{
+		padding-bottom:0;
+		min-height: 10px !important;
+	}
+
+	.selfEvaluationDetailTable .el-form-item_vertical{
+		width: 600px;
+		display: flex;
+		align-items: center;
+		font-size: 12px;
+		border: 1px solid #ddd;
+		border-top: none;
+	}
+
+	.selfEvaluationDetailTable .ivu-textarea-wrapper{
+		width:100% !important;
+		min-height: 150px;
+	}
+
+
+	.bgf9 .el-form-item_vertical{
+		background-color: #fff;
+	}
+	.bgff .el-form-item_vertical{
+		background-color: #fff;
+	}
+	.bgf9 .el-form-item_vertical:hover , .bgff .el-form-item_vertical:hover{
+		background-color: #f5f5f5;
+	}
+
+
+	.selfEvaluationDetailTable .bip-content-item{
+		padding:0;
+		border:none;
+	}
+
+	.selfEvaluationDetailTable .el-form-item_vertical .el-form-item__vertical_label{
+		font-size: 14px;
+		width: 188px !important;
+		padding-left: 10px;
+		/*border-right: 1px solid #ddd;*/
+		height: 100%;
+		min-height: 40px;
+		display: block;
+		line-height: 40px;
+		color:#666;
+	}
+	.selfEvaluationDetailTable .el-form-item_vertical .el-form-item__vertical_content{
+		padding-left:10px;
+		width:418px;
+		/*border-left:1px solid #ddd;*/
+		padding-right: 10px;
+	}
+	.selfEvaluationDetailTable .el-form-item__label{
+		width:249px !important;
+		/*border-right: 1px solid #ddd;*/
+	}
+	.selfEvaluationDetailTable .el-form-item__content{
+		width: 550px;
+		display: inline-block;
+		margin-left: 15px !important;
+		padding-right:15px !important;
+	}
+</style>

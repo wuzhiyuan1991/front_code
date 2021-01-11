@@ -1,0 +1,60 @@
+<Modal :visible.sync="visible"  width='650' :title="modalTitle" @on-cancel="doClose" :footer-hide="true">
+    <div class="modal-box-default" style="background: #fff;">
+        <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+            <div class="form-item-label required-before label280">{{title}}</div>
+            <div>
+                <!-- <iv-radio-group class="group-vertical" :model.sync="selectedWorkCatalogId"> -->
+                    <iv-radio  class="mb10 flex-h-start" :value="item.id" v-for="item of workCatalogList" style="word-break: break-all;white-space: normal;width:500px;">
+                        <div class="flex-layout">
+                            <span style="cursor: pointer;min-width: 75px;margin-right:5px;flex-grow:1;flex-shrink:0">
+                                {{item.name}}
+                            </span>
+                            <span v-if="item.levelList&&item.levelList.length>0&&selectedWorkCatalogId==item.id">
+                                <iv-radio-group  :model.sync="selectedWorLevelId">
+                                    (  <iv-radio :value="level.id" v-for="(index,level) of item.levelList">
+                                    <span style="cursor: pointer;">{{level.name}}</span>
+                                    <span v-if="index==item.levelList.length-1">）</span>
+                                </iv-radio>
+                                </iv-radio-group>
+                            </span>
+                        </div>
+
+                    </iv-radio>
+                <!-- </iv-radio-group> -->
+              <div style="width:280px;font-size:12px;" class="">{{ timeYMD.Format("yyyy-MM-dd") }}</div>
+          </div>
+        </div>
+        <div class="flex-layout flex-v-start" style="max-height: 500px;overflow: auto;margin-top:10px; margin-bottom: 20px;">
+            <div class="form-item-label required-before label280">请选择需要创建值班记录的所在部门（站/队）</div>
+            <div style="width:280px;font-size:12px;" class="ivu-select-dropdown-width280" prop="orgId">
+                <!-- <company-tree-select style="width:250px;" :id.sync="compId" placeholder="请选择公司"></company-tree-select> -->
+				<!-- <iv-input v-if="isUpdateOpType && mainModel.isFromRecord" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" disabled></iv-input> -->
+				<department-tree-select allow-parent-checked :id.sync="orgId" :comp-id.sync="compId"></department-tree-select>
+            </div>
+        </div>
+        <div v-show="!isShowBtn && orgId" style="color:red;">提示： 当前 {{getDataDic('org', orgId)['deptName']}} 已经有相关值班记录（值班中/待接班），无法创建新的值班记录。</div>
+        <div v-show="isShowBtn && orgId"  style="color:#33a6ff">提示： 当前 {{ getDataDic('org', orgId)['deptName']}} 无相关值班记录（值班中/待接班），可以创建新的值班记录。</div>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" v-if="isShowBtn" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<style>
+    .ivu-radio-cursor .ivu-radio{
+        cursor: pointer;
+    }
+    .ivu-select-dropdown-width280 .ivu-select-dropdown{
+        width:280px;
+    }
+	.label280 {
+		width: 280px;
+	}
+</style>

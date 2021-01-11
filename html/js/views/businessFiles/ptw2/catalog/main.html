@@ -1,0 +1,123 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default >
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+                    <div class="prelative addButton pull-right">
+                        <vi-button @click="doAddDetail">{{$t("gb.common.add")}}</vi-button>
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+			                    <!--<iv-dropdown-item>-->
+                                    <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                    $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+                                $main-header-dropdown-item-tag-common-display
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="doUpdate">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"
+                               @click="doAdd4Copy">复制
+                    </vi-button>
+                    <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="doDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+                <div class="lr-layout" style="background: #fff;padding:10px 0;">
+                    <div class="lr-layout-l legal-regulation-type-box" style="width: 189px;overflow-y: auto;z-index:100;border-right: 1px solid #ddd;">
+                        <base-according :border-right='false' :current-index.sync="checkedGroupIndex" v-ref:according width='188' :values="tabList" name-field="value" @on-selected="doSelectGroup"></base-according>
+                    </div>
+                    <div class="lr-layout-r" style="padding: 0;">
+                        <div v-show='checkedGroupIndex==0' style="width:500px;">
+                            <base-list
+                                        :auto-close="false"
+                                        :values.sync="taskType.values"
+                                       @on-selected='doSelectTaskIndex'
+                                       @on-add-ok="doSaveCatalogType"
+                                       @on-edit-ok="doEditCatalogType"
+                                       @on-move-row="onMoveRow"
+                                       @on-del="doDelCataLogType"
+                                       @on-del-all="doDelCataLogTypeAll"
+                            ></base-list>
+                        </div>
+                        <div v-show='checkedGroupIndex==1' >
+                            <main-work-level v-ref:main-work-level></main-work-level>
+                        </div>
+                        <div v-show="checkedGroupIndex==2" style="width:500px;">
+                                <base-list
+                                        :auto-close="false"
+                                :values.sync="taskPersonalProtection.values"
+                                @on-selected='doSelectTaskIndex'
+                                @on-add-ok="doSaveCatalogType"
+                                @on-edit-ok="doEditCatalogType"
+                                @on-move-row="onMoveRow"
+                                @on-del="doDelCataLogType"
+                                @on-del-all="doDelCataLogTypeAll">
+                            </base-list>
+
+                        </div>
+                        <div v-show="checkedGroupIndex==3">
+                            <main-gas-check v-ref:main-gas-check></main-gas-check>
+                        </div>
+                        <div v-show="checkedGroupIndex==4">
+                            <main-comment-type></main-comment-type>
+                        </div>
+                         <div  v-show="checkedGroupIndex==5"  >
+
+                                 <vi-button    class="company-control"  >公司选择控件</vi-button>
+                                  
+                                 <div class="mb10    " style="border-bottom: 1px solid #e8e8e8;">
+                                    <ul style="display: inline-flex;">
+                                        <li v-for="(index,item) of stuffTypes"
+                                            class="lr-layout-li"
+                                            :class="{'checked': index === stuffTypeSelectedIndex}"
+                                            @click="onTabsSwitch(index)">
+                                            <span>{{item.value}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                         </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+<aside :show.sync="detailModel1.show" :class="mainModel.detailPanelClass">
+    <detail-panel v-ref:detail-model></detail-panel>
+</aside>
+
+<style>
+     .company-control{
+            margin: 20px   40px;
+     }
+
+</style>

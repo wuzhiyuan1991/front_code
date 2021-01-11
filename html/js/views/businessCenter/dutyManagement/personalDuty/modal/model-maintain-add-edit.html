@@ -1,0 +1,61 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true" width='600' @on-cancel="doClose" >
+    <div class="modal-box-default modal-valve-param" style="background: #fff;">
+		<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+		    <el-form-item label="开始时间" prop="startTime" class="is-required">
+				<date-picker format="yyyy-MM-dd HH:mm" :begin="startTime":selected-date.sync="mainModel.vo.startTime" time-zero type="datetime"></date-picker>
+		    </el-form-item>
+			<el-form-item label="结束时间" prop="endTime" class="is-required">
+				<date-picker format="yyyy-MM-dd HH:mm" :begin="endTime":selected-date.sync="mainModel.vo.endTime" time-zero type="datetime"></date-picker>
+			</el-form-item>
+		    <el-form-item label="维护检修记录" prop="workRecord" class="is-required">
+		        <iv-input type="textarea" :rows="5" :value.sync="mainModel.vo.workRecord" placeholder="请输入"></iv-input>
+		    </el-form-item>
+		    <el-form-item label="维检人员" prop="users" class="is-required">
+				<div style="position: relative;cursor: pointer;" @click="showMaintainSelectModal">
+					<multiple-input-select
+						:selected-multiple.sync="mainModel.vo.users"
+						:textonly="mainModel.isReadOnly"
+						id-field="id"
+						display-field="name"
+					></multiple-input-select>
+				</div>
+		    </el-form-item>
+		</el-form>
+    </div>
+    <div class="edit-pop-container">
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+			<vi-button type="primary" @click="doClose" class="pull-right">{{$t("gb.common.close")}}</vi-button>
+        </div>
+    </div>
+<!--    <div slot="footer">-->
+<!--        <vi-Button type="ghost" size="large" @click="doClose">取消</vi-Button>-->
+<!--        <vi-Button type="primary" size="large"  @click="doSave">确定</vi-Button>-->
+<!--    </div>-->
+</Modal>
+
+<maintain-select-modal
+	:visible.sync="selectModel.userSelectModel.visible"
+    :filter-data="selectModel.userSelectModel.filterData" 
+	:show-only-type.sync="selectModel.userSelectModel.onlyType"
+	:single-select = "false" 
+    @do-save="doSaveMaintain">
+</maintain-select-modal>
+
+<style>
+	.modal-valve-param .ivu-select-dropdown-width420 .ivu-select-dropdown {
+		width: 420px;
+	}
+	
+	.modal-valve-param .el-form {
+		width: 85%;
+	}
+	
+	.modal-valve-param .el-form-item__label {
+		width: 136px !important;
+	}
+	
+	.modal-valve-param .el-form-item__content {
+		margin-left: 136px !important;
+	}
+</style>

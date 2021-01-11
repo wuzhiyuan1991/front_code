@@ -1,0 +1,45 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="1200" :footer-hide="true" class="userSelectModal">
+    <div class="sw-modal-body">
+
+        <div style="line-height: 40px;font-size: 16px;">
+            <span>巡检表 ： </span>
+            <span>{{checkTableName}}</span>
+        </div>
+
+
+        <div class="lr-layout" style="padding: 0;background-color: #fff;height: 500px;">
+
+            <div class="lr-layout-l" style="border: 1px solid #ddd;">
+                <div class="title">巡检区域</div>
+                <ul>
+                    <li v-for="(index, area) in checkAreas" class="lr-layout-li" :class="{'checked': index === checkedAreaIndex}"
+                        @click="doSelectArea(index)"><span style="display: inline-block;width: 25px;">{{index + 1}}</span>{{area.name}}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="lr-layout-r" style="overflow-y: auto;height: 500px;border: 1px solid #ddd;">
+                <div class="layout-body">
+                    <div v-for="(index, point) in checkedArea.points">
+                        <div class="body-header">
+                            <div style=" border-bottom: 1px solid green;">
+                                <span>巡检点: {{point.name}}</span>
+                            </div>
+                        </div>
+                        <lite-table
+                                :values="point.items"
+                                :columns="columns"
+                                :page-size-opts="[1000]"
+                                show-sequence
+                        ></lite-table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="sw-co-footer">
+            <iv-button @click="doClose">关闭</iv-button>
+        </div>
+    </div>
+</Modal>

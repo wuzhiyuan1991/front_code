@@ -1,0 +1,101 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="1000" :footer-hide="true" class="userSelectModal">
+    <div class="sw-modal-body">
+        <div >
+               <div style="position: relative;margin-bottom:10px;">
+                    <span style="margin-left: 10px; font-weight: 700;font-size: 16px;white-space: pre-wrap;line-height: 20px;color: #666;">巡检区域</span>
+                   <div style="position: absolute;right: 25px;top:0">
+                      <iv-checkbox @click.native='ischeckAll=!isischeckAll'  :checked.sync='ischeckAll'>全选</iv-check>
+                   </div> 
+                </div>
+                
+                
+               
+                    <div class="flex-v-start param-business child-h100 h-p100">
+                        <div class="scrollLeft flex-noshrink" id='scrollLeft' style="width: 150px; height: 445px; overflow-y: auto;">
+                            <p v-for="(key,item) of groupName" :title='item' style="overflow: hidden;    
+                            text-overflow:ellipsis;white-space: nowrap;" :class='clickItem==key?"click-item":""' class="anchor-item" @click.native="selModual(item)" >
+                                    {{item}}
+                            </p>
+                        </div>
+                        <div class="scrollRight flex-grow1"  id='selectScroll' style="height: 445px; overflow-y: auto;">
+                            <div class="rip-item-sub" v-for="(index,tir) in  groupName
+                                " :class='tir' >
+                                
+                                <div class="clearfix" style="margin: 10px 0;font-weight: bold;line-height: 28px;font-size: 16px;">
+                                    <div class="left" style="width: 300px; display: flex;align-items: center;">
+                                        <iv-input :value.sync="tir" textonly style = "width: auto"></iv-input>
+                                    </div>
+                                </div>
+                            
+                                <vue-bootstrap-table
+                                :row-merge="true"
+                                :values.sync="tableData[tir]"
+                                :columns="mainModel.columns"
+                                :filter-column="mainModel.filterColumn"
+                                :show-pager='false'
+                                :show-column-picker="false"
+                                :selected-datas.sync="selectData[tir].selectedDatas"
+                                :show-empty-row='false'
+                                :default-filter-value="mainModel.defaultFilterValue"
+                                lazy-load
+                                :show-filter="false"
+                                 :page-size-opts='[tableData[tir].length]'
+                                style="margin-left: 10px;"
+                                
+                        >
+                        </vue-bootstrap-table>
+                        <!-- :selected-datas.sync="mainModel.selectedDatas" -->
+                               
+                    </div>
+                        
+                         
+                        </div>
+                        </div>
+                    
+        </div>
+
+
+        <div class="sw-co-footer">
+            <iv-button type="primary" @click="doSave" style="margin-right: 20px;">确定</iv-button>
+            <iv-button @click="doClose">取消</iv-button>
+        </div>
+    </div>
+</Modal>
+<style scoped>
+  .simple-card-head{
+      height: 0!important;
+  }
+    .anchor-item{
+        align-items:center;
+        background-color:rgb(255, 255, 255);
+border-bottom-color:rgb(221, 221, 221);
+border-bottom-style:solid;
+border-bottom-width:1px;
+box-sizing:border-box;
+color:#666666;
+cursor:pointer;
+display:flex;
+font-family:"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 微软雅黑, Arial, sans-serif;
+font-size:14px;
+font-weight:400;
+height:32px;
+line-height:21px;
+margin-block-end:0px;
+margin-block-start:0px;
+margin-bottom:0px;
+margin-inline-end:0px;
+margin-inline-start:0px;
+margin-left:0px;
+margin-right:0px;
+margin-top:0px;
+padding-bottom:0px;
+padding-left:10px;
+padding-right:10px;
+padding-top:0px;
+text-size-adjust:100%;
+    }
+    .click-item{
+        background-color:rgb(25, 163, 231)!important;
+        color: #ffffff!important;
+    }
+</style>

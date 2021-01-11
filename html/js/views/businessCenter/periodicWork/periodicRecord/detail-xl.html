@@ -1,0 +1,204 @@
+<!-- 左浮动框 -->
+<div class="detail-large-container">
+    <div class="base-info-panel">
+        <div class="bip-header">
+            <div class="bip-header-title">
+                <i class="recordPng"></i><span>{{$t("gb.common.basicInfo")}}</span>
+            </div>
+            <div class="bip-header-btn-group">
+                <iv-button type="ghost" @click="doSave" v-if="isShowSaveBtn">{{$t("gb.comnon.save")}}</iv-button>
+                <vi-button type="ghost" v-if="hasAuth('exportPdf') && mainModel.isReadOnly" @click="doExportPdf">{{$t("gb.common.printDetail")}}</vi-button>
+                <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+            </div>
+        </div>
+        <div class="bip-content">
+
+            <!--计划检查-->
+            <el-form class="bip-content-form" :model="mainModel.vo" is-label-vertical :rules="mainModel.isReadOnly ? emptyRules : rules"  v-ref:ruleform>
+
+                <iv-row class="bip-content-item">
+
+                	<el-form-item class="small-info-box" :label="$t('gb.common.type')">
+                        <iv-input v-if="!mainModel.isReadOnly" value="计划检查" disabled></iv-input>
+                        <span v-else>{{getDataDic('checkTable_type',mainModel.vo.type)}}</span>
+					</el-form-item>
+
+                    <el-form-item prop="checkTask.name" label="工作任务"  class="small-info-box" >
+                        <input-select v-if="!mainModel.isReadOnly" :disabled="mainModel.opType !== 'create'" :show-tip="true" :value="mainModel.vo.checkTask" id-field="id" display-field="name" @click="doShowCheckTaskSelectModal" ></input-select>
+                        <span v-else>{{displayInspectTask()}}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('gb.common.checkTime')" class="small-info-box" prop="checkDate" v-show="!mainModel.isReadOnly">
+                        <date-picker
+                                v-if="!mainModel.isReadOnly"
+                                format="yyyy-MM-dd HH:mm:ss"
+                                type="datetime"
+                                :is-time="false"
+                                :selected-date.sync="mainModel.vo.checkDate"
+                                :begin="mainModel.vo.startDate"
+                        ></date-picker>
+                        <iv-input v-else :value="mainModel.vo.checkDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+
+                    <el-form-item  v-if="enableCheckLevel" label="检查级别" prop="checkLevel" class="small-info-box" >
+                        <iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('checkLevel', mainModel.vo.checkLevel)" disabled></iv-input>
+                        <span v-else>{{getDataDic('checkLevel', mainModel.vo.checkLevel)}}</span>
+                    </el-form-item>
+
+                </iv-row>
+
+                <iv-row class="bip-content-item">
+
+                    <el-form-item :label="$t('gb.common.startTime')" format="yyyy-MM-dd HH:mm:ss" class="small-info-box" prop="startTime">
+                        <iv-input v-if="!mainModel.isReadOnly" :value="mainModel.vo.startDate" disabled class="inp"></iv-input>
+                        <iv-input v-else :value.sync="mainModel.vo.startDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('gb.common.endTime')" format="yyyy-MM-dd HH:mm:ss" class="small-info-box" prop="endTime">
+                        <iv-input v-if="!mainModel.isReadOnly" :value="mainModel.vo.endDate" disabled class="inp"></iv-input>
+                        <iv-input v-else :value.sync="mainModel.vo.endDate" textonly class="inp"></iv-input>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('gb.common.ownedComp')" prop="compId" class="small-info-box" >
+                        <iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.compId)['compName']" disabled></iv-input>
+                        <span v-else>{{getDataDic('org', mainModel.vo.compId)['compName']}}</span>
+                    </el-form-item>
+
+                    <el-form-item  :label="$t('gb.common.ownedDept')" prop="orgId" class="small-info-box" >
+                        <iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org', mainModel.vo.orgId)['deptName']" disabled></iv-input>
+                        <span v-else>{{getDataDic('org', mainModel.vo.orgId)['deptName']}}</span>
+                    </el-form-item>
+
+                </iv-row>
+            </el-form>
+
+        </div>
+    </div>
+    
+    <div class="rel-info-panel">
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title">
+                    <i class="itemPng"></i>
+                    <span>任务组明细</span>
+                </p>
+                <vue-bootstrap-table
+                        :columns="taskTable.columns"
+                        :show-filter="false"
+                        :show-column-picker="false"
+                        :show-pager="false"
+                        :page-size-opts="[1000]"
+                        :values="checkObjModel.checkObjects"
+                        @on-click-cell="doTaskClick"
+                        :show-empty-row="false"
+                        v-ref:checktask-table
+                >
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+    </div>
+
+    <!--查看检查项-->
+    <div class="rel-info-panel" v-if="isTaskDone">
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title">
+                    <i class="itemPng"></i>
+                    <span>工作项</span>
+                </p>
+                <simple-card class="bip-content-sub-item" v-for="group in checkObjModel.items">
+                    <span slot="title">{{group.groupName}}</span>
+                    <vue-bootstrap-table
+                            :columns="itemColumns"
+                            :show-filter="false"
+                            :show-column-picker="false"
+                            :show-pager="true"
+                            :values="group.itemList"
+                            @on-click-cell="doViewDetail"
+                            :show-empty-row="false"
+                            :show-seq="true"
+                            cursor="pointer"
+                    >
+                    </vue-bootstrap-table>
+                </simple-card>
+            </simple-card>
+        </div>
+    </div>
+
+    <!--执行检查项-->
+    <div class="rel-info-panel" v-if="!isTaskDone">
+        <div class="rip-item">
+            <simple-card>
+                <p slot="title">
+                    <i class="itemPng"></i>
+                    <span>检查项</span>
+                </p>
+                <simple-card class="bip-content-sub-item" v-for="group in checkObjModel.items">
+                    <span slot="title">{{group.groupName}}</span>
+                    <vue-bootstrap-table
+                            :columns="itemColumns1"
+                            :show-filter="false"
+                            :show-column-picker="false"
+                            :show-pager="true"
+                            :values="group.itemList"
+                            @on-click-cell="editDetail"
+                            :show-empty-row="false"
+                            :show-seq="true"
+                    >
+                    </vue-bootstrap-table>
+                </simple-card>
+            </simple-card>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑检查结果弹框 -->
+<Modal :visible.sync="viewDetailModel1.show" :title="viewDetailModel1.title" width="520" :footer-hide="true">
+    <view-Edit-Component></view-Edit-Component>
+</Modal>
+
+<Modal :visible.sync="viewDetailModel.show" :title="viewDetailModel.title" width="720" :footer-hide="true">
+    <viewDetailComponent></viewDetailComponent>
+</Modal>
+
+<Modal :visible.sync="picDetailModel.show" :title="picDetailModel.title" width="520" :footer-hide="true">
+    <picDetail></picDetail>
+</Modal>
+
+
+<checktask-select-modal
+        single-select
+        :visible.sync="mainModel.showCheckTaskSelectModal"
+        @do-save="doSaveCheckTask"
+        :filter-data="selectModal.checkTaskSelectModal.filterData"
+></checktask-select-modal>
+
+<user-select-modal
+        single-select
+        :visible.sync="mainModel.showUserSelectModal"
+        @do-save="doSaveUser"
+></user-select-modal>
+
+<!--选择检查对象个体-->
+<check-object-select
+        :visible.sync="selectModal.checkObjectSelectModel.visible"
+        :co-type="selectModal.checkObjectSelectModel.checkObjectType"
+        :co-id="selectModal.checkObjectSelectModel.checkObjId"
+        :area-id="selectModal.checkObjectSelectModel.areaId"
+        :comp-id="mainModel.vo.compId"
+        @do-save="doSaveCheckObj"
+></check-object-select>
+<Modal :visible.sync="exportModel.visible" :title="exportModel.title" :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <iv-radio-group :model.sync="exportModel.exportType">
+                <iv-radio value="3">全部数据</iv-radio>
+                <iv-radio value="0">只包含"不合格"项</iv-radio>
+                <iv-radio value="1">只包含"合格"项</iv-radio>
+            </iv-radio-group>
+        </div>
+        <div class="epc-footer">
+            <!--            <vi-button type="primary" @click="doSaveCopy" class="pull-right">取消</vi-button>-->
+            <vi-button type="primary" @click="doExport" class="pull-right">确定</vi-button>
+        </div>
+    </div>
+</Modal>

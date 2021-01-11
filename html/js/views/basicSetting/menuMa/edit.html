@@ -1,0 +1,14 @@
+
+ <div class="edit-pop-container" >
+     <div class="epc-content">
+         <el-form :model="vo" :rules="rules" v-ref:ruleform>
+             <el-form-item :label="$t('gb.common.name')" prop="orgId">
+                 <input type="text" v-model = "vo.name" maxlength="50">
+            </el-form-item>
+             </el-form>
+     </div>
+         <div class="epc-footer">
+             <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.comnon.save")}}</vi-button>
+             <!--<vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>-->
+         </div>
+ </div>

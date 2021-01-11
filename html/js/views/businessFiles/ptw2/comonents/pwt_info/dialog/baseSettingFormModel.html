@@ -1,0 +1,46 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width:420 :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content el-form-item__label_light" style="min-height:290px;">
+            <el-form class="fip-content-item-form" :model="mainModel.vo"
+                     :rules="mainModel.rules" v-ref:ruleform>
+                <!--<el-form-item :label="$t('gb.common.code')" prop="code">-->
+                    <!--<code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+                <!--</el-form-item>-->
+                <el-form-item v-if="mainModel.vo.isInherent=='1'" label="信息项名称" prop="oldName">
+                    <iv-input :value.sync="mainModel.vo.oldName" textonly></iv-input>
+                </el-form-item>
+                <el-form-item :label="mainModel.vo.isInherent=='1'?'名称（拟定修改）':'信息项名称'" prop="name">
+                    <iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+                </el-form-item>
+
+                <!--<el-form-item v-if="mainModel.vo.isInherent!='1'" label="信息项名称" prop="name">-->
+                    <!--<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>-->
+                <!--</el-form-item>-->
+
+                <el-form-item v-if="mainModel.vo.isInherent!='1'" label="数据类型" prop="dataType">
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_column_setting_data_type', mainModel.vo.dataType) }}</span>
+                    <i-select v-else :model.sync="mainModel.vo.dataType" :list="getDataDicList('iptw_card_column_setting_data_type')" clearable></i-select>
+                </el-form-item>
+                <el-form-item v-if="mainModel.vo.isInherent=='1'" label="固化字段" prop="isInherent">
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_column_setting_is_inherent', mainModel.vo.isInherent) }}</span>
+                    <i-select disabled v-else :model.sync="mainModel.vo.isInherent" :list="getDataDicList('iptw_card_column_setting_is_inherent')" clearable></i-select>
+                </el-form-item>
+
+                <el-form-item :label="$t('gb.common.state')" prop="disable">
+                    <disable-select :disabled="mainModel.vo.isInherent=='1' && codeMap(mainModel.vo)" :value.sync="mainModel.vo.disable" :read-only="mainModel.isReadOnly" show-input></disable-select>
+                </el-form-item>
+                <el-form-item label="是否必填项" prop="isRequired">
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_card_column_setting_is_required', mainModel.vo.isRequired) }}</span>
+                    <i-select v-else  :disabled="mainModel.vo.isInherent=='1' && codeMap(mainModel.vo, 'require')" :model.sync="mainModel.vo.isRequired" :list="getDataDicList('iptw_card_column_setting_is_required')" clearable></i-select>
+                </el-form-item>
+                <!--<el-form-item label="作业票模板" prop="tpl.id">-->
+                    <!--<input-select :value="mainModel.vo.ptwCardTpl" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" clearable @click="(!mainModel.isReadOnly) && (doShowPtwCardTplSelectModal())" ></input-select>-->
+                <!--</el-form-item>-->
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+

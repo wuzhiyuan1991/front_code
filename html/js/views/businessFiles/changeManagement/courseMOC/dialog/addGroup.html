@@ -1,0 +1,35 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+            <el-form-item  label="受培训人" prop="trainee.id">
+
+                <input-select :value.sync="mainModel.vo.trainee" id-field="id" display-field="name"
+                :textonly="mainModel.isReadOnly" clearable
+                @click="doShowSelectUserModal()"></input-select>
+            </el-form-item>
+            <el-form-item label="培训日期" prop="cultivateDate">
+                <date-picker style="width: 150px;" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00"
+								:selected-date.sync="mainModel.vo.cultivateDate" clearable></date-picker>
+            </el-form-item>
+            <el-form-item label="培训结果" prop="result">
+                <iv-radio-group :model.sync="mainModel.vo.result">
+                    <iv-radio value="1" 
+                        @change="mainModel.vo.result=1">
+                        通过</iv-radio>
+                    <iv-radio value="0" 
+                        @change="mainModel.vo.result=0">
+                        不通过</iv-radio>
+                </iv-radio-group>
+            </el-form-item>
+         
+         
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<user-select-modal :is-show-concator='false' :visible.sync="userSelectModel.show" :filter-data="userSelectModel.filterData" @do-save="doSaveSelect" single-select></user-select-modal>

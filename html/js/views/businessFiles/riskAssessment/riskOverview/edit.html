@@ -1,0 +1,86 @@
+<div class="edit-pop-container ">
+    <div class="epc-content riskAddCon">
+        <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
+
+            <el-form-item :label="$t('gb.common.ownedComp')" prop="orgId">
+                <company-tree-select v-if="!!mainModel.opType" :id.sync="mainModel.vo.orgId"></company-tree-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('bc.ria.scene')" prop="scene">
+                <iv-input type="textarea" :rows="2" :value.sync="mainModel.vo.scene"></iv-input>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.hazardFactor')" prop='hazardFactor.id'>
+                <iv-tree-select :model.sync="mainModel.vo.hazardFactor.id" :list="hazardFactorList" id-attr="id" display-attr="name">
+                    <iv-tree :model="hazardFactorList" :serch-filterable="true" :selected-datas.sync="selectedDataHazard" id-attr="id" pid-attr="parentId" display-attr="name" :single-select="true" :allow-parent-checked="true"></iv-tree>
+                </iv-tree-select>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.riskGrade')" prop="riskLevel">
+                <risk-model :model.sync="riskModel"></risk-model>
+            </el-form-item>
+
+            <el-form-item :label="$t('gb.common.controlMeasures')" prop="controlMeasures">
+                <iv-input type="textarea" :rows="2" :value.sync="mainModel.vo.controlMeasures"></iv-input>
+            </el-form-item>
+
+            <el-form-item label="控制措施-类型" prop="typeOfCtrlMeas">
+                <i-select :model.sync="mainModel.vo.typeOfCtrlMeas" :list="getDataDicList('type_of_ctrl_meas')" clearable>
+                    <i-option v-for="item in getDataDicList('type_of_ctrl_meas')" :value="item.id">{{item.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <el-form-item label="控制措施-层级" prop="hierOfCtrlMeas">
+                <i-select :model.sync="mainModel.vo.hierOfCtrlMeas" :list="getDataDicList('hier_of_ctrl_meas')" clearable>
+                    <i-option v-for="item in getDataDicList('hier_of_ctrl_meas')" :value="item.id">{{item.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <div v-show="isCreated" style="margin-top:4px;" class="select-style">
+                <el-form-item :label="$t('gb.common.chioceCheck')">
+                    <iv-input @click="(mainModel.showItemSelectModal= true)" style="width: 210px;cursor: pointer;" type="textarea" :value="mainModel.checkItem.name" readonly></iv-input>
+                    <div style="display: flex;flex-direction: column;font-size: 20px;padding-top: 3px;position: absolute;right:51px;top: 1px;background-color: #fff;height: 44px;width: 21px;color: #aaa;padding-left: 1px;border-top-right-radius: 7px;border-bottom-right-radius: 7px;">
+                        <Icon type="plus-circled" @click="(mainModel.showItemSelectModal= true)"></Icon>
+                        <Icon type="close-circled" @click="doClearInput"></Icon>
+                    </div>
+
+                    <iv-button @click="doCreate" style="height:44px;margin-top:2px;float: right;margin-left: 5px;font-size: 13px">
+                        <Icon type="edit"></Icon>
+                    </iv-button>
+                </el-form-item>
+
+            </div>
+            <div v-show="!isCreated" style="margin-top:4px;">
+                <el-form-item :label="$t('gb.common.checkItemContent')" prop="checkItem.name">
+                    <iv-textarea
+                            :rows="2"
+                            :value.sync="mainModel.vo.checkItem.name"
+                    ></iv-textarea>
+
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.checkType')" prop="checkItem.type">
+                    <i-select :model.sync="mainModel.vo.checkItem.type" :list="mainModel.typeList" style="width: 211px;float: left">
+                        <i-option v-for="item in mainModel.typeList" :value="item.id">{{ item.name }}</i-option>
+                    </i-select>
+                    <!--<span  @click="doSelect" >切换</span>-->
+                    <iv-button @click="doSelect" style="float: left;margin-left: 5px;font-size: 13px">
+                        <Icon type="reply"></Icon>
+                    </iv-button>
+                </el-form-item>
+            </div>
+            <el-form-item label="管控等级" prop="levelOfControl">
+                <i-select :model.sync="mainModel.vo.levelOfControl" :list="getDataDicList('level_of_control')">
+                    <i-option v-for="item in getDataDicList('level_of_control')" :value="item.id">{{item.value}}</i-option>
+                </i-select>
+            </el-form-item>
+
+            <div class="form-group h30"></div>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+
+<checkitem-select-modal single-select :visible.sync="mainModel.showItemSelectModal" @do-save="doSaveItemTable"></checkitem-select-modal>
+<equipment-select-modal single-select :visible.sync="mainModel.showEquipmentSelectModal" @do-save="doSaveEquipment"></equipment-select-modal>

@@ -1,0 +1,59 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+                <iv-col $main-header-condition-div-attr-default>
+                    <all-classification $main-header-classification-attr-mixBusiness>
+                    </all-classification>
+                    <cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default>
+<!--                    <div class="prelative addButton pull-right">-->
+<!--                        <iv-dropdown trigger="click" placement="bottom-end">-->
+<!--                            <vi-button type="ghost" icon="chevron-down"></vi-button>-->
+<!--                        </iv-dropdown>-->
+<!--                    </div>-->
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}</vi-button>
+                    <vi-button v-if="tableModel.selectedDatas.length > 0" type="text" class="mp-header-item-btn" @click="doSetCheckMinutes">设置检查时长-GPS偏移</vi-button>
+                </iv-col>
+            </iv-row>
+
+        </div>
+<!--        <div class="mp-content">-->
+<!--            <div style="position: absolute;bottom: 11px;left: 20px;">-->
+<!--                <iv-checkbox  :checked.sync="isCheckKind" :middle="isHalfCheck" :disabled=""  @change.stop="checkSelect"> 多选 </iv-checkbox>-->
+<!--            </div>-->
+            <vue-bootstrap-table $main-center-table-attr-default :code="tableCode" :show-scroll="true">
+            </vue-bootstrap-table>
+<!--        </div>-->
+    </div>
+</div>
+<Modal :visible.sync="batchIllegalModel.show" :title="batchIllegalModel.title" footer-hide>
+    <div class="edit-pop-container">
+        <div class="epc-content">
+            <el-form :model="batchIllegalModel" :rules="batchIllegalModel.rules" v-ref:ruleform label-width="130px" style="width:390px">
+                <el-form-item label="最短检查时长" prop="checkMin" class="small-info-box">
+                    <iv-input-number is-integer :value.sync="batchIllegalModel.checkMin" :min="1" style="width: 65%"></iv-input-number>
+                    <span style="font-size: 12px; padding-left: 5px;">分钟</span>
+                </el-form-item>
+                <el-form-item label="最长检查时长" prop="checkMax" class="small-info-box">
+                    <iv-input-number is-integer :value.sync="batchIllegalModel.checkMax" :min="1"style="width: 65%"></iv-input-number>
+                    <span style="font-size: 12px; padding-left: 5px;">分钟</span>
+                </el-form-item>
+                <el-form-item label="最小GPS偏移" prop="checkMinGps" class="small-info-box">
+                    <iv-input-number is-integer :value.sync="batchIllegalModel.checkMinGps" :min="1"style="width: 65%"></iv-input-number>
+                    <span style="font-size: 12px; padding-left: 5px;">米</span>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSaveIllegalBatch" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</modal>

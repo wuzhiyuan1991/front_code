@@ -1,0 +1,35 @@
+<div v-show="values.length > 0" style="position: relative;">
+    <div class="hw-head">
+        <strong>{{title}}</strong>
+        <div class="right">
+            <iv-button type="text" @click="doRefresh">刷新</iv-button>
+            <a v-link="{path: routeUrl}" target="_blank" v-if="showMore">
+                <iv-button type="text">更多</iv-button>
+            </a>
+        </div>
+    </div>
+    <table>
+        <colgroup>
+            <col v-for="th in columns" :style="{'width': th.width + 'px'}">
+        </colgroup>
+        <thead>
+        <tr>
+            <th v-for="th in columns">{{th.title}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="row in values">
+            <td v-for="col in columns">
+                <div
+                        :class="{'link': col.fieldType === 'link'}"
+                        @click="doClick(row, col)"
+                        :title="col.hideTip ? '' : renderText(row, col)"
+                >{{{renderText(row, col)}}}</div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="table-spin" v-if="showLoading">
+        <!--<div class="bg-rotate-loader"></div>-->
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<Modal :visible.sync="visible" footer-hide :closable="false" width="900">
+    <div style="text-align: right;background-color: #fff;padding: 20px 20px 0;"  class="print-hidden">
+        <iv-button @click="doPrint">打印</iv-button>
+        <iv-button @click="doClose">关闭</iv-button>
+    </div>
+    <div class="preview-box" id="section-to-print">
+        <h4 style="font-weight: bold;margin-bottom: 10px; word-break: break-all;" class="text-center">{{vo.attr1}} {{vo.name}}</h4>
+
+        <table class="preview-box-table">
+            <colgroup>
+                <col style="width: 120px;">
+                <col>
+                <col style="width: 150px;">
+            </colgroup>
+            <tbody>
+            <tr class="font-bold">
+                <td class="text-center">步骤</td>
+                <td class="text-center">现场处置</td>
+                <td class="text-center">负责人</td>
+            </tr>
+            <template v-for="item in items">
+                <tr v-for="(i, tr) in item.items">
+                    <td :rowspan="item.items.length" v-if="i === 0" class="font-bold text-center">{{item.name}}</td>
+                    <td>{{{tr.content}}}</td>
+                    <td class="text-center">{{tr.principal}}</td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+</Modal>

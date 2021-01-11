@@ -1,0 +1,22 @@
+<Modal :visible.sync="visible" :title="mainModel.title" :footer-hide="true">
+
+    <div class="epc-content" style="position: relative;background-color: white;" id="exsuport">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+           
+            <el-form-item label="风险项" prop="name">
+                <iv-input :value.sync="mainModel.vo.name" ></iv-input>
+            </el-form-item>
+            
+            <el-form-item label="控制措施" prop="measure">
+                <iv-textarea :value.sync="mainModel.vo.measure"></iv-textarea>
+            </el-form-item>
+            
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doCancel" class="pull-right">{{$t("gb.common.cancel")}}</vi-button>
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+
+</Modal>
+<user-select-modal :is-show-concator='false' :visible.sync="userSelectModel.show" :filter-data="userSelectModel.filterData" @do-save="doSaveSelect" single-select></user-select-modal>

@@ -1,0 +1,44 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" width:420 :footer-hide="true">
+    <div class="edit-pop-container">
+        <div class="epc-content el-form-item__label_light  el_form_label_gj  " style="min-height:290px;">
+            <el-form class="fip-content-item-form" :model="mainModel.vo"
+                     :rules="mainModel.rules"   v-ref:ruleform>
+                <!--<el-form-item :label="$t('gb.common.code')" prop="code">-->
+                    <!--<code-input  :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+                <!--</el-form-item>-->
+                <el-form-item label="作业签发角色" prop="name">
+                    <div style="width:250px;">
+                        <iv-input style="font-size:14px;width:260px;" :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+                    </div>
+                </el-form-item>
+                <el-form-item label="承诺内容" prop="content">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.content" v-show="mainModel.isReadOnly" :textonly="mainModel.isReadOnly"></iv-input>
+                    <iv-textarea style="font-size:14px;width:375px;" :rows="4" :value.sync="mainModel.vo.content" v-show="!mainModel.isReadOnly" :readonly="mainModel.isReadOnly"></iv-textarea>
+                </el-form-item>
+                <el-form-item label="应用承诺" prop="enableCommitment">
+                    <div style="width:375px;">
+
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_enable_commitment', mainModel.vo.enableCommitment) }}</span>
+                    <i-select :popper-fixed='false' v-else :model.sync="mainModel.vo.enableCommitment" :list="getDataDicList('iptw_catalog_enable_commitment')"></i-select>
+                    </div>
+                </el-form-item>
+                <!--<el-form-item label="可复选" prop="isMultiple">-->
+                    <!--<span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_is_multiple', mainModel.vo.isMultiple) }}</span>-->
+                    <!--<i-select v-else :model.sync="mainModel.vo.isMultiple" :disabled="mainModel.vo.signerType != 3" :list="getDataDicList('iptw_catalog_is_multiple')"></i-select>-->
+                <!--</el-form-item>-->
+
+                <el-form-item label="作业申请人" prop="isInherent">
+                    <div style="width:375px;">
+
+                    <i-select  :popper-fixed='false' v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.signerType" :list="getDataDicList('iptw_catalog_is_signer_type')"></i-select>
+                    <span v-if="mainModel.isReadOnly">{{ getDataDic('iptw_catalog_is_signer_type', mainModel.vo.signerType) }}</span>
+                    </div>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>
+

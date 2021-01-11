@@ -1,0 +1,45 @@
+<div class="flex-layout">
+    <div style="min-width:170px;height: calc(100vh - 165px)" class="text-center mr15" >
+        <base-according
+            :values="workTypeList"
+            :current-index.sync="workTypeSelectedIndex"
+            @on-selected="onSelectedType"
+            v-ref:according
+        ></base-according>
+    </div>
+    <div class="flex-grow1" style="padding-right: 15px;background: #fff;">
+        <div class="flex-layout list-li-h"  style="padding-bottom:8px;height: 35px;">
+            <div class="flex-v-center"></div>
+            <div class="flex-v-center">
+                <!--<vi-button v-show="!isTop" @click="doAdd">{{$t("gb.common.add")}}</vi-button>-->
+                <vi-button  v-if="isReadOnly"   @click="doEdit">编辑</vi-button>
+                <vi-button style="margin-right:10px;" v-if="!isReadOnly"  @click="doSave">保存</vi-button>
+                <vi-button  v-if="!isReadOnly"  @click="doCancel">取消</vi-button>
+            </div>
+        </div>
+        <div style="background: #fff;">
+            <iv-input type="textarea" height="calc(100vh - 250px)" :rows="22" style="width:800px;" :value.sync="vo.name" :readonly="isReadOnly"></iv-input>
+            <!--<vue-bootstrap-table-->
+                    <!--v-ref:table-task-level-->
+                    <!--show-empty-row=false-->
+                    <!--:show-pager="false"-->
+                    <!--:lazy-load="true"-->
+                    <!--:columns="tableModel.columns"-->
+                    <!--:values.sync="tableModel.values"-->
+                    <!--@on-edit-row="doUpdateInfoBefore"-->
+                    <!--@on-del-row="doDeleteInfo"-->
+                    <!--:selected-datas.sync="tableModel.selectedDatas"-->
+            <!--&gt;</vue-bootstrap-table>-->
+        </div>
+
+        <!--                                    <lite-new-table :columns='tableModel.columns'-->
+        <!--                                                    :values="tableModel.values"-->
+        <!--                                                    @on-add-row="doAddRow"-->
+        <!--                                                    @on-save="doSave"-->
+        <!--                                                    @on-del="doDelItem"-->
+        <!--                                    ></lite-new-table>-->
+    </div>
+</div>
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel v-ref:detail-model></detail-panel>
+</aside>

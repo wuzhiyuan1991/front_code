@@ -1,0 +1,51 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true" @on-cancel="cancel">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+<!--					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" :label="$t('gb.common.code')" prop="code">-->
+<!--						<code-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty" v-ref:code-input></code-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" :label="$t('gb.common.ownedComp')" prop="compId">-->
+<!--						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>-->
+<!--						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" :label="$t('gb.common.ownedDept')" prop="orgId">-->
+<!--						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId" clearable></department-tree-select>-->
+<!--						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>-->
+<!--					</el-form-item>-->
+				<el-form-item v-if="(hiddenFields.indexOf('operate') == -1)" label="操作" prop="operate">
+					<span v-if="mainModel.isReadOnly">{{ getDataDic('icm_project_three_simult_task_detail_operate', mainModel.vo.operate) }}</span>
+					<i-select v-else :model.sync="mainModel.vo.operate" :list="getDataDicList('icm_project_three_simult_task_detail_operate')" clearable></i-select>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('operateDate') == -1)" label="时间" prop="operateDate">
+					<date-picker v-if="!mainModel.isReadOnly" format="yyyy-MM-dd" data-format="yyyy-MM-dd 00:00:00" :selected-date.sync="mainModel.vo.operateDate" :disabled="(disabledFields.indexOf('operateDate') != -1)" clearable></date-picker>
+					<iv-input v-else :value="formatYMD(mainModel.vo.operateDate)" :disabled="(disabledFields.indexOf('operateDate') != -1)" textonly class="inp"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('place') == -1)" label="地点" prop="place">
+					<iv-input :value.sync="mainModel.vo.place" :disabled="(disabledFields.indexOf('place') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('person') == -1)" label="参与人员" prop="person">
+					<iv-textarea :value.sync="mainModel.vo.person" :disabled="(disabledFields.indexOf('person') != -1)" :readonly="mainModel.isReadOnly"></iv-textarea>
+				</el-form-item>
+				<el-form-item v-if="(hiddenFields.indexOf('description') == -1)" label="事件描述" prop="description">
+					<iv-textarea :value.sync="mainModel.vo.description" :disabled="(disabledFields.indexOf('description') != -1)" :readonly="mainModel.isReadOnly"></iv-textarea>
+				</el-form-item>
+				<file-list-simple-form-item :label="$t('bc.hal.enclosure')" :prop="mainModel.files" class="fip-content-sub-item" :data="fileModel.file.data" :config="fileModel.file.cfg" :readonly="!hasAuth('edit')"> </file-list-simple-form-item>
+
+
+
+				<!--					<el-form-item v-if="(hiddenFields.indexOf('projectId') == -1)" label="项目" prop="projectId">-->
+<!--						<iv-input :value.sync="mainModel.vo.projectId" :disabled="(disabledFields.indexOf('projectId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>-->
+<!--					</el-form-item>-->
+<!--					<el-form-item v-if="(hiddenFields.indexOf('taskId') == -1)" label="任务" prop="task.id">-->
+<!--						<input-select :value="mainModel.vo.projThrSimultaneousTask" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('projThrSimultaneousTask') != -1)" clearable @click="(!mainModel.isReadOnly) && (doShowProjThrSimultaneousTaskSelectModal())" ></input-select>-->
+<!--					</el-form-item>-->
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doCancel" class="pull-right">取消</vi-button>
+			<vi-button type="primary" @click="doSave" class="pull-right">保存</vi-button>
+			
+		</div>
+	</div>
+</Modal>

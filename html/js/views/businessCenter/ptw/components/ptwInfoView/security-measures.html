@@ -1,0 +1,101 @@
+<simple-card style="width:750px;">
+    <p slot="title" class="ptw-title" @click="deelGroupList">安全措施</p>
+    <div style="position: absolute;top: 0px;right:0;">
+        <div v-if="verNumList.length>1">
+            修改历史
+            <i-select placement="bottom-end" :popper-fixed="false" class="ivu-select-selection-none ivu-select-width-auto" style="width:80px;" :display-fn="displayFn" :model.sync="selectVerNum" @on-change="changeVersion" :list="verNumList" >
+                <i-option v-for="(index, item) in verNumList" :value="item.verNum">
+                    <div class="flex-layout-between">
+                        <div>#{{ item.verNum }} &nbsp;&nbsp;{{index==verNumList.length-1?'作业申请':'作业会签'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.workPersonnelName ? item.workPersonnelName+'/':''}}{{item.username}}</div><div> &nbsp;&nbsp;{{item.verifyTime}}</div>
+                    </div>
+
+                </i-option>
+            </i-select>
+        </div>
+    </div>
+
+
+    <div v-if="model.enableCtrlMeasureGroup == '1'" style="padding-left:9px;" v-for="(index,item) in groupItemModel.list">
+        <div  class="flex-layout-between">
+            <div class="flex-layout mb10">
+                <div class="security-groups-itemIndex" >分组</div>
+                <div class="security-groups">{{item.name}}</div>
+            </div>
+        </div>
+        <div>
+            <lite-table
+                    :page-size-opts="[1000]"
+                    :is-show-page-box="false"
+                    show-sequence="false"
+                    :columns="tableModel.columns"
+                    :values="item.children"
+                    @on-click="onRowClicked"
+            ></lite-table>
+        </div>
+    </div>
+
+    <div v-if="model.enableCtrlMeasureGroup != '1'" style="padding-left:9px;">
+        <div>
+            <lite-table
+                    :page-size-opts="[1000]"
+                    :is-show-page-box="false"
+                    show-sequence="false"
+                    :columns="tableModel.columns"
+                    :values="tableModel.list"
+                    @on-click="onRowClicked"
+            ></lite-table>
+        </div>
+    </div>
+
+    <!--<div class="ptw-border ul-style-none">-->
+        <!--<ul class="ul-inside">-->
+            <!--<li v-for="item of list" class="flex-v-center-warp lite-box-21" >-->
+                <!--<input type="checkbox" disabled :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')" class="width-auto" />-->
+                <!--{{item.name}}-->
+                <!--&lt;!&ndash;<image-view image-style="height:20px;width:auto;margin-left:5px;margin-bottom:0;" :images="getFiles(item.cloudFiles, 'PTW18')" show-close=false></image-view>&ndash;&gt;-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+    <!--<div class="ptw-border ul-style-none">-->
+        <!--<ul class="ul-inside">-->
+            <!--<li v-for="item of kongzhicsList" class="flex-v-center-warp lite-box-21" >-->
+                <!--<input type="checkbox" disabled :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')" class="width-auto" />-->
+                <!--{{getItemName(item)}}-->
+                <!--<image-view image-style="height:20px;width:auto;margin-left:5px;margin-bottom:0;" :images="getFiles(item.cloudFiles, 'PTW18')" show-close=false></image-view>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+</simple-card>
+
+
+<Modal title="查看详情" :visible.sync="securityModel.show" footer-hide  width="550">
+    <div class="edit-pop-container">
+        <div class="epc-content el-form-item__label-light simple-card-body" style="background: #fff;">
+            <el-form :model="mainModel.vo" v-ref:ruleform>
+                <el-form-item  label="文字" >
+                    <iv-input style="font-size:14px;color:#666;padding-top:0.2em;":value.sync="securityModel.str"  textonly></iv-input>
+                </el-form-item>
+                <el-form-item  label="图片">
+                    <image-view :images="getFiles(securityModel.picList,'PTW23')" :show-close="false"></image-view>
+                </el-form-item>
+                <el-form-item  label="视频" >
+                    <lite-box v-for="video in securityModel.video" :show-close="false">
+                        <img :src="convertPath(video.id)"  @click="doPlay(video)">
+                    </lite-box>
+                </el-form-item>
+            </el-form>
+        </div>
+        <!--<div class="epc-footer">-->
+        <!--<vi-button type="primary" @click="educationModel.visible=false" class="pull-right">{{$t("gb.common.ok")}}</vi-button>-->
+        <!--</div>-->
+    </div>
+
+</Modal>
+
+<Modal class="type-video" :visible.sync="playModel.show" width="450" footer-hide>
+    <div v-if="playModel.show" style="height: 700px;" id="player"></div>
+</Modal>
+
+
+

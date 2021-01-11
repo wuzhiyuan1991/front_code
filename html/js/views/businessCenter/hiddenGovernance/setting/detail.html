@@ -1,0 +1,136 @@
+<div class="detail-large-container">
+	<div class="base-info-panel">
+		<div class="bip-header">
+			<div class="bip-header-title">
+				<div v-if="isFlag"><i class="checkPlanPng"></i><span>{{isTitle}}</span></div>
+				<div v-else>
+					<div  v-if="isReadOnly"><i class="checkPlanPng"></i><span>{{isDetail}}</span></div>
+					 <div v-else><i class="checkPlanPng" ></i><span>{{isUpdata}}</span></div>
+				</div>
+
+			</div>
+			<div class="bip-header-btn-group">
+				<iv-button type="ghost" @click="doSave"  v-if="isFlag">{{$t("gb.comnon.save")}}</iv-button>
+				<iv-button class="ivu-btn-ghost" @click="doDel" v-if="!isFlag" >{{$t("gb.common.del")}}</iv-button>
+				<iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
+				<!--<iv-button type="ghost" @click="doClose">{{$t("gb.common.cancel")}}</iv-button>-->
+				<!--<iv-button type="ghost" @click="doDisable"  v-if="!isFlag && mainModel.vo.disable == '1'">{{$t("gb.common.enable")}}</iv-button>-->
+				<!--<iv-button type="ghost" @click="doDisable"  v-if="!isFlag && mainModel.vo.disable == '0'">{{$t("gb.common.disable")}}</iv-button>-->
+			</div>
+		</div>
+		<!--<div class="fip-header"><Icon type="ios-photos"></Icon><span >{{$t("gb.common.detail")}}</span></div>-->
+		<div class="bip-content">
+				<el-form class="bip-content-form" :model="mainModel.vo" :rules="rules" is-label-vertical  v-ref:ruleform>
+					<iv-row class="bip-content-item">
+
+					<!--<el-form-item :label="$t('gb.common.code')" prop="name" class="small-info-box">-->
+						<!--<iv-input placeholder="请输入名称" :textonly="isReadOnly" :value.sync="mainModel.vo.code" disabled></iv-input>-->
+						<!--&lt;!&ndash;<input type="text" class="inp" maxlength="50" name="publisherId" placeholder="无" v-model="mainModel.vo.name" readOnly >&ndash;&gt;-->
+					<!--</el-form-item>-->
+
+					<el-form-item :label="$t('gb.common.approvalobject')" prop="name" class="small-info-box">
+						<i-select :model.sync="mainModel.vo.attr2" :list="object" v-if="!isReadOnly" >
+							<!--<i-option :value="0">隐患登记</i-option>-->
+							<i-option v-for="s in object" :value="s.id">{{s.name}}</i-option>
+						</i-select>
+						<iv-input value="隐患登记" :textonly="isReadOnly" v-else></iv-input>
+						<!--<input type="text" class="inp" maxlength="50" name="publisherId" placeholder="无" v-model="mainModel.vo.name" readOnly >-->
+					</el-form-item>
+
+					<el-form-item :label="$t('gb.common.nameRole')" prop="name" class="small-info-box">
+						<iv-input :value.sync="mainModel.vo.name"  :textonly="isReadOnly" ></iv-input>
+						<!--<input type="text" class="inp" maxlength="50" name="publisherId" placeholder="无" v-model="mainModel.vo.name" readOnly >-->
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.approvaltype')" prop="processType" class="small-info-box">
+						<i-select :model.sync="mainModel.vo.processType" :list="mainModel.types" v-if="!isReadOnly" >
+							<i-option v-for="s in mainModel.types" :value="s.id">{{s.value}}</i-option>
+						</i-select>
+						<span v-else>{{getDataDic('process_type', mainModel.vo.processType)}}</span>
+						<!--<input type="text" class="inp" maxlength="50" name="createDate" placeholder="无" :value="getDataDic('process_type', mainModel.vo.processType)" readOnly >-->
+					</el-form-item>
+					<!--<el-form-item label="所属阶段" prop="attr4" class="small-info-box">-->
+						<!--<input-select :value="mainModel.vo.activitiProcess" id-field="id" display-field="name" v-if="!isReadOnly"  @click="(!mainModel.isReadOnly) && (mainModel.showActivitiProcessSelectModal = true)" ></input-select>-->
+							<!--<span v-else>{{mainModel.vo.activitiProcess.name}}</span>-->
+						<!--<input type="text" class="inp" maxlength="50" name="publisherId" placeholder="无" v-model="mainModel.vo.name" readOnly >-->
+					<!--</el-form-item>-->
+
+					<!--<el-form-item label="可以指定后续整改人" prop="reformerFlag">-->
+						<!--<span>{{getDataDic('reformer_flag', mainModel.vo.reformerFlag)}}</span>-->
+					<!--</el-form-item>-->
+					</iv-row>
+				</el-form>
+			<!--审批流程-->
+			<simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.approvalProcess')}}</span></p>
+				<a slot="extra" @click.prevent="isShowCardContent = !isShowCardContent">
+					<span v-if="isShowCardContent"><Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
+				</a>
+		        <a slot="extra" @click.prevent="doApprovalStage()" v-if="isBottom && isPrevent">
+		            <span><Icon type="plus"></Icon>{{$t('bc.ria.append')}}</span>
+		        </a>
+                <filter-component :groups.sync="mainModel.vo.filterLookups"></filter-component>
+			</simple-card>
+			<!--业务角色-->
+<!--			<simple-card class="fip-content-item" :show-content.sync="isShowRole">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.businessRole')}}</span></p>
+				<a slot="extra" @click.prevent="isShowRole = !isShowRole">
+					<span v-if="isShowRole"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+				</a>
+				<a slot="extra" @click.prevent="doApprovalRole" v-if="isFlag">
+					<span><Icon type="plus"></Icon>{{$t('bc.ria.append')}}</span>
+				</a>
+				<business-role :groups.sync="mainModel.vo.filterLookups"></business-role>
+			</simple-card>-->
+			<!--组织机构-->
+		<!--	<simple-card class="fip-content-item" :show-content.sync="isShowOrganization">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.organizatInfo')}}</span></p>
+				<a slot="extra" @click.prevent="isShowOrganization = !isShowOrganization">
+					<span v-if="isShowOrganization"><Icon type="arrow-up-b"></Icon>收起</span>
+					<span v-else><Icon type="arrow-down-b"></Icon>展开</span>
+				</a>
+				<a slot="extra" @click.prevent="doAppend" v-if="isBottom && isPrevent">
+					<span><Icon type="plus"></Icon>{{$t('bc.ria.append')}}</span>
+				</a>
+				&lt;!&ndash;<vue-bootstrap-table&ndash;&gt;
+						&lt;!&ndash;:columns="tableModel.itemColumnsdata"&ndash;&gt;
+						&lt;!&ndash;:show-filter="tableModel.showFilter"&ndash;&gt;
+						&lt;!&ndash;:show-column-picker=tableModel.showColumnPicker"&ndash;&gt;
+						&lt;!&ndash;:show-pager=“tableModel.showPager"&ndash;&gt;
+						&lt;!&ndash;@on-del-row="delItemRelRowHandler"&ndash;&gt;
+						&lt;!&ndash;:values="mainModel.vo.organizationList"&ndash;&gt;
+						&lt;!&ndash;@on-click-cell="doTableCellClick"&ndash;&gt;
+						&lt;!&ndash;:reset-trigger-flag="tableModel.resetTriggerFlag"&ndash;&gt;
+						&lt;!&ndash;:page-size-opts="tableModel.pageSizeOpts"&ndash;&gt;
+				&lt;!&ndash;&gt;&ndash;&gt;
+				&lt;!&ndash;</vue-bootstrap-table>&ndash;&gt;
+				<div v-if="isOrgShow">
+				<vue-bootstrap-table
+						:columns="itemColumns"
+						:show-filter="false"
+						:show-column-picker="false"
+						:show-pager="true"
+						:show-empty-row="false"
+						:values="mainModel.vo.organizationList"
+						@on-del-row="delItemRelRowHandler"
+						:url-delete="urlDelete"
+				>
+				</vue-bootstrap-table>
+				</div>
+			</simple-card>-->
+		</div>
+	</div>
+	<!--<div class="few-info-sider pull-right">-->
+        <!--<iv-button type="ghost" @click="doClose" icon="close-round">{{$t("gb.common.close")}}</iv-button>-->
+        <!--&lt;!&ndash;<iv-button type="ghost" @click="doSave" icon="android-document">提交</iv-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;<iv-button type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>&ndash;&gt;-->
+
+	<!--</div>-->
+		
+</div>
+<!-- 弹框 -->
+<Modal :visible.sync="editModel.show" :title="editModel.title" footer-hide>
+	<edit-component></edit-component>
+</Modal>
+<activiti-role-modeler-select-modal single-select :visible.sync="mainModel.showActivitiProcessSelectModal"  @do-save="doSaveActivitiProcess"></activiti-role-modeler-select-modal>

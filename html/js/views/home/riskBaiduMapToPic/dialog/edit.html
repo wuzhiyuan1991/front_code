@@ -1,0 +1,70 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item  label="名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item  label="公司" prop="compId">
+						<company-tree-select :id.sync="mainModel.vo.compId" clearable :disabled="!!compId && isCompDisable"></company-tree-select>
+					</el-form-item>
+					<el-form-item  label="部门" prop="orgId">
+						<department-tree-select :id.sync="mainModel.vo.orgId" :comp-id.sync="mainModel.vo.compId" clearable></department-tree-select>
+					</el-form-item>
+					<!--<el-form-item  label="属地" prop="dominationArea">-->
+						<!--&lt;!&ndash;<input-select&ndash;&gt;-->
+								<!--&lt;!&ndash;:value="mainModel.vo.dominationArea"&ndash;&gt;-->
+								<!--&lt;!&ndash;placeholder="请选择属地"&ndash;&gt;-->
+								<!--&lt;!&ndash;id-field="id"&ndash;&gt;-->
+								<!--&lt;!&ndash;display-field="name"&ndash;&gt;-->
+								<!--&lt;!&ndash;@click="doShowDominationAreaSelectModal"&ndash;&gt;-->
+								<!--&lt;!&ndash;clearable&ndash;&gt;-->
+								<!--&lt;!&ndash;@do-clear-input="doClearDominationArea"&ndash;&gt;-->
+						<!--&lt;!&ndash;&gt;</input-select>&ndash;&gt;-->
+						<!--<multiple-input-select-->
+								<!--:selected-multiple.sync="mainModel.vo.dominationArea"-->
+								<!--@on-click="doShowDominationAreaSelectModal"-->
+						<!--&gt;</multiple-input-select>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item :label="$t('gb.common.picture')" prop="rightPictures">-->
+						<!--<lite-box v-for="(index,pic) in mainModel.vo.cloudFiles" @on-close="doDeleteFile(pic.fileId,index,mainModel.vo.rightPictures)" @click="doPic(pic.fileId)">-->
+							<!--<img :src="convertPicPath(pic.fileId)">-->
+						<!--</lite-box>-->
+						<!--<vue-file-upload-->
+								<!--v-ref:uploader-->
+								<!--style="display: none;"-->
+								<!--:multi-selection="false"-->
+								<!--:params="uploadModel.params"-->
+								<!--@on-before-upload="doUploadBefore"-->
+								<!--@on-success-upload="doUploadSuccess"-->
+								<!--@on-upload-complete="onUploadComplete"-->
+								<!--:filters="uploadModel.filters">-->
+						<!--</vue-file-upload>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item v-if='mainModel.opType!=="create"' label="经度" prop="x">-->
+						<!--<iv-input :value.sync="mainModel.vo.x"  clearable></iv-input>-->
+					<!--</el-form-item>-->
+					<!--<el-form-item  v-if='mainModel.opType!=="create"' label="纬度" prop="y">-->
+						<!--<iv-input :value.sync="mainModel.vo.y"  clearable></iv-input>-->
+					<!--</el-form-item>-->
+			</el-form>
+
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave1" class="pull-right">保存</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<!--single-select  单选项
+:visible.sync="dominationAreaSelectModel.visible"
+ -->
+<dominationarea-select-modal
+		:visible.sync="dominationAreaSelectModel.visible"
+		:filter-data="dominationAreaSelectModel.filterData"
+		@do-save="doSaveDominationArea"
+></dominationarea-select-modal>
+
+
+
+

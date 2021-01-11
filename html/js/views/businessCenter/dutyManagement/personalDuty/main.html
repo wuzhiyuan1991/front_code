@@ -1,0 +1,81 @@
+<div class="tab-container">
+    <div class="main-panel">
+        <div class="mp-header formTitle">
+            <iv-row $main-header-row-attr-default-display>
+
+                <iv-col $main-header-condition-div-attr-default style="width: 60%;line-height: 34px;">
+                    <all-classification $main-header-classification-attr-default></all-classification>
+					<cust-filter-condition-group v-ref:condtion-group></cust-filter-condition-group>
+                </iv-col>
+                <iv-col $main-header-func-div-attr-default style="width: 40%;">
+					<span class="title-person duty-statistics" style="top: 5px; right: 200px">
+						<span>值班中：<a href="javascript:;" class="text-overflow100" style="color: #444" title="{{ mainModel.dutyStatistics.InTheDuty }}">{{ mainModel.dutyStatistics.InTheDuty }}</a></span>
+						<span>待接班：<a href="javascript:;" class="text-overflow100" style="color: #444" title="{{ mainModel.dutyStatistics.ForTheSuccession }}">{{ mainModel.dutyStatistics.ForTheSuccession }}</a></span>
+					</span>
+                    <div class="prelative addButton pull-right">
+                        <vi-button v-if="hasAuth('create')" @click="doAdd">{{$t("gb.common.add")}}</vi-button>
+                        
+                        <iv-dropdown trigger="click" placement="bottom-end">
+							<vi-button type="ghost" icon="chevron-down"></vi-button>
+							<iv-dropdown-menu slot="list">
+			                    <!--<iv-dropdown-item>-->
+                                    <!--$main-header-fileupload-tag-excel-->
+                                <!--</iv-dropdown-item>-->
+                                <iv-dropdown-item v-if="hasAuth('export')">
+                                    $main-header-div-tag-download-excel
+                                </iv-dropdown-item>
+							</iv-dropdown-menu>
+						</iv-dropdown>
+                    </div>
+                    $main-header-refresh-button
+                </iv-col>
+            </iv-row>
+            <iv-row $main-header-row-attr-default-hidden>
+                <iv-col span="24">
+                    <vi-button type="text" class="mp-header-item-btn">{{$t("gb.common.selItem", [tableModel.selectedDatas.length])}}
+                    </vi-button>
+                    <vi-button v-if="hasAuth('edit')" type="text" class="mp-header-item-btn"
+                               @click="mainEdit">{{$t("gb.common.edition")}}
+                    </vi-button>
+                    <!-- <vi-button v-if="hasAuth('enable')" type="text" class="mp-header-item-btn"
+                               @click="doEnableDisable">{{$t("gb.common.EnableDisable")}}
+                    </vi-button> -->
+                    <vi-button v-if="hasAuth('delete')" type="text" class="mp-header-item-btn"
+                               @click="mainDelete">{{$t("gb.common.del")}}
+                    </vi-button>
+                </iv-col>
+            </iv-row>
+        </div>
+        <div class="mp-content">
+			<!-- <vue-bootstrap-table :values="columns" lazy-load $main-center-table-attr-default></vue-bootstrap-table> -->
+            <vue-bootstrap-table @on-data-loaded="doDataLoaded" :selected-datas.sync="tableModel.selectedDatas" :setting="tableModel" :page-size-opts="[20,50,100]" :code="moduleCode" :resizeable="true" show-loading :show-scroll="true" @on-click-cell="tableCellClick" v-ref:main-table></vue-bootstrap-table>
+        </div>
+    </div>
+</div>
+
+<!-- Legacy模式 -->
+<!--
+<ridutyrecord-form-modal
+		:visible.sync="formModel.riDutyRecordFormModel.show"
+		@do-save="doSaveRiDutyRecord"
+		v-ref:ridutyrecord-form-modal>
+</ridutyrecord-form-modal>
+-->
+
+<aside :show.sync="detailModel.show" :class="mainModel.detailPanelClass">
+    <detail-panel></detail-panel>
+</aside>
+
+<editor :visible.sync="editor.show"></editor>
+<modal-add v-ref:sel-tpl @refresh-main-tabel="refreshMainTabel"></modal-add>
+
+<style type="text/css">
+	.text-overflow100 {
+		display: inline-block;
+		max-width: 100px;
+		vertical-align: middle;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+</style>

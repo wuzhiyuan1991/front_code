@@ -1,0 +1,61 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="编码" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkResult') == -1)" label="检查结果" prop="checkResult">
+						<iv-input :value.sync="mainModel.vo.checkResult" :disabled="(disabledFields.indexOf('checkResult') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('tpaCheckRecord') == -1)" label="检查记录id" prop="checkRecordId">
+						<input-select :value="mainModel.vo.tpaCheckRecord" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('tpaCheckRecord') != -1)" @click="(!mainModel.isReadOnly) && (doShowTpaCheckRecordSelectModal())" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkItemId') == -1)" label="检查项id" prop="checkItemId">
+						<iv-input :value.sync="mainModel.vo.checkItemId" :disabled="(disabledFields.indexOf('checkItemId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isRectification') == -1)" label="是否现场立即整改" prop="isRectification">
+						<iv-input :value.sync="mainModel.vo.isRectification" :disabled="(disabledFields.indexOf('isRectification') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="是否禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('groupName') == -1)" label="组名" prop="groupName">
+						<iv-input :value.sync="mainModel.vo.groupName" :disabled="(disabledFields.indexOf('groupName') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('groupOrderNo') == -1)" label="组排序" prop="groupOrderNo">
+						<iv-input :value.sync="mainModel.vo.groupOrderNo" :disabled="(disabledFields.indexOf('groupOrderNo') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('isShared') == -1)" label="是否被分享" prop="isShared">
+						<iv-input :value.sync="mainModel.vo.isShared" :disabled="(disabledFields.indexOf('isShared') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('itemOrderNo') == -1)" label="项排序" prop="itemOrderNo">
+						<iv-input :value.sync="mainModel.vo.itemOrderNo" :disabled="(disabledFields.indexOf('itemOrderNo') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('reformType') == -1)" label="是否立即整改" prop="reformType">
+						<iv-input :value.sync="mainModel.vo.reformType" :disabled="(disabledFields.indexOf('reformType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('shareScope') == -1)" label="分享范围" prop="shareScope">
+						<iv-input :value.sync="mainModel.vo.shareScope" :disabled="(disabledFields.indexOf('shareScope') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('shareType') == -1)" label="分享类型" prop="shareType">
+						<iv-input :value.sync="mainModel.vo.shareType" :disabled="(disabledFields.indexOf('shareType') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('step') == -1)" label="纠正措施" prop="step">
+						<iv-input :value.sync="mainModel.vo.step" :disabled="(disabledFields.indexOf('step') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('suggestStep') == -1)" label="建议措施" prop="suggestStep">
+						<iv-input :value.sync="mainModel.vo.suggestStep" :disabled="(disabledFields.indexOf('suggestStep') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('talkResult') == -1)" label="沟通记录" prop="talkResult">
+						<iv-input :value.sync="mainModel.vo.talkResult" :disabled="(disabledFields.indexOf('talkResult') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<tpacheckrecord-select-modal :visible.sync="selectModel.tpaCheckRecordSelectModel.visible" :filter-data="selectModel.tpaCheckRecordSelectModel.filterData"  @do-save="doSaveTpaCheckRecord"></tpacheckrecord-select-modal>

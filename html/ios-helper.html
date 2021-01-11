@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>iOS安装安全眼教程</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return decodeURI(r[2]); return null; //返回参数值
+    }
+    var name = getUrlParam("name");
+    var type = getUrlParam("type");
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    // 判断名字长度
+    function strlen(str){
+        var len = 0;
+        for (var i=0; i<str.length; i++) {
+            var c = str.charCodeAt(i);
+            //单字节加1
+            if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+                len++;
+            }
+            else {
+                len+=2;
+            }
+        }
+        return len;
+    }
+    var image = new Image();
+    image.onload = function () {
+        var h = image.height;
+        var w = image.width;
+        canvas.height = h;
+        canvas.width = w;
+        ctx.drawImage(image,0,0);
+        if(type !== '1'){
+            ctx.font = "600 16px 'Microsoft YaHei'";
+            var len = strlen(name)
+            ctx.fillText(name, w - 185 - len*4, 220);
+        }
+    };
+    //等于1 二维码苹果
+    if(type === '1'){
+        // image.src = "./images/ios-ent-helper.jpg";
+        image.src = "./images/ios-ent-helper2.jpg";
+    }else{
+//        image.src = "./images/ios-helper.jpg";  // 原来竖版 安装教程
+        image.src = "./images/ios-helper-install.png";
+    }
+</script>
+</body>
+</html>

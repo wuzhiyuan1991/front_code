@@ -1,0 +1,208 @@
+<div class="mechanism-setting">
+
+    <!--个人积分规则-->
+    <div class="mechanism-item" v-if="showItem === 'student' || showItem === 'all'">
+
+        <div class="mechanism-title" @click.prevent="userConf.show = !userConf.show">
+            <div class="mechanism-side">
+                <strong >学员积分规则</strong>
+                <a href="javascript:void(0);" @click.prevent="userConf.show = !userConf.show" >
+                    <Icon type="chevron-up" v-show="userConf.show" @click.prevent="userConf.show = !userConf.show"></Icon>
+                    <Icon type="chevron-down" v-show="!userConf.show" @click.prevent="userConf.show = !userConf.show"></Icon>
+                </a>
+            </div>
+        </div>
+
+        <div v-show="userConf.show" style="margin-left: 20px;margin-top: 10px">
+            <table border="1">
+                <colgroup>
+                    <col style="width: 50px;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="my-td my-bg my-center" style="text-align: center;">序号</td>
+                    <td class="my-td my-bg">激励考核项</td>
+                    <td class="my-td my-bg my-center" style="width:7%">应用规则</td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">1</td>
+                    <td class="my-td">必修课按时通过<iv-input-number :min="0" :value.sync="userConf.vo.CompulsoryTrainingOnTime.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConf.vo.CompulsoryTrainingOnTime.enabled" ></iv-checkbox>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="my-td my-center">2</td>
+                    <td class="my-td">必修课逾期通过<iv-input-number :min="0" :value.sync="userConf.vo.CompulsoryTrainingOverTime.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConf.vo.CompulsoryTrainingOverTime.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">3</td>
+                    <td class="my-td">通过选修课<iv-input-number :min="0" :value.sync="userConf.vo.OptionalTraining.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConf.vo.OptionalTraining.enabled" ></iv-checkbox>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">4</td>
+                    <td class="my-td">通过考试<iv-input-number :min="0" :value.sync="userConf.vo.PassATest.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConf.vo.PassATest.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">5</td>
+                    <td class="my-td">课程评论<iv-input-number :min="0" :value.sync="userConf.vo.Comment.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="userConf.vo.Comment.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--讲师积分规则-->
+    <div class="mechanism-item"  v-if="showItem === 'teacher' || showItem === 'all'">
+
+        <div class="mechanism-title" @click.prevent="teacherConf.show = !teacherConf.show">
+            <div class="mechanism-side">
+                <strong >讲师积分规则</strong>
+                <a href="javascript:void(0);"  @click.prevent="teacherConf.show = !teacherConf.show">
+                    <Icon type="chevron-up" v-show="deptConf.show" @click.prevent="teacherConf.show = !teacherConf.show"></Icon>
+                    <Icon type="chevron-down" v-show="!deptConf.show" @click.prevent="teacherConf.show = !teacherConf.show"></Icon>
+                </a>
+            </div>
+        </div>
+
+        <div v-show="teacherConf.show" style="margin-left: 20px;margin-top: 10px">
+            <table border="1">
+                <colgroup>
+                    <col style="width: 50px;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="my-td my-center my-bg">序号</td>
+                    <td class="my-td my-bg">激励考核项</td>
+                    <td class="my-td my-center my-bg" style="width: 7%">应用规则</td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">1</td>
+                    <td class="my-td">开发线上课程<iv-input-number  :min="0" :value.sync="teacherConf.vo.OnlineCourseDev.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="teacherConf.vo.OnlineCourseDev.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">2</td>
+                    <td class="my-td">开发线下课程<iv-input-number :min="0" :value.sync="teacherConf.vo.OfflineCourseDev.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="teacherConf.vo.OfflineCourseDev.enabled" ></iv-checkbox></td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">3</td>
+                    <td class="my-td">
+                        讲师水平平均星级
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.TeachingLevel5.attr2"></iv-input>
+                        星至
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.TeachingLevel5.attr3"></iv-input>
+                        星得
+                        <iv-input-number :min="0" :value.sync="teacherConf.vo.TeachingLevel5.score"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="teacherConf.vo.TeachingLevel5.enabled" ></iv-checkbox>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">4</td>
+                    <td class="my-td">
+                        讲师水平平均星级
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.TeachingLevel4.attr2"></iv-input>
+                        星至
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.TeachingLevel4.attr3"></iv-input>
+                        星得
+                        <iv-input-number :min="0" :value.sync="teacherConf.vo.TeachingLevel4.score"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="teacherConf.vo.TeachingLevel4.enabled"></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">5</td>
+                    <td class="my-td">
+                        课件质量平均星级
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.CourseQuality5.attr2"></iv-input>
+                        星至
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.CourseQuality5.attr3"></iv-input>
+                        星得
+                        <iv-input-number :min="0" :value.sync="teacherConf.vo.CourseQuality5.score"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="teacherConf.vo.CourseQuality5.enabled" ></iv-checkbox>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">6</td>
+                    <td class="my-td">
+                        课件质量平均星级
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.CourseQuality4.attr2"></iv-input>
+                        星至
+                        <iv-input type="number" style="width: 150px;" :value.sync="teacherConf.vo.CourseQuality4.attr3"></iv-input>
+                        星得
+                        <iv-input-number :min="0" :value.sync="teacherConf.vo.CourseQuality4.score"></iv-input-number>分。
+                    </td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="teacherConf.vo.CourseQuality4.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--部门积分规则-->
+    <div class="mechanism-item"  v-if="showItem === 'department' || showItem === 'all'">
+
+        <div class="mechanism-title" @click.prevent="deptConf.show = !deptConf.show">
+            <div class="mechanism-side">
+                <strong >部门积分规则</strong>
+                <a href="javascript:void(0);"  @click.prevent="deptConf.show = !deptConf.show">
+                    <Icon type="chevron-up" v-show="deptConf.show" @click.prevent="deptConf.show = !deptConf.show"></Icon>
+                    <Icon type="chevron-down" v-show="!deptConf.show" @click.prevent="deptConf.show = !deptConf.show"></Icon>
+                </a>
+            </div>
+        </div>
+
+        <div v-show="deptConf.show" style="margin-left: 20px;margin-top: 10px">
+            <table border="1">
+                <colgroup>
+                    <col style="width: 50px;">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="my-td my-center my-bg">序号</td>
+                    <td class="my-td my-bg">激励考核项</td>
+                    <td class="my-td my-center my-bg" style="width: 7%">应用规则</td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">1</td>
+                    <td class="my-td">上传线上课程<iv-input-number :min="0" :value.sync="deptConf.vo.DeptOnlineCourseDev.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConf.vo.DeptOnlineCourseDev.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">2</td>
+                    <td class="my-td">上传线下课程<iv-input-number :min="0" :value.sync="deptConf.vo.DeptOfflineCourseDev.score"></iv-input-number>分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConf.vo.DeptOfflineCourseDev.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="my-td my-center">3</td>
+                    <td class="my-td">按照部门人均积分排名，第1名得<iv-input-number :min="0" :value.sync="deptConf.vo.DeptPerCapitaTrainingScore.subRuleConfs.DeptPerCapitaTrainingScore1.score"></iv-input-number>分，之后名次依次递减<iv-input-number :min="0" :value.sync="deptConf.vo.DeptPerCapitaTrainingScore.subRuleConfs.DeptPerCapitaTrainingScore2.score"></iv-input-number>分，最低分为0分。</td>
+                    <td class="my-td my-center"><iv-checkbox :checked.sync="deptConf.vo.DeptPerCapitaTrainingScore.enabled" ></iv-checkbox>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div style="background: #fff;padding: 0;margin-left: 20px">
+        <vi-button class="pull-left ivu-btn btn"  v-if="hasPermission('1060002003')"  @click="doSave" style="margin-top: 10px;background: #00467c;
+    color: #fff;"><span>{{$t('gb.comnon.save')}}</span></vi-button>
+    </div>
+</div>

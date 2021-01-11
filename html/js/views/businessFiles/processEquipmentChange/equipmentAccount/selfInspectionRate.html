@@ -1,0 +1,71 @@
+<div class="report train-chart">
+
+    <!--左侧-->
+    <div class="train-content">
+
+
+        <div class="train-filter">
+
+            <div class="filter" style="width: 200px;">
+               
+                <vi-date-picker type="daterange" :options="datePickModel.options" :value.sync="dateRange" placeholder="选择日期范围" style="width:100%">
+                </vi-date-picker>
+            </div>
+            <div class="filter" style="width: 400px;">
+                <multi-input-select placeholder="请选择部门"  :values="depts" @click="doSelectDept" v-ref:dept-select></multi-input-select>
+            </div>
+
+
+
+            <iv-button type="primary" @click="doQuery" style=" margin-right: 10px;">查询</iv-button>
+            <Icon type="ios-information-outline"
+                style="font-size: 20px;color: #FF9902;cursor: pointer;" @click="tip.show=true"></Icon>
+        </div>
+
+        <div v-if="tableModel.values.length>0" id="iepcExecl">
+            <h4 style="text-align: center;">变更台账及应用范围评估表</h4>
+            <simple-card id="changAccount">
+                <p slot='title'></p>
+                <a slot="extra" @click="doExport">导出</a>
+                <vue-bootstrap-table  style="max-height: calc( 100vh - 260px);" :values="tableModel.values" :columns="tableModel.columns" 
+                    :show-empty-row="false"  :page-size-opts="[20,50,100,200,500]" :lazy-load='true'  show-loading>
+                </vue-bootstrap-table>
+            </simple-card>
+        </div>
+        <div v-else style="text-align: center;padding-top: 200px;">
+            暂无数据
+        </div>
+    </div>
+
+
+</div>
+<dept-select-modal  :visible.sync="deptSelectModel.visible" @do-save="doSaveDepts" :single-select="true"
+	:filter-data="deptSelectModel.filterData"></dept-select-modal>
+<style>
+    .train-filter .filter {
+        margin-right: 10px;
+    }
+    #iepcExecl .table tbody tr td, #iepcExecl .table tbody tr td span, #iepcExecl .table tbody tr td div{
+        white-space: normal !important;
+        word-break: normal !important;
+        /* text-align: center; */
+    }
+</style>
+<modal :visible.sync="tip.show" title="说明" :footer-hide="true" width="400">
+    <div style="
+height: 300px;
+padding:10px;
+
+width: 100%;background-color: white;">
+        <div  style="text-indent: 50px;padding: 10px;">报表查询条件注释：</div>
+        <div  style="text-indent: 50px;padding: 10px;">1. 日期范围</div>
+        <div  style="text-indent: 70px;padding: 10px;">匹配 变更申请发起的日期</div>
+        <div  style="text-indent: 50px;padding: 10px;">2. 单位</div>
+        <div  style="text-indent: 70px;padding: 10px;">匹配变更申请记录的“申请单位”</div>
+    </div>
+    <div class="epc-footer">
+		<vi-button type="primary" @click="tip.show=false" class="pull-right">{{$t("gb.common.close")}}
+		</vi-button>
+		
+	</div>
+</modal>

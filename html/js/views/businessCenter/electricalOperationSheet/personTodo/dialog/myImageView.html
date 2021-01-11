@@ -1,0 +1,12 @@
+<div style="margin-right:10px;" class="blockImg">
+    <div v-if="getName" >{{getName}}</div>
+    <image-view v-else :images="images" show-close=false :image-style="imgStyle"></image-view>
+</div>
+<style>
+    .blockImg img{
+        backface-visibility:hidden;
+        -webkit-backface-visibility:hidden;	/* Chrome 和 Safari */
+        -moz-backface-visibility:hidden; 	/* Firefox */
+        -ms-backface-visibility:hidden; 	/* Internet Explorer */
+    }
+</style>

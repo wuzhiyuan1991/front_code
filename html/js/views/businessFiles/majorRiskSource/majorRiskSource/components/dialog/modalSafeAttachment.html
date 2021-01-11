@@ -1,0 +1,20 @@
+<Modal v-if="load" :title="title" :visible.sync="visible">
+    <div class="edit-pop-container">
+        <div class="epc-content ">
+            <div style="max-height: 500px;width:100%;" class="flex-grow1 pd10">
+                <el-form :model="model" :rules="rules" v-ref:form>
+                    <el-form-item label="安全附件名称" prop="name">
+                        <iv-input :value.sync="model.name"></iv-input>
+                    </el-form-item>
+                    <el-form-item label="数量" prop="quantity">
+                        <iv-input type="number" :value.sync="model.quantity"></iv-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <template slot="footer">
+        <vi-Button type="ghost" size="large" @click="doCancel">取消</vi-Button>
+        <vi-Button type="primary" size="large" @click="doSave">保存</vi-Button>
+    </template>
+</Modal>

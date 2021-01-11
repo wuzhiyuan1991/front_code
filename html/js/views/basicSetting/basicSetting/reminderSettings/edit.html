@@ -1,0 +1,432 @@
+<!--<div class="detail-large-container">-->
+<style>
+	.el-tabs__header .el-tabs__item{
+		padding: 0;
+	}
+	.lookupId.ivu-select.ivu-select-single .ivu-select-selection{
+		border: none;
+	}
+	.lookupId.ivu-select.ivu-select-single .ivu-select-selection i{
+		display: none;
+	}
+	.lookupId.ivu-select.ivu-select-single .ivu-select-selection span{
+		padding:0;
+	}
+</style>
+<div class="detail-container">
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header"><Icon type="ios-photos"></Icon>
+			<span v-if="mainModel.addShow">{{$t("gb.common.add")}}</span>
+			<span v-else>{{$t("gb.common.detail")}}</span>
+		</div>
+
+    <el-tabs v-if="mainModel.tabsShow" style="width: 100%">
+        <el-tab-pane :label="$t('bs.bac.remindTime')" v-if="((mainModel.tabsType == '0') || (mainModel.opType == 'create'))">
+			<div class="fip-content">
+			  <simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>{{$t("bs.bac.remindInfo")}}</span></p>
+	                	<el-form :model="mainModel" :rules="mainModel.isReadOnly == true ? mainModel.timeRules : mainModel.emptyRules" label-width="80px" class="fip-content-item-form" style="width: auto" v-ref:ruleform>
+							<el-form-item prop="timeVo.code" :label="$t('bs.bac.number')" style="width: 88%" prop="timeVo.code">
+								<iv-input v-if="mainModel.isReadOnly && mainModel.opType == 'create'" type="text" :value.sync="mainModel.timeVo.code" ></iv-input>
+								<iv-input v-if="mainModel.isReadOnly && mainModel.opType == 'update'" type="text" :value.sync="mainModel.timeVo.code" disabled></iv-input>
+								<iv-input v-if="!mainModel.isReadOnly" type="text" :value.sync="mainModel.timeVo.code" textonly></iv-input>
+							</el-form-item>
+							<el-form-item prop="timeVo.remindName" :label="$t('bs.bac.remindName')" style="width: 88%" prop="timeVo.remindName">
+								<iv-input v-if="mainModel.isReadOnly" type="text" type="text"  :value.sync="mainModel.timeVo.remindName" data-options="required:true"></iv-input>
+								<iv-input v-if="!mainModel.isReadOnly" type="text" :value.sync="mainModel.timeVo.remindName" textonly></iv-input>
+							</el-form-item>
+							<el-form-item prop="timeVo.orgId" :label="$t('gb.common.ownedComp')" style="width: 59%" prop="timeVo.orgId">
+								<!--<i-select :model.sync="mainModel.timeVo.orgId"  :list="mainModel.orgList" style="width:320px;">-->
+									<!--<i-option v-for="item in mainModel.orgList" :value="item.id">{{ item.name }}</i-option>-->
+								<!--</i-select>-->
+								<company-tree-select :id.sync="mainModel.timeVo.orgId" v-if="mainModel.isReadOnly"></company-tree-select>
+								<iv-input v-if="!mainModel.isReadOnly" :value="getDataDic('org',mainModel.timeVo.orgId)['compName']" :textonly="!mainModel.isReadOnly"></iv-input>
+							</el-form-item>
+							<el-form-item :label="$t('bs.bac.operatObject')" style="width: 59%" prop="timeVo.lookupId">
+								<i-select :model.sync="mainModel.timeVo.lookupId" v-if="mainModel.opType == 'update' && mainModel.isReadOnly" :list="mainModel.lookupList"  @on-change="doChangeDataByTime" disabled>
+									<i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>
+								</i-select>
+								<i-select :model.sync="mainModel.timeVo.lookupId" v-if="mainModel.opType == 'create' && mainModel.isReadOnly" :list="mainModel.lookupList"  @on-change="doChangeDataByTime">
+									<i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>
+								</i-select>
+								<i-select :model.sync="mainModel.timeVo.lookupId" v-if="!mainModel.isReadOnly" :list="mainModel.lookupList" class="lookupId">
+									<i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>
+								</i-select>
+							</el-form-item>
+							<!--<el-form-item prop="timeVo.lookupId" :label="$t('bs.bac.operatObject')" class="reminderSettings-Select">-->
+								<!--<i-select :model.sync="mainModel.timeVo.lookupId"  v-if="mainModel.opType == 'update' && mainModel.isReadOnly" :list="mainModel.lookupList"-->
+										   <!--@on-change="doChangeDataByTime" disabled>-->
+									<!--<i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>-->
+								<!--</i-select>-->
+								<!--<i-select :model.sync="mainModel.timeVo.lookupId" v-if="mainModel.opType == 'create' && mainModel.isReadOnly" :list="mainModel.lookupList"  @on-change="doChangeDataByTime">-->
+									<!--<i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>-->
+								<!--</i-select>-->
+							<!--</el-form-item>-->
+							<el-form-item prop="timeWay" :label="$t('bs.bac.remindMode')" class="reminderSettings-Checkbox">
+								<iv-checkbox-group :model="mainModel.timeWay">
+									<iv-checkbox value="0">{{$t('bs.bac.system')}}</iv-checkbox>
+									<iv-checkbox value="1">{{$t('das.oniu.mail')}}</iv-checkbox>
+									<iv-checkbox value="3">APP</iv-checkbox>
+								</iv-checkbox-group>
+							</el-form-item>
+							<simple-card class="fip-content-item reminderSettings-remind">
+								<p slot="title"><i class="basicPng"></i><span>{{$t('bs.bac.remindReson')}}</span></p>
+								<!--v-if="mainModel.timeVo.rcList.length > 0" v-for="(index,condition) in mainModel.timeVo.rcList"-->
+								<div class="reminderSettings-group" v-if="mainModel.timeVo.rcList.length > 0" v-for="(index,condition) in mainModel.timeVo.rcList">
+										<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.timeVo.rcList[index].lookupItemId"  @on-change="doChangeNodesAndExpress" :list="mainModel.timeCondition" size="small" >
+												<i-option v-for="item in mainModel.timeCondition" :value="item.id">{{ item.name }}</i-option>
+											</i-select>
+										</div>
+										<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.timeVo.rcList[index].conditionNodes" @on-change="doChangeTimeValue" :list="mainModel.dateCondition" size="small" >
+												<i-option v-for="item in mainModel.dateCondition" :value="item.value">{{ item.label }}</i-option>
+											</i-select>
+										</div>
+										<div class="reminderSettings-condition" v-if="(mainModel.timeVo.rcList[index].conditionNodes !='isNull') && (mainModel.timeVo.rcList[index].conditionNodes !='isNotNull')">
+											<!--<date-picker :selected-date.sync="mainModel.timeVo.rcList[index].conditionValueDate"></date-picker>-->
+											<vi-date-picker type="date" :value.sync="mainModel.timeVo.rcList[index].conditionValueDate" placeholder="请选择日期"></vi-date-picker>
+										</div>
+										<div class="reminderSettings-condition" v-if="(mainModel.timeVo.rcList[index].conditionNodes =='betweenDate') && (mainModel.timeVo.rcList[index].conditionNodes !='isNull') && (mainModel.timeVo.rcList[index].conditionNodes !='isNotNull')">
+											<!--<date-picker :selected-date.sync="mainModel.timeVo.rcList[index].conditionValueEndDate"></date-picker>-->
+											<vi-date-picker type="date" :value.sync="mainModel.timeVo.rcList[index].conditionValueEndDate" placeholder="请选择日期"></vi-date-picker>
+										</div>
+										<Icon type="android-remove-circle" style="cursor: pointer; margin-top: 10px;color: red;" @click="doDeleteCondition(index)"></Icon>
+								</div>
+
+							</simple-card>
+							<el-form-item prop="timeVo.rcList" label="">
+							<div class="reminderSettings-AddCondition" v-if="mainModel.timeVo.rcList.length < 5">
+								<textarea  type="text"  readonly="readonly" @click="doAddCondition">{{$t('bs.bac.addReson')}}</textarea>
+							</div>
+							</el-form-item>
+							<simple-card class="fip-content-item">
+									<p slot="title"><i class="basicPng"></i><span>{{$t('bs.bac.setRules')}}</span></p>
+								<div class="reminderSettings-center">
+									<el-form-item prop="timeVo.remindExpress" label="">
+										<textarea type="text" v-model="mainModel.timeVo.remindExpress"></textarea>
+									</el-form-item>
+								</div>
+							</simple-card>
+							<simple-card class="fip-content-item" >
+								<p slot="title"><i class="basicPng"></i><span>{{$t('bs.bac.remindObject')}}</span></p>
+								<a slot="extra" @click="doAddPerson">
+									<span><Icon type="plus"></Icon>{{$t('bs.bac.addPerson')}}</span>
+								</a>
+								<a slot="extra" @click="doAddRole">
+									<span><Icon type="plus"></Icon>{{$t('bs.bac.addRole')}}</span>
+								</a>
+
+								<table id="sample-table-5" class="table table-hover">
+									<thead>
+									<tr class="remindTh4">
+										<th class="remindTh4">{{$t('gb.common.type')}}</th>
+										<th class="remindTh4">{{$t('bd.hal.objectName')}}</th>
+										<th style="width: 50px"></th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr v-for="(index,m) in mainModel.timeVo.rmList">
+										<td v-text="doSearchModelType(m.type)"></td>
+										<td>{{m.name}}</td>
+										<td><div class="table-column-tools" @click="doDel(m,index)"><i class="ivu-icon ivu-icon-trash-a"></i></div></td>
+									</tr>
+									</tbody>
+								</table>
+							</simple-card>
+
+	                	</el-form>
+			</simple-card>
+	       </div>
+        </el-tab-pane>
+     <!--   <el-tab-pane label="事件提醒" v-if="((mainModel.tabsType == '1') || (mainModel.opType == 'create'))">
+			<div class="fip-content">
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>提醒信息</span></p>
+	                	<el-form :model="mainModel" :rules="rules" label-width="80px" style="width: auto"  v-ref:ruleform >
+								<el-form-item prop="timeVo.remindName" label="编号:" >
+									<iv-input type="text"   type="text"  :value.sync="mainModel.timeVo.remindName" data-options="required:true"></iv-input>
+								</el-form-item>
+								<el-form-item prop="timeVo.attr1" label="提醒名称:">
+									&lt;!&ndash;<textarea type="text" class="col-xs-12 col-sm-12" v-model="mainModel.timeVo.attr1"></textarea>&ndash;&gt;
+									<iv-input type="text"   type="text"  :value.sync="mainModel.timeVo.attr1" data-options="required:true"></iv-input>
+								</el-form-item>
+
+								<el-form-item prop="timeVo.attr1" label="所属公司:">
+									<i-select :model.sync="mainModel.timeVo.orgId" :list="mainModel.deptList" size="small"  style="width:320px">
+										<i-option v-for="item in mainModel.deptList" :value="item.id">{{ item.name }}</i-option>
+									</i-select>
+								</el-form-item>
+
+								<el-form-item prop="timeVo.lookupId" label="操作对象:">
+									<i-select :model.sync="mainModel.timeVo.lookupId" :list="mainModel.lookupList" size="small"  style="width:320px" @on-change="doChangeDataByTime">
+										<i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>
+									</i-select>
+								</el-form-item>
+	                            <el-form-item prop="vo.remindEventType" label="事件类型">
+	                                <i-select :model.sync="mainModel.vo.remindEventType" :list="mainModel.eventType" size="small"  style="width:320px">
+	                                    <i-option v-for="item in mainModel.eventType" :value="item.value">{{ item.label }}</i-option>
+	                                </i-select>
+	                            </el-form-item>
+
+	                            <el-form-item prop="timeWay" label="提醒方式" class="reminderSettings-Checkbox">
+									<iv-checkbox-group :model="mainModel.timeWay">
+	                        			<iv-checkbox value="0">系统</iv-checkbox> 
+	                        			<iv-checkbox value="1">邮箱</iv-checkbox>
+				 						<iv-checkbox value="3">APP</iv-checkbox> 
+	                        		</iv-checkbox-group>
+								</el-form-item>
+
+							<div>
+								<simple-card class="fip-content-item">
+									<p slot="title"><i class="basicPng"></i><span>提醒条件</span></p>
+									<div class="reminderSettings-group">
+										<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.vo.rcList[0].lookupItemId" :list="mainModel.firstCondition" size="small" >
+												<i-option v-for="item in mainModel.firstCondition" :value="item.id">{{ item.name }}</i-option>
+											</i-select>
+	                               		 </div>
+										<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.vo.rcList[0].conditionNodes" :list="mainModel.dateCondition" size="small" >
+												<i-option v-for="item in mainModel.dateCondition" :value="item.value">{{ item.label }}</i-option>
+											</i-select>
+	                               		 </div>
+										<div class="reminderSettings-condition">
+	                                   	 	<date-picker :selected-date.sync="mainModel.vo.rcList[0].conditionValueDate"></date-picker>
+	                               		 </div>
+										<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.vo.rcList[1].lookupItemId" :list="mainModel.secondCondition" size="small" @on-change="doSecondType">
+												<i-option v-for="item in mainModel.secondCondition" :value="item.id">{{ item.name }}</i-option>
+											</i-select>
+										</div>
+									</div>
+									<div class="reminderSettings-group">
+										<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.vo.rcList[1].conditionNodes" :list="mainModel.secondCValueType" size="small"  @on-change="doSecondValue">
+												<i-option v-for="item in mainModel.secondCValueType" :value="item.value">{{ item.label }}</i-option>
+											</i-select>
+										 </div>
+										<div class="reminderSettings-condition">
+											<input type="text" v-model="mainModel.vo.rcList[1].conditionValue" v-if="mainModel.secondComponent == '2'" class="col-xs-12 col-sm-12">
+											<date-picker :selected-date.sync="mainModel.vo.rcList[1].conditionValueDate" v-if="mainModel.secondComponent == '1'"></date-picker>
+											<input type="text" @click="doChooiseModel(mainModel.vo.rcList[1].lookupItemId,1)"  v-model="mainModel.vo.rcList[1].attr2" v-if="mainModel.secondComponent == '3'" class="col-xs-12 col-sm-12">
+										</div>
+										<div class="reminderSettings-condition">
+												<i-select :model.sync="mainModel.vo.rcList[2].lookupItemId" :list="mainModel.thirdCondition" size="small"  @on-change="doThirdType">
+													<i-option v-for="item in mainModel.thirdCondition" :value="item.id">{{ item.name }}</i-option>
+												</i-select>
+											</div>
+										<div class="reminderSettings-condition">
+												<i-select :model.sync="mainModel.vo.rcList[2].conditionNodes" :list="mainModel.thirdValueType" size="small"  @on-change="doThirdValue">
+													<i-option v-for="item in mainModel.thirdValueType" :value="item.value">{{ item.label }}</i-option>
+												</i-select>
+											</div>
+									</div>
+								<div class="reminderSettings-group">
+									<div class="reminderSettings-condition">
+											<input type="text"  v-model="mainModel.vo.rcList[2].conditionValue" v-if="mainModel.thirdComponent == '2'" class="col-xs-12 col-sm-12">
+											<date-picker :selected-date.sync="mainModel.vo.rcList[2].conditionValueDate" v-if="mainModel.thirdComponent == '1'"></date-picker>
+											<input type="text" @click="doChooiseModel(mainModel.vo.rcList[2].lookupItemId,2)"  v-model="mainModel.vo.rcList[2].attr2" v-if="mainModel.thirdComponent == '3'" class="col-xs-12 col-sm-12">
+										</div>
+
+									<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.vo.rcList[3].lookupItemId" :list="mainModel.fourCondition" size="small"  @on-change="doFourType">
+												<i-option v-for="item in mainModel.fourCondition" :value="item.id">{{ item.name }}</i-option>
+											</i-select>
+										</div>
+									<div class="reminderSettings-condition">
+											<i-select :model.sync="mainModel.vo.rcList[3].conditionNodes" :list="mainModel.fourValueType" size="small"  @on-change="doFourValue">
+												<i-option v-for="item in mainModel.fourValueType" :value="item.value">{{ item.label }}</i-option>
+											</i-select>
+										</div>
+									<div class="reminderSettings-condition">
+											<input type="text" v-model="mainModel.vo.rcList[3].conditionValue" v-if="mainModel.fourComponent == '2'" class="col-xs-12 col-sm-12">
+											<date-picker :selected-date.sync="mainModel.vo.rcList[3].conditionValueDate" v-if="mainModel.fourComponent == '1'"></date-picker>
+											<input type="text" @click="doChooiseModel(mainModel.vo.rcList[3].lookupItemId,3)"  v-model="mainModel.vo.rcList[3].attr2" v-if="mainModel.fourComponent == '3'" class="col-xs-12 col-sm-12">
+										</div>
+								</div>
+							<div class="reminderSettings-group">
+								<div class="reminderSettings-condition">
+	                                    <i-select :model.sync="mainModel.vo.rcList[4].lookupItemId" :list="mainModel.fiveCondition" size="small"  @on-change="doFiveType">
+	                                        <i-option v-for="item in mainModel.fiveCondition" :value="item.id">{{ item.name }}</i-option>
+	                                    </i-select>
+	                                </div>
+								<div class="reminderSettings-condition">
+	                                    <i-select :model.sync="mainModel.vo.rcList[4].conditionNodes" :list="mainModel.fiveValueType" size="small"  @on-change="doFiveValue">
+	                                        <i-option v-for="item in mainModel.fiveValueType" :value="item.value">{{ item.label }}</i-option>
+	                                    </i-select>
+	                                </div>
+								<div class="reminderSettings-condition">
+	                                    <input type="text" v-model="mainModel.vo.rcList[4].conditionValue" v-if="mainModel.fiveComponent == '2'"  class="col-xs-12 col-sm-12">
+	                                    <date-picker :selected-date.sync="mainModel.vo.rcList[4].conditionValueDate" v-if="mainModel.fiveComponent == '1'"></date-picker>
+	                                    <input type="text" @click="doChooiseModel(mainModel.vo.rcList[4].lookupItemId,4)" v-model="mainModel.vo.rcList[4].attr2" v-if="mainModel.fiveComponent == '3'" class="col-xs-12 col-sm-12">
+	                                </div>
+							</div>
+
+					</simple-card>
+					</div>
+							&lt;!&ndash;<el-form-item prop="vo.remindExpress" label="设定规则">&ndash;&gt;
+								&lt;!&ndash;<textarea type="text" class="col-sm-12" v-model="mainModel.vo.remindExpress"></textarea>	&ndash;&gt;
+							&lt;!&ndash;</el-form-item>&ndash;&gt;
+							<simple-card class="fip-content-item" >
+								<p slot="title"><i class="basicPng"></i><span>设定规则</span></p>
+								<div class="reminderSettings-center">
+									<el-form-item prop="timeVo.remindExpress">
+										<textarea type="text"  v-model="mainModel.timeVo.remindExpress"></textarea>
+									</el-form-item>
+								</div>
+							</simple-card>
+							<simple-card class="fip-content-item" >
+								<p slot="title"><i class="basicPng"></i><span>提醒对象</span></p>
+								<a slot="extra" @click="doAddPerson">
+									<span><Icon type="plus"></Icon>添加人员</span>
+								</a>
+								<a slot="extra" @click="doAddRole">
+									<span><Icon type="plus"></Icon>添加角色</span>
+								</a>
+							</simple-card>
+							&lt;!&ndash;<vue-bootstrap-table&ndash;&gt;
+							&lt;!&ndash;:columns=mainModel.itemColumns&ndash;&gt;
+							&lt;!&ndash;:show-filter=mainModel.showFilter&ndash;&gt;
+							&lt;!&ndash;:show-column-picker=mainModel.showColumnPicker&ndash;&gt;
+							&lt;!&ndash;:show-pager=mainModel.showPager&ndash;&gt;
+							&lt;!&ndash;:values="group.filterLookups"&ndash;&gt;
+							&lt;!&ndash;@on-del-row="delItemRelRowHandler"&ndash;&gt;
+							&lt;!&ndash;@on-click-cell="doTableCellClick"&ndash;&gt;
+							&lt;!&ndash;:reset-trigger-flag=mainModel.resetTriggerFlag&ndash;&gt;
+							&lt;!&ndash;:page-size-opts=mainModel.pageSizeOpts&ndash;&gt;
+							&lt;!&ndash;&gt;&ndash;&gt;
+							&lt;!&ndash;</vue-bootstrap-table>&ndash;&gt;
+	                	</el-form>
+	            	</form>
+				</simple-card>
+	        </div>
+        </el-tab-pane>
+        <el-tab-pane label="审批提醒" >
+			<div class="fip-content">
+				<simple-card class="fip-content-item">
+					<p slot="title"><i class="basicPng"></i><span>提醒信息</span></p>
+	                	<el-form :model="mainModel" :rules="rules" label-width="80px" v-ref:ruleform style="width: auto">
+	                		<div>
+								<el-form-item prop="timeVo.remindName" label="编号:" >
+									<iv-input type="text"  type="text"  :value.sync="mainModel.timeVo.remindName" data-options="required:true"></iv-input>
+								</el-form-item>
+								<el-form-item prop="timeVo.attr1" label="提醒名称:">
+									&lt;!&ndash;<textarea type="text" class="col-xs-12 col-sm-12" v-model="mainModel.timeVo.attr1"></textarea>&ndash;&gt;
+									<iv-input type="text" type="text" :value.sync="mainModel.timeVo.attr1" data-options="required:true"></iv-input>
+								</el-form-item>
+	                            <el-form-item prop="timeVo.attr1" label="所属公司">
+	                                <i-select :model.sync="mainModel.timeVo.orgId"  :list="mainModel.deptList" size="small" style="width:320px">
+	                                    <i-option v-for="item in mainModel.deptList" :value="item.id">{{ item.name }}</i-option>
+	                                </i-select>
+	                            </el-form-item>
+	                            
+	                            <el-form-item prop="timeVo.lookupId" label="操作对象">
+	                                <i-select :model.sync="mainModel.timeVo.lookupId"  :list="mainModel.lookupList" size="small" style="width:320px" @on-change="doChangeDataByTime">
+	                                    <i-option v-for="item in mainModel.lookupList" :value="item.id">{{ item.attr1 }}</i-option>
+	                                </i-select>
+	                            </el-form-item>
+	                             
+								<el-form-item prop="timeWay" label="提醒方式" class="reminderSettings-Checkbox">
+									<iv-checkbox-group :model="mainModel.timeWay">
+	                        			<iv-checkbox value="0">系统</iv-checkbox> 
+	                        			<iv-checkbox value="1">邮箱</iv-checkbox>
+				 						<iv-checkbox value="3">APP</iv-checkbox> 
+	                        		</iv-checkbox-group>
+								</el-form-item>
+	                        </div>
+	                        <div>
+							<simple-card class="fip-content-item">
+								&lt;!&ndash;v-if="$index == 0"&ndash;&gt;
+								<p slot="title"><i class="basicPng"></i><span >提醒条件</span></p>
+		                        <div v-for="rcListItem in mainModel.timeVo.rcList" style="clear: both;overflow: hidden;margin-bottom: 10px;">
+		                            <div class="reminderSettings-condition">
+		                                <i-select :model.sync="rcListItem.lookupItemId" :list="mainModel.timeCondition" size="small">
+		                                    <i-option v-for="item in mainModel.timeCondition" :value="item.id">{{ item.name }}</i-option>
+		                                </i-select>
+		                            </div>
+		                            <div class="reminderSettings-condition">
+		                                <i-select :model.sync="rcListItem.conditionNodes" :list="mainModel.dateCondition" size="small">
+		                                    <i-option v-for="item in mainModel.dateCondition" :value="item.value">{{ item.label }}</i-option>
+		                                </i-select>
+		                            </div>
+		                            <div class="reminderSettings-condition">
+		                                <date-picker :selected-date.sync="rcListItem.conditionValueDate"></date-picker>
+		                            </div>
+		                       	 </div>
+								</simple-card>
+		                        <div class="reminderSettings-AddCondition">
+	                                <p>添加条件</p>
+	                            </div>
+
+								<simple-card class="fip-content-item" >
+									<p slot="title"><i class="basicPng"></i><span>设定规则</span></p>
+									<div class="reminderSettings-center">
+										<el-form-item prop="timeVo.remindExpress">
+											<textarea type="text"  v-model="mainModel.timeVo.remindExpress"></textarea>
+										</el-form-item>
+									</div>
+								</simple-card>
+								<simple-card class="fip-content-item" >
+									<p slot="title"><i class="basicPng"></i><span>提醒对象</span></p>
+									<a slot="extra" @click="doAddPerson">
+										<span><Icon type="plus"></Icon>添加人员</span>
+									</a>
+									<a slot="extra" @click.prevent="doApprovalStage">
+										<span>审批阶段</span>
+									</a>
+								</simple-card>
+								&lt;!&ndash;table数据&ndash;&gt;
+								&lt;!&ndash;<vue-bootstrap-table&ndash;&gt;
+								&lt;!&ndash;:columns=mainModel.itemColumns&ndash;&gt;
+								&lt;!&ndash;:show-filter=mainModel.showFilter&ndash;&gt;
+								&lt;!&ndash;:show-column-picker=mainModel.showColumnPicker&ndash;&gt;
+								&lt;!&ndash;:show-pager=mainModel.showPager&ndash;&gt;
+								&lt;!&ndash;:values="group.filterLookups"&ndash;&gt;
+								&lt;!&ndash;@on-del-row="delItemRelRowHandler"&ndash;&gt;
+								&lt;!&ndash;@on-click-cell="doTableCellClick"&ndash;&gt;
+								&lt;!&ndash;:reset-trigger-flag=mainModel.resetTriggerFlag&ndash;&gt;
+								&lt;!&ndash;:page-size-opts=mainModel.pageSizeOpts&ndash;&gt;
+								&lt;!&ndash;&gt;&ndash;&gt;
+								&lt;!&ndash;</vue-bootstrap-table>&ndash;&gt;
+		                    </div>
+		                    &lt;!&ndash;<div class="col-xs-12 btnSave1">&ndash;&gt;
+		                        &lt;!&ndash;<button class="btn btn-save" type="button" @click="doSave">&ndash;&gt;
+		                            &lt;!&ndash;<i class="ace-icon fa fa-check bigger-110"></i>保存&ndash;&gt;
+		                        &lt;!&ndash;</button>&ndash;&gt;
+		                        &lt;!&ndash;<button class="btn btnSm" type="button" @click="doCancel">&ndash;&gt;
+		                            &lt;!&ndash;<i class="ace-icon fa fa-check bigger-110"></i>取消&ndash;&gt;
+		                        &lt;!&ndash;</button>&ndash;&gt;
+		                    &lt;!&ndash;</div>&ndash;&gt;
+	                	</el-form>
+	            </form>
+			</simple-card>
+	       </div>
+        </el-tab-pane>-->
+    </el-tabs>
+
+</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost"icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<iv-button v-if="!mainModel.isReadOnly && hasPermission('3020004002')" type="ghost" @click.stop="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<vi-button v-if="mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="!mainModel.isReadOnly && mainModel.opType != 'create' && hasPermission('3020004003')"  type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+	<!--<div class="few-info-sider pull-right">-->
+		<!--<iv-button type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>-->
+		<!--&lt;!&ndash;<iv-button type="ghost" @click="doCancel" icon="close-round">{{$t("gb.common.cancel")}}</iv-button>&ndash;&gt;-->
+	<!--</div>-->
+</div>
+<!-- 弹框选人 -->
+<user-select-modal :visible.sync="showModal"  @do-save="doSaveSelect"  single-select ></user-select-modal>
+<!-- 选择角色 -->
+<Modal :visible.sync="roleModel.show" :title="roleModel.title" :width="700" footer-hide>
+	<role-component @do-role-saved="doRoleSaved"></role-component>
+</Modal>
+
+<!--
+<Modal :visible.sync="chooiseModel.show" :title="chooiseModel.title" width="1000" :footer-hide="true">
+	<chooisemodelcomponent></chooisemodelcomponent>
+</Modal>-->

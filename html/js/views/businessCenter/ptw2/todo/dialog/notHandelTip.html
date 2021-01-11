@@ -1,0 +1,14 @@
+<Modal v-if="load" title="提示" :visible.sync="visible" width="400">
+    <div class="modal-box-default" style="line-height: 2rem;font-size: 14px;">
+        <p>web端只能对作业票进行下列操作</p>
+        <ul class="ul-disc mb30">
+            <li >审核&nbsp;&nbsp;（作业预约，提交之后的审核操作）</li>
+            <li >申请&nbsp;&nbsp;（作业预约通过之后，填报作业票内容）</li>
+<!--            <li>批准&nbsp;&nbsp;（作业批准人签字批准环节）</li>-->
+        </ul>
+        <p style="margin-top:14px;" class="invalidText">作业票其他处理业务请在手持终端登陆APP进行操作。</p>
+    </div>
+    <template slot="footer">
+        <vi-Button type="ghost" size="large" @click="close">关闭</vi-Button>
+    </template>
+</Modal>

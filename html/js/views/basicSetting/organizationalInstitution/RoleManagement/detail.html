@@ -1,0 +1,102 @@
+<div class="detail-container">
+
+	<div class="few-info-panel pull-left">
+
+		<div class="fip-header">
+			<Icon type="ios-photos"></Icon>
+			<span>{{mainModel.title}}</span>
+		</div>
+
+		<div class="fip-content">
+			<!-- 模型基础信息 -->
+			<simple-card class="fip-content-item">
+				<p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+				<el-form class="fip-content-item-form" :model="mainModel.vo"
+						 :rules="mainModel.isReadOnly ? mainModel.emptyRules : mainModel.rules" v-ref:ruleform>
+					<el-form-item  :label="$t('ori.perm.authCode')" prop="code">
+						<!--<iv-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+					</el-form-item>
+					<el-form-item :label="$t('ori.perm.authName')" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.ownedComp')" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item :label="$t('gb.common.state')" prop="disable">
+						<!--<iv-input :value.sync="disableLable" :textonly="mainModel.isReadOnly"></iv-input>-->
+						<!--<span>{{disableLable}}</span>-->
+						<disable-select :value.sync="mainModel.vo.disable" :read-only="true"></disable-select>
+					</el-form-item>
+
+				</el-form>
+			</simple-card>
+
+			<div :class="{'rel-info-panel-mask': mainModel.action === 'copy'}">
+				<simple-card class="fip-content-item fixed-table-card" filter :filter-when="mainModel.opType !== 'create' && mainModel.action !== 'copy'">
+					<p slot="title"><i class="basicPng"></i><span>{{$t("bs.orl.personnel")}}</span></p>
+					<a slot="extra" v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'" @click.prevent="doShowUserSelectModel" >
+						<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+					</a>
+					<vue-bootstrap-table
+						:url="tableModel.userTableModel.url"
+						:columns="tableModel.userTableModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:lazy-load="true"
+						@on-del-row="doRemoveUsers"
+						v-ref:user-table
+						>
+					</vue-bootstrap-table>
+				</simple-card>
+				
+				<simple-card class="fip-content-item fixed-table-card">
+					<p slot="title"><i class="basicPng"></i><span title="其他公司{{$t('bs.orl.personnel')}}（拥有{{getDataDic('org', mainModel.vo.compId)['compName']}}公司及下属公司的数据权限）"  style="display: inline-block;width:450px;overflow: hidden;    
+						text-overflow:ellipsis;white-space:nowrap;">其他公司{{$t("bs.orl.personnel")}}（拥有{{getDataDic('org', mainModel.vo.compId)['compName']}}公司及下属公司的数据权限）</span></p>
+					<a slot="extra" v-if="mainModel.isReadOnly && hasAuth('edit') && mainModel.action !== 'copy'" @click.prevent="doShowOtherOrganUserSelectModel" >
+						<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
+					</a>
+					
+					<vue-bootstrap-table
+						:url="tableModel.otherOrganUserTableModel.url"
+						:columns="tableModel.otherOrganUserTableModel.columns"
+						:show-empty-row="false"
+						:use-default-global-filter="false"
+						:lazy-load="true"
+						@on-del-row="doRemoveOtherOrganUsers"
+						v-ref:other-organ-user-table
+						>
+					</vue-bootstrap-table>
+					
+				</simple-card>
+				
+			</div>
+			
+		</div>
+	</div>
+	<div class="few-info-sider pull-right">
+		<iv-button type="ghost" icon="close-round" @click.stop="doClose" >{{$t("gb.common.close")}}</iv-button>
+		<vi-button v-if="hasAuth('enable') && mainModel.isReadOnly" type="ghost"  @click="doEnableDisable" icon="ios-minus-outline">{{$t("gb.common.EnableDisable")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('edit')" type="ghost" @click="doEdit" icon="android-document">{{$t('gb.common.edition')}}</iv-button>
+ 		<iv-button v-if="!mainModel.isReadOnly" type="ghost" @click="doSave" icon="android-document">{{$t('gb.comnon.save')}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy2" icon="android-document">复制</iv-button>
+		<vi-button v-if="!mainModel.isReadOnly && isEditStatus" type="ghost" class="mp-header-item-btn" @click="doCancel" icon="ios-information-outline ">{{$t("gb.common.cancel")}}</vi-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('feature')" type="ghost" @click="doMenuAndFunc" icon="funnel">{{$t("ori.rolm.menuAndFuncAuth")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && hasAuth('dataAuth')" type="ghost" @click="doAlotData" icon="android-wifi">{{$t("ori.rolm.dataAuth")}}</iv-button>
+		<iv-button v-if="mainModel.isReadOnly && mainModel.opType != 'create' && hasAuth('delete')" type="ghost" @click="doDelete" icon="trash-a">{{$t("gb.common.del")}}</iv-button>
+	</div>
+</div>
+
+<user-select-modal :visible.sync="selectModel.userSelectModel.visible" :is-show-concator="false" @do-save="doSaveUsers" :filter-data="selectModel.userSelectModel.filterData"></user-select-modal>
+<other-organ-user-select-modal :visible.sync="selectModel.otherOrganUserSelectModel.visible"  @do-save="doSaveOtherOrganUsers" :filter-data="selectModel.otherOrganUserSelectModel.filterData"></other-organ-user-select-modal>
+<Modal :visible.sync="copyModel.visible" :title="copyModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<iv-checkbox :checked.sync="copyModel.isNeedCopyUser">复制【人员】</iv-checkbox>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSaveCopy" class="pull-right">确定</vi-button>
+		</div>
+	</div>
+</Modal>

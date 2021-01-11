@@ -1,0 +1,39 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="编码" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('name') == -1)" label="设备设施子件名称" prop="name">
+						<iv-input :value.sync="mainModel.vo.name" :disabled="(disabledFields.indexOf('name') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!-- <el-form-item v-if="(hiddenFields.indexOf('equipment') == -1)" label="设备设施主件id" prop="equipmentId">
+						<input-select :value="mainModel.vo.equipment" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('equipment') != -1)" @click="(!mainModel.isReadOnly) && (doShowEquipmentSelectModal())" ></input-select>
+					</el-form-item> -->
+					<el-form-item v-if="(hiddenFields.indexOf('serialNumber') == -1)" label="序列号" prop="serialNumber">
+						<iv-input :value.sync="mainModel.vo.serialNumber" :disabled="(disabledFields.indexOf('serialNumber') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<!-- <el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="是否禁用" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item> -->
+					<el-form-item v-if="(hiddenFields.indexOf('retirementDate') == -1)" label="报废日期" prop="retirementDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.retirementDate" :disabled="(disabledFields.indexOf('retirementDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.retirementDate" :disabled="(disabledFields.indexOf('retirementDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('warranty') == -1)" label="保修期(月)" prop="warranty">
+						<iv-input :value.sync="mainModel.vo.warranty" :disabled="(disabledFields.indexOf('warranty') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('warrantyPeriod') == -1)" label="保修终止日期" prop="warrantyPeriod">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.warrantyPeriod" :disabled="(disabledFields.indexOf('warrantyPeriod') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.warrantyPeriod" :disabled="(disabledFields.indexOf('warrantyPeriod') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<equipment-select-modal :visible.sync="selectModel.equipmentSelectModel.visible"  @do-save="doSaveEquipment"></equipment-select-modal>

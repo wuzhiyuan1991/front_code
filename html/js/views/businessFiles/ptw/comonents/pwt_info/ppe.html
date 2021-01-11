@@ -1,0 +1,35 @@
+<simple-card class="ptw-base-info">
+    <div slot="title" >
+        <!--<div class="flex-layout-between">-->
+             <p style="height: 21px;">个人防护</p>
+             <span @click="gotoMore" class="link-ele pull-right">自定义更多...</span>
+        <!--</div>-->
+    </div>
+    <div style="padding-left:10px;">
+        <iv-checkbox  :checked.sync="model.enableUploadPicPpe" false-value="0" true-value="1" ><span class="checked-box-span">需要附录上传照片</span></iv-checkbox>
+        <span style="color:#aaa;">（附录照片是针对“个人防护”整体而言，不是针对某一类型的防护）</span>
+    </div>
+    <div class="flex-layout ml10 mb20 pdt10 ivu-checkbox-wrapper-flex" v-for="item of ppeList">
+        <div style="width:110px" class="text-center">
+            <iv-checkbox :checked.sync="item.enable"  @change="doPPEChange(item)" style="color: #3c8dbc;">
+                <!--<span class="checked-box-span">{{item.name}}</span>-->
+                <span style="color:#33a6ff;text-align: left;width:60px;white-space: normal;word-break: break-all;">{{item.name}}</span>
+
+            </iv-checkbox>
+        </div>
+        <div style="width:600px;max-width: 600px;min-height: 80px;position: relative;border:1px dashed #fff;"  class="mr10 " :class="{'rel-info-panel-mask border-color-ddd':!item.enable}">
+                <div class="form-disabled h80" :style="item.enable?'background:#fff;border:1px solid #ddd;width:505px':'background:#fff;border:none;width:505px;padding:5px 8px;'" :class="{'bgw':item.enable}">
+                    <div class="ele-disabled-mask"></div>
+                <iv-checkbox-group class="group-vertical">
+                    <!--<iv-checkbox disabled   v-for="ppeitem of getPPEItems(item)"><span class="checked-box-span">{{ppeitem.name}}</span></iv-checkbox>-->
+                    <iv-checkbox disabled class="checked-box-span"  v-for="ppeitem of getPPEItems(item)">{{ppeitem.name}}</iv-checkbox>
+                </iv-checkbox-group>
+            </div>
+            <div style="position: absolute;top:0px;right:4px;" >
+                <span class="link-ele"  @click="item.enable && doCustomContent(6,item.id,item.enable)">定制内容</span>
+            </div>
+        </div>
+    </div>
+</simple-card>
+
+

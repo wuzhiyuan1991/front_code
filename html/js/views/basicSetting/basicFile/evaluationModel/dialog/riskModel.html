@@ -1,0 +1,91 @@
+<div class="sw-rm-select">
+    <iv-input display-type="popfx" :value.sync="modelVO.result" style="width:100%;" @click="showModel"></iv-input>
+    <Icon type="ios-close" v-show="showClearIcon" class="fxIcoClose" @click.stop="doClear"></Icon>
+    <img src="./images/fx.png" class="fxIco" @click="showModel" style="cursor: pointer">
+</div>
+
+<Modal :visible.sync="show" title="风险等级" width="800" :footer-hide="true" class="riskModelLevel" @on-cancel="doClose">
+    <div class="edit-pop-container epc-riskmodel">
+        <div class="epc-content ">
+            <el-form :model="modelVO" style="width:760px;" v-ref:ruleform>
+
+                <iv-row>
+                    <iv-col span="24">
+                        <el-form-item :label="$t('bd.ria.evaluatModel')" prop="id" :rules="ruleModel.name">
+                            <i-select :model.sync="modelVO.id" :list="modelList" style="width:240px" @on-change="modelChange">
+                                <i-option v-for="item in modelList" :value="item.id">{{ item.name }}</i-option>
+                            </i-select>
+                        </el-form-item>
+                    </iv-col>
+                </iv-row>
+
+                <!--选择-->
+                <iv-row v-for="(index, gradeLat) in modelVO.riskGradeLats">
+                    <iv-col>
+                        <iv-row style="border-bottom:1px solid #ccc;padding-top: 20px;">
+                            <iv-col span="23">
+                                <el-form-item :label="gradeLat.name" label-width="125px" :prop="'opts.'+index" :rules="ruleModel.latScore">
+                                    <iv-radio-group :model.sync="modelVO.opts[index]">
+                                        <iv-radio v-for="latScore in gradeLat.latScores" :value="latScore.id" style="min-width:90px;">{{latScore.name}}
+                                        </iv-radio>
+                                    </iv-radio-group>
+                                </el-form-item>
+                            </iv-col>
+                            <iv-col span="1" style="padding-top:10px;padding-right: 10px;">
+                                <a href="javascript:void(0);" @click.prevent="doExtra(index)" class="pull-right">
+                                    <i class="pull-right" :class="[showExt[index] ? 'exDownImg' : 'exUpImg']"></i>
+                                </a>
+                            </iv-col>
+                        </iv-row>
+                        <iv-row v-show="showExt[index]" style="margin-top: 20px;">
+                            <iv-col style="width:760px;overflow-y: hidden;border:1px solid #ccc;background-color:#fff;overflow-x: auto;">
+                                <table>
+                                    <colgroup>
+                                        <col align="left" style="width:50px;padding-left: 20px;"/>
+                                        <col align="left" style="width:100px;"/>
+                                        <col v-for="ext in gradeLat.gradeExtend" v-text="ext.name" align="right" style="width: 200px;"/>
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>{{$t("bd.ria.score")}}</th>
+                                        <th>{{$t("bd.ria.degree")}}</th>
+                                        <th v-for="ext in gradeLat.gradeExtend" v-text="ext.name"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="(latIndex, latScore) in gradeLat.latScores" style="line-height: 40px;"
+                                        :class="{selectOpt: modelVO.opts[index] === latScore.id}">
+                                        <td v-text="latScore.score"></td>
+                                        <td v-text="latScore.name"></td>
+                                        <td v-for="ext in gradeLat.gradeExtend">
+                                            <tooltip :content="getExtDetailsInfo(latIndex,ext.scoreExtend)" placement="bottom" :delay="500">
+                                                {{getExtInfo(latIndex,ext.scoreExtend)}}
+                                            </tooltip>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </iv-col>
+                        </iv-row>
+                    </iv-col>
+                </iv-row>
+
+                <!--结果-->
+                <div style="margin-top: 20px;border:1px solid #ccc;background-color: #fff;overflow: hidden;display: flex;">
+                    <div style="width: 80%;padding: 8px 16px;">
+                        <vi-button v-for="label in calcRuleLables" track-by="$index" style="margin: 4px;padding: 0 15px; height: 34px;line-height: 33px;">
+                            <a class='removeThis' style="font-size: 16px;">{{{displayLabelText(label)}}}</a>
+                        </vi-button>
+                    </div>
+                    <div style="font-size:18px;font-weight:bold;border-left:1px solid #ccc;width:20%;display: inline-flex;align-items: center;justify-content: center;"
+                         v-if="calcRuleResult && show" :style="{backgroundColor: '#'+calcRuleResult.colorMark}">
+                        {{calcRuleResult.level}}
+                    </div>
+                </div>
+            </el-form>
+        </div>
+        <div class="epc-footer">
+            <vi-button type="primary" @click="doConfirm" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+        </div>
+    </div>
+</Modal>

@@ -1,0 +1,55 @@
+<Modal :visible.sync="visible"  :title="mainModel.title" :footer-hide="true">
+	<div class="edit-pop-container">
+		<div class="epc-content">
+			<el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform>
+					<el-form-item v-if="(hiddenFields.indexOf('code') == -1)" label="" prop="code">
+						<iv-input :value.sync="mainModel.vo.code" :disabled="(disabledFields.indexOf('code') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkerId') == -1)" label="检查人id" prop="checkerId">
+						<iv-input :value.sync="mainModel.vo.checkerId" :disabled="(disabledFields.indexOf('checkerId') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('endDate') == -1)" label="结束时间" prop="endDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.endDate" :disabled="(disabledFields.indexOf('endDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.endDate" :disabled="(disabledFields.indexOf('endDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('startDate') == -1)" label="开始时间" prop="startDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.startDate" :disabled="(disabledFields.indexOf('startDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.startDate" :disabled="(disabledFields.indexOf('startDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('compId') == -1)" label="所属公司" prop="compId">
+						<company-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.compId"></company-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.compId)['compName']" :disabled="(disabledFields.indexOf('compId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('orgId') == -1)" label="所属部门" prop="orgId">
+						<department-tree-select v-if="!mainModel.isReadOnly" :id.sync="mainModel.vo.orgId" :comp-id.sync ="mainModel.vo.compId"></department-tree-select>
+						<iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" :disabled="(disabledFields.indexOf('orgId') != -1)" textonly></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkDate') == -1)" label="实际完成时间" prop="checkDate">
+						<date-picker v-if="!mainModel.isReadOnly" :selected-date.sync="mainModel.vo.checkDate" :disabled="(disabledFields.indexOf('checkDate') != -1)"></date-picker>
+						<iv-input v-else :value.sync="mainModel.vo.checkDate" :disabled="(disabledFields.indexOf('checkDate') != -1)" textonly class="inp"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkPlan') == -1)" label="检查计划id" prop="checkPlanId">
+						<input-select :value="mainModel.vo.checkPlan" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('checkPlan') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showCheckPlanSelectModal = true)" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('checkTable') == -1)" label="检查表id" prop="checkTableId">
+						<input-select :value="mainModel.vo.checkTable" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" :disabled="(disabledFields.indexOf('checkTable') != -1)" @click="(!mainModel.isReadOnly) && (mainModel.showCheckTableSelectModal = true)" ></input-select>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('disable') == -1)" label="是否禁用，0未发布，1发布" prop="disable">
+						<iv-input :value.sync="mainModel.vo.disable" :disabled="(disabledFields.indexOf('disable') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('num') == -1)" label="任务序号" prop="num">
+						<iv-input :value.sync="mainModel.vo.num" :disabled="(disabledFields.indexOf('num') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+					<el-form-item v-if="(hiddenFields.indexOf('status') == -1)" label="任务状态" prop="status">
+						<iv-input :value.sync="mainModel.vo.status" :disabled="(disabledFields.indexOf('status') != -1)" :textonly="mainModel.isReadOnly"></iv-input>
+					</el-form-item>
+			</el-form>
+		</div>
+		<div class="epc-footer">
+			<vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+		</div>
+	</div>
+</Modal>
+
+<checkplan-select-modal single-select :visible.sync="mainModel.showCheckPlanSelectModal"  @do-save="doSaveCheckPlan"></checkplan-select-modal>
+<checktable-select-modal single-select :visible.sync="mainModel.showCheckTableSelectModal"  @do-save="doSaveCheckTable"></checktable-select-modal>

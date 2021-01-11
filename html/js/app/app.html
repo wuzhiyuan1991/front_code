@@ -1,0 +1,82 @@
+<div id="app-main-panel" :class="classes">
+    <header class="app-main-header" :style="headerStyle" v-show="showLeftSider">
+        <!-- <div class="top-header" style="width: 240px;" v-if="!showLeftSider"></div> -->
+        <div class="leftLogo" v-show="showLeftSider" transition="fade">
+            <a href="#" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"></span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    <!--<img src="images/menu/saiweiLogo.png" style="width: 80px;"/>-->
+
+                    <div class="saiWeiLogo" style="height:60px;width: 120px;">
+                        <img style="height:100%;" id="saiWeiLogo"
+                             onerror="void(this.src='images/menu/saiweiLogo.png');"/>
+                    </div>
+                </span>
+
+            </a>
+            <!-- Sidebar toggle button-->
+            <a class="icon-toggle" data-toggle="offcanvas" role="button" @click="doToggle"
+               :class="{activeLogo:logocur}">
+            </a>
+        </div>
+        <div class="top-header" style="height:auto" id="menu" @click="doClickHeader">
+            <div class="headerCenter">
+                <menu-header :url="url" :values="headerMenuData" @on-ready="doDisplay"></menu-header>
+            </div>
+            <div class="headerRigth" id="headerListid">
+                <div v-show="searchShow" style="display: none"  class="headerSearch activeSearch"
+                     @click="doCurrentTarget" transition="fade">
+                    <iv-input :maxlength="50" :value.sync="searchModel.params" @on-enter="doSearch"
+                              placeholder="请输入您想要搜索的内容">
+                        <i-select :model.sync="searchModel.code" :list="searchModel.searchList" slot="prepend" v-ref:search-list>
+                            <i-option v-for="item in searchModel.searchList" :value="item.code">{{item.name}}</i-option>
+                        </i-select>
+                    </iv-input>
+                </div>
+
+                <ul class="headerList" >
+                    <!--<li title="搜索">-->
+                        <!--<a @click.stop="doSearch" class="search"></a>-->
+                    <!--</li>-->
+                    <li v-show="false">
+                        <!--<a @click.stop="doSearch" class="search"></a>-->
+                    </li>
+                    <li @click.stop="doShowPersonInfoDetail" class="headerImgSize" title="个人资料">
+                        <div :style="styleObj" v-if="showWorkState">
+                            <span style="margin: 5px;">{{workState === '1' ? '上班中' : '已下班'}}</span>
+                        </div>
+
+                        <span v-if="headerShowImg"><img :src="headerFaceUrl"></span>
+                        <a v-else class="img"></a>
+
+                    </li>
+                    <li title="退出系统">
+                        <a @click="doLogout" class="closeImg"></a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <app-notice></app-notice>
+    </header>
+
+    <div class="app-main-content" transition="fade">
+        <router-view keep-alive>
+        </router-view>
+    </div>
+    <div v-poptip="poptipData" class="ivu-poptip-popper window-poptip">
+        <div class="ivu-poptip-inner">
+            <div class="ivu-poptip-body">
+                <div class="ivu-poptip-body-content window-poptip-content">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aside :show.sync="detailPersonInfoModel.show" placement="right">
+        <component :is="rightSlidePanelName"></component>
+    </aside>
+</div>

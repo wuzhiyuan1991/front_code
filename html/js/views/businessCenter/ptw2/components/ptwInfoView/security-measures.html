@@ -1,0 +1,22 @@
+<simple-card style="width:750px;">
+    <p slot="title" class="ptw-title">安全措施</p>
+    <!--<el-form style="width:680px;" class="ul-style-none">-->
+        <!--<el-form-item label="安全措施">-->
+            <!--<ul class="ul-inside">-->
+                <!--<li v-for="item of kongzhicsList">-->
+                    <!--<input type="checkbox" disabled :checked="item.checkResult == '2'" class="width-auto" />-->
+                    <!--{{item.content||item.name}}-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</el-form-item>-->
+    <!--</el-form>-->
+    <div class="ptw-border ul-style-none">
+        <ul class="ul-inside">
+            <li v-for="item of kongzhicsList" class="flex-v-center-warp lite-box-21" >
+                <input type="checkbox" disabled :checked="(item.attr1=='1' && item.checkResult=='0') || (item.checkResult=='2')" class="width-auto" />
+                {{getItemName(item)}}
+                <image-view image-style="height:20px;width:auto;margin-left:5px;margin-bottom:0;" :images="getFiles(item.cloudFiles, 'PTW18')" show-close=false></image-view>
+            </li>
+        </ul>
+    </div>
+</simple-card>

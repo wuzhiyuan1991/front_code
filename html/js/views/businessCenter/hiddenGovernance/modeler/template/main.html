@@ -1,0 +1,63 @@
+<Modal :visible.sync="visible" :title="mainModel.title" width="900" v-ref:tree :footer-hide="true" class="userSelectModal">
+
+    <iv-row type="flex">
+        <iv-col span="6" style="background-color: #eaf0f5;padding: 20px 0 0 20px;">
+            <div class="member-select-left-tree process-select-left-tree" v-el:mtree style="margin-top: 0;height: 483px;">
+                <ul>
+                    <li :class="{'active': templateType === 'standard'}" @click="changeType('standard')">标准流程</li>
+                    <li :class="{'active': templateType === 'custom'}" @click="changeType('custom')">客户流程</li>
+                </ul>
+            </div>
+        </iv-col>
+
+
+        <iv-col span="18" style="background-color: #eaf0f5;padding-top: 20px;" v-show="templateType === 'standard'">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModel.keyword" placeholder="" icon="ios-search" @on-click="doFilterTable" @on-enter="doFilterTable"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table
+                            :columns="standardModel.columns"
+                            :show-pager="true"
+                            :selected-datas.sync="tableModel.selectedDatas"
+                            :url="standardModel.url"
+                            :is-single-check="true"
+                            :default-filter-value="tableModel.defaultFilterValue"
+                            @on-dbclick-cell="onDbClickCell"
+                            lazy-load
+                            v-ref:standard-table
+                    ></vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+
+
+        <iv-col span="18" style="background-color: #eaf0f5;padding-top: 20px;" v-show="templateType === 'custom'">
+            <div style="padding: 0 10px;width: 300px;">
+                <iv-input :value.sync="tableModel.keyword" placeholder="" icon="ios-search" @on-click="doFilterTable" @on-enter="doFilterTable"></iv-input>
+            </div>
+            <div class="edit-pop-container member-select-right-table">
+                <div class="epc-content">
+                    <vue-bootstrap-table
+                            :columns="customModel.columns"
+                            :show-pager="true"
+                            :selected-datas.sync="tableModel.selectedDatas"
+                            :url="customModel.url"
+                            :is-single-check="true"
+                            :default-filter-value="tableModel.defaultFilterValue"
+                            @on-dbclick-cell="onDbClickCell"
+                            lazy-load
+                            v-ref:custom-table
+                    ></vue-bootstrap-table>
+                </div>
+                <div class="epc-footer" style="border-top:none;">
+                    <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+                </div>
+            </div>
+        </iv-col>
+    </iv-row>
+</Modal>

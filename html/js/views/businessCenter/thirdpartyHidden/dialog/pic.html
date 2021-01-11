@@ -1,0 +1,22 @@
+<style>
+    .picBigModel .ivu-modal-content{
+        width: 70%;
+        left:15%;
+    }
+</style>
+<div class="picBigModel">
+<simple-card class="fip-content-item" :show-content.sync="isShowCardContent">
+    <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.basicInfo')}}</span></p>
+    <div class="col-xs-12">
+        <div class="col-xs-12">
+            <div style="width:100%;" >
+                <!--<img :src="processPic" @click="doPic(this.fileId)" style="margin: 3px;width:100%;">-->
+                <img :src="processPic" @click="doPic(this.fileId)" style="margin: 3px;width:100%;">
+            </div>
+        </div>
+    </div>
+</simple-card>
+<Modal class="type-pic" :visible.sync="picModel.show" width="70%" footer-hide>
+    <img v-if="picModel.show" :src="processPic" style="width: auto;height:auto;">
+</Modal>
+</div>

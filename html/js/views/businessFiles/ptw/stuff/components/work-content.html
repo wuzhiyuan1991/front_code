@@ -1,0 +1,37 @@
+<div>
+    <base-list
+            :auto-close="false"
+            mut-height=300
+            :values.sync="values"
+            v-if="componentKey==='baselist'"
+               @on-edit-ok="doEdit"
+               @on-add-ok="doAdd"
+               @on-move-up="doMoveUp"
+               @on-move-down="doMoveDown"
+               @on-del="del"
+               @on-del-all="delAll"
+    ></base-list>
+    <div v-if="isPPE">
+        <div class="flex-layout">
+            <div class="mr20" style="width: 170px;">
+                <div @click="gotoDic" class="flex-center base-block-title link-btn-color">个人防护设备</div>
+                <div style="height: calc(100vh - 248px);overflow-y: auto">
+                    <base-according v-ref:ppe-type :current-index="ppeTypeSelectedIndex" :values="ppeTypes" @on-selected="onSelectedPPE" class="mt5"></base-according>
+                </div>
+            </div>
+            <div class="flex-grow1">
+                <base-list v-for="(index,item) of ppeTypes" v-show="index===ppeTypeSelectedIndex" :values="item.values"
+                   mut-height=300
+                   :auto-close="false"
+                   :auto-close="false"
+                   @on-edit-ok="doEdit"
+                  @on-add-ok="doAdd"
+                  @on-move-up="doMoveUp"
+                  @on-move-down="doMoveDown"
+                   @on-del="del"
+                   @on-del-all="delAll"
+                ></base-list>
+            </div>
+        </div>
+    </div>
+</div>

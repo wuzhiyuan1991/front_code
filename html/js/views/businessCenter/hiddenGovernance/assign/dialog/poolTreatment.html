@@ -1,0 +1,110 @@
+<style>
+    .special-d .el-form-item__label {
+        color: #999;
+    }
+
+    .special-d .ivu-input-wrapper input.ivu-input {
+        background-color: #f3f3f3;
+        cursor: not-allowed;
+    }
+</style>
+<div class="edit-pop-container">
+    <div class="epc-content">
+        <el-form :model="mainModel.vo" :rules="mainModel.rules" v-ref:ruleform label-width="130px" style="width:390px">
+            <div v-if="formType == 1">
+                <el-form-item :label="$t('hag.hazc.resultApproval')"  prop="status">
+                    <div style="position: absolute;width: 100%;height: 100%;z-index: 50;cursor: pointer;" @click="showNoneTips" v-show="mainModel.selectModel.status.length==0"></div>
+                    <i-select :model.sync="mainModel.vo.status"  :list.sync="mainModel.selectModel.status">
+                        <i-option v-for="s in mainModel.selectModel.status" :value="s.id">{{s.value}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item v-if="isRiskTypeRequiredWhenFirstAudit && !!mainModel.vo.status && mainModel.vo.status != 200 && mainModel.vo.status != 4  && mainModel.vo.status != 1003 && !showCauseAnalysis" :label="$t('hag.hazc.hiddenGrade')" prop="riskType2">
+                    <div style="position: absolute;width: 100%;height: 100%;z-index: 50;cursor: pointer;" @click="showNoneTips" v-show="mainModel.selectModel.status.length==0"></div>
+                    <i-select :model.sync="mainModel.vo.riskType" :list="mainModel.selectModel.riskTypes" :disabled="!isFirstAudit">
+                        <i-option v-for="s in mainModel.selectModel.riskTypes" :value="s.id">{{s.name}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item label="成因分析" prop="causeAnalysis" v-if="!!mainModel.vo.status && mainModel.vo.status != 200 && mainModel.vo.status != 4 && mainModel.vo.status != 1003 && !showCauseAnalysis">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.causeAnalysis"></iv-input>
+                </el-form-item>
+                <el-form-item v-if="mainModel.enableUpdateUsers" :label="$t('hag.hazc.approver')" prop="users">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.auditUsers" id-field="id" display-field="name"
+                                        @on-click="doSelectUsers(1)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.opinionsApproval')" prop="approvalOpinion">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.approvalOpinion"></iv-input>
+                </el-form-item>
+
+            </div>
+            <div v-if="showAssignModel">
+                <el-form-item label="奖励金额(元)" prop="rewardAmount">
+                    <iv-input-number is-integer min=0 :value.sync="mainModel.vo.rewardAmount" type="number"></iv-input-number>
+                </el-form-item>
+                <el-form-item label="奖励人次" prop="rewardNum">
+                    <iv-input-number is-integer min=0 :value.sync="mainModel.vo.rewardNum" type="number"></iv-input-number>
+                </el-form-item>
+                <el-form-item v-if="!isRiskTypeRequiredWhenFirstAudit" :label="$t('hag.hazc.hiddenGrade')" prop="riskType">
+                    <i-select :model.sync="mainModel.vo.riskType" :list="mainModel.selectModel.riskTypes">
+                        <i-option v-for="s in mainModel.selectModel.riskTypes" :value="s.id">{{s.name}}</i-option>
+                    </i-select>
+                </el-form-item>
+                <el-form-item :label="$t('gb.common.riskGrade')" prop="riskLevel">
+                    <risk-model :model.sync="mainModel.selectModel.riskModel"></risk-model>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyReson')" prop="dealDemand">
+                    <iv-input type="textarea" :value.sync="mainModel.vo.dealDemand"></iv-input>
+                </el-form-item>
+                <el-form-item label="ERP工单整改人" prop="erpDealCandidates" v-if="isErpReform || isErpAssign">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.dealCandidates" id-field="id" display-field="name"
+                                        @on-click="doSelectUsers(2)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyPerson')" prop="dealCandidates" v-if="!isErpReform && !isErpAssign">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.dealCandidates" id-field="id" display-field="name"
+                                        @on-click="doSelectUsers(2)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyTime')" prop="maxDealDate">
+                    <date-picker format="yyyy-MM-dd HH:mm:ss" :selected-date.sync="mainModel.vo.maxDealDate" type="datetime" time-zero></date-picker>
+                </el-form-item>
+                <el-form-item label="站队整改人" prop="secondDealCandidates" v-if="isErpReform || isErpAssign">
+                    <multi-select-input :selected-multiple="mainModel.selectModel.userSelected.secondDealCandidates" id-field="id" display-field="name"
+                                        @on-click="doSelectUsers(4)"></multi-select-input>
+                </el-form-item>
+                <el-form-item :label="$t('hag.hazc.rectifyTime')" prop="maxSecondDealDate" v-if="isErpReform || isErpAssign">
+                    <date-picker format="yyyy-MM-dd HH:mm:ss" :selected-date.sync="mainModel.vo.maxSecondDealDate"  @click="doSelectMaxSecondDealDate"  :readonly="!mainModel.vo.maxDealDate"></date-picker>
+                </el-form-item>
+                <div style="padding: 5px 0;" v-if="needVerify && !isErpReform && !isErpAssign">
+
+                    <iv-checkbox :checked="mainModel.vo.needVerify === '2'" @on-change="changeVerify">整改后需要验证</iv-checkbox>
+                </div>
+                <div :class="{'special-d': disableVerify}">
+
+                    <el-form-item :label="$t('hat.hazt.Verifier')" prop="accepterCandidates">
+                        <multi-select-input
+                                :selected-multiple="mainModel.selectModel.userSelected.accepterCandidates"
+                                id-field="id"
+                                :readonly="!mainModel.selectModel.userSelected.canUpdateVerifyUser || disableVerify || !canEditVerifyUser"
+                                display-field="name"
+                                @on-click="doSelectUsers(3)"
+                        ></multi-select-input>
+                    </el-form-item>
+                    <el-form-item :label="$t('hat.hazt.termTime')" prop="maxAcceptDate">
+                        <date-picker
+                                format="yyyy-MM-dd HH:mm:ss"
+                                :selected-date.sync="mainModel.vo.maxAcceptDate"
+                                :readonly="disableVerify"
+                                type="datetime" time-zero
+                        ></date-picker>
+                    </el-form-item>
+                </div>
+                <div style="padding: 5px 0;"  v-if="showOpCard">
+                    <iv-checkbox :checked="mainModel.vo.nestedOpCard === '2'" @on-change="changeOpCard">需要调用一票两卡</iv-checkbox>
+                </div>
+            </div>
+        </el-form>
+    </div>
+    <div class="epc-footer">
+        <vi-button type="primary" @click="doSave" class="pull-right">{{$t("gb.common.ok")}}</vi-button>
+    </div>
+</div>
+<user-select-modal :visible.sync="mainModel.selectModel.userSelected.visible" :filter-data="mainModel.selectModel.userSelected.filterData"
+                   @do-save="doSaveUser"></user-select-modal>
