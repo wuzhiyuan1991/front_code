@@ -1,3 +1,3 @@
 define({
-     url: "http://sz.safewaychina.cn:59001"
+     url: "http://localhost"
 });

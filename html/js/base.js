@@ -265,12 +265,12 @@ define(function () {
         }
     };
 
-    
+
     window.enableMajorRiskSource = true;
     $.ajax({
         url: base.ctxpath + "/user/loginUser",
         xhrFields: {
-             // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
+             withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
         },
         async: false,
         success: function (data) {
