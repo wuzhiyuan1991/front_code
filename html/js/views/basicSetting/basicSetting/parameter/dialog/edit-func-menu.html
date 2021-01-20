@@ -11,7 +11,7 @@
 
         <div class="menuFor8 mr16" style="overflow: hidden;">
             <div class="not">{{$t("bs.orl.modelSel")}}</div>
-            <div id="web-sel"  class="menu-sel-box" v-show="viewMode === 'web'">
+            <div id="web-sel" class="menu-sel-box" v-show="viewMode === 'web'">
                 <div class="menu-sel-left">
                     <ul>
                         <li :id="'linkedsel'+auth.id" v-for="auth in webAuthList" class="menu-sel-item"
@@ -23,12 +23,13 @@
                 <div class="menu-sel-right" style="height: 100%;overflow-y:auto;overflow-x: hidden">
                     <!--WEB-->
                     <div class="menu-and-func">
-                        <iv-checkbox :checked.sync="mainModel.vo.selectAll" @on-change="changeChecked(0)">全选
+                        <iv-checkbox :checked.sync="mainModel.vo.selectAll" @on-change="changeChecked(0)">
+                            {{$t("gb.common.selectAll")}}
                         </iv-checkbox>
                         <div v-for="first in webAuthList" class="root" :id="'web'+first.id">
                             <div>
                                 <i class="glyphicon" :class="['', first.open ? 'glyphicon-minus' : 'glyphicon-plus']"
-                                   @click="doChangeModule(first,$index)"></i>
+                                    @click="doChangeModule(first,$index)"></i>
                                 <iv-checkbox :checked.sync="first.isChecked" @on-change="changeChecked(1, first)">
                                     {{first.name}}
                                 </iv-checkbox>
@@ -36,32 +37,29 @@
                             <div class="menu-and-func-sec" v-for="second in first.children" v-show="first.open">
                                 <div>
                                     <iv-checkbox :checked.sync="second.isChecked"
-                                                 @on-change="changeChecked(2, second, first)">{{second.name}}
+                                        @on-change="changeChecked(2, second, first)">{{second.name}}
                                     </iv-checkbox>
                                 </div>
                                 <div class="menu-and-func-thi" v-for="third in second.children">
                                     <div class="menu-and-func-name">
                                         <iv-checkbox :checked.sync="third.isChecked"
-                                                     @on-change="changeChecked(3, third, second, first)">{{third.name}}
+                                            @on-change="changeChecked(3, third, second, first)">{{third.name}}
                                         </iv-checkbox>
                                     </div>
                                     <div class="menu-third">
                                         <div v-if="third.funcAuthList && third.funcAuthList.length >0"
-                                             class="sel-selall">
-                                            <iv-checkbox
-                                                    :checked.sync="third.allChecked"
-                                                    @on-change="changeChecked(4, third)"
-                                                    :disabled="!third.isChecked && !batchDeleteMode"
-                                            >全选
+                                            class="sel-selall">
+                                            <iv-checkbox :checked.sync="third.allChecked"
+                                                @on-change="changeChecked(4, third)"
+                                                :disabled="!third.isChecked && !batchDeleteMode">
+                                                {{$t("gb.common.selectAll")}}
                                             </iv-checkbox>
                                         </div>
                                         <div v-for="func in third.funcAuthList">
 
-                                            <iv-checkbox
-                                                    :checked.sync="func.isChecked"
-                                                    @on-change="changeChecked(5, third)"
-                                                    :disabled="!third.isChecked && !batchDeleteMode"
-                                            >{{func.name}}
+                                            <iv-checkbox :checked.sync="func.isChecked"
+                                                @on-change="changeChecked(5, third)"
+                                                :disabled="!third.isChecked && !batchDeleteMode">{{func.name}}
                                             </iv-checkbox>
 
                                         </div>
@@ -72,23 +70,24 @@
                     </div>
                 </div>
             </div>
-            <div id="app-sel"  class="menu-sel-box" v-show="viewMode === 'app'">
-<!--                <div class="menu-sel-left" >-->
-<!--                    <ul>-->
-<!--                        <li :id="'linkedsel'+auth.id" v-for="auth in appAuthList" class="menu-sel-item"-->
-<!--                            @click="selModual(auth,$index)">-->
-<!--                            {{auth.name }}-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </div>-->
+            <div id="app-sel" class="menu-sel-box" v-show="viewMode === 'app'">
+                <!--                <div class="menu-sel-left" >-->
+                <!--                    <ul>-->
+                <!--                        <li :id="'linkedsel'+auth.id" v-for="auth in appAuthList" class="menu-sel-item"-->
+                <!--                            @click="selModual(auth,$index)">-->
+                <!--                            {{auth.name }}-->
+                <!--                        </li>-->
+                <!--                    </ul>-->
+                <!--                </div>-->
                 <div class="menu-sel-right" style="height: 100%;overflow-y:auto;overflow-x: hidden">
                     <!--APP-->
                     <div class="menu-and-func" v-show="viewMode === 'app'">
-                        <iv-checkbox :checked.sync="appSelectAll" @on-change="changeChecked(10)">全选</iv-checkbox>
+                        <iv-checkbox :checked.sync="appSelectAll" @on-change="changeChecked(10)">
+                            {{$t("gb.common.selectAll")}}</iv-checkbox>
                         <div v-for="first in appAuthList" style="margin-top: 5px;" :id="'app'+first.id" class="root">
                             <div>
                                 <i class="glyphicon" :class="['', first.open ? 'glyphicon-minus' : 'glyphicon-plus']"
-                                   @click="doChangeModule(first,$index)"></i>
+                                    @click="doChangeModule(first,$index)"></i>
                                 <iv-checkbox :checked.sync="first.isChecked" @on-change="changeChecked(1, first)">
                                     {{first.name}}
                                 </iv-checkbox>
@@ -97,7 +96,7 @@
                                 <div class="menu-and-func-sec2" v-for="second in first.children" v-show="first.open">
                                     <div>
                                         <iv-checkbox :checked.sync="second.isChecked"
-                                                     @on-change="changeChecked(2, second, first)">{{second.name}}
+                                            @on-change="changeChecked(2, second, first)">{{second.name}}
                                         </iv-checkbox>
                                     </div>
                                 </div>

@@ -1,3 +1,3 @@
 define({
-     url: "${tsc.group.url}"
+     url: "http://localhost"
 });

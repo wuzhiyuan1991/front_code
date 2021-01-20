@@ -120,8 +120,8 @@
               <i-option v-for="item in getDataDicList('icpe_check_table_result')" :value="item.id">{{ item.value }}
               </i-option>
             </i-select>
-            <span
-              v-if="mainModel.isReadOnly">{{getDataDic('icpe_check_table_result', mainModel.vo.defaultResult)}}</span>
+            <span v-if="mainModel.isReadOnly">{{getDataDic('icpe_check_table_result',
+              mainModel.vo.defaultResult)}}</span>
           </el-form-item>
 
           <el-form-item class="small-info-box" :label="$t('gb.common.describe')" prop="remarks">
@@ -452,7 +452,7 @@
     :domination-area="formModel.editGroupInfoFormModal.dominationArea" :comp-id="mainModel.vo.compId">
   </edit-group-info-form-model>
 </Modal>
-<expert-support :visible.sync="selectModel.support.visible" :data="suportdata"  @do-save="doSupport"></expert-support>
+<expert-support :visible.sync="selectModel.support.visible" :data="suportdata" @do-save="doSupport"></expert-support>
 <style>
   .linkAToByCode {
     color: #666;

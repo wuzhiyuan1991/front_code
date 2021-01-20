@@ -24,108 +24,108 @@ define(function (require) {
                 url: "checkplan/list{/curPage}{/pageSize}",
                 selectedDatas: [],
                 columns: [{
-                        title: "",
-                        fieldName: "id",
-                        fieldType: "cb",
-                    },
-                    {
-                        //
-                        title: this.$t("gb.common.code"),
-                        fieldName: "code",
-                        fieldType: "link",
-                        filterType: "text",
-                        width: 220
-                    },
+                    title: "",
+                    fieldName: "id",
+                    fieldType: "cb",
+                },
+                {
+                    //
+                    title: this.$t("gb.common.code"),
+                    fieldName: "code",
+                    fieldType: "link",
+                    filterType: "text",
+                    width: 220
+                },
 
-                    {
-                        //计划名
-                        title: this.$t("gb.common.checkPlanName"),
-                        fieldName: "name",
-                        filterType: "text",
-                        width: 240
+                {
+                    //计划名
+                    title: this.$t("gb.common.checkPlanName"),
+                    fieldName: "name",
+                    filterType: "text",
+                    width: 240
+                },
+                {
+                    title: this.$t("gb.common.state"),
+                    orderName: "disable",
+                    fieldName: "disable",
+                    fieldType: "custom",
+                    render: function (data) {
+                        if (data.endDate != null && data.disable != null && data.disable == 1 && data.endDate < new Date().Format("yyyy-MM-dd hh:mm:ss")) {
+                            data.disable = 3;
+                        }
+                        return LIB.getDataDic("isPublished", data.disable);
                     },
-                    {
-                        title: this.$t("gb.common.state"),
-                        orderName: "disable",
-                        fieldName: "disable",
-                        fieldType: "custom",
-                        render: function (data) {
-                            if (data.endDate != null && data.disable != null && data.disable == 1 && data.endDate < new Date().Format("yyyy-MM-dd hh:mm:ss")) {
-                                data.disable = 3;
+                    popFilterEnum: LIB.getDataDicList("isPublished"),
+                    filterType: "enum",
+                    filterName: "criteria.intsValue.disable",
+                    width: 100
+                },
+                {
+                    //开始时间
+                    title: this.$t("gb.common.startTime"),
+                    fieldName: "startDate",
+                    filterType: "date",
+                    width: 180
+                },
+                {
+                    //结束时间
+                    title: this.$t("gb.common.endTime"),
+                    fieldName: "endDate",
+                    filterType: "date",
+                    width: 180
+                },
+                {
+                    title: this.$t("gb.common.check"),
+                    filterType: "text",
+                    fieldType: "custom",
+                    filterName: "criteria.strValue.checkTableName",
+                    sortable: false,
+                    render: function (data) {
+                        if (data.checkTables) {
+                            return _.pluck(data.checkTables, 'name').join(', ')
+                        }
+                    },
+                    width: 240
+                },
+                LIB.tableMgr.column.company,
+                LIB.tableMgr.column.dept,
+                {
+                    //创建人
+                    title: "创建人",
+                    fieldName: "creator.name",
+                    orderName: "createBy",
+                    filterType: "text",
+                },
+                {
+                    //发布人
+                    title: "发布人",
+                    fieldName: "publisher.name",
+                    orderName: "attr1",
+                    filterType: "text",
+                },
+                {
+                    //检查频率
+                    title: "检查频率",
+                    fieldName: "frequencyType",
+                    orderName: "frequencyType",
+                    fieldType: "custom",
+                    render: function (data) {
+                        if (data.planSetting) {
+                            if (data.checkType == "0") {
+                                return LIB.getDataDic("plan_frequence", data.checkType);
+                            } else {
+                                return LIB.getDataDic("plan_frequence", data.planSetting.frequencyType);
                             }
-                            return LIB.getDataDic("isPublished", data.disable);
-                        },
-                        popFilterEnum: LIB.getDataDicList("isPublished"),
-                        filterType: "enum",
-                        filterName: "criteria.intsValue.disable",
-                        width: 100
-                    },
-                    {
-                        //开始时间
-                        title: this.$t("gb.common.startTime"),
-                        fieldName: "startDate",
-                        filterType: "date",
-                        width: 180
-                    },
-                    {
-                        //结束时间
-                        title: this.$t("gb.common.endTime"),
-                        fieldName: "endDate",
-                        filterType: "date",
-                        width: 180
-                    },
-                    {
-                        title: this.$t("gb.common.check"),
-                        filterType: "text",
-                        fieldType: "custom",
-                        filterName: "criteria.strValue.checkTableName",
-                        sortable: false,
-                        render: function (data) {
-                            if (data.checkTables) {
-                                return _.pluck(data.checkTables, 'name').join(', ')
-                            }
-                        },
-                        width: 240
-                    },
-                    LIB.tableMgr.column.company,
-                    LIB.tableMgr.column.dept,
-                    {
-                        //创建人
-                        title: "创建人",
-                        fieldName: "creator.name",
-                        orderName: "createBy",
-                        filterType: "text",
-                    },
-                    {
-                        //发布人
-                        title: "发布人",
-                        fieldName: "publisher.name",
-                        orderName: "attr1",
-                        filterType: "text",
-                    },
-                    {
-                        //检查频率
-                        title: "检查频率",
-                        fieldName: "frequencyType",
-                        orderName: "frequencyType",
-                        fieldType: "custom",
-                        render: function (data) {
-                            if(data.planSetting) {
-                                   if(data.checkType=="0"){
-                                       return LIB.getDataDic("plan_frequence",data.checkType);
-                                   }else {
-                                       return LIB.getDataDic("plan_frequence",data.planSetting.frequencyType);
-                                   }
 
-                            }else {
-                                return LIB.getDataDic("plan_frequence",data.checkType);
-                            }
-                        },
-                        popFilterEnum: LIB.getDataDicList("plan_frequence"),
-                        filterType: "enum",
-                        filterName: "criteria.intsValue.frequencyType",
-                        width: 100
+                        } else {
+                            return LIB.getDataDic("plan_frequence", data.checkType);
+                        }
                     },
+                    popFilterEnum: LIB.getDataDicList("plan_frequence"),
+                    filterType: "enum",
+                    filterName: "criteria.intsValue.frequencyType",
+                    width: 100
+                },
 
                 ],
                 defaultFilterValue: {
@@ -216,12 +216,12 @@ define(function (require) {
                             onOk: function () {
                                 //判断是否已发布
                                 if (_.some(rows, function (row) {
-                                        return row.disable == 1;
-                                    })) {
+                                    return row.disable == 1;
+                                })) {
                                     LIB.Msg.warning("【已发布】状态不能发布,请重新选择!");
                                 } else if (_.some(rows, function (row) {
-                                        return row.disable == 2;
-                                    })) {
+                                    return row.disable == 2;
+                                })) {
                                     LIB.Msg.warning("【已失效】状态不能发布,请重新选择!");
                                 } else {
                                     var ids = _.map(rows, function (row) {
@@ -259,12 +259,12 @@ define(function (require) {
                     onOk: function () {
                         //判断是否已发布
                         if (_.some(rows, function (row) {
-                                return row.disable == 0;
-                            })) {
+                            return row.disable == 0;
+                        })) {
                             LIB.Msg.warning("【未发布】状态不能失效,请重新选择!");
                         } else if (_.some(rows, function (row) {
-                                return row.disable == 2;
-                            })) {
+                            return row.disable == 2;
+                        })) {
                             LIB.Msg.warning("【已失效】状态不能失效,请重新选择!");
                         } else {
                             api.invalid(null, _.pick(rows[0], "id", "disable")).then(function (res) {

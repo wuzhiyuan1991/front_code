@@ -15,13 +15,13 @@ define(function (require) {
                 //当前grid所选中的行
                 selectedRow: [],
                 detailPanelClass: "middle-info-aside"
-//				detailPanelClass : "large-info-aside"
+                //				detailPanelClass : "large-info-aside"
             },
             tableModel: LIB.Opts.extendMainTableOpt(
                 {
                     url: "radomobser/list{/curPage}{/pageSize}?_bizModule=dealt",
                     selectedDatas: [],
-                    isSingleCheck:false,
+                    isSingleCheck: false,
                     columns: [
                         {
                             title: "",
@@ -152,12 +152,12 @@ define(function (require) {
             uploadModel: {
                 url: "/radomobser/importExcel"
             },
-            exportModel : {
+            exportModel: {
                 url: "/radomobser/exportExcel",
                 withColumnCfgParam: true,
                 visible: false,
-                title:'导出',
-                exportType:"0"
+                title: '导出',
+                exportType: "0"
             },
             convertModel: {
                 //控制转隐患组件显示
@@ -166,7 +166,7 @@ define(function (require) {
                 show: false,
                 id: null
             },
-            filterTabId:"all"
+            filterTabId: "all"
 
         };
     }
@@ -184,17 +184,17 @@ define(function (require) {
                 this._normalizeFilterParam(status);
             },
             _normalizeFilterParam: function (status) {
-                if(status == "all") {
+                if (status == "all") {
                     status = null;
-                }else{
+                } else {
                     status = [status];
                 }
                 var params = [{
-                    value : {
-                        columnFilterName : "criteria.intsValue.tabStatus",
-                        columnFilterValue : status
+                    value: {
+                        columnFilterName: "criteria.intsValue.tabStatus",
+                        columnFilterValue: status
                     },
-                    type : "save"
+                    type: "save"
                 }];
                 this.$refs.mainTable.doQueryByFilter(params);
             },
@@ -208,40 +208,40 @@ define(function (require) {
                 });
                 var batchNum = this.tableModel.selectedDatas.length;
                 api.getTableBatchHandleSetting().then(function (res) {
-                    var numer =_.get(res.data, "result");
+                    var numer = _.get(res.data, "result");
                     if (batchNum > numer) {
-                        LIB.Msg.warning("您已选中的记录数是"+batchNum+",限额数是"+numer);
+                        LIB.Msg.warning("您已选中的记录数是" + batchNum + ",限额数是" + numer);
                     } else {
                         LIB.Modal.confirm({
-                            title: '已选中'+batchNum+'条数据,确定删除数据?',
+                            title: '已选中' + batchNum + '条数据,确定删除数据?',
                             onOk: function () {
                                 api.delete(null, deleteIds).then(function (res) {
                                     _this.emitMainTableEvent("do_update_row_data", {
                                         opType: "remove",
                                         value: _this.tableModel.selectedDatas
                                     });
-                                    LIB.Msg.info(res.data+"条记录已经删除成功");
+                                    LIB.Msg.info(res.data + "条记录已经删除成功");
                                 });
                             }
                         });
                     }
                 });
             },
-            doExportExcel:function () {
+            doExportExcel: function () {
                 this.exportModel.exportType = "0";
                 this.exportModel.visible = true;
             },
-            doExport: function(){
+            doExport: function () {
                 this.exportModel.visible = false;
-                var url = "/radomobser/exportExcel/" + this.exportModel.exportType + this._getExportURL() +'&_bizModule=dealt';
+                var url = "/radomobser/exportExcel/" + this.exportModel.exportType + this._getExportURL() + '&_bizModule=dealt';
                 window.open(url);
             },
-            changeExportType:function () {
+            changeExportType: function () {
                 this.exportModel.exportType = this.exportModel.exportType == "0" ? "1" : "0";
             },
             _getExportURL: function () {
                 var queryStr = LIB.urlEncode(this.$refs.mainTable.getCriteria());
-                var originColumns =  _.get(this.tableModel, "columns");
+                var originColumns = _.get(this.tableModel, "columns");
                 var columns = window.localStorage.getItem("tb_code_" + this.moduleCode);
                 var ret = [];
 
@@ -277,9 +277,9 @@ define(function (require) {
                     });
                 }
                 var criteria = this.$refs.mainTable.getCriteria();
-                if(!!criteria) {
+                if (!!criteria) {
                     var strValue = !!criteria['criteria.strValue'] ? JSON.parse(criteria['criteria.strValue']) : {};
-                    _.extend(strValue , {_config: JSON.stringify(ret)});
+                    _.extend(strValue, { _config: JSON.stringify(ret) });
                     var str = encodeURIComponent(JSON.stringify(strValue));
                     delete criteria['criteria.strValue'];
                     queryStr = LIB.urlEncode(criteria) + '&criteria.strValue=' + str;
@@ -292,18 +292,18 @@ define(function (require) {
             this.$api = api;
         },
         ready: function () {
-            if(!!this.$route.query.state) {
+            if (!!this.$route.query.state) {
                 var statusColumn = _.find(this.tableModel.columns, function (item) {
                     return item.fieldName === "status";
                 });
-                if(!!statusColumn) {
-                    if(this.$route.query.state == 1) {
+                if (!!statusColumn) {
+                    if (this.$route.query.state == 1) {
                         this.$refs.mainTable.doOkActionInFilterPoptip(null, statusColumn, ['1']);
                     }
                 }
             }
             var _this = this;
-            if(LIB.getBusinessSetByNamePath('common.enableCheckLevel').result === '2'){
+            if (LIB.getBusinessSetByNamePath('common.enableCheckLevel').result === '2') {
                 _this.tableModel.columns.push({
                     title: "检查级别",
                     fieldName: "checkLevel",
@@ -311,14 +311,14 @@ define(function (require) {
                     fieldType: "custom",
                     filterType: "enum",
                     filterName: "criteria.intsValue.checkLevel",
-                    popFilterEnum : LIB.getDataDicList("checkLevel"),
+                    popFilterEnum: LIB.getDataDicList("checkLevel"),
                     render: function (data) {
-                        return LIB.getDataDic("checkLevel",data.checkLevel);
+                        return LIB.getDataDic("checkLevel", data.checkLevel);
                     },
                     width: 100
                 });
             }
-            if(LIB.getBusinessSetByNamePath('radomObserSet.enableHSEType').result === '2'){
+            if (LIB.getBusinessSetByNamePath('radomObserSet.enableHSEType').result === '2') {
                 _this.tableModel.columns.push({
                     title: "HSE类型",
                     fieldName: "hseType",
@@ -326,9 +326,9 @@ define(function (require) {
                     fieldType: "custom",
                     filterType: "enum",
                     filterName: "criteria.intsValue.hseType",
-                    popFilterEnum : LIB.getDataDicList("random_observe_hse_type"),
+                    popFilterEnum: LIB.getDataDicList("random_observe_hse_type"),
                     render: function (data) {
-                        return LIB.getDataDic("random_observe_hse_type",data.hseType);
+                        return LIB.getDataDic("random_observe_hse_type", data.hseType);
                     },
                     width: 100
                 });

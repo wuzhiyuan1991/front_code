@@ -1,18 +1,7 @@
 <!--<main-select :model.sync="values" :treedata="treeData"></main-select>-->
 <div class="select-tree">
-    <main-select
-            :custom-ico="true"
-            :show-fix-ico="showFixIco"
-            :custom-func="customFunc"
-            :treedata="treeData"
-            :modal-title="showTitle"
-            :model.sync="values"
-            :parent-node="parentNode"
-            :serch-filterable="true"
-            :department="isDepart"
-            :subject-matter-type="subjectMatterType"
-            :mechanism-type="mechanismType"
-            :open-deep="openDeep"
-            :model-type="modelType"
-    ></main-select>
+    <main-select :custom-ico="true" :show-fix-ico="showFixIco" :custom-func="customFunc" :treedata="treeData"
+        :modal-title="showTitle" :model.sync="values" :parent-node="parentNode" :serch-filterable="true"
+        :department="isDepart" :subject-matter-type="subjectMatterType" :mechanism-type="mechanismType"
+        :open-deep="openDeep" :model-type="modelType" :placeholder="$t('gb.common.pleaseSelect')"></main-select>
 </div>

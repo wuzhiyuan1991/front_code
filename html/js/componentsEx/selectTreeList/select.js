@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
 	var Vue = require("vue");
 	var Icon = require("components/iviewIcon");
@@ -6,26 +6,26 @@ define(function(require) {
 	var assist = require("components/utils/assist");
 
 
-	var template = '<div :class="classes" v-clickoutside="handleClose" class="ivu-select-top">'+
-		'<div class="ivu-select-selection" v-el:reference @mouseenter="doMouseenter"  @mouseleave="doMouseleave" :class="{\'ivu-select-hover\':hover}"> '+
-		'<div class="ivu-tag" v-if="multiple" v-for="item in selectedMultiple"> '+
-		'<span class="ivu-tag-text">{{ item.label }}</span> '+
-		'<Icon type="ios-close-empty" @click.stop="removeTag($index)"></Icon> '+
-		'</div> '+
-		'<span :class="prefixCls+\'-placeholder\'" v-show="showPlaceholder && !filterable">{{ placeholder }}</span> '+
-		'<span :class="prefixCls+\'-selected-value\'" v-show="!showPlaceholder && !multiple && !filterable">{{ selectedSingle }}</span> '+
-		'<input '+
-		'type="text" '+
-		':class="prefixCls+\'-input\'" '+
-		'v-if="filterable" '+
-		'v-model="query" '+
-		':placeholder="placeholder" '+
-		':style="inputStyle"> '+
-			//'<Icon type="ios-close" :class="prefixCls+\'-arrow\'" v-show="showCloseIcon" @click.stop="clearSingleSelect"></Icon> '+
-			//'<Icon type="arrow-down-b" :class="prefixCls+\'-arrow\'"></Icon> '+
-		'</div> '+
-		'<select-tree-list :model-type="modelType" :open-deep="openDeep" :custom-ico="customIco" :custom-func="customFunc" :show-fix-ico="showFixIco" :treedata="treedata" :serch-filterable="serchFilterable" :subject-matter-type="subjectMatterType" :mechanism-type="mechanismType" :department="department"  :modal-title="modalTitle" :data-query.sync="dataQuery" :transfer-data="transferData"  :keydata="keydata" :parent-node="parentNode" :selected-datas.sync="selectedDatas" :visible.sync="visible"></select-tree-list>'+
-		'<span class="select-ico-add"  @click="toggleMenu"><Icon type="plus-round"></Icon></span>'+
+	var template = '<div :class="classes" v-clickoutside="handleClose" class="ivu-select-top">' +
+		'<div class="ivu-select-selection" v-el:reference @mouseenter="doMouseenter"  @mouseleave="doMouseleave" :class="{\'ivu-select-hover\':hover}"> ' +
+		'<div class="ivu-tag" v-if="multiple" v-for="item in selectedMultiple"> ' +
+		'<span class="ivu-tag-text">{{ item.label }}</span> ' +
+		'<Icon type="ios-close-empty" @click.stop="removeTag($index)"></Icon> ' +
+		'</div> ' +
+		'<span :class="prefixCls+\'-placeholder\'" v-show="showPlaceholder && !filterable">{{ placeholder }}</span> ' +
+		'<span :class="prefixCls+\'-selected-value\'" v-show="!showPlaceholder && !multiple && !filterable">{{ selectedSingle }}</span> ' +
+		'<input ' +
+		'type="text" ' +
+		':class="prefixCls+\'-input\'" ' +
+		'v-if="filterable" ' +
+		'v-model="query" ' +
+		':placeholder="placeholder" ' +
+		':style="inputStyle"> ' +
+		//'<Icon type="ios-close" :class="prefixCls+\'-arrow\'" v-show="showCloseIcon" @click.stop="clearSingleSelect"></Icon> '+
+		//'<Icon type="arrow-down-b" :class="prefixCls+\'-arrow\'"></Icon> '+
+		'</div> ' +
+		'<select-tree-list :model-type="modelType" :open-deep="openDeep" :custom-ico="customIco" :custom-func="customFunc" :show-fix-ico="showFixIco" :treedata="treedata" :serch-filterable="serchFilterable" :subject-matter-type="subjectMatterType" :mechanism-type="mechanismType" :department="department"  :modal-title="modalTitle" :data-query.sync="dataQuery" :transfer-data="transferData"  :keydata="keydata" :parent-node="parentNode" :selected-datas.sync="selectedDatas" :visible.sync="visible"></select-tree-list>' +
+		'<span class="select-ico-add"  @click="toggleMenu"><Icon type="plus-round"></Icon></span>' +
 		'</div>';
 
 
@@ -33,9 +33,9 @@ define(function(require) {
 	var prefixCls = 'ivu-select';
 
 	var opts = {
-		template :  template,
-		components: { Icon:Icon },
-		directives: { clickoutside:clickoutside },
+		template: template,
+		components: { Icon: Icon },
+		directives: { clickoutside: clickoutside },
 		props: {
 			model: {
 				type: [String, Number, Array],
@@ -78,12 +78,12 @@ define(function(require) {
 				default: null
 			},
 			//树的数据源
-			treedata:{
-				type:[Object,Array],
+			treedata: {
+				type: [Object, Array],
 			},
 			//右边的数据
-			transferData:{
-				type:Array,
+			transferData: {
+				type: Array,
 			},
 			//选中的数据
 			selectedDatas: {
@@ -93,70 +93,70 @@ define(function(require) {
 				}
 			},
 			//数据源的桥接变量 保存选中的数据
-			keydata:{
+			keydata: {
 				type: Array,
-				'default':function () {
+				'default': function () {
 					return []
 				}
 			},
-			parentNode:{
-				type: Boolean,
-				default:false
-			},
-			hover:{
+			parentNode: {
 				type: Boolean,
 				default: false
 			},
-			dataQuery:{
+			hover: {
+				type: Boolean,
+				default: false
+			},
+			dataQuery: {
 				type: String,
-				default:''
+				default: ''
 			},
-			serchFilterable:{
+			serchFilterable: {
 				type: Boolean,
 				default: false
 			},
-			modalTitle:{
+			modalTitle: {
 				type: String,
 
 			},
-			department:{
+			department: {
 				type: Boolean,
-				default:false
+				default: false
 			},
-			subjectMatterType:{
-				type:Boolean,
-				default:false
+			subjectMatterType: {
+				type: Boolean,
+				default: false
 			},
 			//机构的判断
-			mechanismType:{
-				type:Boolean,
-				default:false
+			mechanismType: {
+				type: Boolean,
+				default: false
 			},
-            //显示自定义的图标 （公司跟部门）
-            customIco:{
-                type:Boolean,
-                default:false
-            },
-            customFunc: {
-                type: Function,
-                default: function () {
-                    return '';
-                }
-            },
-            //右边框是否显示图标
-            showFixIco:{
-                type:Boolean,
-                default:false
-            },
-            // 展开的层级，默认两级
-            openDeep: {
-                type: Number,
-                default: 2
-            },
-            modelType: {
-                type: String,
-                default: ''
-            }
+			//显示自定义的图标 （公司跟部门）
+			customIco: {
+				type: Boolean,
+				default: false
+			},
+			customFunc: {
+				type: Function,
+				default: function () {
+					return '';
+				}
+			},
+			//右边框是否显示图标
+			showFixIco: {
+				type: Boolean,
+				default: false
+			},
+			// 展开的层级，默认两级
+			openDeep: {
+				type: Number,
+				default: 2
+			},
+			modelType: {
+				type: String,
+				default: ''
+			}
 		},
 		data: function data() {
 			return {
@@ -174,13 +174,13 @@ define(function(require) {
 
 		computed: {
 			classes: function classes() {
-				var oot ={};
-				oot[prefixCls + '-visible']=this.visible;
-				oot[prefixCls + '-disabled']=this.disabled;
-				oot[prefixCls + '-multiple']=this.multiple;
-				oot[prefixCls + '-single']=!this.multiple;
-				oot[prefixCls + '-show-clear']=this.showCloseIcon;
-				oot[prefixCls + '-' + this.size]=!!this.size;
+				var oot = {};
+				oot[prefixCls + '-visible'] = this.visible;
+				oot[prefixCls + '-disabled'] = this.disabled;
+				oot[prefixCls + '-multiple'] = this.multiple;
+				oot[prefixCls + '-single'] = !this.multiple;
+				oot[prefixCls + '-show-clear'] = this.showCloseIcon;
+				oot[prefixCls + '-' + this.size] = !!this.size;
 				return ['' + prefixCls, oot
 					//{
 					//[prefixCls + '-visible']: this.visible,
@@ -200,7 +200,7 @@ define(function(require) {
 						status = true;
 					}
 					//anson tag 暂时不允许显示的值是空字符串，如果是空字符串则显示placeHolder
-					else if(this.selectedSingle == '') {
+					else if (this.selectedSingle == '') {
 						status = true;
 					}
 				} else if (Array.isArray(this.model)) {
@@ -209,7 +209,7 @@ define(function(require) {
 					}
 				}
 				//anson tag 暂时不允许显示的值是空字符串，如果是空字符串则显示placeHolder
-				else if(this.selectedSingle == '') {
+				else if (this.selectedSingle == '') {
 					status = true;
 				}
 
@@ -230,21 +230,21 @@ define(function(require) {
 		},
 		methods: {
 			//鼠标移入 移出
-			doMouseenter:function(){
+			doMouseenter: function () {
 				this.hover = true;
 			},
-			doMouseleave:function(){
+			doMouseleave: function () {
 				this.hover = false;
 			},
-			toggleMenu:function(){
+			toggleMenu: function () {
 				this.$broadcast('on-del-serchData');
 				if (this.disabled) {
 					return false;
 				}
 				this.visible = !this.visible;
 				this.$emit('on-month');
-				this.$nextTick(function(){
-                	this.$el.querySelector('.ivu-transfer-list-body-box').scrollTop = 0;
+				this.$nextTick(function () {
+					this.$el.querySelector('.ivu-transfer-list-body-box').scrollTop = 0;
 				});
 			},
 			hideMenu: function hideMenu() {
@@ -266,7 +266,7 @@ define(function(require) {
 					}
 				};
 
-//	            if (this.optionInstances.length) {
+				//	            if (this.optionInstances.length) {
 				//解决动态切换数据源问题
 				if (this.optionInstances.length && (this.optionInstances[0].label || this.optionInstances[0].$el)) {
 					this.optionInstances.forEach(function (child) {
@@ -319,9 +319,9 @@ define(function(require) {
 					}
 				}
 				//anson tag 清空绑定的数据的值
-//	            if(this.selectedSingle == '') {
-//	            	this.model = '';
-//	            }
+				//	            if(this.selectedSingle == '') {
+				//	            	this.model = '';
+				//	            }
 
 				this.toggleSingleSelected(this.model, init);
 			},
@@ -426,9 +426,9 @@ define(function(require) {
 				}
 			},
 			handleClose: function handleClose() {
-                //litao 2019年12月4日16:34:52 div 本身有mask ，不点击到外面 这个事件里面上不应该存在，  现在右边公司的滚动条不知道为什么 触发了这个事件
-                //todo 暂时去掉，
-                //this.hideMenu();
+				//litao 2019年12月4日16:34:52 div 本身有mask ，不点击到外面 这个事件里面上不应该存在，  现在右边公司的滚动条不知道为什么 触发了这个事件
+				//todo 暂时去掉，
+				//this.hideMenu();
 			},
 			handleKeydown: function handleKeydown(e) {
 				if (this.visible) {
@@ -526,7 +526,7 @@ define(function(require) {
 			visible: function visible(val) {
 				if (val) {
 					this.$broadcast('on-update-popper');
-				} else {}
+				} else { }
 			},
 			list: function (val) {
 				var _this = this;
@@ -534,23 +534,23 @@ define(function(require) {
 				//解决动态切换数据源的问题
 				this.options = [];
 				this.optionInstances = [];
-//	            this.selectedSingle = ''; // label
+				//	            this.selectedSingle = ''; // label
 				this.selectedMultiple = [];
 
 
-//	        	 if (typeof this.model === 'string') {
-//	                if (this.model === '') {
-//	                    status = true;
-//	                }
-//	        		 this.model = '';
-//                     status = true;
-//	            } else if (Array.isArray(this.model)) {
-//	                if (!this.model.length) {
-//	                    status = true;
-//	                }
-//	            	this.model.length = 0;
-//                    status = true;
-//	            }
+				//	        	 if (typeof this.model === 'string') {
+				//	                if (this.model === '') {
+				//	                    status = true;
+				//	                }
+				//	        		 this.model = '';
+				//                     status = true;
+				//	            } else if (Array.isArray(this.model)) {
+				//	                if (!this.model.length) {
+				//	                    status = true;
+				//	                }
+				//	            	this.model.length = 0;
+				//                    status = true;
+				//	            }
 				//debugger;
 				this.updateOptions(true);
 			}
@@ -572,7 +572,7 @@ define(function(require) {
 					}
 				}
 			},
-			"on-modeltree-close":function(){
+			"on-modeltree-close": function () {
 				this.visible = !this.visible;
 			}
 		}

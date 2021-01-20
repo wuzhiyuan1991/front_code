@@ -2,24 +2,26 @@ define(function () {
 
     var CONST = require('const');
 
+
+
     // 模拟请求数据
     // require(["demo/mock/mockData"], function (mockData) {
     //     mockData.init({baseUrl : CONST.url});
     // });
 
     //兼容测试环境域名的ip访问,条件时ip或域名访问
-    if(CONST.url != this.location.origin) {
-		function isValidIP(ip) {
-			var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-			return reg.test(ip);
-		} 
-        if(isValidIP(this.location.hostname)) {
+    if (CONST.url != this.location.origin) {
+        function isValidIP(ip) {
+            var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+            return reg.test(ip);
+        }
+        if (isValidIP(this.location.hostname)) {
             CONST.url = this.location.origin;
         }
         else {
             // var url  = "http://192.168.88.14:8082"
             var url = window.localStorage.getItem("accessUrl");
-            if(!!url) {
+            if (!!url) {
                 CONST.url = url;
             }
         }
@@ -29,7 +31,7 @@ define(function () {
 
 
     var base = {
-        SwConfig: {url: CONST.url},
+        SwConfig: { url: CONST.url },
         ctxpath: CONST.url,
         user: null,
         setting: {
@@ -40,7 +42,7 @@ define(function () {
             dataDicVer: null,
             i18nVer: null,
             fileServer: null,
-            envBusinessConfig:{},
+            envBusinessConfig: {},
             cache: {
                 i18n: {
                     ver: null,
@@ -77,7 +79,7 @@ define(function () {
     require(["components/base-table/tableHelper"], function (helper) {
         var cfg = {};
         cfg.dataDic = base.setting.dataDic;
-        cfg.defaultGlobalFilterValue = {"criteria.orderValue": {fieldName: "modifyDate", orderType: "1"}};
+        cfg.defaultGlobalFilterValue = { "criteria.orderValue": { fieldName: "modifyDate", orderType: "1" } };
         helper.registerCfg(cfg);
     })
     //配置上传组件app项目路径,解决组件的base依赖
@@ -95,9 +97,9 @@ define(function () {
     window.businessCache = false;
 
     var cacheCfg = [
-        {cacheName: "i18n", cacheReqUrl: "/i18n/list/all"},
-        {cacheName: "dataDic", cacheReqUrl: "/lookup/list/dic"},
-        {cacheName: "companyList", cacheReqUrl: "/organization/list?type=1"}
+        { cacheName: "i18n", cacheReqUrl: "/i18n/list/all" },
+        { cacheName: "dataDic", cacheReqUrl: "/lookup/list/dic" },
+        { cacheName: "companyList", cacheReqUrl: "/organization/list?type=1" }
     ];
 
     var initCache = function (opts) {
@@ -110,7 +112,7 @@ define(function () {
             $.ajax({
                 url: base.ctxpath + "/cache/version?keys=" + reqCacheKeys.join(","),
                 xhrFields: {
-                     // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
+                    // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
                 },
                 async: false,
                 success: function (data) {
@@ -148,15 +150,15 @@ define(function () {
                                 var cacheInstanceStr = window.localStorage.getItem(cacheName);
                                 if (cacheInstanceStr) {
                                     window.cache[cacheName] = JSON.parse(cacheInstanceStr);
-                                    if(cacheName == 'dataDic') {
+                                    if (cacheName == 'dataDic') {
                                         base.setting.dataDicOrigin = _.defaults(base.setting.dataDic, window.cache[cacheName]);
                                         var res = {};
                                         _.forEach(base.setting.dataDicOrigin, function (item, key) {
-                                            if(_.isArray(item)) {
+                                            if (_.isArray(item)) {
                                                 var r = {};
-                                                _.forEach(item, function(val) {
-                                                    for(var k in val) {
-                                                        if(val.hasOwnProperty(k)) {
+                                                _.forEach(item, function (val) {
+                                                    for (var k in val) {
+                                                        if (val.hasOwnProperty(k)) {
                                                             r[k] = val[k]
                                                         }
                                                     }
@@ -177,9 +179,9 @@ define(function () {
                                 var len = window.localStorage.length;
                                 var i;
                                 var cacheKey;
-                                for(i = len-1; i >= 0; i--) {
+                                for (i = len - 1; i >= 0; i--) {
                                     cacheKey = window.localStorage.key(i);
-                                    if(cacheKey && cacheKey.startsWith("riskMap_")) {
+                                    if (cacheKey && cacheKey.startsWith("riskMap_")) {
                                         window.localStorage.removeItem(cacheKey);
                                     }
                                 }
@@ -199,48 +201,49 @@ define(function () {
                             //    }
 
                             //分批发送请求，性能低但是耦合性也低, 需要使用 cacheReqUrl
-                             //$.ajax({
-                                //    url: base.ctxpath + cacheReqUrl + versionParam,
-                                //    async: false,
-                                //    cache: true,
-                                //    success: function (res) {
-                                //        if (res && res.error == '0' && !!res.content) {
-                                //            window.localStorage.setItem(cacheName, JSON.stringify(res.content));
-                                //            window.cache[cacheName] = res.content;
-                                //        }
-                                //        isInitFinish = true;
-                                //    }
-                                //});
+                            //$.ajax({
+                            //    url: base.ctxpath + cacheReqUrl + versionParam,
+                            //    async: false,
+                            //    cache: true,
+                            //    success: function (res) {
+                            //        if (res && res.error == '0' && !!res.content) {
+                            //            window.localStorage.setItem(cacheName, JSON.stringify(res.content));
+                            //            window.cache[cacheName] = res.content;
+                            //        }
+                            //        isInitFinish = true;
+                            //    }
+                            //});
                             //}
                         });
 
-                        if(pendingRefreshCacheKeys.length > 0) {
+                        if (pendingRefreshCacheKeys.length > 0) {
                             $.ajax({
                                 url: base.ctxpath + "/cache/value?keys=" + pendingRefreshCacheKeys.join(","),
                                 async: false,
                                 xhrFields: {
-                                     // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
+                                    // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
                                 },
                                 cache: true,
                                 success: function (res) {
-                                       var body = null;
+                                    var body = null;
                                     if (res && res.error == '0' && !!(body = res.content)) {
-                                        for(cacheKey in body) {
+                                        for (cacheKey in body) {
                                             var cacheValue = body[cacheKey];
                                             window.localStorage.setItem(cacheKey, JSON.stringify(cacheValue));
-                                            if(cacheKey == 'i18n') {
+                                            if (cacheKey == 'i18n') {
                                                 window.cache[cacheKey] = cacheValue;
-                                            } else if(cacheKey == 'dataDic') {
+                                                console.log(cacheValue)
+                                            } else if (cacheKey == 'dataDic') {
                                                 //base.setting.dataDic = cacheValue;
-                                                base.setting.dataDicOrigin = _.defaults(base.setting.dataDic,cacheValue);
+                                                base.setting.dataDicOrigin = _.defaults(base.setting.dataDic, cacheValue);
 
                                                 var res = {};
                                                 _.forEach(base.setting.dataDicOrigin, function (item, key) {
-                                                    if(_.isArray(item)) {
+                                                    if (_.isArray(item)) {
                                                         var r = {};
-                                                        _.forEach(item, function(val) {
-                                                            for(var k in val) {
-                                                                if(val.hasOwnProperty(k)) {
+                                                        _.forEach(item, function (val) {
+                                                            for (var k in val) {
+                                                                if (val.hasOwnProperty(k)) {
                                                                     r[k] = val[k]
                                                                 }
                                                             }
@@ -265,12 +268,12 @@ define(function () {
         }
     };
 
-    
+
     window.enableMajorRiskSource = true;
     $.ajax({
         url: base.ctxpath + "/user/loginUser",
         xhrFields: {
-             // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
+            withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
         },
         async: false,
         success: function (data) {
@@ -287,10 +290,10 @@ define(function () {
                 try {
                     base.setting.menuConfig = data.content.menuConfig ? JSON.parse(data.content.menuConfig.objText) : null;
                     base.setting.globalJsonCfg = data.content.globalJsonCfg ? JSON.parse(data.content.globalJsonCfg) : null;
-                    if(base.setting.globalJsonCfg && base.setting.globalJsonCfg.logoutActionUrl) {
+                    if (base.setting.globalJsonCfg && base.setting.globalJsonCfg.logoutActionUrl) {
                         window.localStorage.setItem("logoutActionUrl", base.setting.globalJsonCfg.logoutActionUrl);
                     }
-                } catch(e) {
+                } catch (e) {
                     console.error(e);
                 }
                 var orgListDraft = data.content.orgList;
@@ -311,9 +314,9 @@ define(function () {
                     var _len = window.localStorage.length;
                     var _i;
                     var _cacheKey;
-                    for(_i = _len-1; _i >= 0; _i--) {
+                    for (_i = _len - 1; _i >= 0; _i--) {
                         _cacheKey = window.localStorage.key(_i);
-                        if(_cacheKey && _cacheKey.startsWith("tb_code_")) {
+                        if (_cacheKey && _cacheKey.startsWith("tb_code_")) {
                             window.localStorage.removeItem(_cacheKey);
                         }
                     }
@@ -321,29 +324,29 @@ define(function () {
                 window.localStorage.setItem("org_data_level", orgDataLevel);
                 base.userEx = {
                     //数据权限等级
-                    orgDataLevel : orgDataLevel,
+                    orgDataLevel: orgDataLevel,
                     //是否数据权限只和部门相关
-                    isDeptDataAuth : (orgDataLevel == 20 || orgDataLevel == 10),
+                    isDeptDataAuth: (orgDataLevel == 20 || orgDataLevel == 10),
                     //只有本部门新增、更新权限的pojos列表, 会影响 所属公司和所属部门无法选择
-                    updateOwnDeptPojos : data.content["updateOwnDeptPojos"] || []
+                    updateOwnDeptPojos: data.content["updateOwnDeptPojos"] || []
                 };
 
                 var orgIds = data.content["select:organization"];
 
                 _.each(orgListDraft, function (data) {
-                    if(data.t == "1") {
+                    if (data.t == "1") {
                         orgDic[data.id] = {
-                            id : data.id,
-                            pId : data.pId,
-                            compName : data.n,
-                            csn : data.csn || data.n,
-                            t : "1",
+                            id: data.id,
+                            pId: data.pId,
+                            compName: data.n,
+                            csn: data.csn || data.n,
+                            t: "1",
                             disable: data.d,
-                            code:data.c
+                            code: data.c
                         };
                     } else {
                         var ownComp = orgIdMap[data.cId];
-                        if(ownComp) {
+                        if (ownComp) {
                             orgDic[data.id] = {
                                 id: data.id,
                                 pId: data.pId,
@@ -352,22 +355,22 @@ define(function () {
                                 deptName: data.n,
                                 t: "2",
                                 disable: data.d,
-                                code:data.c
+                                code: data.c
                             };
                         } else {
-                            var errorData = {id:data.id, parentId:data.pId, name : data.n, companyId : data.cId,code:data.c};
+                            var errorData = { id: data.id, parentId: data.pId, name: data.n, companyId: data.cId, code: data.c };
                             console.error("组织机构数据错误,该组织机构的所属公司不存在 : " + JSON.stringify(errorData));
                             console.error(data);
                         }
 
                     }
-                    
-                    var org = {id : data.id, name : data.n, parentId : data.pId, type : data.t, disable: data.d,code:data.c,compId:data.cId};
+
+                    var org = { id: data.id, name: data.n, parentId: data.pId, type: data.t, disable: data.d, code: data.c, compId: data.cId };
                     orgMap[data.id] = org;
 
                     //非本集团需要根据数据权限增加，本集团直接使用最大数据权限
-                    if(orgDataLevel < 50) {
-                        if(_.contains(orgIds, org.id)) {
+                    if (orgDataLevel < 50) {
+                        if (_.contains(orgIds, org.id)) {
                             orgList.push(_.clone(org));
                         }
                     } else {
@@ -376,7 +379,7 @@ define(function () {
                 });
 
                 //部门相关权限需要将本公司增加到orgList中
-                if(orgDataLevel < 30) {
+                if (orgDataLevel < 30) {
                     //此处增加所属公司到权限列表只是为了UI显示时确保有所属公司
                     orgList.push(_.clone(orgMap[base.user.compId]));
                 }
@@ -385,7 +388,7 @@ define(function () {
                 base.setting.dataDic["org"] = orgDic;
 
                 base.setting.orgMap = orgMap;
-                if(!orgMap[base.user.compId]) {
+                if (!orgMap[base.user.compId]) {
                     base.user.compId = '';
                 }
                 base.setting.envBusinessConfig = JSON.parse(data.content.envBusinessConfig);
@@ -403,10 +406,10 @@ define(function () {
                 //     ]
                 // };
                 var fieldSetting = {};
-                _.each(data.content.customPageSetting,function(num,key){
-                    try{
+                _.each(data.content.customPageSetting, function (num, key) {
+                    try {
                         fieldSetting[key] = JSON.parse(num.content);
-                    }catch(err){
+                    } catch (err) {
                         console.error("页面配置相关json参数错误");
                     }
                 });
@@ -425,21 +428,21 @@ define(function () {
 
             } else {
                 var logoutActionUrl = window.localStorage.getItem("logoutActionUrl");
-                if(logoutActionUrl) {
+                if (logoutActionUrl) {
                     //自定义登录地址
                     $.ajax({
                         url: base.ctxpath + logoutActionUrl,
                         async: false,
                         success: function (res) {
                             //如果自定义的登出逻辑异常了， 则返回的安全眼默认的登出页面 /logout, 则调用默认登出逻辑
-                            if(res.content == "/logout") {
+                            if (res.content == "/logout") {
                                 $.ajax({
                                     url: base.ctxpath + "/user/logout",
                                     async: false,
                                     success: function () {
                                         location.href = base.ctxpath;
                                     },
-                                    error: function() {
+                                    error: function () {
                                         location.href = base.ctxpath;
                                     }
                                 });
@@ -450,7 +453,7 @@ define(function () {
                             location.href = base.ctxpath;
                         }
                     });
-                }else {
+                } else {
                     location.href = base.ctxpath;
                 }
 
@@ -461,17 +464,17 @@ define(function () {
     $.ajax({
         url: base.ctxpath + "/systembusinessset/getBusinessSetByNamePath?compId=9999999999&namePath=common.useCheckInsteadOfCodeAsLink",
         xhrFields: {
-             // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
+            // withCredentials: true//表示发送凭证，但测试结果表示只会发送jsessionid，普通的cookie不会发送!
         },
-        success:function (data) {
-            if(data.content){
-                base.setting.useCheckInsteadOfCodeAsLink=data.content.result==2;
+        success: function (data) {
+            if (data.content) {
+                base.setting.useCheckInsteadOfCodeAsLink = data.content.result == 2;
             }
         }
     });
     base.initCache = initCache;
 
-    initCache({cacheKeys: ["i18n", "dataDic", "compId"]});
+    initCache({ cacheKeys: ["i18n", "dataDic", "compId"] });
 
     var curTime = new Date().getTime();
 

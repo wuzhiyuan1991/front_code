@@ -46,14 +46,14 @@ define(function (require) {
                             filterType: "text",
                             width: 450,
                             'renderClass': "textarea",
-                        },{
+                        }, {
                             title: this.$t("gb.common.riskGrade"),
                             fieldName: "criteria.strValue.riskLevel",
                             filterType: 'text',
                             width: 120,
                             fieldType: "custom",
                             showTip: false,
-                            sortable :false,
+                            sortable: false,
                             render: function (data) {
                                 var resultColor = _.propertyOf(JSON.parse(data.riskModel))("resultColor");
                                 if (resultColor) {
@@ -62,7 +62,7 @@ define(function (require) {
                                     return "<span style='background:#F5F5F5;color:#F5F5F5;opacity: 1;margin-right: 5px;padding-right: 13px;'></span>" + (_.propertyOf(JSON.parse(data.riskModel))("result") ? _.propertyOf(JSON.parse(data.riskModel))("result") : '');
                                 }
                             }
-                        },{
+                        }, {
                             //title : "风险分类",
                             title: this.$t("gb.common.checkItemClass"),
                             //fieldType : "custom",
@@ -92,7 +92,7 @@ define(function (require) {
                             width: 80
                         },
                         {
-                            title: "隐患等级",
+                            title: this.$t("hag.hazc.hiddenGrade"),
                             orderName: "type",
                             fieldType: "custom",
                             filterType: "enum",
@@ -104,7 +104,7 @@ define(function (require) {
                             width: 120
                         },
                         {
-                            title: "隐患类别",
+                            title: this.$t("gb.common.hdc"),
                             orderName: "type",
                             fieldType: "custom",
                             filterType: "enum",
@@ -167,7 +167,7 @@ define(function (require) {
                 data.columnFilterName = "riskType.id";
                 //条件 后台搜索的 值
                 data.columnFilterValue = obj.nodeId;
-                this.emitMainTableEvent("do_query_by_filter", {type: "save", value: data});
+                this.emitMainTableEvent("do_query_by_filter", { type: "save", value: data });
             },
             //启用停用
             // doEnableDisable: function () {
@@ -194,24 +194,24 @@ define(function (require) {
                     bizType = this.$route.query.bizType;
                 }
 
-                if(bizType){
-                    this.uploadModel.url = "/checkitem/importExcel" + "?bizType="+ bizType;
+                if (bizType) {
+                    this.uploadModel.url = "/checkitem/importExcel" + "?bizType=" + bizType;
                 }
 
                 var params = [];
                 //大类型
                 params.push({
-                    value : {
-                        columnFilterName : "bizType",
-                        columnFilterValue : bizType
+                    value: {
+                        columnFilterName: "bizType",
+                        columnFilterValue: bizType
                     },
-                    type : "save"
+                    type: "save"
                 });
                 this.$refs.mainTable.doQueryByFilter(params);
             }
         },
         init: function () {
-            if(this.$route.path.indexOf("/randomInspection") == 0) {
+            if (this.$route.path.indexOf("/randomInspection") == 0) {
                 api.__auth__ = {
                     create: '4010002001',
                     'import': '4010002004',
@@ -220,7 +220,7 @@ define(function (require) {
                     'delete': '4010002003',
                     enable: '4010002021'
                 };
-            }else{
+            } else {
                 api.__auth__ = {
                     create: '2010002001',
                     'import': '2010002004',
@@ -228,18 +228,18 @@ define(function (require) {
                     edit: '2010002002',
                     'delete': '2010002003',
                     enable: '2010002021',
-                    'riskInfo':'2010002010'
+                    'riskInfo': '2010002010'
                 };
             }
             this.$api = api;
         },
-        ready: function(){
+        ready: function () {
             var _this = this;
             var companyBusinessSetState = LIB.getCompanyBusinessSetState();
             var isDisableHiddenDangerLevel = companyBusinessSetState['checkItem.disableHiddenDangerLevel'].result === '2';
             if (isDisableHiddenDangerLevel) {
-                _.find(this.tableModel.columns, function (item,index) {
-                    if(item.title === "隐患等级"){
+                _.find(this.tableModel.columns, function (item, index) {
+                    if (item.title === "隐患等级") {
                         _this.tableModel.columns.splice(index, 1);
                     }
                     return item.title === "隐患等级";
@@ -248,8 +248,8 @@ define(function (require) {
 
             var isDisableHiddenDangerType = companyBusinessSetState['checkItem.disableHiddenDangerType'].result === '2';
             if (isDisableHiddenDangerType) {
-                _.find(this.tableModel.columns, function (item,index) {
-                    if(item.title === "隐患类别"){
+                _.find(this.tableModel.columns, function (item, index) {
+                    if (item.title === "隐患类别") {
                         _this.tableModel.columns.splice(index, 1);
                     }
                     return item.title === "隐患类别";
@@ -258,8 +258,8 @@ define(function (require) {
 
             var isDisableRemark = companyBusinessSetState['checkItem.disableRemark'].result === '2';
             if (isDisableRemark) {
-                _.find(this.tableModel.columns, function (item,index) {
-                    if(item.title === "备注"){
+                _.find(this.tableModel.columns, function (item, index) {
+                    if (item.title === "备注") {
                         _this.tableModel.columns.splice(index, 1);
                     }
                     return item.title === "备注";

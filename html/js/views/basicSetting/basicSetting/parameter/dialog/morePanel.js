@@ -9,11 +9,11 @@ define(function (require) {
 
     var component = {
         template: template,
-        mixins:[LIB.VueMixin.dataDic],
+        mixins: [LIB.VueMixin.dataDic],
         components: {
             'checkItemSelectModal': checkItemSelectModal,
-            "positionSelectModal":positionSelectModal,
-            "userSelectModal":userSelectModal,
+            "positionSelectModal": positionSelectModal,
+            "userSelectModal": userSelectModal,
         },
         data: function () {
             return {
@@ -22,24 +22,24 @@ define(function (require) {
                     vo: {
                         description: '',
                         result: '3',
-                        positions:[],
-                        users : [],
+                        positions: [],
+                        users: [],
                     },
-                    detailCompId:null,
+                    detailCompId: null,
                 },
                 tableModel: {
-                    checkItemTableModel:{
+                    checkItemTableModel: {
                         url: 'systembusinesssetdetail/list/{curPage}/{pageSize}',
                         columns: [
-                            _.extend(_.omit(LIB.tableMgr.column.company, 'filterType'), {width: 120}),
+                            _.extend(_.omit(LIB.tableMgr.column.company, 'filterType'), { width: 120 }),
                             {
-                                title: '检查表',
+                                title: LIB.lang('gb.common.check'),
                                 fieldName: 'checkTableName',
                                 width: 160,
                                 keywordFilterName: "criteria.strValue.keyWordValue"
                             },
                             {
-                                title: '检查项',
+                                title: LIB.lang('bd.hal.checkItem'),
                                 fieldName: 'checkItemName',
                                 width: 238,
                                 keywordFilterName: "criteria.strValue.keyWordValue"
@@ -53,130 +53,130 @@ define(function (require) {
                             }
                         ]
                     },
-                    positionTableModel : LIB.Opts.extendDetailTableOpt({
-                        url : "systembusinessset/positions/list/{curPage}/{pageSize}",
-                        lazyLoad:true,
-                        columns : [
+                    positionTableModel: LIB.Opts.extendDetailTableOpt({
+                        url: "systembusinessset/positions/list/{curPage}/{pageSize}",
+                        lazyLoad: true,
+                        columns: [
                             LIB.tableMgr.ksColumn.code,
                             {
-                                title : "名称",
-                                fieldName : "name",
+                                title: LIB.lang('gb.common.name'),
+                                fieldName: "name",
                                 keywordFilterName: "criteria.strValue.keyWordValue_name"
-                            },{
-                                title : "",
-                                fieldType : "tool",
-                                toolType : "del"
+                            }, {
+                                title: "",
+                                fieldType: "tool",
+                                toolType: "del"
                             }]
                     }),
-                    userTableModel : LIB.Opts.extendDetailTableOpt({
-                        url : "systembusinessset/users/list/{curPage}/{pageSize}",
-                        columns : [
+                    userTableModel: LIB.Opts.extendDetailTableOpt({
+                        url: "systembusinessset/users/list/{curPage}/{pageSize}",
+                        columns: [
                             LIB.tableMgr.ksColumn.code,
-                            _.extend(_.omit(LIB.tableMgr.column.dept, 'filterType'), {width: 120}),
+                            _.extend(_.omit(LIB.tableMgr.column.dept, 'filterType'), { width: 120 }),
                             {
-                                title : "名称",
-                                fieldName : "name",
+                                title: LIB.lang('gb.common.name'),
+                                fieldName: "name",
                                 keywordFilterName: "criteria.strValue.keyWordValue_name"
-                            },{
-                                title : "",
-                                fieldType : "tool",
-                                toolType : "del"
+                            }, {
+                                title: "",
+                                fieldType: "tool",
+                                toolType: "del"
                             }]
                     }),
 
                 },
                 selectModel: {
-                    checkItemSelectModal:{
+                    checkItemSelectModal: {
                         visible: false,
                     },
-                    positionSelectModel : {
-                        visible : false,
-                        filterData : {orgId : null}
+                    positionSelectModel: {
+                        visible: false,
+                        filterData: { orgId: null }
                     },
-                    userSelectModel : {
-                        visible : false,
-                        filterData : {orgId : null}
+                    userSelectModel: {
+                        visible: false,
+                        filterData: { orgId: null }
                     },
                 },
-                morePanelType:null
+                morePanelType: null
             }
         },
-        watch:{
-            "mainModel.detailCompId":function (nval, oval) {
-                if(this.morePanelType === 'incentiveMechanism'){
-                    if(nval != oval && nval){
+        watch: {
+            "mainModel.detailCompId": function (nval, oval) {
+                if (this.morePanelType === 'incentiveMechanism') {
+                    if (nval != oval && nval) {
                         this.$nextTick(function () {
                             this.$refs.positionTable.doClearData();
-                            this.$refs.positionTable.doQuery({id : this.mainModel.vo.id,"criteria.strValue.compId":this.mainModel.detailCompId});
+                            this.$refs.positionTable.doQuery({ id: this.mainModel.vo.id, "criteria.strValue.compId": this.mainModel.detailCompId });
                             this.$refs.userTable.doClearData();
-                            this.$refs.userTable.doQuery({id : this.mainModel.vo.id,"criteria.strValue.compId":this.mainModel.detailCompId});
+                            this.$refs.userTable.doQuery({ id: this.mainModel.vo.id, "criteria.strValue.compId": this.mainModel.detailCompId });
                         })
                     }
                 }
             }
         },
         methods: {
-            refreshTableData: function() {
+            refreshTableData: function () {
                 var _this = this;
-                _.each(arguments, function(ref) {
+                _.each(arguments, function (ref) {
                     ref.doQuery({ id: _this.mainModel.vo.id });
                 })
             },
-            doShowPositionSelectModal : function() {
-                if(!this.mainModel.detailCompId){
-                    LIB.Msg.info("请先选择一个公司");
+            doShowPositionSelectModal: function () {
+                if (!this.mainModel.detailCompId) {
+                    LIB.Msg.info(LIB.lang('bs.bac.psacf'));
                     return;
                 }
                 this.selectModel.positionSelectModel.visible = true;
-                this.selectModel.positionSelectModel.filterData = {orgId : this.mainModel.detailCompId};
+                this.selectModel.positionSelectModel.filterData = { orgId: this.mainModel.detailCompId };
             },
-            doSavePositions : function(selectedDatas) {
+            doSavePositions: function (selectedDatas) {
                 if (selectedDatas) {
                     this.mainModel.vo.positions = selectedDatas;
-                    var param = _.map(selectedDatas, function(data){return {id : data.id}});
+                    var param = _.map(selectedDatas, function (data) { return { id: data.id } });
                     var _this = this;
-                    api.savePositions({id : this.mainModel.vo.id, compId:this.mainModel.detailCompId}, param).then(function() {
+                    api.savePositions({ id: this.mainModel.vo.id, compId: this.mainModel.detailCompId }, param).then(function () {
                         _this.refreshTableData(_this.$refs.positionTable);
                     });
                 }
             },
-            doRemovePosition : function(item) {
+            doRemovePosition: function (item) {
                 var _this = this;
                 var data = item.entry.data;
                 LIB.Modal.confirm({
-                    title: '删除当前数据?',
+                    title: LIB.lang('bs.bac.dcd') + '?',
                     onOk: function () {
-                        api.removePositions({id : _this.mainModel.vo.id}, [{id : data.id}]).then(function() {
+                        api.removePositions({ id: _this.mainModel.vo.id }, [{ id: data.id }]).then(function () {
                             _this.$refs.positionTable.doRefresh();
                         });
                     }
                 });
             },
-            doShowUserSelectModal : function() {
-                if(!this.mainModel.detailCompId){
-                    LIB.Msg.info("请先选择一个公司");
+            doShowUserSelectModal: function () {
+                if (!this.mainModel.detailCompId) {
+                    LIB.Msg.info(LIB.lang('bs.bac.psacf'));
                     return;
                 }
                 this.selectModel.userSelectModel.visible = true;
-                this.selectModel.userSelectModel.filterData = {orgId : this.mainModel.detailCompId};
+                this.selectModel.userSelectModel.filterData = { orgId: this.mainModel.detailCompId };
             },
-            doSaveUsers : function(selectedDatas) {
+            doSaveUsers: function (selectedDatas) {
                 if (selectedDatas) {
                     this.mainModel.vo.users = selectedDatas;
-                    var param = _.map(selectedDatas, function(data){return {id : data.id}});
+                    var param = _.map(selectedDatas, function (data) { return { id: data.id } });
                     var _this = this;
-                    api.saveUsers({id : this.mainModel.vo.id, compId:this.mainModel.detailCompId}, param).then(function() {
+                    api.saveUsers({ id: this.mainModel.vo.id, compId: this.mainModel.detailCompId }, param).then(function () {
                         _this.refreshTableData(_this.$refs.userTable);
                     });
                 }
             },
-            doRemoveUser : function(item) {
+            doRemoveUser: function (item) {
                 var _this = this;
                 var data = item.entry.data;
                 LIB.Modal.confirm({
-                    title: '删除当前数据?',
+                    title: LIB.lang('bs.bac.dcd') + '?',
                     onOk: function () {
-                        api.removeUsers({id : _this.mainModel.vo.id}, [{id : data.id}]).then(function() {
+                        api.removeUsers({ id: _this.mainModel.vo.id }, [{ id: data.id }]).then(function () {
                             _this.$refs.userTable.doRefresh();
                         });
                     }
@@ -203,20 +203,20 @@ define(function (require) {
                 });
                 api.addParameterDetail(params).then(function () {
                     _this.getCheckItems();
-                    LIB.Msg.info("添加成功");
+                    LIB.Msg.info(LIB.lang('gb.common.addedsuf'));
                 })
             },
             delItemRelRowHandler: function (id) {
-                var params = {id: id};
+                var params = { id: id };
                 var _this = this;
                 api.deleteParameterDetail(null, params).then(function () {
                     _this.getCheckItems();
-                    LIB.Msg.info("删除成功");
+                    LIB.Msg.info(LIB.lang('gb.common.sd'));
                 })
             },
             doSave: function () {
                 api.saveBusinessSet(this.mainModel.vo).then(function () {
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
             doClose: function () {
@@ -226,10 +226,10 @@ define(function (require) {
                 this.mainModel.description = description;
                 this.mainModel.vo = item;
                 this.morePanelType = null;
-                if(item.attr1.startsWith('incentiveMechanism')){
+                if (item.attr1.startsWith('incentiveMechanism')) {
                     this.morePanelType = "incentiveMechanism";
                     return
-                }else if(item.attr1.startsWith('checkResult')){
+                } else if (item.attr1.startsWith('checkResult')) {
                     this.$broadcast('init-card-filter');
                     this.morePanelType = "checkResult";
                     this.getCheckItems();
@@ -250,7 +250,7 @@ define(function (require) {
         },
         events: {
             //edit框数据加载
-            "ev_dtReload": function() {
+            "ev_dtReload": function () {
                 this.init.apply(this, arguments);
             }
 

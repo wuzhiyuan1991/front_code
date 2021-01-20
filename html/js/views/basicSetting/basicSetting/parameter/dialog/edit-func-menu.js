@@ -4,7 +4,8 @@ define(function (require) {
     //数据模型
     var api = require("../vuex/api");
     var tpl = require("text!./edit-func-menu.html");
-    var linked=require("./minix_linkedmodual");
+    var linked = require("./minix_linkedmodual");
+
     var newVO = function () {
         return {
             roleId: null,
@@ -48,7 +49,7 @@ define(function (require) {
      created/beforeCompile/compiled/ready/attached/detached/beforeDestroy/destroyed
      **/
     var detail = LIB.Vue.extend({
-        mixins:[linked],
+        mixins: [linked],
         template: tpl,
         data: function () {
             return dataModel;
@@ -56,9 +57,9 @@ define(function (require) {
         methods: {
 
             // 滚动事件
-            onListWrapScroll:function (e) {
-                  var arr  = $(".scrollItem");
-                  console.log(arr.eq(0)[0].clientHeight)
+            onListWrapScroll: function (e) {
+                var arr = $(".scrollItem");
+                console.log(arr.eq(0)[0].clientHeight)
             },
 
             changeViewMode: function (mode) {
@@ -73,12 +74,12 @@ define(function (require) {
                 var authList = [];
                 _.each(_this.mainModel.vo.menuList, function (menu) {
                     if (menu.isChecked && (menu.menuLevel === '3' || menu.attr1 === "/home/index")) {
-                        authList.push({type: 0, relId: menu.id});
+                        authList.push({ type: 0, relId: menu.id });
                     }
                     if (menu.menuLevel === '3') {
                         _.each(menu.funcAuthList, function (auth) {
                             if (auth.isChecked) {
-                                var funcAuth = {type: 1, relId: auth.id};
+                                var funcAuth = { type: 1, relId: auth.id };
                                 authList.push(funcAuth);
                             }
                         });
@@ -101,9 +102,9 @@ define(function (require) {
                     roleAuthorityRels: authList,
                     roleAppAuthorityRels: appList
                 };
-                api.distributionMenuAndFunc({id: _vo.roleId}, params).then(function () {
+                api.distributionMenuAndFunc({ id: _vo.roleId }, params).then(function () {
                     _this.$emit("do-edit-func-and-menu-finshed");
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
             doSaveBatch: function () {
@@ -112,12 +113,12 @@ define(function (require) {
                 var authList = [];
                 _.each(_vo.menuList, function (menu) {
                     if (menu.isChecked && (menu.menuLevel === '3' || menu.attr1 === "/home/index")) {
-                        authList.push({type: 0, relId: menu.id});
+                        authList.push({ type: 0, relId: menu.id });
                     }
                     if (menu.menuLevel === '3') {
                         _.each(menu.funcAuthList, function (auth) {
                             if (auth.isChecked) {
-                                var funcAuth = {type: 1, relId: auth.id};
+                                var funcAuth = { type: 1, relId: auth.id };
                                 authList.push(funcAuth);
                             }
                         });
@@ -140,17 +141,17 @@ define(function (require) {
                     roleAppAuthorityRels: appList
                 };
 
-                api.distributionMenuAndFuncs({type: dataModel.mainModel.type, roleIds: JSON.stringify(_this.mainModel.roleIds)}, params).then(function () {
+                api.distributionMenuAndFuncs({ type: dataModel.mainModel.type, roleIds: JSON.stringify(_this.mainModel.roleIds) }, params).then(function () {
                     _this.$emit("do-edit-func-and-menu-finshed");
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
             /**
              * 菜单的展开收起
              */
-            doChangeModule: function (first,index) {
+            doChangeModule: function (first, index) {
                 first.open = !first.open;
-                this._recomputeItemHeight(first,index);
+                this._recomputeItemHeight(first, index);
             },
 
             // 全选的
@@ -168,7 +169,7 @@ define(function (require) {
                 });
                 setTimeout(function () {
                     circleLoading.hide();
-                },1000);
+                }, 1000);
             },
             _changeAppAllChecked: function () {
                 var selectAll = this.appSelectAll;
@@ -180,10 +181,10 @@ define(function (require) {
             _changeMenu3Checked: function (item) {
                 var isChecked = item.isChecked;
                 // if (!isChecked) {
-                    item.allChecked = isChecked;
-                    _.forEach(item.funcAuthList, function (auth) {
-                        auth.isChecked = isChecked;
-                    })
+                item.allChecked = isChecked;
+                _.forEach(item.funcAuthList, function (auth) {
+                    auth.isChecked = isChecked;
+                })
                 // }
             },
 
@@ -237,9 +238,9 @@ define(function (require) {
                 _vo.roleId = id;
 
                 //获取菜单功能全部数据
-                api.listMenu({roleId: id}).then(function (res) {
+                api.listMenu({ roleId: id }).then(function (res) {
                     var items = res.data;
-                    if (_.isArray(items) && items.length>0) {
+                    if (_.isArray(items) && items.length > 0) {
                         items = _.map(items, function (item) {
                             return {
                                 id: item.id,
@@ -251,7 +252,7 @@ define(function (require) {
                             }
                         });
                         _this._getFunctionsByRoleId(id, items)
-                    }else{
+                    } else {
                         _this.webAuthList = [];
                         LIB.globalLoader.hide();
                     }
@@ -264,10 +265,10 @@ define(function (require) {
 
             _getFunctionsByRoleId: function (id, menus) {
                 var _this = this;
-                api.getFunc({roleId: id}).then(function (res) {
+                api.getFunc({ roleId: id }).then(function (res) {
                     if (_.isArray(res.data)) {
                         _this._normalizeSingleData(menus, res.data);
-                    }else if(_.isArray(menus)){
+                    } else if (_.isArray(menus)) {
                         _this._normalizeSingleData(menus, []);
                     }
                     LIB.globalLoader.hide();
@@ -319,10 +320,10 @@ define(function (require) {
 
             _initAppSingle: function (id) {
                 var _this = this;
-                api.getAppAllMenuList({roleId: id}).then(function (res) {
+                api.getAppAllMenuList({ roleId: id }).then(function (res) {
                     var items = res.data;
                     if (_.isArray(items) && !_.isEmpty(items)) {
-                        api.getAppMenuList({roleId: id}).then(function (res2) {
+                        api.getAppMenuList({ roleId: id }).then(function (res2) {
                             var authList = res2.data || [];
                             _this._normalizeAppSingleData(items, authList);
                         })
@@ -367,16 +368,16 @@ define(function (require) {
                 //清空数据
                 _.extend(_vo, newVO());
                 //获取菜单功能全部数据
-                api.listRoleMenu({roleIds: JSON.stringify(ids)}).then(function (res) {
-                    if(_.isArray(res.data)) {
+                api.listRoleMenu({ roleIds: JSON.stringify(ids) }).then(function (res) {
+                    if (_.isArray(res.data)) {
                         _this._normalizeBatchData(res.data);
                     }
                 });
 
                 if (this.isAppEnable) {
-                    api.getAppRolesList({roleIds: JSON.stringify(ids)}).then(function (res) {
+                    api.getAppRolesList({ roleIds: JSON.stringify(ids) }).then(function (res) {
                         var items = res.data;
-                        if (_.isArray(items))  {
+                        if (_.isArray(items)) {
                             _this._normalizeAppSingleData(items, [])
                         }
                     });
@@ -449,8 +450,8 @@ define(function (require) {
             "ev_editFuncAndMenuBacth": function (rows, type) {
                 this._init();
                 var ids = _.pluck(rows, "id");
-                this.selLinked.modualsHeight=[];
-                this.selLinkedApp.modualsHeight=[];
+                this.selLinked.modualsHeight = [];
+                this.selLinkedApp.modualsHeight = [];
                 this._initBatch(ids, type);
             }
         },

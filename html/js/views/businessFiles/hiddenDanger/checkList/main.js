@@ -38,7 +38,7 @@ define(function (require) {
           },
           {
             //title : "适用属地",
-            title: '适用属地',
+            title: this.$t('gb.common.at'),
             orderName: "dominationarea.id",
             fieldName: "dominationNames",
             filterName: "criteria.strValue.dominationNames",
@@ -80,7 +80,7 @@ define(function (require) {
           LIB.tableMgr.column.disable,
           LIB.tableMgr.column.company,
           {
-            title: "风险点类型",
+            title: this.$t("gb.common.torp"),
             orderName: "checkObjType",
             fieldType: "custom",
             render: function (data) {

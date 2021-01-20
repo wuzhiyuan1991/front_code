@@ -149,7 +149,7 @@ define(function(require) {
             }
 
             //解决跨域无法传递cookies问题 ，
-            // req.credentials = true;
+            req.credentials = true;
 
             next(function(res) {
 
