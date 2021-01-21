@@ -1,8 +1,9 @@
 <style>
-    #poolTotal .ivu-poptip-rel,.ivu-date-picker{
-         width:100%!important;
-     }
- </style>
+    #poolTotal .ivu-poptip-rel,
+    .ivu-date-picker {
+        width: 100% !important;
+    }
+</style>
 <div class="reportChartMain">
     <div class="mp-header formTitle" style="margin-left: 10px;">
         <div class="basic">{{qryInfoModel.title}}</div>
@@ -26,18 +27,21 @@
                     </el-form-item>
                     <el-form-item prop="year" style="overflow: inherit;width: 180px;padding-right: 10px;">
                         <span style="float: left;">年份：</span>
-                        <vi-date-picker style="float: left;width:128px!important;" type="year" :value="qryInfoModel.year" @on-change="changeQryYear"></vi-date-picker>
+                        <vi-date-picker style="float: left;width:128px!important;" type="year"
+                            :value="qryInfoModel.year" @on-change="changeQryYear"></vi-date-picker>
                     </el-form-item>
 
                     <el-form-item prop="typeOfRange" style="width:180px;overflow: inherit;padding-right: 10px;">
-                        <i-select class="select-color" :model.sync="qryInfoModel.vo.typeOfRange" clearable  style="width:100%;font-size: 12px" v-ref:select
-                                  :list="typeOfRanges" placeholder="请选择"
-                                  @on-change="changeTypeOfRange">
-                            <i-option v-for="item in typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                        <i-select class="select-color" :model.sync="qryInfoModel.vo.typeOfRange" clearable
+                            style="width:100%;font-size: 12px" v-ref:select :list="typeOfRanges" placeholder="请选择"
+                            @on-change="changeTypeOfRange">
+                            <i-option v-for="item in typeOfRanges" :value="item.value">{{ item.label }}</i-option>
                         </i-select>
                     </el-form-item>
                     <el-form-item prop="objRange" style="width: 400px;padding-right: 10px;">
-                        <obj-select :type="qryInfoModel.vo.typeOfRange" :values.sync="qryInfoModel.vo.objRange" :disabled="qryInfoModel.vo.typeOfRange == null || qryInfoModel.vo.typeOfRange == ''"></obj-select>
+                        <obj-select :type="qryInfoModel.vo.typeOfRange" :values.sync="qryInfoModel.vo.objRange"
+                            :disabled="qryInfoModel.vo.typeOfRange == null || qryInfoModel.vo.typeOfRange == ''">
+                        </obj-select>
                     </el-form-item>
 
                     <el-form-item style="width: 60px;line-height: 28px;height: 28px;">
@@ -50,40 +54,37 @@
     <div class="reportChart reportChartCfg">
         <iv-row type="flex" justify="end" style="padding-right: 50px;">
             <iv-col>
-                <iv-button type="text" @click="changeMethod('pie');" :style="qryInfoModel.vo.method == 'pie'?'color:#0099e5':''">饼状</iv-button>
+                <iv-button type="text" @click="changeMethod('pie');"
+                    :style="qryInfoModel.vo.method == 'pie'?'color:#0099e5':''">饼状</iv-button>
                 <span>|</span>
-                <iv-button type="text" @click="changeMethod('bar');" :style="qryInfoModel.vo.method == 'bar'?'color:#0099e5':''">柱状</iv-button>
+                <iv-button type="text" @click="changeMethod('bar');"
+                    :style="qryInfoModel.vo.method == 'bar'?'color:#0099e5':''">柱状</iv-button>
             </iv-col>
         </iv-row>
-        <vuecharts  :options="pieChartOpt" @chartclick="clickPieChart" v-ref:pie-chart></vuecharts>
-        <vuecharts  :options="barChartOpt" @chartclick="clickBarChart" v-ref:bar-chart></vuecharts>
+        <vuecharts :options="pieChartOpt" @chartclick="clickPieChart" v-ref:pie-chart></vuecharts>
+        <vuecharts :options="barChartOpt" @chartclick="clickBarChart" v-ref:bar-chart></vuecharts>
     </div>
 
     <!-- 撰取 -->
     <Modal v-if="drillModel.show" :visible.sync="drillModel.show" mask-closable :title="drillModel.title" width="900"
-           :footer-hide="true" class="userSelectModal">
+        :footer-hide="true" class="userSelectModal">
         <div class="edit-pop-container" style="width: 900px">
             <div class="epc-header"></div>
             <div class="epc-content">
-                <iv-button @click="doExportData" style="position: absolute;right: 20px;top:93px;z-index: 10;">导出</iv-button>
+                <iv-button @click="doExportData" style="position: absolute;right: 20px;top:93px;z-index: 10;">导出
+                </iv-button>
 
-                <vue-bootstrap-table
-                        :columns="drillModel.table.columns"
-                        :url="drillModel.table.url"
-                        :default-filter-value="drillModel.table.qryParam"
-                        :show-filter="true"
-                        :filter-column="drillModel.table.filterColumns"
-                        :show-column-picker="false"
-                        :show-pager="true"
-                        resizeable
-                        v-ref:rpt-details-table>
+                <vue-bootstrap-table :columns="drillModel.table.columns" :url="drillModel.table.url"
+                    :default-filter-value="drillModel.table.qryParam" :show-filter="true"
+                    :filter-column="drillModel.table.filterColumns" :show-column-picker="false" :show-pager="true"
+                    resizeable v-ref:rpt-details-table>
                 </vue-bootstrap-table>
             </div>
         </div>
     </Modal>
 </div>
 <style>
-    .is-style-active{
-        color:#0099e5 !important;
+    .is-style-active {
+        color: #0099e5 !important;
     }
 </style>

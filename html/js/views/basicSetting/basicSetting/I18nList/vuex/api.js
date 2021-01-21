@@ -1,4 +1,4 @@
-define(function(require){
+define(function (require) {
 
     var Vue = require("vue");
     var apiCfg = require("apiCfg");
@@ -12,6 +12,6 @@ define(function(require){
         //importExcel:{method: 'POST', url: 'i18n/importExcel'}
     };
     customActions = _.defaults(customActions, apiCfg.buildDefaultApi("i18n"));
-    var resource = Vue.resource(null,{}, customActions);
+    var resource = Vue.resource(null, {}, customActions);
     return resource;
 });

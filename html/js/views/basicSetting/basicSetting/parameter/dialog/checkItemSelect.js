@@ -1,9 +1,9 @@
-define(function(require) {
+define(function (require) {
     var LIB = require('lib');
     var template = require("text!./checkItemSelect.html");
     var api = require("../vuex/api");
 
-    var initDataModel = function() {
+    var initDataModel = function () {
         return {
             treeModel: {
                 data: [],
@@ -23,12 +23,12 @@ define(function(require) {
                         fieldType: "cb"
                     },
                     {
-                        title: "检查项名称",
+                        title: LIB.lang('gb.common.cin'),
                         fieldName: "name",
                         width: 240
                     },
                     {
-                        title: "分类",
+                        title: LIB.lang('bd.hal.classInfo'),
                         fieldType: "custom",
                         render: function (data) {
                             if (data.riskType) {
@@ -38,33 +38,33 @@ define(function(require) {
                         width: 160
                     },
                     {
-                        title: "类型",
+                        title: LIB.lang('routing.inspection.check.obj.type'),
                         fieldType: "custom",
                         width: 80,
                         render: function (data) {
                             if (data.type === '2') {
-                                return "管理类";
+                                return LIB.lang('gb.common.management'); //管理类
                             } else if (data.type === '1') {
-                                return "状态类";
+                                return LIB.lang('gb.common.statec'); //状态类
                             } else if (data.type === '0') {
-                                return "行为类";
+                                return LIB.lang('gb.common.behavior'); //行为类
                             }
                         }
                     },
                     {
-                        title: "状态",
+                        title: LIB.lang('gb.common.state'),
                         fieldType: "custom",
                         width: 80,
                         render: function (data) {
                             if (data.disable === '0') {
-                                return "启用";
+                                return LIB.lang('gb.common.enable');
                             } else if (data.disable === '1') {
-                                return "停用";
+                                return LIB.lang('gb.common.disable');
                             }
                         }
                     },
                     {
-                        title: "设备设施",
+                        title: LIB.lang('gb.common.equipmentAndFacilities'),
                         fieldType: "custom",
                         render: function (data) {
                             return data.equipment == null ? "" : data.equipment.name;
@@ -105,7 +105,7 @@ define(function(require) {
                         }
                     }
                 ];
-                if(_.isEmpty(this.treeModel.filterData.children)) {
+                if (_.isEmpty(this.treeModel.filterData.children)) {
                     params.push({
                         type: 'save',
                         value: {
@@ -116,8 +116,8 @@ define(function(require) {
                 }
                 return params;
             },
-            doTreeNodeClick: function(obj) {
-                if(_.isEmpty(obj.data.compId)){
+            doTreeNodeClick: function (obj) {
+                if (_.isEmpty(obj.data.compId)) {
                     return;
                 }
                 if (obj.data.id === this.treeModel.filterData.id) {
@@ -126,22 +126,22 @@ define(function(require) {
                 this.treeModel.filterData = obj.data;
                 this.$refs.table.doCleanRefresh(this.buildFilterParams());
             },
-            onDbClickCell: function(data) {
+            onDbClickCell: function (data) {
                 this.$emit('do-save', [data.entry.data], this.treeModel.filterData.id);
                 this.visible = false;
             },
-            doSave: function() {
+            doSave: function () {
                 if (this.tableModel.selectedDatas.length === 0) {
-                    LIB.Msg.warning("请选择数据");
+                    LIB.Msg.warning(LIB.lang('gb.common.psd'));
                     return;
                 }
                 this.$emit('do-save', this.tableModel.selectedDatas, this.treeModel.filterData.id);
                 this.visible = false;
             },
             // 过滤树形组件
-            doFilterTree: function(val) {
+            doFilterTree: function (val) {
                 var items;
-                if(!val) {
+                if (!val) {
                     this.buildTreeData(this.backupCheckTables);
                 } else {
                     items = _.filter(this.backupCheckTables, function (item) {
@@ -151,7 +151,7 @@ define(function(require) {
                 }
             },
             // 过滤表格
-            doFilterTable: function() {
+            doFilterTable: function () {
                 this.$refs.table.doCleanRefresh(this.buildFilterParams());
             },
             init: function () {
@@ -163,7 +163,7 @@ define(function(require) {
             // 获取检查表
             getCheckTables: function () {
                 var _this = this;
-                api.getCheckTables({compId: this.compId}).then(function (res) {
+                api.getCheckTables({ compId: this.compId }).then(function (res) {
                     var items = _.map(res.data.list, function (item) {
                         return {
                             compId: item.compId,
@@ -176,7 +176,7 @@ define(function(require) {
                     _this.buildTreeData(items);
                 })
             },
-            buildTreeData: function(items) {
+            buildTreeData: function (items) {
                 var root = {
                     id: "-1",
                     name: '全部',
@@ -188,19 +188,19 @@ define(function(require) {
                     if (key === '0') {
                         child = {
                             id: key,
-                            name: '非计划检查',
+                            name: LIB.lang('bs.bac.sp.unc'),
                             children: val
                         }
                     } else if (key === '1') {
                         child = {
                             id: key,
-                            name: '计划检查',
+                            name: LIB.lang('gb.common.plannedi'),
                             children: val
                         }
                     } else {
                         child = {
                             id: key,
-                            name: '通用',
+                            name: LIB.lang('bs.bac.sp.currency'),
                             children: val
                         }
                     }
@@ -208,14 +208,14 @@ define(function(require) {
                 });
                 this.treeModel.data = root;
                 // 还原树组件状态
-                this.$nextTick(function() {
+                this.$nextTick(function () {
                     this.$els.mtree.scrollTop = 0;
                 });
                 this.treeModel.selectedData = [];
             }
         },
         watch: {
-            visible: function(val) {
+            visible: function (val) {
                 if (val) {
                     this.init();
                     this.getCheckTables();
@@ -226,7 +226,7 @@ define(function(require) {
                 }
             }
         },
-        created: function() {
+        created: function () {
             this.orgListVersion = 1;
         }
     };

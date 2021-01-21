@@ -16,6 +16,10 @@ define(function (require) {
     var getNowDateStr = function () {
         return new Date().Format("yyyy-MM-dd 00:00:00");
     };
+
+
+
+
     //初始化数据模型
     var newVO = function () {
         return {
@@ -94,10 +98,10 @@ define(function (require) {
             // checkItemIds: [],
             typeList: [{
                 id: '0',
-                name: "非计划检查"
+                name: LIB.lang('bs.bac.sp.unc')
             }, {
                 id: '1',
-                name: "计划检查"
+                name: LIB.lang('gb.common.plannedi')
             }],
             showCheckTaskSelectModal: false,
             //showCheckObjectSelectModal : false,
@@ -109,165 +113,165 @@ define(function (require) {
         },
 
         itemColumns: [{
-                title: "检查项",
-                fieldName: "name",
-                width: 680
-            },
-            // {
-            //     title: "检查对象",
-            //     fieldType: "custom",
-            //     render: function (data) {
-            //         return data.checkObjectName;
-            //     },
-            //     width: 200
-            // },
-            {
-                title: "否决项",
-                fieldType: "custom",
-                width: 80,
-                showTip: false,
-                render: function (data) {
-                    if (data.vetoItem == 1) {
-                        return '是'
-                    } else {
-                        return '否';
-                    }
-                }
-            },
-            {
-                title: "类型",
-                fieldName: "type",
-                fieldType: "custom",
-                render: function (data) {
-                    return LIB.getDataDic("pool_type", [data.type]);
-                },
-                width: 80
-            },
-            {
-                title: "结果",
-                fieldType: "custom",
-                fieldName: 'resultObj',
-                width: 120,
-                render: function (data) {
-                    var val = "";
-                    if (data.isDigital && data.isDigital != 0 && data.digitalRecord) {
-                        val = "(" + data.digitalRecord + data.digitalUnit + ")";
-                    }
-                    if (data.checkResult === '1') {
-                        return '<a style="color:#33a6ff;">合格 ' + val + '</a>';
-                    } else if (data.checkResult === '0') {
-                        // return '<a style="color:#f00;">不合格</a>';
-                        if (parseInt(data.failedNum) > 1) {
-                            var str = "<span style='border-radius: 50%;background: red;color:#fff;display: inline-block;width:15px;height: 15px;font-size: 12px;text-align: center;margin-left: 5px;'>" + data.failedNum + "</span>"
-                            return '<a style="color:#f00;">不合格' + str + ' ' + val + '</a><a class="viewDanger" style="color:#1AA1E4;cursor:pointer;margin-left:5px">查看隐患</a>';
-                        }
-                        return '<a style="color:#f00;">不合格 ' + val + '</a><a class="viewDanger" style="color:#1AA1E4;cursor:pointer;margin-left:15px">查看隐患</a>';
-                    } else if (data.checkResult === '2') {
-                        return '<span style="color:#cecece;">不涉及 ' + val + '</span>';
-                    } else {
-                        return '<a style="color:red;">选择</a>';
-                    }
-                },
-                tipRender: function (data) {
-                    if (data.checkResult === '1') {
-                        return "合格";
-                    } else if (data.checkResult === '0') {
-                        return "不合格";
-                    } else if (data.checkResult === '2') {
-                        return "不涉及";
-                    } else {
-                        return "选择";
-                    }
+            title: LIB.lang('bd.hal.checkItem'),
+            fieldName: "name",
+            width: 680
+        },
+        // {
+        //     title: "检查对象",
+        //     fieldType: "custom",
+        //     render: function (data) {
+        //         return data.checkObjectName;
+        //     },
+        //     width: 200
+        // },
+        {
+            title: LIB.lang('ri.bc.vetoItem'),
+            fieldType: "custom",
+            width: 80,
+            showTip: false,
+            render: function (data) {
+                if (data.vetoItem == 1) {
+                    return LIB.lang('gb.common.yes')
+                } else {
+                    return LIB.lang('gb.common.no');
                 }
             }
+        },
+        {
+            title: LIB.lang('gb.common.type'),
+            fieldName: "type",
+            fieldType: "custom",
+            render: function (data) {
+                return LIB.getDataDic("pool_type", [data.type]);
+            },
+            width: 80
+        },
+        {
+            title: LIB.lang('bd.ria.result'),
+            fieldType: "custom",
+            fieldName: 'resultObj',
+            width: 120,
+            render: function (data) {
+                var val = "";
+                if (data.isDigital && data.isDigital != 0 && data.digitalRecord) {
+                    val = "(" + data.digitalRecord + data.digitalUnit + ")";
+                }
+                if (data.checkResult === '1') {
+                    return '<a style="color:#33a6ff;">' + LIB.lang("hag.hazv.qualified") + ' ' + val + '</a>';
+                } else if (data.checkResult === '0') {
+                    // return '<a style="color:#f00;">不合格</a>';
+                    if (parseInt(data.failedNum) > 1) {
+                        var str = "<span style='border-radius: 50%;background: red;color:#fff;display: inline-block;width:15px;height: 15px;font-size: 12px;text-align: center;margin-left: 5px;'>" + data.failedNum + "</span>"
+                        return '<a style="color:#f00;">' + LIB.lang("hag.hazv.unqualified") + str + ' ' + val + '</a><a class="viewDanger" style="color:#1AA1E4;cursor:pointer;margin-left:5px">查看隐患</a>';
+                    }
+                    return '<a style="color:#f00;">' + LIB.lang("hag.hazv.unqualified") + ' ' + val + '</a><a class="viewDanger" style="color:#1AA1E4;cursor:pointer;margin-left:15px">查看隐患</a>';
+                } else if (data.checkResult === '2') {
+                    return '<span style="color:#cecece;">' + LIB.lang("ri.bc.nin") + ' ' + val + '</span>';
+                } else {
+                    return '<a style="color:red;">' + LIB.lang("gb.common.choice") + '</a>';
+                }
+            },
+            tipRender: function (data) {
+                if (data.checkResult === '1') {
+                    return LIB.lang('hag.hazv.qualified');
+                } else if (data.checkResult === '0') {
+                    return LIB.lang('hag.hazv.unqualified');
+                } else if (data.checkResult === '2') {
+                    return LIB.lang('ri.bc.nin');
+                } else {
+                    return LIB.lang('gb.common.choice');
+                }
+            }
+        }
         ],
         itemColumns1: [{
-                title: "检查项内容",
-                fieldName: "name",
-                width: 540
+            title: LIB.lang('gb.common.checkItemContent'),
+            fieldName: "name",
+            width: 540
+        },
+        {
+            title: LIB.lang('gb.common.type'),
+            fieldName: "type",
+            fieldType: "custom",
+            render: function (data) {
+                return LIB.getDataDic("pool_type", [data.type]);
             },
-            {
-                title: "类型",
-                fieldName: "type",
-                fieldType: "custom",
-                render: function (data) {
-                    return LIB.getDataDic("pool_type", [data.type]);
-                },
-                width: 80
-            },
-            {
-                title: "否决项",
-                fieldType: "custom",
-                width: 80,
-                showTip: false,
-                render: function (data) {
-                    if (data.vetoItem == 1) {
-                        return '是'
-                    } else {
-                        return '否';
-                    }
-                }
-            },
-            {
-                title: "结果",
-                fieldType: "custom",
-                fieldName: "operation1",
-                width: "80px",
-                render: function (data) {
-                    var textColor = '#cecece',
-                        iconColor = '#cecece';
-
-                    if (data.checkResult === '1') {
-                        textColor = 'blue';
-                        if (data._content) {
-                            iconColor = 'blue';
-                        }
-                    }
-                    return "<a href='javascript:void(0);' class='record-cell-text' style='color:" + textColor + ";'>合格</a><a href='javascript:void(0);' class='record-cell-icon' style='color:" + iconColor + ";'><i class='ivu-icon ivu-icon-ios-information'></i></a>"
-                },
-                tipRender: function (data) {
-                    return "合格";
-                }
-            },
-            {
-                title: "",
-                fieldType: "custom",
-                fieldName: "operation2",
-                width: "80px",
-                render: function (data) {
-                    var str = "<a href='javascript:void(0);' style='color:red;'>不合格</a>";
-                    if (data.failedNum && data.failedNum > 1) {
-                        str = "<a href='javascript:void(0);' style='color:red;display: flex;align-items: center;'>不合格" + "<span style='border-radius: 50%;background: red;color:#fff;display: inline-block;width:15px ;height: 15px;margin-left:5px;text-align: center;'>" + data.failedNum + "</span></a>";
-                    }
-                    if (data.checkResult === '0') {
-                        // return "<a href='javascript:void(0);' style='color:red;'>不合格</a>";
-                        return str;
-                    } else {
-                        return "<a href='javascript:void(0);' style='color:#cecece;'>不合格</a>";
-                    }
-                },
-                tipRender: function (data) {
-                    return "不合格";
+            width: 80
+        },
+        {
+            title: LIB.lang('ri.bc.vetoItem'),
+            fieldType: "custom",
+            width: 80,
+            showTip: false,
+            render: function (data) {
+                if (data.vetoItem == 1) {
+                    return LIB.lang('gb.common.yes')
+                } else {
+                    return LIB.lang('gb.common.no');
                 }
             }
+        },
+        {
+            title: LIB.lang('bd.ria.result'),
+            fieldType: "custom",
+            fieldName: "operation1",
+            width: "80px",
+            render: function (data) {
+                var textColor = '#cecece',
+                    iconColor = '#cecece';
+
+                if (data.checkResult === '1') {
+                    textColor = 'blue';
+                    if (data._content) {
+                        iconColor = 'blue';
+                    }
+                }
+                return "<a href='javascript:void(0);' class='record-cell-text' style='color:" + textColor + ";'>" + LIB.lang('hag.hazv.qualified') + "</a><a href='javascript:void(0);' class='record-cell-icon' style='color:" + iconColor + ";'><i class='ivu-icon ivu-icon-ios-information'></i></a>"
+            },
+            tipRender: function (data) {
+                return LIB.lang('hag.hazv.qualified');
+            }
+        },
+        {
+            title: "",
+            fieldType: "custom",
+            fieldName: "operation2",
+            width: "80px",
+            render: function (data) {
+                var str = "<a href='javascript:void(0);' style='color:red;'>" + LIB.lang('hag.hazv.unqualified') + "</a>";
+                if (data.failedNum && data.failedNum > 1) {
+                    str = "<a href='javascript:void(0);' style='color:red;display: flex;align-items: center;'>" + LIB.lang('hag.hazv.unqualified') + "<span style='border-radius: 50%;background: red;color:#fff;display: inline-block;width:15px ;height: 15px;margin-left:5px;text-align: center;'>" + data.failedNum + "</span></a>";
+                }
+                if (data.checkResult === '0') {
+                    // return "<a href='javascript:void(0);' style='color:red;'>不合格</a>";
+                    return str;
+                } else {
+                    return "<a href='javascript:void(0);' style='color:#cecece;'>" + LIB.lang('hag.hazv.unqualified') + "</a>";
+                }
+            },
+            tipRender: function (data) {
+                return LIB.lang('hag.hazv.unqualified');
+            }
+        }
         ],
         viewDetailModel: {
             //控制编辑组件显示
-            title: "详情",
+            title: LIB.lang('gb.common.detail'),
             //显示编辑弹框
             show: false,
             id: null
         },
         viewDetailModel1: {
             //控制编辑组件显示
-            title: "详情",
+            title: LIB.lang('gb.common.detail'),
             //显示编辑弹框
             show: false,
             id: null
         },
         detailModel: {
             //控制编辑组件显示
-            title: "新增",
+            title: LIB.lang('gb.common.add'),
             //显示编辑弹框
             show: true,
             //编辑模式操作类型
@@ -281,48 +285,49 @@ define(function (require) {
         rules: {
             "checkUser.username": [{
                 required: true,
-                message: '请选择检查人名称'
+                message: LIB.lang('ri.bc.psin')
             }],
             "checkTable.name": [{
                 required: true,
-                message: '请选择检查表'
+                message: LIB.lang('ri.bc.psac')
             }],
             'checkBeginDate': [{
                 required: true,
-                message: '请选择开始检查时间'
+                message: LIB.lang('ri.bc.pstst')
             }],
             'checkEndDate': [{
                 required: true,
-                message: '请选择结束检查时间'
+                message: LIB.lang('ri.bc.psect')
             }, {
                 validator: function (rule, val, callback) {
                     var vo = dataModel.mainModel.vo;
-                    if (new Date(vo.checkBeginDate).getTime() >= new Date(vo.checkEndDate).getTime() ) {
-                        callback(new Error("结束检查时间应大于开始检查时间"))
+                    if (new Date(vo.checkBeginDate).getTime() >= new Date(vo.checkEndDate).getTime()) {
+                        callback(new Error(LIB.lang('ri.bc.teitsbg')))
                     } else {
                         callback()
                     }
                 }
             }],
+
             "checkObj.id": [{
                 required: true,
-                message: '请选择受检对象'
+                message: LIB.lang('ri.bc.pstto')
             }],
             "orgId": [{
                 required: true,
-                message: '请选择所属部门'
+                message: LIB.lang('ri.bc.psyd')
             }],
             "compId": [{
                 required: true,
-                message: '请选择所属公司'
+                message: LIB.lang('ri.bc.psyc')
             }],
             "checkLevel": [{
                 required: true,
-                message: '请选择检查级别'
+                message: LIB.lang('ri.bc.pscl')
             }, LIB.formRuleMgr.length()],
             "checkTask.name": [{
                 required: true,
-                message: '请选择检查任务'
+                message: LIB.lang('ri.bc.psct')
             }],
 
         },
@@ -363,7 +368,7 @@ define(function (require) {
         signatureImgs: [],
         exportModel: {
             visible: false,
-            title: "导出数据?",
+            title: LIB.lang('ri.bc.exportData') + "?",
             exportType: "3" //0:不合格;1:合格;2:不涉及;3:全部
         },
     };
@@ -415,7 +420,7 @@ define(function (require) {
                     this.selectModal.userSelectModal.singleSelect = true;
                 } else {
                     if (!this.mainModel.vo.checkerId) {
-                        LIB.Msg.info("请先选择检查人");
+                        LIB.Msg.info(LIB.lang('ri.bc.pstef'));
                         return;
                     }
                     var excludeIds = [];
@@ -545,7 +550,7 @@ define(function (require) {
                 }
 
                 this.mainModel.selectedCheckItem = obj.entry.data;
-                this.viewDetailModel1.title = "结果";
+                this.viewDetailModel1.title = LIB.lang('bd.ria.result');
                 //  operation1 点击合格列      operation2 不合格       operation3 不涉及
                 if (!_.contains(['operation1', 'operation2', 'operation3'], fieldName)) {
                     return;
@@ -633,14 +638,14 @@ define(function (require) {
                         _vo.collaborators = _.filter(_vo.collaborators, function (item) {
                             return item.id != _vo.checkerId;
                         })
-                        LIB.Msg.info("协同检查人员不能包含”检查人“，系统已经自动过滤去除重复的人员");
+                        LIB.Msg.info(LIB.lang('ri.bc.ciciits'));
                     }
                 } else if (selectedDatas && this.selectModal.userSelectModal.type === 1) {
                     if (_.find(selectedDatas, "id", _vo.checkerId)) {
                         this.mainModel.vo.collaborators = _.filter(selectedDatas, function (item) {
                             return item.id != _vo.checkerId;
                         })
-                        LIB.Msg.info("协同检查人员不能包含”检查人“，系统已经自动过滤去除重复的人员");
+                        LIB.Msg.info(LIB.lang('ri.bc.ciciits'));
 
                     } else {
                         this.mainModel.vo.collaborators = selectedDatas;
@@ -656,14 +661,14 @@ define(function (require) {
                     if (this.hasAuth('viewPool')) {
                         window.open("/html/main.html#!/hiddenGovernance/businessCenter/total?method=filterByCheckRecord&&name=" + obj.entry.data.name + "&&id=" + obj.entry.data.checkRecordDetailId + '&&compId=' + this.mainModel.vo.compId)
                     } else {
-                        LIB.Msg.info('暂无权限')
+                        LIB.Msg.info(LIB.lang('gb.common.noPermission'))
                     }
                     return
                 }
                 if (obj.cell.fieldName == 'resultObj') {
                     var _vo = obj.entry.data;
                     this.viewDetailModel.show = true;
-                    this.viewDetailModel.title = "检查项";
+                    this.viewDetailModel.title = LIB.lang('bs.bac.sp.ci');
                     this.viewDetailModel.id = null;
                     this.$broadcast('ev_viewDetailReload', _vo);
                 }
@@ -732,14 +737,14 @@ define(function (require) {
                         return "<a href='javascript:void(0);' class='record-cell-text' style='color:" + textColor + ";'>不涉及</a><a href='javascript:void(0);' class='record-cell-icon' style='color:" + iconColor + ";'><i class='ivu-icon ivu-icon-ios-information'></i></a>"
                     },
                     tipRender: function (data) {
-                        return "不涉及";
+                        return LIB.lang('ri.bc.nin');
                     }
                 });
             },
 
             doShowCheckObjSelectModal: function () {
                 if (!this.mainModel.vo.checkUser.id) {
-                    return LIB.Msg.warning("请先选择检查人");
+                    return LIB.Msg.warning(LIB.lang('ri.bc.pstef'));
                 }
                 this.selectModal.taskSelectModel.visible = true;
             },
@@ -1036,12 +1041,12 @@ define(function (require) {
 
                 if (dataModel.mainModel.opType === "check") {
                     if (!_this.mainModel.vo.checkTaskId) {
-                        LIB.Msg.info("请选择检查任务");
+                        LIB.Msg.info(LIB.lang('ri.bc.psct'));
                         return;
                     }
                 }
 
-                var detailErrorMsg = "检查结果有误";
+                var detailErrorMsg = LIB.lang('ri.bc.triw');
                 var isCheckResultValid = true;
 
                 // 循环数据
@@ -1094,8 +1099,8 @@ define(function (require) {
                             if (!checkItems.checkResult) {
                                 if (itemList.groupId + checkItems.id === remainingCheckItemId) {
                                     isCheckResultValid = false;
-                                    checkResultHint = itemList.groupName + "第" + Math.ceil(nums / 10) + "页第" + nums % 10 + "行";
-                                    detailErrorMsg = "检查记录未设置检查结果";
+                                    checkResultHint = itemList.groupName + LIB.lang('gb.common.pageNo') + Math.ceil(nums / 10) + LIB.lang('gb.common.page') + nums % 10 + LIB.lang('gb.common.line');
+                                    detailErrorMsg = LIB.lang('ri.bc.tirinsi');
                                     return false;
                                 }
                             }
@@ -1147,7 +1152,7 @@ define(function (require) {
                         api.create(params).then(function (res) {
                             _this.doClose();
                             _this.$dispatch("ev_dtCreate");
-                            LIB.Msg.success("保存成功");
+                            LIB.Msg.success(LIB.lang('gb.common.saveds'));
                         })
                     }
                 })
@@ -1284,8 +1289,8 @@ define(function (require) {
                         detail.checkRecordDetailProblems = checkRecordDetailProblems || [];
                     }
                 }
-                if(checkResult == '0')
-                this.changeIconColor(checkItemId, hasContent, checkRecordDetailProblems.length);
+                if (checkResult == '0')
+                    this.changeIconColor(checkItemId, hasContent, checkRecordDetailProblems.length);
 
             },
             //detail框点击关闭后事件处理

@@ -32,12 +32,12 @@
             </input-select>
           </el-form-item>
 
-          <el-form-item label="检查开始时间" class="small-info-box" prop="checkBeginDate">
+          <el-form-item :label="$t('gb.common.ist')" class="small-info-box" prop="checkBeginDate">
             <date-picker type="datetime" format=" yyyy-MM-dd HH:mm:ss" v-if="!mainModel.isReadOnly"
               :selected-date.sync="mainModel.vo.checkBeginDate"></date-picker>
             <iv-input v-else :value="mainModel.vo.checkBeginDate" textonly class="inp"></iv-input>
           </el-form-item>
-          <el-form-item label="检查结束时间" class="small-info-box" prop="checkEndDate">
+          <el-form-item :label="$t('gb.common.iet')" class="small-info-box" prop="checkEndDate">
             <date-picker type="datetime" format="yyyy-MM-dd HH:mm:ss" v-if="!mainModel.isReadOnly"
               :selected-date.sync="mainModel.vo.checkEndDate" :begin="mainModel.vo.checkBeginDate"></date-picker>
             <iv-input v-else :value="mainModel.vo.checkEndDate" textonly class="inp"></iv-input>
@@ -46,7 +46,7 @@
 
         <iv-row class="bip-content-item">
 
-          <el-form-item label="检查对象" prop="checkObj.id" class="small-info-box">
+          <el-form-item :label="$t('ri.bc.io')" prop="checkObj.id" class="small-info-box">
             <input-select :value="mainModel.vo.checkObj" id-field="id" display-field="name"
               @click="doShowCheckObjSelectModal" v-if="!mainModel.isReadOnly"></input-select>
             <span v-else>{{mainModel.vo.checkObjectName}}</span>
@@ -69,14 +69,14 @@
           </el-form-item>
         </iv-row>
         <iv-row class="bip-content-item">
-          <el-form-item v-if="enableCheckLevel" label="检查级别" prop="checkLevel" class="small-info-box">
+          <el-form-item v-if="enableCheckLevel" :label="$t('ri.bc.il')" prop="checkLevel" class="small-info-box">
             <i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.checkLevel"
               :list="getDataDicList('checkLevel')" clearable>
               <i-option v-for="type in getDataDicList('checkLevel')" :value="type.id">{{type.value}}</i-option>
             </i-select>
             <span v-if="mainModel.isReadOnly">{{getDataDic('checkLevel', mainModel.vo.checkLevel)}}</span>
           </el-form-item>
-          <el-form-item label="协同检查人员" class="small-info-box">
+          <el-form-item :label="$t('ri.bc.cwi')" class="small-info-box">
             <multiple-input-select v-if="!mainModel.isReadOnly" :selected-multiple.sync="mainModel.vo.collaborators"
               :textonly="mainModel.isReadOnly" @on-click="(!mainModel.isReadOnly) && doShowUserSelectModal(1)">
             </multiple-input-select>
@@ -93,10 +93,10 @@
   <div class="rel-info-panel" v-if="mainModel.isReadOnly">
     <div class="rip-item rip-tableFirst">
       <simple-card class="fip-content-item">
-        <p slot="title"><i class="basicPng"></i><span>检查现场情况</span></p>
+        <p slot="title"><i class="basicPng"></i><span>{{$t('ri.bc.ctsc')}}</span></p>
         <div class="rel-info-panel-content-tabs">
           <el-tabs active-key="relTab">
-            <el-tab-pane label="备注说明">
+            <el-tab-pane :label="$t('gb.common.notes')">
               <div class="rip-item">
                 <simple-card>
                   <span
@@ -104,14 +104,14 @@
                 </simple-card>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="电子签名">
+            <el-tab-pane :label="$t('ri.bc.es')">
               <div class="rip-item">
                 <simple-card>
                   <image-view :show-close="false" :images="signatureImgs"></image-view>
                 </simple-card>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="现场图片">
+            <el-tab-pane :label="$t('ri.bc.sp')">
               <div class="rip-item">
                 <simple-card>
                   <image-view :show-close="false" :images="picFiles"></image-view>
@@ -131,24 +131,25 @@
         :filter="true" :filter-when="mainModel.opType !== 'create'" :custom-filter="true" @do-filter="filterTaskGroup">
         <p slot="title" style="width: 100%">
           <i class="itemPng"></i>
-          <span>任务明细</span>
+          <span>{{$t('ri.bc.td')}}</span>
           <span v-if="enableTrajectoryMap&&hasTrajectoryMap" style="cursor: pointer;margin-left: 30px;"
-            class="right btn-link" @click="doTrajectoryMap">查看巡检轨迹</span>
+            class="right btn-link" @click="doTrajectoryMap">{{$t('ri.bc.vit')}}</span>
           <span class="right" style="margin-left:15px;">
-            <iv-checkbox :checked.sync="itemSelectModel[2]">不涉及</iv-checkbox>
+            <iv-checkbox :checked.sync="itemSelectModel[2]">{{$t('ri.bc.nin')}}</iv-checkbox>
           </span>
           <span class="right" style="margin-left:15px;">
-            <iv-checkbox :checked.sync="itemSelectModel[1]">不合格</iv-checkbox>
+            <iv-checkbox :checked.sync="itemSelectModel[1]">{{$t('hag.hazv.unqualified')}}</iv-checkbox>
           </span>
           <span class="right" style="margin-left:15px;">
-            <iv-checkbox :checked.sync="itemSelectModel[0]">合格</iv-checkbox>
+            <iv-checkbox :checked.sync="itemSelectModel[0]">{{$t('hag.hazv.qualified')}}</iv-checkbox>
           </span>
         </p>
 
         <simple-card class="bip-content-sub-item" v-for="group in mainModel.checkRecordDetailVoList">
           <!--                    <span slot="title">{{group.groupName}}</span>-->
           <div slot="title" style="width: 100%;font-weight: 600;color: #666;font-size: 13px;">{{group.groupName}} <span
-              v-if="group.checkStartDate" style="float: right;">检查时间:{{group.checkStartDate}}</span></div>
+              v-if="group.checkStartDate"
+              style="float: right;">{{$t('gb.common.checkTime')}}:{{group.checkStartDate}}</span></div>
           <vue-bootstrap-table :columns="itemColumns" :show-filter="false" :show-column-picker="false"
             :show-pager="true" :values="group.itemList" @on-click-cell="doViewDetail" :show-empty-row="false"
             :show-seq="true" cursor="pointer">
@@ -194,26 +195,24 @@
 <!--选择检查对象-->
 <check-object-select :visible.sync="selectModal.taskSelectModel.visible" :comp-id="mainModel.vo.checkUser.compId"
   table-type="0" @do-save="doSaveCheckObj" :is-single-check="true" :is-comp-disable="false" :is-show-area-label="false"
-   show-dependency-tree
-></check-object-select>
+  show-dependency-tree></check-object-select>
 
 <!--选择检查对象个体-->
 <check-object-unity-select :visible.sync="selectModal.checkObjectSelectModel.visible"
   :co-type="selectModal.checkObjectSelectModel.checkObjectType" :co-id="selectModal.checkObjectSelectModel.checkObjId"
-  :comp-id="mainModel.vo.compId" @do-save="doSaveCheckObjUnity"
-></check-object-unity-select>
+  :comp-id="mainModel.vo.compId" @do-save="doSaveCheckObjUnity"></check-object-unity-select>
 <Modal :visible.sync="exportModel.visible" :title="exportModel.title" :footer-hide="true">
   <div class="edit-pop-container">
     <div class="epc-content">
       <iv-radio-group :model.sync="exportModel.exportType">
-        <iv-radio value="3">全部数据</iv-radio>
-        <iv-radio value="0">只包含"不合格"项</iv-radio>
-        <iv-radio value="1">只包含"合格"项</iv-radio>
+        <iv-radio value="3">{{$t('bs.orl.allData')}}</iv-radio>
+        <iv-radio value="0">{{$t('ri.bc.ioui')}}</iv-radio>
+        <iv-radio value="1">{{$t('ri.bc.oqiai')}}</iv-radio>
       </iv-radio-group>
     </div>
     <div class="epc-footer">
       <!--            <vi-button type="primary" @click="doSaveCopy" class="pull-right">取消</vi-button>-->
-      <vi-button type="primary" @click="doExport" class="pull-right">确定</vi-button>
+      <vi-button type="primary" @click="doExport" class="pull-right">{{$t('gb.common.ok')}}</vi-button>
     </div>
   </div>
 </Modal>

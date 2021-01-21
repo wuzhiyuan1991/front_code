@@ -4,7 +4,7 @@
             <el-tabs @tab-click="doTabs" class="scroll-tabs" v-if="routeType === 'hiddenDanger'">
                 <!--风险类别/检查项类别-->
                 <!--<el-tab-pane :label="$t('gb.common.riskCategory')">-->
-                <el-tab-pane :label="bizType == 'job' ? '工作项分类' : '检查项分类'">
+                <el-tab-pane :label="bizType == 'job' ? $t('gb.common.wic') : $t('gb.common.checkItemClass')">
                     <iv-row type="flex" align="middle" class="mp-header-item-func">
                         <iv-col span="24" class="menuTitle">
                             <vi-button type="text" class="mp-header-item-btn" @click="showAll">
@@ -13,26 +13,16 @@
                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('riskType')">添加
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('riskType')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
                     <iv-tree-grid :model="riskType.data" v-ref:tree-grid-risk-type
-                               :selected-datas.sync="selectedTreeDatas"
-                               id-attr="id"
-                               pid-attr="parentId"
-                               display-attr="name"
-                               :single-select="true"
-                               :show-checkbox="false"
-                               :allow-parent-checked="true"
-                               @on-add-node="doAddNode"
-                               @on-edit-node="doEditNode"
-                               @on-del-node="doDeleteNode"
-                               :edit="true"
-                                :default-open-layer="1"
-                               :open="riskType.showHide"
-                                  sort-key="orderNo"
-                    ></iv-tree-grid>
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="riskType.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
                 <!--检查表分类-->
                 <el-tab-pane :label="$t('bd.hal.checkTableClass')">
@@ -44,26 +34,16 @@
                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('tableType')">添加
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('tableType')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
                     <iv-tree-grid :model="tableType.data" v-ref:tree-grid-table-type
-                                  :selected-datas.sync="selectedTreeDatas"
-                                  id-attr="id"
-                                  pid-attr="parentId"
-                                  display-attr="name"
-                                  :single-select="true"
-                                  :show-checkbox="false"
-                                  :allow-parent-checked="true"
-                                  @on-add-node="doAddNode"
-                                  @on-edit-node="doEditNode"
-                                  @on-del-node="doDeleteNode"
-                                  :edit="true"
-                                  :default-open-layer="1"
-                                  :open="tableType.showHide"
-                                  sort-key="orderNo"
-                    ></iv-tree-grid>
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="tableType.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
 
             </el-tabs>
@@ -71,27 +51,34 @@
             <el-tabs @tab-click="doTabs" class="scroll-tabs" v-if="routeType === 'riskAssessment'">
                 <!--危害因素分类-->
                 <el-tab-pane label="危害因素分类">
-                    <div  >
+                    <div>
                         <iv-row>
                             <iv-col span="4" style="min-width: 200px;">
                                 <div style="border-right: 1px solid #ddd;height: calc(100vh - 190px)">
-                                    <div style="border-bottom: 1px solid #ddd;display: inline-flex;width: 100%;padding-top: 9px;padding-bottom: 9px;">
+                                    <div
+                                        style="border-bottom: 1px solid #ddd;display: inline-flex;width: 100%;padding-top: 9px;padding-bottom: 9px;">
                                         <div style="margin: 0 17px">
-                                            <iv-button  style="font-size:14px;padding: 4px ;" type="text" @click="doCreateCatalog"><Icon type="plus"></Icon>添加</iv-button>
-                                            <iv-button  style="font-size:14px;padding: 4px ;" type="text" @click="doShowUpdateCatalog"><Icon type="edit"></Icon>编辑</iv-button>
-                                            <iv-button  style="font-size:14px;padding: 4px ;" type="text" @click="doDeleteCatalog"><Icon type="trash-a"></Icon>删除</iv-button>
+                                            <iv-button style="font-size:14px;padding: 4px ;" type="text"
+                                                @click="doCreateCatalog">
+                                                <Icon type="plus"></Icon>{{$t('bc.ria.append')}}
+                                            </iv-button>
+                                            <iv-button style="font-size:14px;padding: 4px ;" type="text"
+                                                @click="doShowUpdateCatalog">
+                                                <Icon type="edit"></Icon>编辑
+                                            </iv-button>
+                                            <iv-button style="font-size:14px;padding: 4px ;" type="text"
+                                                @click="doDeleteCatalog">
+                                                <Icon type="trash-a"></Icon>删除
+                                            </iv-button>
                                         </div>
                                     </div>
                                     <ul>
-                                        <li
-                                            v-for="(index, group) in hazardFactor.catalogLists"
-                                            class="lr-layout-li"
+                                        <li v-for="(index, group) in hazardFactor.catalogLists" class="lr-layout-li"
                                             style="border-bottom: 1px solid #ddd;height:32px;position: relative;"
                                             :class="{'checked': index === hazardFactor.selectCatalogIndex}"
-                                            @click="doSelectHazardCatalogs(index)"
-                                            :title="group.name"
-                                        >
-                                            <span style="margin-left: 17px;display: inline-block;width:126px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{group.name}}</span>
+                                            @click="doSelectHazardCatalogs(index)" :title="group.name">
+                                            <span
+                                                style="margin-left: 17px;display: inline-block;width:126px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{group.name}}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -106,48 +93,35 @@
                                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                                 {{$t('bs.bac.collapseAll')}}
                                             </vi-button>
-                                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('hazardFactor')">添加
+                                            <vi-button type="text" class="mp-header-item-btn"
+                                                @click="treeAdd('hazardFactor')">{{$t('bc.ria.append')}}
                                             </vi-button>
-                                            <vi-button type="text" class="mp-header-item-btn" @click="doImport('hazardFactor')">
+                                            <vi-button type="text" class="mp-header-item-btn"
+                                                @click="doImport('hazardFactor')">
                                                 导入
                                             </vi-button>
                                         </iv-col>
                                     </iv-row>
-                                    <div style="position: relative;width:100%;height: 100%;overflow: auto;" class="custom-vi-tree-item-select-down-padding-right180" >
-                                        <iv-tree-grid
-                                                style="top:auto;bottom:auto;"
-                                                :model="hazardFactor.data" v-ref:tree-grid-hazard-factor
-                                              :selected-datas.sync="selectedTreeDatas"
-                                              id-attr="id"
-                                              pid-attr="parentId"
-                                              display-attr="name"
-                                              :single-select="true"
-                                              :show-checkbox="false"
-                                              :allow-parent-checked="true"
-                                              @on-add-node="doAddNode"
-                                              @on-edit-node="doEditNode"
-                                              @on-del-node="doDeleteNode"
-                                              :edit="true"
-                                              :default-open-layer="1"
-                                              :open="hazardfactor.showHide"
-                                              sort-key="orderNo"
-                                        ></iv-tree-grid>
+                                    <div style="position: relative;width:100%;height: 100%;overflow: auto;"
+                                        class="custom-vi-tree-item-select-down-padding-right180">
+                                        <iv-tree-grid style="top:auto;bottom:auto;" :model="hazardFactor.data"
+                                            v-ref:tree-grid-hazard-factor :selected-datas.sync="selectedTreeDatas"
+                                            id-attr="id" pid-attr="parentId" display-attr="name" :single-select="true"
+                                            :show-checkbox="false" :allow-parent-checked="true" @on-add-node="doAddNode"
+                                            @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                                            :default-open-layer="1" :open="hazardfactor.showHide" sort-key="orderNo">
+                                        </iv-tree-grid>
 
                                     </div>
                                 </div>
                             </iv-col>
                             <iv-col span="10" style="padding:10px;position: relative;">
                                 <div style="text-align: right;margin-bottom: 16px;">
-                                    <span class="do-add-btn" @click="doAddCompany">添加</span>
+                                    <span class="do-add-btn" @click="doAddCompany">{{$t('bc.ria.append')}}</span>
                                 </div>
                                 <div style="position: absolute;top:15px;left: 20px;">当前分类适用于公司</div>
-                                <lite-table
-                                        :columns="hazardFactor.columns"
-                                        :values="hazardFactor.companyList"
-                                        :tools="['del']"
-                                        show-sequence
-                                        @on-delete="doDeleteCompany"
-                                ></lite-table>
+                                <lite-table :columns="hazardFactor.columns" :values="hazardFactor.companyList"
+                                    :tools="['del']" show-sequence @on-delete="doDeleteCompany"></lite-table>
                             </iv-col>
                         </iv-row>
 
@@ -161,37 +135,28 @@
                 <!--检查依据分类-->
                 <el-tab-pane :label="$t('bc.ria.lawsRegulat')">
                     <!--<iv-col span="24" class="mp-header-item-func" :style="{ top: topSubMenu + 'px' }">-->
-                    <!--<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkbasistype')">添加</vi-button>-->
+                    <!--<vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkbasistype')">{{$t('bc.ria.append')}}</vi-button>-->
                     <!--</iv-col>-->
                     <iv-row type="flex" align="middle" class="mp-header-item-func">
                         <iv-col span="24" class="menuTitle">
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkBasisType')">添加
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkBasisType')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid :model="checkBasisType.data" v-ref:treegrid
-                                  :selected-datas.sync="selectedTreeDatas"
-                                  id-attr="id"
-                                  pid-attr="parentId"
-                                  display-attr="name"
-                                  :single-select="true"
-                                  :show-checkbox="false"
-                                  :allow-parent-checked="true"
-                                  @on-add-node="doAddNode"
-                                  @on-edit-node="doEditNode"
-                                  @on-del-node="doDeleteNode"
-                                  :edit="true"
-                                  :default-open-layer="1"
-                                  :open="checkBasisType.showHide"
-                                  :add-level="2"
-                                  sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="checkBasisType.data" v-ref:treegrid :selected-datas.sync="selectedTreeDatas"
+                        id-attr="id" pid-attr="parentId" display-attr="name" :single-select="true"
+                        :show-checkbox="false" :allow-parent-checked="true" @on-add-node="doAddNode"
+                        @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true" :default-open-layer="1"
+                        :open="checkBasisType.showHide" :add-level="2" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
             </el-tabs>
 
-            <el-tabs @tab-click="doTabs" class="scroll-tabs" v-if="routeType === 'default' || routeType === 'equipmentType'">
+            <el-tabs @tab-click="doTabs" class="scroll-tabs"
+                v-if="routeType === 'default' || routeType === 'equipmentType'">
                 <!--设备设施分类-->
-                <el-tab-pane :label="$t('bd.hal.equipmentType')" v-if="routeType === 'default' || routeType === 'equipmentType'">
+                <el-tab-pane :label="$t('bd.hal.equipmentType')"
+                    v-if="routeType === 'default' || routeType === 'equipmentType'">
                     <iv-row type="flex" align="middle" class="mp-header-item-func">
                         <iv-col span="22" class="menuTitle">
                             <vi-button type="text" class="mp-header-item-btn" @click="showAll">
@@ -200,29 +165,20 @@
                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('equipmentType')">添加
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('equipmentType')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                         <iv-col span="2" class="menuTitle">
-                            <iv-checkbox  :checked.sync="showEquipmentTypeCode" >编码列</iv-checkbox>
+                            <iv-checkbox :checked.sync="showEquipmentTypeCode">编码列</iv-checkbox>
                         </iv-col>
                     </iv-row>
-                        <iv-tree-grid :model="equipmentType.data" v-ref:tree-grid-equipment-type
-                                      :selected-datas.sync="selectedTreeDatas"
-                                      id-attr="id"
-                                      pid-attr="parentId"
-                                      :display-attr="showEquipmentTypeCode ? 'nameCode' : 'name'"
-                                      :single-select="true"
-                                      :show-checkbox="false"
-                                      :allow-parent-checked="true"
-                                      @on-add-node="doAddNode"
-                                      @on-edit-node="doEditNode"
-                                      @on-del-node="doDeleteNode"
-                                      :edit="true"
-                                      :default-open-layer="1"
-                                      :open="equipmentType.showHide"
-                                      sort-key="orderNo"
-                        ></iv-tree-grid>
+                    <iv-tree-grid :model="equipmentType.data" v-ref:tree-grid-equipment-type
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId"
+                        :display-attr="showEquipmentTypeCode ? 'nameCode' : 'name'" :single-select="true"
+                        :show-checkbox="false" :allow-parent-checked="true" @on-add-node="doAddNode"
+                        @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true" :default-open-layer="1"
+                        :open="equipmentType.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
 
                 <!--行业分类-->
@@ -235,28 +191,16 @@
                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('industryCategory')">添加
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('industryCategory')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="industryCategory.data"
-                            v-ref:tree-grid-industry-category
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="industryCategory.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="industryCategory.data" v-ref:tree-grid-industry-category
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="industryCategory.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
             </el-tabs>
 
@@ -271,28 +215,16 @@
                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('courseCategory')">添加
+                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('courseCategory')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="courseCategory.data"
-                            v-ref:tree-grid-course-category
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="courseCategory.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="courseCategory.data" v-ref:tree-grid-course-category
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="courseCategory.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
 
                 <!--取证分类-->
@@ -306,28 +238,15 @@
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('certificationSubject')">
-                                添加
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="certificationSubject.data"
-                            v-ref:tree-grid-certification-subject
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="certificationSubject.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="certificationSubject.data" v-ref:tree-grid-certification-subject
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="certificationSubject.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
 
                 <el-tab-pane label="证书类型">
@@ -340,35 +259,22 @@
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('certType')">
-                                添加
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="doImport('certType')">
                                 导入
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="certType.data"
-                            v-ref:tree-grid-cert-type
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="certType.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="certType.data" v-ref:tree-grid-cert-type
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="certType.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
             </el-tabs>
             <el-tabs @tab-click="doTabs" class="scroll-tabs" v-if="routeType === 'complianceManagement'">
-            
+
 
                 <el-tab-pane label="证书类型">
                     <iv-row type="flex" align="middle" class="mp-header-item-func">
@@ -380,31 +286,18 @@
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('certType')">
-                                添加
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="doImport('certType')">
                                 导入
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="certType.data"
-                            v-ref:tree-grid-cert-type
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="certType.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="certType.data" v-ref:tree-grid-cert-type
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="certType.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
             </el-tabs>
             <el-tabs @tab-click="doTabs" class="scroll-tabs" v-if="routeType === 'majorRiskSource'">
@@ -420,31 +313,18 @@
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkObjectCatalog')">
-                                添加
+                                {{$t('bc.ria.append')}}
                             </vi-button>
                             <vi-button type="text" class="mp-header-item-btn" @click="doImport('checkObjectCatalog')">
                                 {{$t("gb.common.import")}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="checkObjectCatalog.data"
-                            v-ref:tree-grid-check-object-catalog
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="checkObjectCatalog.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="checkObjectCatalog.data" v-ref:tree-grid-check-object-catalog
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="checkObjectCatalog.showHide" sort-key="orderNo"></iv-tree-grid>
                 </el-tab-pane>
 
                 <!--化学品类别-->
@@ -457,32 +337,22 @@
                             <vi-button type="text" class="mp-header-item-btn" @click="hideAll">
                                 {{$t('bs.bac.collapseAll')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="treeAdd('checkObjectCatalogClassify')">
-                                添加
+                            <vi-button type="text" class="mp-header-item-btn"
+                                @click="treeAdd('checkObjectCatalogClassify')">
+                                {{$t('bc.ria.append')}}
                             </vi-button>
-                            <vi-button type="text" class="mp-header-item-btn" @click="doImport('checkObjectCatalogClassify')">
+                            <vi-button type="text" class="mp-header-item-btn"
+                                @click="doImport('checkObjectCatalogClassify')">
                                 {{$t("gb.common.import")}}
                             </vi-button>
                         </iv-col>
                     </iv-row>
-                    <iv-tree-grid
-                            :model="checkObjectCatalogClassify.data"
-                            v-ref:tree-grid-check-object-catalog-classify
-                            :selected-datas.sync="selectedTreeDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            :single-select="true"
-                            :show-checkbox="false"
-                            :allow-parent-checked="true"
-                            @on-add-node="doAddNode"
-                            @on-edit-node="doEditNode"
-                            @on-del-node="doDeleteNode"
-                            :edit="true"
-                            :default-open-layer="1"
-                            :open="checkObjectCatalogClassify.showHide"
-                            sort-key="orderNo"
-                    ></iv-tree-grid>
+                    <iv-tree-grid :model="checkObjectCatalogClassify.data" v-ref:tree-grid-check-object-catalog-classify
+                        :selected-datas.sync="selectedTreeDatas" id-attr="id" pid-attr="parentId" display-attr="name"
+                        :single-select="true" :show-checkbox="false" :allow-parent-checked="true"
+                        @on-add-node="doAddNode" @on-edit-node="doEditNode" @on-del-node="doDeleteNode" :edit="true"
+                        :default-open-layer="1" :open="checkObjectCatalogClassify.showHide" sort-key="orderNo">
+                    </iv-tree-grid>
                 </el-tab-pane>
             </el-tabs>
 
@@ -490,27 +360,24 @@
     </iv-row>
 </div>
 
-<risk-assessment-kind
-    :visible.sync="hazardFactor.catalogVisible"
-    @do-save ="doSaveCatalog"
-    @do-update ="doUpdateCatalog"
-    v-ref:risk-assessment-kind
-></risk-assessment-kind>
+<risk-assessment-kind :visible.sync="hazardFactor.catalogVisible" @do-save="doSaveCatalog" @do-update="doUpdateCatalog"
+    v-ref:risk-assessment-kind></risk-assessment-kind>
 
 <Modal :visible.sync="addModel.show" :title="addModel.title" width="520" :footer-hide="true">
-    <editcomponent
-            @do-update="doUpdate"
-            @do-add-top="doEditAdd"
-            :visible.sync="addModel.show"
-            :list="currentList"
-    ></editcomponent>
+    <editcomponent @do-update="doUpdate" @do-add-top="doEditAdd" :visible.sync="addModel.show" :list="currentList">
+    </editcomponent>
 </Modal>
 
-<company-select-model @do-save='doSaveCompany' :visible.sync="hazardFactor.companySelectModel.show" :filter-data="hazardFactor.companySelectModel.filterData"></company-select-model>
+<company-select-model @do-save='doSaveCompany' :visible.sync="hazardFactor.companySelectModel.show"
+    :filter-data="hazardFactor.companySelectModel.filterData"></company-select-model>
 
 
-<import-progress @do-export-excel="doExportExcel" :url="checkObjectCatalog.importUrl" :templete-url="checkObjectCatalog.templateUrl" :import-model.sync="checkObjectCatalog.showImport"></import-progress>
-<import-progress @do-export-excel="doExportExcel" :url="checkObjectCatalogClassify.importUrl" :templete-url="checkObjectCatalogClassify.templateUrl" :import-model.sync="checkObjectCatalogClassify.showImport"></import-progress>
-<import-progress @do-export-excel="doExportExcel" :url="certType.importUrl" :templete-url="certType.templateUrl" :import-model.sync="certType.showImport"></import-progress>
-<import-progress @do-export-excel="doExportExcel" :init-fun="initHazardFactor" :url="hazardFactor.importUrl" :templete-url="hazardFactor.templateUrl" :import-model.sync="hazardFactor.showImport"></import-progress>
-
+<import-progress @do-export-excel="doExportExcel" :url="checkObjectCatalog.importUrl"
+    :templete-url="checkObjectCatalog.templateUrl" :import-model.sync="checkObjectCatalog.showImport"></import-progress>
+<import-progress @do-export-excel="doExportExcel" :url="checkObjectCatalogClassify.importUrl"
+    :templete-url="checkObjectCatalogClassify.templateUrl" :import-model.sync="checkObjectCatalogClassify.showImport">
+</import-progress>
+<import-progress @do-export-excel="doExportExcel" :url="certType.importUrl" :templete-url="certType.templateUrl"
+    :import-model.sync="certType.showImport"></import-progress>
+<import-progress @do-export-excel="doExportExcel" :init-fun="initHazardFactor" :url="hazardFactor.importUrl"
+    :templete-url="hazardFactor.templateUrl" :import-model.sync="hazardFactor.showImport"></import-progress>

@@ -6,17 +6,19 @@ define(function (require) {
     var morePanel = require("./dialog/morePanel");
     var deptSelectModal = require("componentsEx/selectTableModal/deptSelectModal");
     var roleSelectModal = require("componentsEx/selectTableModal/roleSelectModal");
-    var scrollMixins=require("./scrollMixins");
+    var scrollMixins = require("./scrollMixins");
     var companySelectModel = require("componentsEx/selectTableModal/companySelectModel");
     var userSelectModal = require("componentsEx/selectTableModal/userSelectModal");
     var label = require("./labelTools")
     var editFuncAndMenuComponent = require("./dialog/edit-func-menu");
+
+
     var getRadomObserChildren = function () {
         return [
             {
                 attr1: "radomObserSet.enableAnonymity.users2ViewAnonymity",
                 attr2: "1",
-                attr5: "随机观察",
+                attr5: LIB.lang('bs.bac.sp.ro'), //随机观察
                 children: [],
                 compId: "9999999999",
                 createBy: "9999999999",
@@ -31,7 +33,7 @@ define(function (require) {
             {
                 attr1: "radomObserSet.enableAnonymity.roles2ViewAnonymity",
                 attr2: "1",
-                attr5: "随机观察",
+                attr5: LIB.lang('bs.bac.sp.ro'), //随机观察
                 children: [],
                 compId: "9999999999",
                 createBy: "9999999999",
@@ -54,33 +56,43 @@ define(function (require) {
             type: "SYSTEM_ENV"
         }
     };
+
+
+
+
+
+
+
+
+
+
     var modelNameMap = {
-    	common:{modelName:'commonModel',title:"通用"},
-        checkResult:{modelName:'checkResultModal',title:"检查记录"},
-        checkTaskSet:{modelName:'checkTaskSetModel',title:"检查任务"},
-        radomObserSet: {modelName:'radomObserSetModel',title:"随机观察"},
-        dailyInspection:{modelName: 'dailyInspectionModel',title:"非计划检查"},
-        poolGovern:{modelName: 'poolGovernModel',title:"隐患治理"},
-        training:{modelName: 'trainingModel',title:"培训管理"},
-        reportFunction: {modelName:'reportFunctionModel',title:"巡检管理"},
-        asmtTaskSet: {modelName:'asmtTaskSetModel',title:"报表功能"},
-        deptForSupervisePoint: {modelName:'deptForSupervisePointModel',title:"自评任务"},
-        checkSubmit:{modelName: 'checkSubmitModel',title:"重点监管部门"},
-        amstResult:{modelName: 'amstResultModel',title:"检查表整体提交确认"},
-        checkItem:{modelName: 'checkItemModel',title:"检查项"},
-        tableBatchHandle:{modelName:'tableBatchHandleModel',title:"领导力评分模式"},
-        routingInspection:{modelName: 'routingInspectionModel',title:"列表批量处理记录数量最大值"},
-        riskjudgmenttask:{modelName:'riskJudgmentTaskModel',title:"风险研判"},
-        incentiveMechanism:{modelName: 'incentiveMechanismModel',title:"激励机制"},
-        emer:{modelName:'emerModel',title:"应急管理"},
-        safetyAudit:{modelName: 'safetyAuditModel',title:"安全审核"},
-        ptw:{modelName: "ptwModel",title:"作业许可证"},
-        dutyManagement:{modelName: 'dutyMaModel',title:"值班管理"},
+        common: { modelName: 'commonModel', title: LIB.lang('bs.bac.sp.currency') },
+        checkResult: { modelName: 'checkResultModal', title: LIB.lang('bs.bac.sp.ir') },
+        checkTaskSet: { modelName: 'checkTaskSetModel', title: LIB.lang('bs.bac.sp.ct') },
+        radomObserSet: { modelName: 'radomObserSetModel', title: LIB.lang('bs.bac.sp.ro') },
+        dailyInspection: { modelName: 'dailyInspectionModel', title: LIB.lang('bs.bac.sp.unc') },
+        poolGovern: { modelName: 'poolGovernModel', title: LIB.lang('bs.bac.sp.hdm') },
+        training: { modelName: 'trainingModel', title: LIB.lang('bs.bac.sp.tm') },
+        reportFunction: { modelName: 'reportFunctionModel', title: LIB.lang('bs.bac.sp.pm') },
+        asmtTaskSet: { modelName: 'asmtTaskSetModel', title: LIB.lang('bs.bac.sp.rf') },
+        deptForSupervisePoint: { modelName: 'deptForSupervisePointModel', title: LIB.lang('bs.bac.sp.set') },
+        checkSubmit: { modelName: 'checkSubmitModel', title: LIB.lang('bs.bac.sp.kra') },
+        amstResult: { modelName: 'amstResultModel', title: LIB.lang('bs.bac.sp.cosc') },
+        checkItem: { modelName: 'checkItemModel', title: LIB.lang('bs.bac.sp.ci') },
+        tableBatchHandle: { modelName: 'tableBatchHandleModel', title: LIB.lang('bs.bac.sp.lsm') },
+        routingInspection: { modelName: 'routingInspectionModel', title: LIB.lang('bs.bac.sp.mnobpril') },
+        riskjudgmenttask: { modelName: 'riskJudgmentTaskModel', title: LIB.lang('bs.bac.sp.ra') },
+        incentiveMechanism: { modelName: 'incentiveMechanismModel', title: LIB.lang('bs.bac.sp.im') },
+        emer: { modelName: 'emerModel', title: LIB.lang('bs.bac.sp.em') },
+        safetyAudit: { modelName: 'safetyAuditModel', title: LIB.lang('bs.bac.sp.sa') },
+        ptw: { modelName: "ptwModel", title: LIB.lang('bs.bac.sp.wp') },
+        dutyManagement: { modelName: 'dutyMaModel', title: LIB.lang('bs.bac.sp.odm') },
         // opCard:{modelName:"opCardModel",title:"一票两卡"},
     };
     //初始化页面控件
     var dataModel = {
-        modelNameMap:modelNameMap,
+        modelNameMap: modelNameMap,
         defaultIconImage: "/html/images/favicon.ico",
         defaultLogoImage: "/html/images/sw-logo.jpg",
         defaultLgImage: "/html/images/login.png",
@@ -94,9 +106,9 @@ define(function (require) {
             type: "SYSTEM_ENV",
             vo: newVO(),
             title: null,
-            slogan:null,
+            slogan: null,
             iconName: null,
-            iosname:null,
+            iosname: null,
             logoName: null,
             lgName: null,
             bgName: null,
@@ -117,7 +129,7 @@ define(function (require) {
             //文件过滤器，默认只能上传图片，可不配
             filters: {
                 max_file_size: '10kb',
-                mime_types: [{title: "favicon", extensions: "ico"}]
+                mime_types: [{ title: "favicon", extensions: "ico" }]
             },
             params: {
                 recordId: null,
@@ -129,7 +141,7 @@ define(function (require) {
             //文件过滤器，默认只能上传图片，可不配
             filters: {
                 max_file_size: '10kb',
-                mime_types: [{title: "favicon"}]
+                mime_types: [{ title: "favicon" }]
             },
             params: {
                 recordId: null,
@@ -141,7 +153,7 @@ define(function (require) {
             //文件过滤器，默认只能上传图片，可不配
             filters: {
                 max_file_size: '10kb',
-                mime_types: [{title: "favicon"}]
+                mime_types: [{ title: "favicon" }]
             },
             params: {
                 recordId: null,
@@ -153,7 +165,7 @@ define(function (require) {
             //文件过滤器，默认只能上传图片，可不配
             filters: {
                 max_file_size: '10kb',
-                mime_types: [{title: "favicon"}]
+                mime_types: [{ title: "favicon" }]
             },
             params: {
                 recordId: null,
@@ -170,7 +182,7 @@ define(function (require) {
         lgImg: null,
         bgImg: null,
         apkImg: null,
-        iosImg:null,
+        iosImg: null,
         watermark: '',
         obj: null,
         //显示图片
@@ -203,7 +215,7 @@ define(function (require) {
             },
             show: false
         },
-        incentiveMechanismModel : {
+        incentiveMechanismModel: {
             vo: {
                 children: null
             },
@@ -275,7 +287,7 @@ define(function (require) {
             },
             show: false
         },
-        opCardModel:{
+        opCardModel: {
             vo: {
                 children: null
             },
@@ -287,21 +299,21 @@ define(function (require) {
                 url: 'supervisepointdept/list{/curPage}{/pageSize}',
                 urlDelete: 'supervisepointdept',
                 columns: [{
-                    title: "部门编码",
-                    width:200,
+                    title: LIB.lang('bs.orl.departCode'),
+                    width: 200,
                     fieldName: "organization.code"
                 }, {
-                    title: "部门名称",
-                    width:200,
+                    title: LIB.lang('bs.orl.departName'),
+                    width: 200,
                     fieldName: "organization.name"
                 }, {
-                    title: "操作",
+                    title: LIB.lang('gb.common.op'),
                     fieldType: "tool",
                     toolType: "del"
                 }],
-                data:[]
+                data: []
             },
-            deptSelectModel:{
+            deptSelectModel: {
                 show: false
             }
         },
@@ -323,133 +335,133 @@ define(function (require) {
             },
             show: false
         },
-        riskJudgmentTaskModel:{
+        riskJudgmentTaskModel: {
             vo: {
                 children: null
             },
             show: false
         },
         companySelectModel: {
-            filterData:null,
-            list:[],
-            num:0,
-            show:false
+            filterData: null,
+            list: [],
+            num: 0,
+            show: false
         },
-        radomObser :{
+        radomObser: {
             columns0: [{
-                title: "名称",
+                title: LIB.lang('gb.common.name'),
                 fieldName: "name"
             },
-                LIB.tableMgr.column.company,
-                LIB.tableMgr.column.dept,
+            LIB.tableMgr.column.company,
+            LIB.tableMgr.column.dept,
             ],
-            columns1:[
+            columns1: [
                 {
-                    title: "名称",
+                    title: LIB.lang('gb.common.name'),
                     fieldName: "name"
                 },
                 LIB.tableMgr.column.company,
             ],
-            columns2:[
+            columns2: [
                 {
                     title: "",
-                    render:function (row) {
+                    render: function (row) {
                         return row.description;
                     },
-                    width:"100px"
+                    width: "100px"
                 },
                 {
-                    title: "启用",
-                    render:function (data) {
-                        if(data.enable.unmodified === '1'){
+                    title: LIB.lang('gb.common.enable'),
+                    render: function (data) {
+                        if (data.enable.unmodified === '1') {
                             return label.checkDisTrue;
                         }
-                        if(data.enable.result == '2'){
+                        if (data.enable.result == '2') {
                             return label.checkTrue;
-                        }else{
+                        } else {
                             return label.checkFalse;
                         }
                     },
                     event: true,
-                    width:"100px"
+                    width: "100px"
                 },
                 {
-                    title: "必填",
-                    render:function (data) {
-                        if(data.require.unmodified === '1'){
+                    title: LIB.lang('gb.common.required'),
+                    render: function (data) {
+                        if (data.require.unmodified === '1') {
                             return label.checkDisTrue;
                         }
-                        if(data.require.result == '2'){
+                        if (data.require.result == '2') {
                             return label.checkTrue;
-                        }else{
+                        } else {
                             return label.checkFalse;
                         }
                     },
                     event: true,
-                    width:"100px"
+                    width: "100px"
                 },
             ],
-            list0:[],
-            list1:[],
+            list0: [],
+            list1: [],
             cure: 'person',
-            compId:null,
+            compId: null,
             personList: [],
             roleList: [],
 
             settingList: []
         },
-        userSelectModel :{
-            type:null,
-            show:false
+        userSelectModel: {
+            type: null,
+            show: false
         },
-        poolGovern:{
+        poolGovern: {
             columns: [
                 {
                     title: "",
-                    render:function (data) {
+                    render: function (data) {
                         return data.description;
                     },
-                    width:"100px"
+                    width: "100px"
                 },
                 {
-                    title: "启用",
-                    render:function (row) {
-                        if(row.unmodified === '1'){
+                    title: LIB.lang('gb.common.enable'),
+                    render: function (row) {
+                        if (row.unmodified === '1') {
                             return label.checkDisTrue;
                         }
-                        if(row.enable.result === '2'){
+                        if (row.enable.result === '2') {
                             return label.checkTrue;
                         } else {
                             return label.checkFalse;
                         }
                     },
                     event: true,
-                    width:"70px"
+                    width: "70px"
                 },
                 {
-                    title: "必填",
-                    render:function (row) {
-                        if(row.unmodified === '1'){
+                    title: LIB.lang('gb.common.required'),
+                    render: function (row) {
+                        if (row.unmodified === '1') {
                             return label.checkDisTrue;
                         }
                         if (row.enable.result !== '2') {
                             return label.checkDisTrue;
                         }
-                        if(row.require.result === '2'){
+                        if (row.require.result === '2') {
                             return label.checkTrue;
                         } else {
                             return label.checkFalse;
                         }
                     },
                     event: true,
-                    width:"70px"
+                    width: "70px"
                 },
                 {
-                    title: "字段类型",
-                    render:function (row) {
+                    title: LIB.lang('gb.common.ft'),
+                    render: function (row) {
                         return row.remark;
                     },
-                    width:"70px"
+                    width: "70px"
                 },
             ],
         },
@@ -458,7 +470,7 @@ define(function (require) {
         },
         chooiseFuncAndMenuModel: {
             //控制组件显示
-            title: "菜单功能权限-全局默认权限",
+            title: LIB.lang('bs.bac.mfpgdp'),
             //显示编辑弹框
             show: false
         },
@@ -466,14 +478,14 @@ define(function (require) {
     //使用Vue方式，对页面进行事件和数据绑定
     var vm = LIB.Vue.extend({
         template: require("text!./main.html"),
-        mixins:[scrollMixins],
+        mixins: [scrollMixins],
         components: {
             "viewDetail": viewDetail,
             "morePanel": morePanel,
             "deptSelectModal": deptSelectModal,
             "companySelectModel": companySelectModel,
             "user-select-modal": userSelectModal,
-            "roleSelectModal" : roleSelectModal,
+            "roleSelectModal": roleSelectModal,
             'editFuncAndMenuComponent': editFuncAndMenuComponent
         },
         computed: {
@@ -486,9 +498,9 @@ define(function (require) {
         },
         methods: {
             doMenuAndFunc: function (e) {
-                
+
                 e.preventDefault()
-                
+
                 this.chooiseFuncAndMenuModel.show = true;
                 // this.chooiseFuncAndMenuModel.title = "菜单功能权限 - " + row.name;
                 // this.chooiseFuncAndMenuModel.id = null;
@@ -498,13 +510,13 @@ define(function (require) {
                 this.chooiseFuncAndMenuModel.show = false;
             },
             // 改变状态
-            changeTableListStatusa: function(row, event, rowIndex, index) {
+            changeTableListStatusa: function (row, event, rowIndex, index) {
                 var theKey = rowIndex == 1 ? 'enable' : 'require'
-                row[theKey].result =  row[theKey].result === '2' ? '1' : '2'
+                row[theKey].result = row[theKey].result === '2' ? '1' : '2'
                 if (theKey === 'enable' && row[theKey].result === '1') {
                     row['require'].result = '1'
-                 }
-                
+                }
+
             },
             onRadomObserSetModelClicked: function (obj, e, index, num) {
                 var list = this.fiflterEnableRequireTableData('radomObser.settingList');
@@ -515,20 +527,20 @@ define(function (require) {
                     return item.description == '属地';
                 });
 
-                if(obj.description == '部门' || obj.description == '操作' || obj.description == '问题类型' || (obj.description=='检查对象' && areaObj.enable.result!='2')){
-                    return ;
+                if (obj.description == '部门' || obj.description == '操作' || obj.description == '问题类型' || (obj.description == '检查对象' && areaObj.enable.result != '2')) {
+                    return;
                 }
-                if(index == 1){
-                    if(obj.enable.result == '2') obj.enable.result = '1';
+                if (index == 1) {
+                    if (obj.enable.result == '2') obj.enable.result = '1';
                     else obj.enable.result = '2';
-                    if(obj.enable.result != '2') obj.require.result = '1'
-                    if(obj.description == '属地' && obj.enable.result == '1'){
+                    if (obj.enable.result != '2') obj.require.result = '1'
+                    if (obj.description == '属地' && obj.enable.result == '1') {
                         checkObj.enable.result = '1';
                         checkObj.require.result = '1';
                     }
-                }else if(index == 2){
-                    if(obj.enable.result == '2'){
-                        if(obj.require.result == '2') obj.require.result = '1';
+                } else if (index == 2) {
+                    if (obj.enable.result == '2') {
+                        if (obj.require.result == '2') obj.require.result = '1';
                         else obj.require.result = '2';
                     }
                 }
@@ -537,26 +549,26 @@ define(function (require) {
                 var obj = _.find(this.radomObserSetModel.vo.children, function (item) {
                     return item.description == 'enableAnonymity'
                 });
-                if(this.radomObser.cure == 'person'){
+                if (this.radomObser.cure == 'person') {
                     var index = 0;
-                }else{
+                } else {
                     var index = 1;
                 }
-                if(obj.children[index]){
+                if (obj.children[index]) {
                     var str = obj.children[index].content.split(',');
-                    if(str.indexOf(item.id)>-1)
+                    if (str.indexOf(item.id) > -1)
                         str.splice(str.indexOf(item.id), 1);
                     obj.children[index].content = str.join(',');
                     var list = [];
-                    var tempList = this.radomObser['list'+index];
+                    var tempList = this.radomObser['list' + index];
                     _.each(tempList, function (items) {
-                        if(items.id != item.id){
+                        if (items.id != item.id) {
                             list.push(items);
                         }
                     });
-                    if(index == 0) this.radomObser.list0 = list;
+                    if (index == 0) this.radomObser.list0 = list;
                     else this.radomObser.list1 = list;
-                    this.saveBusiness('radomObserSet', '删除成功');
+                    this.saveBusiness('radomObserSet', LIB.lang('gb.common.sd'));
                 }
             },
             getCureList: function (str) {
@@ -578,23 +590,23 @@ define(function (require) {
             },
             doSaveContent: function (arr) {
                 var _this = this;
-                if(this.userSelectModel.type == 'radomObser'){
+                if (this.userSelectModel.type == 'radomObser') {
                     var obj = _.find(this.radomObserSetModel.vo.children, function (item) {
                         return item.name == 'enableAnonymity'
                     });
-                    if(obj){
-                        if(this.radomObser.cure=='person'){
+                    if (obj) {
+                        if (this.radomObser.cure == 'person') {
                             var list = _.pluck(_this.radomObser.list0, "id");
                             _.each(arr, function (item) {
-                                if(list.indexOf(item.id)==-1) _this.radomObser.list0.push(item);
+                                if (list.indexOf(item.id) == -1) _this.radomObser.list0.push(item);
                             });
                             obj.children[0].content = _.pluck(_this.radomObser.list0, "id").join(",");
-                        }else{
+                        } else {
                             // obj.children[1].content = _.pluck(arr, "id").join(",");
                             // this.radomObser.list1 = arr;
                             var list = _.pluck(_this.radomObser.list1, "id");
                             _.each(arr, function (item) {
-                                if(list.indexOf(item.id)==-1) _this.radomObser.list1.push(item);
+                                if (list.indexOf(item.id) == -1) _this.radomObser.list1.push(item);
                             });
                             obj.children[1].content = _.pluck(_this.radomObser.list1, "id").join(",");
                         }
@@ -603,31 +615,31 @@ define(function (require) {
                 }
             },
             doSaveUsersSelect: function (datas) {
-                  // 随机观察
-                if(this.userSelectModel.type == 'radomObser') {
+                // 随机观察
+                if (this.userSelectModel.type == 'radomObser') {
                     this.doSaveContent(datas);
                 }
             },
             doAddRadomObser: function () {
-                if(this.radomObser.cure == 'person') this.userSelectModel.show = true;
+                if (this.radomObser.cure == 'person') this.userSelectModel.show = true;
                 else this.roleSelectModel.show = true;
                 this.userSelectModel.type = 'radomObser';
             },
             doShowCompanySelectModel: function () {
-                this.companySelectModel.show=true;
+                this.companySelectModel.show = true;
                 var excludeIds = [];
-                if(this.companySelectModel.list.length > 0){
-                    excludeIds = _.map(this.companySelectModel.list,"id");
+                if (this.companySelectModel.list.length > 0) {
+                    excludeIds = _.map(this.companySelectModel.list, "id");
                 }
-                this.companySelectModel.filterData = {"criteria.strsValue": JSON.stringify({excludeIds: excludeIds})};
+                this.companySelectModel.filterData = { "criteria.strsValue": JSON.stringify({ excludeIds: excludeIds }) };
             },
             doSaveCompany: function (val) {
                 var _this = this;
-                if(!this.companySelectModel.list){
+                if (!this.companySelectModel.list) {
                     this.companySelectModel.list = [];
                 }
-                _.each(val,function(item){
-                    var obj = _.pick(item,["id","name"]);
+                _.each(val, function (item) {
+                    var obj = _.pick(item, ["id", "name"]);
                     _this.companySelectModel.list.push(obj);
                 });
             },
@@ -642,7 +654,7 @@ define(function (require) {
             // 版本信息start ----------------------------------------------
             _queryVersions: function () {
                 var _this = this;
-                var defaultDescription = '无更新说明';
+                var defaultDescription = LIB.lang('gb.common.nud');
                 if (_.isArray(this.versions)) {
                     return;
                 }
@@ -664,12 +676,12 @@ define(function (require) {
                 this.mainModel.logoName = data.file.name;
                 this.logo = LIB.convertImagePath(LIB.convertFileData(data.rs.content), "0");
             },
-            convertImage: function(data) {
-              if(data.indexOf("/") > -1) {
-                  return data;
-              }else {
-                  return LIB.convertImagePath({fileId: data}, "0");
-              }
+            convertImage: function (data) {
+                if (data.indexOf("/") > -1) {
+                    return data;
+                } else {
+                    return LIB.convertImagePath({ fileId: data }, "0");
+                }
             },
             iconUploadModel: function (data) {
                 this.mainModel.iconName = data.file.name;
@@ -690,7 +702,7 @@ define(function (require) {
                 this.iosImg = LIB.convertImagePath(LIB.convertFileData(data.rs.content), "0");
             },
             doDeleteImg: function (t) {
-                switch (t){
+                switch (t) {
                     case 1: this.logo = this.defaultLogoImage;
                         break;
                     case 2: this.lgImg = this.defaultLgImage;
@@ -705,7 +717,7 @@ define(function (require) {
                         break;
                 }
             },
-            
+
             save: function () {
                 var _vo = this.mainModel.vo;
                 var _this = this;
@@ -723,17 +735,17 @@ define(function (require) {
                     lgImg: _this.lgImg,
                     bgImg: _this.bgImg,
                     apkImg: _this.apkImg,
-                    iosImg:_this.iosImg
+                    iosImg: _this.iosImg
                 };
                 _vo.configJson = JSON.stringify(configJson);
                 if (_this.obj === "E30000") {
                     api.save(_vo).then(function (data) {
-                        LIB.Msg.info("新增成功！");
+                        LIB.Msg.info(LIB.lang('gb.common.addeds') + "！");
                         _this.obj = null;
                     });
                 } else {
                     api.update(_vo).then(function (data) {
-                        LIB.Msg.info("修改成功！");
+                        LIB.Msg.info(LIB.lang('gb.common.modifieds') + "！");
                     });
                 }
             },
@@ -800,13 +812,13 @@ define(function (require) {
                 _vo.configJson = JSON.stringify(configJson);
                 if (_this.obj === "E30000") {
                     api.save(_vo).then(function (data) {
-                        LIB.Msg.info("新增成功！");
+                        LIB.Msg.info(LIB.lang('gb.common.addeds') + "！");
                         _this.obj = null;
                     });
                     window.location.reload();
                 } else {
                     api.update(_vo).then(function (data) {
-                        LIB.Msg.info("修改成功！");
+                        LIB.Msg.info(LIB.lang('gb.common.modifieds') + "！");
                         window.location.reload();
                     });
                 }
@@ -817,18 +829,18 @@ define(function (require) {
             /*
             1. cb ；是回调函数， 这里主要用初始化， promiseAll
             */
-            toggleSetItem: function (name,cb) {
-                if(!cb){//当没有cb 的是表示渲染完成，之后改变了高度，scorllModel 需要重新计算
-                    var index=0;
-                    for (keyname in this.modelNameMap){
-                       if(name===keyname){break};
-                       index++;
+            toggleSetItem: function (name, cb) {
+                if (!cb) {//当没有cb 的是表示渲染完成，之后改变了高度，scorllModel 需要重新计算
+                    var index = 0;
+                    for (keyname in this.modelNameMap) {
+                        if (name === keyname) { break };
+                        index++;
                     }
                     this.recomputeItemHeight(index);
                 }
                 this[modelNameMap[name].modelName].show = !this[modelNameMap[name].modelName].show;
-                if(this[modelNameMap[name].modelName].show) {
-                    this.getBusinessSet(name, this.checkResultModal.compId,cb);
+                if (this[modelNameMap[name].modelName].show) {
+                    this.getBusinessSet(name, this.checkResultModal.compId, cb);
                 }
             },
 
@@ -850,12 +862,12 @@ define(function (require) {
              *      自评任务：asmtTaskSet
              * @param compId 公司Id
              */
-            getBusinessSet: function (name, compId,cb) {
+            getBusinessSet: function (name, compId, cb) {
                 var _this = this;
                 var param = {
                     name: name
                 };
-                if(name === 'checkResult') {
+                if (name === 'checkResult') {
                     param.compId = compId;
                 } else {
                     param.compId = COMPID;
@@ -865,30 +877,30 @@ define(function (require) {
                     _this[modelNameMap[name].modelName].vo = res.data;
 
                     // 报表功能  有json字符串  需转化为 数组
-                    if(modelNameMap[name].modelName == 'reportFunctionModel'){
+                    if (modelNameMap[name].modelName == 'reportFunctionModel') {
                         _this.companySelectModel.list = [];
-                        var obj = _.find(_this[modelNameMap[name].modelName].vo.children,function (item) {
+                        var obj = _.find(_this[modelNameMap[name].modelName].vo.children, function (item) {
                             return item.name == 'statCompSet'
                         });
-                        if(obj.content && obj.content.length>1){
+                        if (obj.content && obj.content.length > 1) {
                             var content = JSON.parse(obj.content);
                             _this.companySelectModel.list = content.comp;
                             _this.companySelectModel.num = content.num;
                         }
                     }
                     // 随机观察
-                    if(modelNameMap[name].modelName == 'radomObserSetModel'){
+                    if (modelNameMap[name].modelName == 'radomObserSetModel') {
                         _this.radomObser.list = [];
-                        if(res.data && res.data.children){
+                        if (res.data && res.data.children) {
                             var obj = _.find(res.data.children, function (item) {
                                 return item.name == 'enableAnonymity';
                             });
-                            if(obj && obj.children && obj.children.length>0){
-                                if(obj && obj.children && obj.children.length>0){
-                                    if(obj.children[0].content && obj.children[0].content.length>2) _this.getUsers(obj.children[0].content.split(','));
-                                    if(!obj.children[0].content) obj.children[0].content = '';
-                                    if(obj.children[1] && obj.children[1].content && obj.children[1].content.length>2) _this.getRoles(obj.children[1].content.split(','));
-                                    if(obj.children[1] && !obj.children[1].content) obj.children[1].content = '';
+                            if (obj && obj.children && obj.children.length > 0) {
+                                if (obj && obj.children && obj.children.length > 0) {
+                                    if (obj.children[0].content && obj.children[0].content.length > 2) _this.getUsers(obj.children[0].content.split(','));
+                                    if (!obj.children[0].content) obj.children[0].content = '';
+                                    if (obj.children[1] && obj.children[1].content && obj.children[1].content.length > 2) _this.getRoles(obj.children[1].content.split(','));
+                                    if (obj.children[1] && !obj.children[1].content) obj.children[1].content = '';
                                 }
                             }
                         }
@@ -896,7 +908,7 @@ define(function (require) {
 
                     }
 
-                    if(cb&& cb instanceof Function){
+                    if (cb && cb instanceof Function) {
                         cb(res.data);
                     }
                 });
@@ -907,25 +919,25 @@ define(function (require) {
                 var params = this[modelNameMap[name].modelName].vo;
 
                 // 安全审核需要
-                if(name === 'safetyAudit'){
+                if (name === 'safetyAudit') {
                     var children = params.children;
                     var trueObj = _.find(children, function (item) {
                         return item.result === '2'
                     });
-                    if(!trueObj){
-                        LIB.Msg.warning("至少勾选一个选项");
+                    if (!trueObj) {
+                        LIB.Msg.warning(LIB.lang('gb.common.caloo'));
                         return
                     }
                 }
 
                 // 自评任务需要验证
-                if(name === 'asmtTaskSet') {
+                if (name === 'asmtTaskSet') {
                     var errorResult = _.find(params.children, function (item) {
                         var temp = parseInt(item.result);
                         return (item.name === 'auditDateLimit' || item.name === 'asmtDateLimit') && (temp < 1 || temp > 999);
                     });
                     if (errorResult) {
-                        LIB.Msg.warning(errorResult.description + "须在1-999之间");
+                        LIB.Msg.warning(errorResult.description + LIB.lang('gb.common.mbb'));
                         return;
                     }
                 }
@@ -935,7 +947,7 @@ define(function (require) {
                     })
                     var num = Number(numLimit.result);
                     if (!num || num < 1) {
-                        return LIB.Msg.warning(numLimit.description + "必须大于0");
+                        return LIB.Msg.warning(numLimit.description + LIB.lang('gb.common.mbgt0'));
                     }
                     // json 串处理
                     var obj = numLimit = _.find(params.children, function (item) {
@@ -947,14 +959,14 @@ define(function (require) {
                     obj.content = JSON.stringify(content);
                 }
                 api.saveBusinessSet(params).then(function () {
-                    var message = str?str:"保存成功";
+                    var message = str ? str : LIB.lang('gb.common.saveds');
                     LIB.Msg.info(message);
-                    var tb=window.localStorage.getItem("org_data_level");
-                    window.localStorage.setItem("org_data_level",parseInt(tb)+1);
+                    var tb = window.localStorage.getItem("org_data_level");
+                    window.localStorage.setItem("org_data_level", parseInt(tb) + 1);
                 });
             },
             clearAll: function () {
-                api.clearAll().then(function () {})
+                api.clearAll().then(function () { })
             },
             checkItemChange: function (item, type) {
                 /**
@@ -962,7 +974,7 @@ define(function (require) {
                  *  isDefault: 1：否，  2： 是
                  */
                 //不涉及
-                if(type === 'noRefer') {
+                if (type === 'noRefer') {
                     //1. 先保存选择结果
                     var selectResult = item.isDefault === '1' ? '2' : '1';
                     //2. 只能单选所以先，清空所有选项
@@ -978,14 +990,14 @@ define(function (require) {
             notCheckItemChange: function (item) {
                 // result: 1-否, 2-是
                 item.result = item.result === '1' ? '2' : '1';
-                if(item.name== 'defaultAuth'&&  item.result== '1'){
+                if (item.name == 'defaultAuth' && item.result == '1') {
                     var params = {
                         roleAuthorityRels: [],
                         roleAppAuthorityRels: []
                     };
-                    api.distributionMenuAndFunc({id:'default'}, params).then(function () {
-                      
-                        LIB.Msg.info("取消全局默认权限成功");
+                    api.distributionMenuAndFunc({ id: 'default' }, params).then(function () {
+
+                        LIB.Msg.info(LIB.lang('bs.bac.gdpcs'));
                     });
                 }
             },
@@ -1000,7 +1012,7 @@ define(function (require) {
                         return item.name === 'asmtText';
                     });
                     if (item.result === '1' && _o.result === '0') {
-                       LIB.Msg.warning("个人自评时图片和文字至少需要一项")
+                        LIB.Msg.warning(LIB.lang('bs.bac.aloi'))
                     } else {
                         item.result = item.result === '1' ? '0' : '1';
                     }
@@ -1009,7 +1021,7 @@ define(function (require) {
                         return item.name === 'asmtPic';
                     });
                     if (item.result === '1' && _o.result === '0') {
-                        LIB.Msg.warning("个人自评时图片和文字至少需要一项")
+                        LIB.Msg.warning(LIB.lang('bs.bac.aloi'))
                     } else {
                         item.result = item.result === '1' ? '0' : '1';
                     }
@@ -1024,7 +1036,7 @@ define(function (require) {
                     return item.name === 'auditWeight';
                 });
                 var _v = value;
-                if (value <= 0 ) {
+                if (value <= 0) {
                     asmtWeight.result = 0;
                     _v = 0;
                 } else if (value > 100) {
@@ -1043,7 +1055,7 @@ define(function (require) {
                     return item.name === 'auditWeight';
                 });
                 var _v = value;
-                if (value <= 0 ) {
+                if (value <= 0) {
                     auditWeight.result = 0;
                     _v = 0;
                 } else if (value > 100) {
@@ -1058,36 +1070,36 @@ define(function (require) {
                 this.checkResultModal.visible = true;
             },
             //显示重点监管部门选择弹框
-            doShowDeptSelectModel:function(){
+            doShowDeptSelectModel: function () {
                 this.deptForSupervisePointModel.deptSelectModel.show = true;
             },
             //保存重点监管部门
-            doSaveDeptsForSupervisePoint:function(selectedDatas){
+            doSaveDeptsForSupervisePoint: function (selectedDatas) {
                 var _this = this;
-                var formData = _.map(selectedDatas, function(data){
-                    return {organization:{id:data.id}};
+                var formData = _.map(selectedDatas, function (data) {
+                    return { organization: { id: data.id } };
                 });
-                api.addSupervisePointDept(formData).then(function(rep){
+                api.addSupervisePointDept(formData).then(function (rep) {
                     _this.doRefreshDeptsForSupervisePoint();
-                    LIB.Msg.info("添加成功");
+                    LIB.Msg.info(LIB.lang('gb.common.addedsuf'));
                 });
             },
-            doRefreshDeptsForSupervisePoint:function(){
+            doRefreshDeptsForSupervisePoint: function () {
                 this.$refs.deptSupervisePointTable.doRefresh();
             },
-            getUsers: function(userIds) {
+            getUsers: function (userIds) {
                 var _this = this;
-                api.queryUsers({"criteria.strsValue" : JSON.stringify({userIds:userIds})}).then(function(res){
-                    if(res && res.data) {
+                api.queryUsers({ "criteria.strsValue": JSON.stringify({ userIds: userIds }) }).then(function (res) {
+                    if (res && res.data) {
                         _this.radomObser.list0 = res.data.list;
                         return res.data.list;
                     }
                 })
             },
-            getRoles: function(roleIds) {
+            getRoles: function (roleIds) {
                 var _this = this;
-                api.queryRoles({"criteria.strsValue" : JSON.stringify({ids:roleIds})}).then(function(res){
-                    if(res && res.data) {
+                api.queryRoles({ "criteria.strsValue": JSON.stringify({ ids: roleIds }) }).then(function (res) {
+                    if (res && res.data) {
                         _this.radomObser.list1 = res.data.list;
                         return res.data.list;
                     }
@@ -1101,24 +1113,24 @@ define(function (require) {
                 var _this = this;
                 this.radomObser.list0 = [];
                 this.radomObser.list1 = [];
-                 var obj = _.find(this.radomObserSetModel.vo.children, function (item) {
+                var obj = _.find(this.radomObserSetModel.vo.children, function (item) {
                     return item.name == "enableAnonymity";
                 });
-                if(obj) {
+                if (obj) {
                     var children1 = LIB.getBusinessSetByNamePath("radomObserSet.enableAnonymity.users2ViewAnonymity", compId);
                     var children2 = LIB.getBusinessSetByNamePath("radomObserSet.enableAnonymity.roles2ViewAnonymity", compId);
-                    if(children1){
+                    if (children1) {
                         obj.children = [];
-                        if(!_.isEmpty(children1) && children1.content.length>2) _this.getUsers(children1.content.split(','));
-                        if(_.isEmpty(children1))  children1 = this.initChildren(obj, compId, getRadomObserChildren()[0]);
-                        if(!_.isEmpty(children1) && !children1.content) children1.content = '';
+                        if (!_.isEmpty(children1) && children1.content.length > 2) _this.getUsers(children1.content.split(','));
+                        if (_.isEmpty(children1)) children1 = this.initChildren(obj, compId, getRadomObserChildren()[0]);
+                        if (!_.isEmpty(children1) && !children1.content) children1.content = '';
 
-                        if(!_.isEmpty(children2) && children2.content.length>2) _this.getRoles(children2.content.split(','));
-                        if(_.isEmpty(children2))  children2 = this.initChildren(obj, compId, getRadomObserChildren()[1]);
-                        if(!_.isEmpty(children2) && !children2.content) children2.content = '';
+                        if (!_.isEmpty(children2) && children2.content.length > 2) _this.getRoles(children2.content.split(','));
+                        if (_.isEmpty(children2)) children2 = this.initChildren(obj, compId, getRadomObserChildren()[1]);
+                        if (!_.isEmpty(children2) && !children2.content) children2.content = '';
 
                         obj.children.push(children1, children2);
-                    }else {
+                    } else {
                         obj.children = [];
                         var children = getRadomObserChildren();
                         this.initChildren(obj, compId, children[0]);
@@ -1127,7 +1139,7 @@ define(function (require) {
                     }
                 }
             },
-            initChildren: function (parent, compId , child) {
+            initChildren: function (parent, compId, child) {
                 child.compId = compId;
                 child.parentId = parent.id;
                 child.content = '';
@@ -1141,23 +1153,23 @@ define(function (require) {
             fiflterEnableRequireTableData: function (keys) {
                 var children = this
                 keys.split && keys.split('.').forEach(function (key) {
-                    children = children[key] 
+                    children = children[key]
                 })
                 var poolGovernModelSpecial = [];
-                var tableData = _.filter(children,function (item) {
+                var tableData = _.filter(children, function (item) {
                     return item.showType === '1';
                 })
                 var tableDataGroup = _.groupBy(tableData, "description");
-                _.each(tableDataGroup,function (arr) {
+                _.each(tableDataGroup, function (arr) {
                     var rowData = {};
-                    _.each(arr,function (item) {
+                    _.each(arr, function (item) {
                         rowData.description = item.description;
-                        if(item.content){
+                        if (item.content) {
                             rowData.remark = item.content;
                         }
-                        if(item.attr3 === '启用'){
+                        if (item.attr3 === '启用') {
                             rowData.enable = item;
-                        }else if(item.attr3 === '必填'){
+                        } else if (item.attr3 === '必填') {
                             rowData.require = item;
                         }
                     })
@@ -1173,38 +1185,38 @@ define(function (require) {
             'radomObserSetModel.compId': function (val) {
                 this.radomObserChangeCompId(val);
             },
-            'tabIndex':function (val) {
-                var _this=this;
-                if(this.loadBusiness){return};
-              if(val===1){
-                    var promiseArr=[]
-                    for (name in modelNameMap){
-                        var promise=new Promise(function (resolve) {
-                            _this.toggleSetItem(name,resolve);
+            'tabIndex': function (val) {
+                var _this = this;
+                if (this.loadBusiness) { return };
+                if (val === 1) {
+                    var promiseArr = []
+                    for (name in modelNameMap) {
+                        var promise = new Promise(function (resolve) {
+                            _this.toggleSetItem(name, resolve);
                         })
                         promiseArr.push(promise);
                     }
-                        Promise.all(promiseArr).then(function () {
-                        _this.loadBusiness=true;
+                    Promise.all(promiseArr).then(function () {
+                        _this.loadBusiness = true;
                         _this.$nextTick(function () {
                             _this.initScroll({
-                                target:".param-business",//scroll height 滚动区域高度
-                                rightSelector:".scrollRight",//右边容器的选择器
+                                target: ".param-business",//scroll height 滚动区域高度
+                                rightSelector: ".scrollRight",//右边容器的选择器
                                 //rightItemSelector:".anchor-box",//右边内容的item 选择器
-                                rightItemSelector:".simple-card",
-                                leftSelector:".scrollLeft",//
-                                leftItemSelector:".anchor-item",//左边
-                                activeClass:"active",
-                                correctHeight:-20,//向下纠正-3个像素
+                                rightItemSelector: ".simple-card",
+                                leftSelector: ".scrollLeft",//
+                                leftItemSelector: ".anchor-item",//左边
+                                activeClass: "active",
+                                correctHeight: -20,//向下纠正-3个像素
                             })
                         })
                     })
 
-              }
+                }
             }
         },
         events: {
-            "ev_dtClose": function() {
+            "ev_dtClose": function () {
                 this.checkResultModal.visible = false;
             }
         },
@@ -1213,7 +1225,7 @@ define(function (require) {
             var _vo = this.mainModel.vo;
             var _this = this;
             this.showPlanType = !!LIB.setting.fieldSetting["BC_Hal_InsP"];
-            api.get({type: _vo.type}).then(function (data) {
+            api.get({ type: _vo.type }).then(function (data) {
                 _this.obj = data.body;
                 if (_this.obj !== 'E30000') {
                     var str = _this.obj;
@@ -1226,7 +1238,7 @@ define(function (require) {
                         apkImg: _this.defaultLgImage,
                         iosImg: _this.defaultLgImage
                     };
-                    var obtainImg = {icon: str.icon, logo: str.logo, lgImg: str.lgImg, bgImg: str.bgImg, apkImg:str.apkImg, iosImg: str.iosImg};
+                    var obtainImg = { icon: str.icon, logo: str.logo, lgImg: str.lgImg, bgImg: str.bgImg, apkImg: str.apkImg, iosImg: str.iosImg };
                     _.defaults(obtainImg, infoImg);
                     _this.icon = obtainImg.icon;
                     _this.logo = obtainImg.logo;
@@ -1237,7 +1249,7 @@ define(function (require) {
                 }
             });
         },
-        created:function () {
+        created: function () {
 
 
         }

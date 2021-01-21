@@ -2,54 +2,41 @@
     <div class="epc-content">
         <el-form :model="mainModel.vo" :rules="rules" v-ref:ruleform>
 
-            <el-form-item label="父级分类" prop="parentId" v-if="showParent">
+            <el-form-item :label="$t('em.ms.parentclass')" prop="parentId" v-if="showParent">
                 <!--<i-select :model.sync="mainModel.vo.parentId" :list="mainModel.upperList" >-->
                 <!--<i-option  v-for = "upper in mainModel.upperList" :value="upper.id">{{upper.name}}</i-option>-->
                 <!--</i-select>-->
-                <iv-tree-select
-                        :model.sync="mainModel.vo.parentId"
-                        :list="parentList"
-                        id-attr="id"
-                        display-attr="name"
-                        placeholder="请选择父级分类"
-                        clearable
-                        @on-change="doChangeParent"
-                >
-                    <iv-tree
-                            :model="parentList"
-                            :selected-datas.sync="selectedDatas"
-                            id-attr="id"
-                            pid-attr="parentId"
-                            display-attr="name"
-                            serch-filterable
-                            single-select
-                            show-checkbox
-                            allow-parent-checked
-                     >
+                <iv-tree-select :model.sync="mainModel.vo.parentId" :list="parentList" id-attr="id" display-attr="name"
+                    :placeholder="$t('gb.common.pleaseSelect') + ' '+$t('em.ms.parentclass')" clearable
+                    @on-change="doChangeParent">
+                    <iv-tree :model="parentList" :selected-datas.sync="selectedDatas" id-attr="id" pid-attr="parentId"
+                        display-attr="name" serch-filterable single-select show-checkbox allow-parent-checked>
                     </iv-tree>
                 </iv-tree-select>
             </el-form-item>
 
             <el-form-item :label="$t('gb.common.code')" prop="code">
-                <code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly" :allow-empty="allowEmpty"></code-input>
+                <code-input v-ref:code-input :value.sync="mainModel.vo.code" :textonly="mainModel.isReadOnly"
+                    :allow-empty="allowEmpty"></code-input>
             </el-form-item>
             <el-form-item :label="$t('gb.common.name')" prop="name">
-                <iv-input :value.sync="mainModel.vo.name"></iv-input>
+                <iv-input :value.sync="mainModel.vo.name" :placeholder="$t('gb.common.pleaseInput')"></iv-input>
                 <!--<input type="text" v-model = "mainModel.vo.name" maxlength="50">-->
             </el-form-item>
 
-            <el-form-item label="即将到期提醒时间" v-if="options.category=='equipmentType'" prop="attr2">
+            <el-form-item :label="$t('em.ms.rtate')" v-if="options.category=='equipmentType'" prop="attr2">
                 <iv-input :value.sync="mainModel.vo.attr2" type="number"><span slot="append">月</span></iv-input>
             </el-form-item>
             <!--<el-form-item :label="$t('gb.common.sort')" prop="orderNo">-->
-                <!--<iv-input-number :value.sync="mainModel.vo.orderNo" :min="1" :step="1" style="width: 100%"-->
-                                 <!--is-integer :is-auto-corr="false" :is-show-err="false"></iv-input-number>-->
-                <!--<iv-input :value.sync="mainModel.vo.orderNo" type="number" :min="1" ></iv-input>-->
+            <!--<iv-input-number :value.sync="mainModel.vo.orderNo" :min="1" :step="1" style="width: 100%"-->
+            <!--is-integer :is-auto-corr="false" :is-show-err="false"></iv-input-number>-->
+            <!--<iv-input :value.sync="mainModel.vo.orderNo" type="number" :min="1" ></iv-input>-->
             <!--</el-form-item>-->
-            <el-form-item label="排序位置" prop="insertPointObjId">
-                <span style="white-space:nowrap;">当前节点之后(如果不选择，即为当前层级第一个)</span>
-                <i-select :model.sync="mainModel.vo.insertPointObjId" clearable :list="orderList" style="width: 260px;">
-                    <i-option  v-for = "upper in orderList" :value="upper.id">{{upper.name}}</i-option>
+            <el-form-item :label="$t('em.ms.sortPosition')" prop="insertPointObjId">
+                <span style="white-space:nowrap;">{{$t("em.ms.atcn")}}</span>
+                <i-select :model.sync="mainModel.vo.insertPointObjId" :placeholder="$t('gb.common.pleaseSelect')"
+                    clearable :list="orderList" style="width: 260px;">
+                    <i-option v-for="upper in orderList" :value="upper.id">{{upper.name}}</i-option>
                 </i-select>
             </el-form-item>
         </el-form>

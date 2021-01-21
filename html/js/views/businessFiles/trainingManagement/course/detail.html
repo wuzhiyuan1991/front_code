@@ -351,7 +351,8 @@
                                             <a class="courseA">
                                                 <Icon type="document"
                                                     style="padding-right: 5px;color:#666;cursor: default"></Icon>
-                                                <span style="color:#666;cursor: default" :title="kpoint.name" class="kpointName">
+                                                <span style="color:#666;cursor: default" :title="kpoint.name"
+                                                    class="kpointName">
                                                     {{kpoint.name}} </span>
                                                 <span style="padding-left: 100px;color:#33a6ff"
                                                     @click="gotoPaper(paper.id)"
@@ -458,7 +459,7 @@
                         </el-tab-pane>
                     </el-tabs>
                     <el-tabs v-else :active-key.sync="mainModel.vo.activeKey">
-                       
+
                         <el-tab-pane label="所属行业" key="industry">
                             <simple-card class="table-column-tools-center "
                                 :show-content.sync="cardModel.industryCategoryCardModel.showContent">

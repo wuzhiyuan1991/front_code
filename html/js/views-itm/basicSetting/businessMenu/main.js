@@ -1,407 +1,408 @@
 
-define(function(require){
+define(function (require) {
 	//基础js
 	var LIB = require('lib');
 	var api = require("./vuex/api");
+
 	//编辑弹框页面
 	//var editComponent = require("./edit");
 	var editComponent = require("./edit");
 	//vue数据 配置url地址 拉取数据
 	var dataModel = {
 		//业务中心危害因素 业务档案 ---检查项
-		risktype:{
-			data:null,
+		risktype: {
+			data: null,
 			//selectedTreeDatas:[],
-			showHide:false,
+			showHide: false,
 			selectedDatas: [],
 		},
-		innerAddFun:{
-			type:Function
+		innerAddFun: {
+			type: Function
 		},
 		//业务档案 ---检查依据
-		checkbasistype:{
-			data:null,
-			showHide:false,
+		checkbasistype: {
+			data: null,
+			showHide: false,
 			selectedDatas: [],
 		},
-		listTableType:{
-			data:null,
-			showHide:false,
+		listTableType: {
+			data: null,
+			showHide: false,
 			selectedDatas: [],
 		},
-		equipmentType:{
-			data:null,
-			showHide:false,
+		equipmentType: {
+			data: null,
+			showHide: false,
 			selectedDatas: [],
 		},
-		industryCategory:{
-			data:null,
-			showHide:false,
+		industryCategory: {
+			data: null,
+			showHide: false,
 			selectedDatas: [],
 		},
-		courseCategory:{
-			data:null,
-			showHide:false,
+		courseCategory: {
+			data: null,
+			showHide: false,
 			selectedDatas: [],
 		},
-		certificationSubject:{
-			data:null,
-			showHide:false,
+		certificationSubject: {
+			data: null,
+			showHide: false,
 			selectedDatas: [],
 		},
-		addModel:{
+		addModel: {
 			//显示弹框
-			show : false,
-			title:"修改",
+			show: false,
+			title: LIB.lang('gb.common.modify'),
 			id: null
 		},
 	};
 	var vm = LIB.VueEx.extend({
 		//引入html页面
 		template: require("text!./main.html"),
-		components : {
-			"editcomponent":editComponent
+		components: {
+			"editcomponent": editComponent
 		},
-		data : function() {
+		data: function () {
 			return dataModel;
 		},
-		methods:{
-			doTabs:function(data){
+		methods: {
+			doTabs: function (data) {
 				var _this = this;
 				_this.key = data.key;
-				if(this.key==2){
-					api.checkbasistype().then(function(res1){
+				if (this.key == 2) {
+					api.checkbasistype().then(function (res1) {
 						_this.checkbasistype.data = res1.data;
 					});
-				}else if(this.key==3){
+				} else if (this.key == 3) {
 					//业务档案--隐患排除---检查表
-					api.listTableType().then(function(res2){
+					api.listTableType().then(function (res2) {
 						_this.listTableType.data = res2.data;
 					});
-				}else if(this.key==4){
-					api.equipmentType().then(function(res3){
+				} else if (this.key == 4) {
+					api.equipmentType().then(function (res3) {
 						_this.equipmentType.data = res3.data;
 					});
 
-				}else if(this.key==5){
+				} else if (this.key == 5) {
 					//行业分类
-					api.industryCategory().then(function(res4){
+					api.industryCategory().then(function (res4) {
 						_this.industryCategory.data = res4.data;
 					});
 
-				}else if(this.key==6){
+				} else if (this.key == 6) {
 					//课程类型
-					api.courseCategory().then(function(res5){
+					api.courseCategory().then(function (res5) {
 						_this.courseCategory.data = res5.data;
 					});
-				}else if(this.key==7){
+				} else if (this.key == 7) {
 					//取证类型
-					api.certificationSubject().then(function(res6){
+					api.certificationSubject().then(function (res6) {
 						_this.certificationSubject.data = res6.data;
 					})
 				}
 			},
 			//全部显示
-			treeShowList:function(){
-				this.$refs.treegridrisk.$children[0].doShowNode(function(){
+			treeShowList: function () {
+				this.$refs.treegridrisk.$children[0].doShowNode(function () {
 				})
 			},
 			//全部隐藏
-			treeHide:function(){
-				this.$refs.treegridrisk.$children[0].doHideNode(function(){
+			treeHide: function () {
+				this.$refs.treegridrisk.$children[0].doHideNode(function () {
 				})
 			},
 			//全部显示
-			treeList:function(){
-				this.$refs.treegridlist.$children[0].doShowNode(function(){
+			treeList: function () {
+				this.$refs.treegridlist.$children[0].doShowNode(function () {
 				})
 			},
 			//全部隐藏
-			treeListHide:function(){
-				this.$refs.treegridlist.$children[0].doHideNode(function(){
+			treeListHide: function () {
+				this.$refs.treegridlist.$children[0].doHideNode(function () {
 				})
 			},
 			//全部显示
-			treeListEquipment:function(){
-				this.$refs.equipment.$children[0].doShowNode(function(){
+			treeListEquipment: function () {
+				this.$refs.equipment.$children[0].doShowNode(function () {
 				})
 			},
 			//全部隐藏
-			treeListHideEquipment:function(){
-				this.$refs.equipment.$children[0].doHideNode(function(){
+			treeListHideEquipment: function () {
+				this.$refs.equipment.$children[0].doHideNode(function () {
 				})
 			},
 			//全部显示
-			treeListIndustry:function(){
-				this.$refs.industry.$children[0].doShowNode(function(){
+			treeListIndustry: function () {
+				this.$refs.industry.$children[0].doShowNode(function () {
 				})
 			},
 			//全部隐藏
-			treeListHideIndustry:function(){
-				this.$refs.industry.$children[0].doHideNode(function(){
+			treeListHideIndustry: function () {
+				this.$refs.industry.$children[0].doHideNode(function () {
 				})
 			},
 			//全部显示
-			treeListCourseCategory:function(){
-				this.$refs.course.$children[0].doShowNode(function(){
+			treeListCourseCategory: function () {
+				this.$refs.course.$children[0].doShowNode(function () {
 				})
 			},
 			//全部隐藏
-			treeListHideCourseCategory:function(){
-				this.$refs.course.$children[0].doHideNode(function(){
+			treeListHideCourseCategory: function () {
+				this.$refs.course.$children[0].doHideNode(function () {
 				})
 			},
 			//全部显示
-			treeListCertificationSubject:function(){
-				this.$refs.certification.$children[0].doShowNode(function(){
+			treeListCertificationSubject: function () {
+				this.$refs.certification.$children[0].doShowNode(function () {
 				})
 			},
 			//全部隐藏
-			treeListHideCertificationSubject:function(){
-				this.$refs.certification.$children[0].doHideNode(function(){
+			treeListHideCertificationSubject: function () {
+				this.$refs.certification.$children[0].doHideNode(function () {
 				})
 			},
 			//业务中心--风险评估---危害辨识    业务档案--隐患排查---检查项
 			//新增
-			treeAdd:function(val){
+			treeAdd: function (val) {
 				this.addModel.show = true;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailrisktypeAdd',val);
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailrisktypeAdd', val);
 			},
 
-			risktypeDoAddNode:function(value, innerAddFun){
+			risktypeDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"risktypeAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "risktypeAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			risktypeDoEditNode:function(value) {
+			risktypeDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"risktypeUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "risktypeUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			risktypeDoDelNode:function(value){
+			risktypeDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 				}
-				api.deleteRiskType(null,[id]).then(callback)
+				api.deleteRiskType(null, [id]).then(callback)
 			},
 			//业务档案---风险评估---检查依据
-			checkbasistypeDoAddNode:function(value, innerAddFun) {
+			checkbasistypeDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"checkbasistypeAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "checkbasistypeAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			checkbasistypeDoEditNode:function(value) {
+			checkbasistypeDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"checkbasistypeUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "checkbasistypeUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			checkbasistypeDoDelNode:function(value){
+			checkbasistypeDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 				}
-				api.deleteCheckBasisType(null,[id]).then(callback)
+				api.deleteCheckBasisType(null, [id]).then(callback)
 			},
 			//业务档案--隐患排除---检查表
-			listTableTypeDoAddNode:function(value, innerAddFun) {
+			listTableTypeDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"listTableTypeAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "listTableTypeAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			listTableTypeDoEditNode:function(value) {
+			listTableTypeDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"listTableTypeUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "listTableTypeUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			listTableTypeDoDelNode:function(value){
+			listTableTypeDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 					//_this.retrieveData();
 				}
-				api.delTableType(null,[id]).then(callback)
+				api.delTableType(null, [id]).then(callback)
 			},
 			//设备设施类型
-			equipmentTypeDoAddNode:function(value, innerAddFun) {
+			equipmentTypeDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"equipmentTypeAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "equipmentTypeAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			equipmentTypeDoEditNode:function(value) {
+			equipmentTypeDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"equipmentTypeUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "equipmentTypeUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			equipmentTypeDoDelNode:function(value){
+			equipmentTypeDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 					//_this.retrieveData();
 				}
-				api.delEquipmentType(null,value.data).then(callback)
+				api.delEquipmentType(null, value.data).then(callback)
 			},
 			//行业分类
-			industryCategoryDoAddNode:function(value, innerAddFun) {
+			industryCategoryDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"industryCategoryAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "industryCategoryAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			industryCategoryDoEditNode:function(value) {
+			industryCategoryDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"industryCategoryUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "industryCategoryUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			industryCategoryDoDelNode:function(value){
+			industryCategoryDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 					//_this.retrieveData();
 				}
-				api.delIndustryCategory(null,value.data).then(callback)
+				api.delIndustryCategory(null, value.data).then(callback)
 			},
 			//课程类型
-			courseCategoryDoAddNode:function(value, innerAddFun) {
+			courseCategoryDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"courseCategoryAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "courseCategoryAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			courseCategoryDoEditNode:function(value) {
+			courseCategoryDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"courseCategoryUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "courseCategoryUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			courseCategoryDoDelNode:function(value){
+			courseCategoryDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 					//_this.retrieveData();
 				}
-				api.delCourseCategory(null,value.data).then(callback)
+				api.delCourseCategory(null, value.data).then(callback)
 			},
 			//取证类型
-			certificationSubjectDoAddNode:function(value, innerAddFun) {
+			certificationSubjectDoAddNode: function (value, innerAddFun) {
 				this.innerAddFun = innerAddFun;
-				this.addModel.title = "新增"
-				this.$broadcast('ev_detailReload',value,"certificationSubjectAdd","add");
+				this.addModel.title = LIB.lang('gb.common.add')
+				this.$broadcast('ev_detailReload', value, "certificationSubjectAdd", "add");
 				this.addModel.show = true;
 			},
 			//修改
-			certificationSubjectDoEditNode:function(value) {
+			certificationSubjectDoEditNode: function (value) {
 				this.treeGridName = value;
-				this.addModel.title="修改"
+				this.addModel.title = LIB.lang('gb.common.modify')
 				//value.data.name += "modify"
-				this.$broadcast('ev_detailReload',value,"certificationSubjectUpdata","updata");
+				this.$broadcast('ev_detailReload', value, "certificationSubjectUpdata", "updata");
 				this.addModel.show = true;
 			},
 			//删除
-			certificationSubjectDoDelNode:function(value){
+			certificationSubjectDoDelNode: function (value) {
 				var id = value.data.id;
 				var _this = this;
-				if(value.data.children && value.data.children.length > 0){
-					LIB.Msg.error("该分类下面存在子分类，不可删除！");
+				if (value.data.children && value.data.children.length > 0) {
+					LIB.Msg.error(LIB.lang('em.ms.tasun') + "！");
 					return
 				}
 				var callback = function (res) {
-					if(res.status == 200){
+					if (res.status == 200) {
 						window.businessCache = true;
-						LIB.Msg.info("删除成功");
+						LIB.Msg.info(LIB.lang('gb.common.sd'));
 						value.parentChildren.splice(value.parentChildren.indexOf(value.data), 1);
 					}
 					//_this.retrieveData();
 				}
-				api.delCertificationSubject(null,value.data).then(callback)
+				api.delCertificationSubject(null, value.data).then(callback)
 			},
 			//获取数据
-			retrieveData:function(){
+			retrieveData: function () {
 				var _this = this;
 				//业务中心 ---危害因素 业务档案 ---检查项
-				api.risktype().then(function(res){
+				api.risktype().then(function (res) {
 					_this.risktype.data = res.data;
 				});
 				////业务档案 ---检查依据
@@ -428,7 +429,7 @@ define(function(require){
 				//	_this.certificationSubject.data = res6.data;
 				//})
 			},
-			doUpdate:function(value,flag,type){
+			doUpdate: function (value, flag, type) {
 				//if(flag == "add"){
 				//	var obj = {
 				//		id:value.vo.id,
@@ -443,86 +444,86 @@ define(function(require){
 				//	this.treeGridName.data.orderNo = value.vo.orderNo;
 				//}
 				var _this = this;
-				if(type=="risktypeUpdata" || type=="risktypeAdd"){
-					api.risktype().then(function(res){
+				if (type == "risktypeUpdata" || type == "risktypeAdd") {
+					api.risktype().then(function (res) {
 						_this.risktype.data = res.data;
 					});
-				}else if(type=="checkbasistypeAdd" || type=="checkbasistypeUpdata"){
-					api.checkbasistype().then(function(res1){
+				} else if (type == "checkbasistypeAdd" || type == "checkbasistypeUpdata") {
+					api.checkbasistype().then(function (res1) {
 						_this.checkbasistype.data = res1.data;
 					});
-				}else if(type=="listTableTypeAdd" || type=="listTableTypeUpdata"){
-					api.listTableType().then(function(res2){
+				} else if (type == "listTableTypeAdd" || type == "listTableTypeUpdata") {
+					api.listTableType().then(function (res2) {
 						_this.listTableType.data = res2.data;
 					});
-				}else if(type=="equipmentTypeAdd" || type=="equipmentTypeUpdata"){
-					api.equipmentType().then(function(res3){
+				} else if (type == "equipmentTypeAdd" || type == "equipmentTypeUpdata") {
+					api.equipmentType().then(function (res3) {
 						_this.equipmentType.data = res3.data;
 					});
-				}else if(type=="industryCategoryAdd" || type=="industryCategoryUpdata"){
-					api.industryCategory().then(function(res4){
+				} else if (type == "industryCategoryAdd" || type == "industryCategoryUpdata") {
+					api.industryCategory().then(function (res4) {
 						_this.industryCategory.data = res4.data;
 					});
-				}else if(type=="courseCategoryAdd" || type=="courseCategoryUpdata"){
-					api.courseCategory().then(function(res5){
+				} else if (type == "courseCategoryAdd" || type == "courseCategoryUpdata") {
+					api.courseCategory().then(function (res5) {
 						_this.courseCategory.data = res5.data;
 					});
-				}else if(type=="certificationSubjectAdd" || type=="certificationSubjectUpdata"){
-					api.certificationSubject().then(function(res6){
+				} else if (type == "certificationSubjectAdd" || type == "certificationSubjectUpdata") {
+					api.certificationSubject().then(function (res6) {
 						_this.certificationSubject.data = res6.data;
 					})
 				}
 				window.businessCache = true;
 				this.addModel.show = false;
 			},
-			doEditAdd:function(value,type){
+			doEditAdd: function (value, type) {
 				var _this = this;
 				var obj = {
-					id:value.vo.id,
-					name:value.vo.name,
-					code:value.vo.code,
-					orderNo:value.vo.orderNo,
+					id: value.vo.id,
+					name: value.vo.name,
+					code: value.vo.code,
+					orderNo: value.vo.orderNo,
 				}
-				if(type == "risktype"){
+				if (type == "risktype") {
 					//this.risktype.data.push(obj);
 					//this.retrieveData();
-					api.risktype().then(function(res){
+					api.risktype().then(function (res) {
 						_this.risktype.data = res.data;
 					});
-				}else if(type == "checkbasistype"){
+				} else if (type == "checkbasistype") {
 					//this.checkbasistype.data.push(obj);
 					//this.retrieveData();
-					api.checkbasistype().then(function(res1){
+					api.checkbasistype().then(function (res1) {
 						_this.checkbasistype.data = res1.data;
 					});
-				}else if(type =="listTableType"){
+				} else if (type == "listTableType") {
 					//this.listTableType.data.push(obj);
 					//this.retrieveData();
-					api.listTableType().then(function(res2){
+					api.listTableType().then(function (res2) {
 						_this.listTableType.data = res2.data;
 					});
-				}else if(type =="equipmentType"){
+				} else if (type == "equipmentType") {
 					//this.listTableType.data.push(obj);
 					//this.retrieveData();
-					api.equipmentType().then(function(res3){
+					api.equipmentType().then(function (res3) {
 						_this.equipmentType.data = res3.data;
 					});
-				}else if(type =="industryCategory"){
+				} else if (type == "industryCategory") {
 					//this.listTableType.data.push(obj);
 					//this.retrieveData();
-					api.industryCategory().then(function(res4){
+					api.industryCategory().then(function (res4) {
 						_this.industryCategory.data = res4.data;
 					});
-				}else if(type =="courseCategory"){
+				} else if (type == "courseCategory") {
 					//this.listTableType.data.push(obj);
 					//this.retrieveData();
-					api.courseCategory().then(function(res5){
+					api.courseCategory().then(function (res5) {
 						_this.courseCategory.data = res5.data;
 					});
-				}else if(type =="certificationSubject"){
+				} else if (type == "certificationSubject") {
 					//this.listTableType.data.push(obj);
 					//this.retrieveData();
-					api.certificationSubject().then(function(res6){
+					api.certificationSubject().then(function (res6) {
 						_this.certificationSubject.data = res6.data;
 					})
 				}
@@ -552,7 +553,7 @@ define(function(require){
 		//		},
 		//	},
 
-		ready:function(){
+		ready: function () {
 			this.retrieveData();
 		},
 	})

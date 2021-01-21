@@ -20,6 +20,11 @@ define(function (require) {
     var spinHelper = require("components/iviewSpinHelper");
 
     var artTemplate = require('artTempalte');
+
+
+
+
+
     //配置上传组件app项目路径,解决组件的base依赖
     require(["components/file-upload/pluploadHelper"], function (helper) {
         helper.defaultErrorFunc = _.throttle(function (up, rs) {
@@ -364,7 +369,7 @@ define(function (require) {
         mgr.column = {};
 
         mgr.column.compByParentId = {
-            title: "所属公司",
+            title: 'this.$t("gb.common.ownedComp")',
             fieldType: "custom",
             render: function (data) {
                 if (data.parentId) {
@@ -379,7 +384,7 @@ define(function (require) {
         };
 
         mgr.column.deptByParentId = {
-            title: "所属部门",
+            title: 'this.$t("gb.common.ownedDept")',
             fieldType: "custom",
             render: function (data) {
                 if (data.parentId) {
@@ -394,7 +399,7 @@ define(function (require) {
         };
 
         mgr.column.company = {
-            title: "所属公司",
+            title: 'this.$t("gb.common.ownedComp")',
             fieldType: "custom",
             render: function (data) {
                 if (data.compId) {
@@ -407,7 +412,7 @@ define(function (require) {
             width: 240
         };
         mgr.column.dept = {
-            title: "所属部门",
+            title: 'this.$t("gb.common.ownedDept")',
             fieldType: "custom",
             render: function (data) {
                 if (data.orgId) {
@@ -874,13 +879,13 @@ define(function (require) {
         xhr.send(null);
     };
     //同一公司下部门名相同时，显示该部门上级部门
-    function reNameOrg(d,name) {
+    function reNameOrg(d, name) {
         var result = _.filter(LIB.setting.orgList, function (data) {
             return data.compId == d.compId
         });
         var arr = _.filter(result, function (data) {
-            
-                return data.name == d[name] &&data.id!=d.xId
+
+            return data.name == d[name] && data.id != d.xId
 
 
         });
@@ -894,7 +899,7 @@ define(function (require) {
                         return
                     }
                     d[name] = parr[0].name + '/' + d[name]
-                  
+
                     if (parr[0].id != compId) {
                         orgname(result, parr, compId)
                     }
@@ -1007,7 +1012,7 @@ define(function (require) {
             'BD_RiA_InsM': '/expertSupport/businessFiles/checkMethod',
             'BD_RiA_IncC': '/expertSupport/businessFiles/accidentCase',
             'BD_RiA_InsB': '/expertSupport/businessFiles/legalRegulation',
-            'S_METTING':'/secureMeeting/businessFiles/Meeting'
+            'S_METTING': '/secureMeeting/businessFiles/Meeting'
         },
         Vue: Vue,
         VueRouter: VueRouter,
@@ -1052,6 +1057,10 @@ define(function (require) {
                 val = _.propertyOf(val)(attrs[i])
             }
             return val;
+        },
+        lang: function (val) {
+            var i18n = JSON.parse(window.localStorage.i18n)
+            return i18n[_.findIndex(i18n, function (o) { return o.code == val; })].zhValue
         }
     };
 

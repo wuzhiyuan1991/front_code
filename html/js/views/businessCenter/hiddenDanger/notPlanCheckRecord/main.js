@@ -4,14 +4,17 @@ define(function (require) {
     var api = require("./vuex/api");
     //右侧滑出详细页
     var editComponent = require("./detail-xl");
+
     //Vue数据模型
     var dataModel = function () {
         return {
             moduleCode: "BC_Hal_InsNR",
             tableModel: LIB.Opts.extendMainTableOpt(
+
                 {
                     url: "checkrecord/list{/curPage}{/pageSize}?type=0",
                     selectedDatas: [],
+
                     columns: [
                         {
                             title: "",
@@ -78,12 +81,12 @@ define(function (require) {
                             width: 100
                         },
                         {
-                            title: '检查开始时间',
+                            title: this.$t("gb.common.ist"),
                             fieldName: "checkBeginDate",
                             filterType: "date",
                             width: 180
                         }, {
-                            title: '检查结束时间',
+                            title: this.$t("gb.common.iet"),
                             fieldName: "checkEndDate",
                             filterType: "date",
                             width: 180
@@ -95,7 +98,7 @@ define(function (require) {
                             filterType: "text",
                         }
                     ],
-	                defaultFilterValue : {"criteria.orderValue" : {fieldName : "checkDate", orderType : "1"}},
+                    defaultFilterValue: { "criteria.orderValue": { fieldName: "checkDate", orderType: "1" } },
                 }
             ),
             //控制全部分类组件显示
@@ -157,17 +160,17 @@ define(function (require) {
         },
         ready: function () {
             var _this = this;
-            if(LIB.getBusinessSetByNamePath('common.enableCheckLevel').result === '2'){
+            if (LIB.getBusinessSetByNamePath('common.enableCheckLevel').result === '2') {
                 _this.tableModel.columns.push({
-                    title: "检查级别",
+                    title: this.$t("ri.bc.il"),
                     fieldName: "checkLevel",
                     orderName: "checkLevel",
                     fieldType: "custom",
                     filterType: "enum",
                     filterName: "criteria.intsValue.checkLevel",
-                    popFilterEnum : LIB.getDataDicList("checkLevel"),
+                    popFilterEnum: LIB.getDataDicList("checkLevel"),
                     render: function (data) {
-                        return LIB.getDataDic("checkLevel",data.checkLevel);
+                        return LIB.getDataDic("checkLevel", data.checkLevel);
                     },
                     width: 100
                 });

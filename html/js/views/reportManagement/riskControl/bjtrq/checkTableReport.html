@@ -3,49 +3,55 @@
         <div class="basic">{{qryInfoModel.title}}</div>
     </div>
     <div class="report-qry-head">
-        <el-form :model="{}"  is-label-vertical v-ref:ruleform>
+        <el-form :model="{}" is-label-vertical v-ref:ruleform>
             <iv-row>
                 <iv-col span="24" style="display: flex;align-items: center">
                     <el-form-item style="width: 150px;">
                         <iv-radio-group :model.sync="qryInfoModel.qryDateType">
                             <iv-radio value="1">
-                                <span>按年</span>
+                                <span>{{$t('gb.common.byYear')}}</span>
                             </iv-radio>
                             <iv-radio value="2">
-                                <span>按月</span>
+                                <span>{{$t('gb.common.monthly')}}</span>
                             </iv-radio>
                         </iv-radio-group>
                     </el-form-item>
                     <el-form-item v-if="qryInfoModel.qryDateType == 1" style="width: 180px;overflow: inherit;">
-                        <span style="float: left;display: block;height: 30px;line-height: 30px">年份：</span>
-                        <vi-date-picker style="float: left;width:120px;" type="year" :value="qryInfoModel.year" @on-change="changeQryYear"></vi-date-picker>
+                        <span
+                            style="float: left;display: block;height: 30px;line-height: 30px">{{$t('gb.common.year')}}：</span>
+                        <vi-date-picker style="float: left;width:120px;" type="year" :value="qryInfoModel.year"
+                            @on-change="changeQryYear"></vi-date-picker>
                     </el-form-item>
-                    <el-form-item  v-if="qryInfoModel.qryDateType == 2" style="width: 180px;overflow: inherit;">
-                        <span style="float: left;display: block;height: 30px;line-height: 30px">月份：</span>
-                        <vi-date-picker style="float: left;width:120px;" type="month" @on-change="changeQryMonth"></vi-date-picker>
+                    <el-form-item v-if="qryInfoModel.qryDateType == 2" style="width: 180px;overflow: inherit;">
+                        <span
+                            style="float: left;display: block;height: 30px;line-height: 30px">{{$t('gb.common.month')}}：</span>
+                        <vi-date-picker style="float: left;width:120px;" type="month" @on-change="changeQryMonth">
+                        </vi-date-picker>
                     </el-form-item>
                     <!-- <el-form-item  style="width: 400px;">
                         <obj-select type="frw" :values.sync="qryInfoModel.vo.objRange"></obj-select>
                     </el-form-item> -->
-                    <el-form-item  style="width: 100px;overflow: inherit;" >
-                        <i-select class="select-color" :model.sync="qryInfoModel.vo.typeOfRange" clearable  style="width:100%;font-size: 12px" v-ref:select
-                                    :list="qryInfoModel.typeOfRanges" placeholder="请选择对象范围"
-                                    @on-change="changeTypeOfRange">
-                            <i-option v-for="item in qryInfoModel.typeOfRanges" :value="item.value" >{{ item.label }}</i-option>
+                    <el-form-item style="width: 100px;overflow: inherit;">
+                        <i-select class="select-color" :model.sync="qryInfoModel.vo.typeOfRange" clearable
+                            style="width:100%;font-size: 12px" v-ref:select :list="qryInfoModel.typeOfRanges"
+                            :placeholder="$t('gb.common.psor')" @on-change="changeTypeOfRange">
+                            <i-option v-for="item in qryInfoModel.typeOfRanges" :value="item.value">{{ item.label }}
+                            </i-option>
                         </i-select>
                     </el-form-item>
-                    <el-form-item  style="width: 400px;overflow: inherit;" >
+                    <el-form-item style="width: 400px;overflow: inherit;">
                         <obj-select :type="qryInfoModel.vo.typeOfRange" :values.sync="qryInfoModel.vo.objRange"
-                                    :disabled="qryModel.typeOfRange == null || qryModel.typeOfRange == ''"></obj-select>
+                            :disabled="qryModel.typeOfRange == null || qryModel.typeOfRange == ''"></obj-select>
                     </el-form-item>
-                    <el-form-item  style="width: 100px;overflow: inherit;" >
-                        <i-select class="select-color" :model.sync="qryInfoModel.vo.recordType" clearable  style="width:100%;font-size: 12px" v-ref:select
-                                  :list="qryInfoModel.types" placeholder="请选择对象范围">
-                            <i-option v-for="item in qryInfoModel.types" :value="item.value" >{{ item.label }}</i-option>
+                    <el-form-item style="width: 100px;overflow: inherit;">
+                        <i-select class="select-color" :model.sync="qryInfoModel.vo.recordType" clearable
+                            style="width:100%;font-size: 12px" v-ref:select :list="qryInfoModel.types"
+                            :placeholder="$t('gb.common.psor')">
+                            <i-option v-for="item in qryInfoModel.types" :value="item.value">{{ item.label }}</i-option>
                         </i-select>
                     </el-form-item>
-                    <el-form-item  style="width: 60px;margin-left: 14px;">
-                        <iv-button @click="doQry()">统计</iv-button>
+                    <el-form-item style="width: 60px;margin-left: 14px;">
+                        <iv-button @click="doQry()">{{$t('gb.common.statistics')}}</iv-button>
                     </el-form-item>
                 </iv-col>
             </iv-row>
@@ -57,26 +63,22 @@
 </div>
 
 <!-- 撰取 -->
-<Modal v-if="drillDataModel.show" :visible.sync="drillDataModel.show" mask-closable :title="drillDataModel.title" width="900" :footer-hide="true" class="userSelectModal">
+<Modal v-if="drillDataModel.show" :visible.sync="drillDataModel.show" mask-closable :title="drillDataModel.title"
+    width="900" :footer-hide="true" class="userSelectModal">
     <div class="edit-pop-container" style="width: 900px">
         <div class="epc-header"></div>
         <div class="epc-content">
-            <div style="padding:4px 0 0 4px;width: 225px;position: absolute; right: 0;top: 88px;z-index: 100;" v-if="drillDataModel.groups && drillDataModel.groups.length > 1">
-                <i-select @on-change="onChangeGroupOfDrillDataModel"
-                          :list="drillDataModel.groups" :placeholder="drillDataModel.placeholderOfGroups" style="width:200px;">
+            <div style="padding:4px 0 0 4px;width: 225px;position: absolute; right: 0;top: 88px;z-index: 100;"
+                v-if="drillDataModel.groups && drillDataModel.groups.length > 1">
+                <i-select @on-change="onChangeGroupOfDrillDataModel" :list="drillDataModel.groups"
+                    :placeholder="drillDataModel.placeholderOfGroups" style="width:200px;">
                     <i-option v-for="g in drillDataModel.groups" :value="g.id">{{ g.name }}</i-option>
                 </i-select>
             </div>
-            <vue-bootstrap-table :columns="drillDataModel.table.columns"
-                                 :url="drillDataModel.table.url"
-                                 :default-filter-value="drillDataModel.table.qryParam"
-                                 :show-filter="true"
-                                 style="height: 540px;"
-                                 :show-loading="true"
-                                 :filter-column="drillDataModel.table.filterColumns"
-                                 :show-column-picker="false"
-                                 @on-click-cell="doClickCell"
-                                 :show-pager="true" v-ref:rpt-details-table>
+            <vue-bootstrap-table :columns="drillDataModel.table.columns" :url="drillDataModel.table.url"
+                :default-filter-value="drillDataModel.table.qryParam" :show-filter="true" style="height: 540px;"
+                :show-loading="true" :filter-column="drillDataModel.table.filterColumns" :show-column-picker="false"
+                @on-click-cell="doClickCell" :show-pager="true" v-ref:rpt-details-table>
             </vue-bootstrap-table>
         </div>
     </div>

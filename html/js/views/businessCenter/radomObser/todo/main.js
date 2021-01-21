@@ -15,18 +15,18 @@ define(function (require) {
             moduleCode: 'BC_Hal_RanO_TODO',
             //控制全部分类组件显示
             mainModel: {
-                businessLists:[],
+                businessLists: [],
                 showHeaderTools: false,
                 //当前grid所选中的行
                 selectedRow: [],
                 detailPanelClass: "middle-info-aside"
-//				detailPanelClass : "large-info-aside"
+                //				detailPanelClass : "large-info-aside"
             },
             tableModel: LIB.Opts.extendMainTableOpt(
                 {
                     url: "radomobser/list{/curPage}{/pageSize}?_bizModule=todo",
                     selectedDatas: [],
-                    isSingleCheck:false,
+                    isSingleCheck: false,
                     columns: [
                         {
                             title: "",
@@ -135,11 +135,11 @@ define(function (require) {
             uploadModel: {
                 url: "/radomobser/importExcel"
             },
-            exportModel : {
+            exportModel: {
                 url: "/radomobser/exportExcel",
                 visible: false,
-                title:'导出',
-                exportType:"0",
+                title: '导出',
+                exportType: "0",
                 withColumnCfgParam: true
             },
             convertModel: {
@@ -167,7 +167,7 @@ define(function (require) {
             //提交
             doSubmit: function (row) {
                 var _this = this;
-                if(!row || !_.isString(row.id)) {
+                if (!row || !_.isString(row.id)) {
                     var rows = this.tableModel.selectedDatas;
                     if (rows.length > 1) {
                         LIB.Msg.warning("无法批量操作数据");
@@ -202,7 +202,7 @@ define(function (require) {
             },
             //审核
             doConvert: function (row) {
-                if(!row || !_.isString(row.id)) {
+                if (!row || !_.isString(row.id)) {
                     var rows = this.tableModel.selectedDatas;
                     if (rows.length > 1) {
                         LIB.Msg.warning("无法批量操作数据");
@@ -219,7 +219,7 @@ define(function (require) {
                     LIB.Msg.warning("请选择【待审核】状态的数据!");
                     return;
                 }
-                if(
+                if (
                     (!row.type && !!this.findByNameResult('requireOperationType'))
                     || (!row.checkItemType && !!this.findByNameResult('requireCheckItemType'))
                     || (!row.operationType && !!this.findByNameResult('requireOperationType'))
@@ -229,7 +229,7 @@ define(function (require) {
                     || !row.orgId
                     || (!row.checkObj && !!this.findByNameResult('requireCheckObj'))
                     || row.orgId == row.compId
-                    ) {
+                ) {
                     LIB.Msg.warning("请先编辑完善数据后再审核!");
                     this.showDetail(row, { opType: "update" });
                     return;
@@ -246,7 +246,7 @@ define(function (require) {
                     return item.name == name && item.result == '2';
                 });
 
-                return  !!obj || false;
+                return !!obj || false;
             },
             getBusinessSetting: function () {
                 var _this = this;
@@ -281,12 +281,12 @@ define(function (require) {
                 });
                 var batchNum = this.tableModel.selectedDatas.length;
                 api.getTableBatchHandleSetting().then(function (res) {
-                    var numer =_.get(res.data, "result");
+                    var numer = _.get(res.data, "result");
                     if (batchNum > numer) {
-                        LIB.Msg.warning("您已选中的记录数是"+batchNum+",限额数是"+numer);
+                        LIB.Msg.warning("您已选中的记录数是" + batchNum + ",限额数是" + numer);
                     } else {
                         LIB.Modal.confirm({
-                            title: '已选中'+batchNum+'条数据,确定删除数据?',
+                            title: '已选中' + batchNum + '条数据,确定删除数据?',
                             onOk: function () {
                                 api.delete(null, deleteIds).then(function (res) {
                                     _this.emitMainTableEvent("do_update_row_data", {
@@ -294,28 +294,28 @@ define(function (require) {
                                         value: _this.tableModel.selectedDatas
                                     });
                                     _this.onTableDataLoaded();
-                                    LIB.Msg.info(res.data+"条记录已经删除成功");
+                                    LIB.Msg.info(res.data + "条记录已经删除成功");
                                 });
                             }
                         });
                     }
                 });
             },
-            doExportExcel:function () {
+            doExportExcel: function () {
                 this.exportModel.exportType = "0";
                 this.exportModel.visible = true;
             },
-            doExport: function(){
+            doExport: function () {
                 this.exportModel.visible = false;
                 var url = "/radomobser/exportExcel/" + this.exportModel.exportType + this._getExportURL() + '&_bizModule=todo';
                 window.open(url);
             },
-            changeExportType:function () {
+            changeExportType: function () {
                 this.exportModel.exportType = this.exportModel.exportType == "0" ? "1" : "0";
             },
             _getExportURL: function () {
                 var queryStr = LIB.urlEncode(this.$refs.mainTable.getCriteria());
-                var originColumns =  _.get(this.tableModel, "columns");
+                var originColumns = _.get(this.tableModel, "columns");
                 var columns = window.localStorage.getItem("tb_code_" + this.moduleCode);
                 var ret = [];
 
@@ -351,9 +351,9 @@ define(function (require) {
                     });
                 }
                 var criteria = this.$refs.mainTable.getCriteria();
-                if(!!criteria) {
+                if (!!criteria) {
                     var strValue = !!criteria['criteria.strValue'] ? JSON.parse(criteria['criteria.strValue']) : {};
-                    _.extend(strValue , {_config: JSON.stringify(ret)});
+                    _.extend(strValue, { _config: JSON.stringify(ret) });
                     var str = encodeURIComponent(JSON.stringify(strValue));
                     delete criteria['criteria.strValue'];
                     queryStr = LIB.urlEncode(criteria) + '&criteria.strValue=' + str;
@@ -372,19 +372,19 @@ define(function (require) {
         },
         ready: function () {
             this.getBusinessSetting();
-            if(!!this.$route.query.state) {
+            if (!!this.$route.query.state) {
                 var statusColumn = _.find(this.tableModel.columns, function (item) {
                     return item.fieldName === "status";
                 });
-                if(!!statusColumn) {
-                    if(this.$route.query.state == 1) {
+                if (!!statusColumn) {
+                    if (this.$route.query.state == 1) {
                         this.$refs.mainTable.doOkActionInFilterPoptip(null, statusColumn, ['1']);
                     }
                 }
             }
             this.onTableDataLoaded();
             var _this = this;
-            if(LIB.getBusinessSetByNamePath('radomObserSet.enableCheckLevel').result === '2'){
+            if (LIB.getBusinessSetByNamePath('radomObserSet.enableCheckLevel').result === '2') {
                 _this.tableModel.columns.push({
                     title: "检查级别",
                     fieldName: "checkLevel",
@@ -392,14 +392,14 @@ define(function (require) {
                     fieldType: "custom",
                     filterType: "enum",
                     filterName: "criteria.intsValue.checkLevel",
-                    popFilterEnum : LIB.getDataDicList("checkLevel"),
+                    popFilterEnum: LIB.getDataDicList("checkLevel"),
                     render: function (data) {
-                        return LIB.getDataDic("checkLevel",data.checkLevel);
+                        return LIB.getDataDic("checkLevel", data.checkLevel);
                     },
                     width: 100
                 });
             }
-            if(LIB.getBusinessSetByNamePath('radomObserSet.enableHSEType').result === '2'){
+            if (LIB.getBusinessSetByNamePath('radomObserSet.enableHSEType').result === '2') {
                 _this.tableModel.columns.push({
                     title: "HSE类型",
                     fieldName: "hseType",
@@ -407,15 +407,15 @@ define(function (require) {
                     fieldType: "custom",
                     filterType: "enum",
                     filterName: "criteria.intsValue.hseType",
-                    popFilterEnum : LIB.getDataDicList("random_observe_hse_type"),
+                    popFilterEnum: LIB.getDataDicList("random_observe_hse_type"),
                     render: function (data) {
-                        return LIB.getDataDic("random_observe_hse_type",data.hseType);
+                        return LIB.getDataDic("random_observe_hse_type", data.hseType);
                     },
                     width: 100
                 });
             }
-            if(LIB.getBusinessSetByNamePath('radomObserSet.enableCheckObj').result == '2'){
-                _this.tableModel.columns.splice(5,0,{
+            if (LIB.getBusinessSetByNamePath('radomObserSet.enableCheckObj').result == '2') {
+                _this.tableModel.columns.splice(5, 0, {
                     title: "检查对象",
                     orderName: "ifnull(e.check_object_id,e.equipment_id)",
                     fieldName: "checkObj.name",
