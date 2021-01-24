@@ -6,7 +6,7 @@ define(function (require) {
     var initDataModel = function () {
         return {
             mainModel: {
-                title: "选择人员",
+                title: LIB.lang('gb.common.title.per'),
                 selectedDatas: []
             },
             // tableModel: (

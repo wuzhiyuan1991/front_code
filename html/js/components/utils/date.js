@@ -50,6 +50,7 @@
     var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var monthNamesShort = shorten(monthNames, 3);
     var dayNamesShort = shorten(dayNames, 3);
+
     fecha.i18n = {
         dayNamesShort: dayNamesShort,
         dayNames: dayNames,

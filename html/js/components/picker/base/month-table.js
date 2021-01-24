@@ -6,9 +6,10 @@
 define(function(require) {
     //import { deepCopy } from '../../../utils/assist';
     var Vue = require("vue");
+    var lang = require("../../utils/lang")
     var deepCopy = require('../../utils/assist').deepCopy;
     var template =  '<div :class="classes" @click.stop="handleClick"> '+
-                    '<span :class="getCellCls(cell)" v-for="cell in cells"><em :index="$index">{{ cell.text }}月</em></span>'+
+                    '<span :class="getCellCls(cell)" v-for="cell in cells"><em :index="$index">{{ cell.text }}'+lang("gb.common.month1")+'</em></span>'+
                     '</div>';
 
     var prefixCls = 'ivu-date-picker-cells';

@@ -20,6 +20,7 @@ define(function(require) {
     var nextMonth = require("../util").nextMonth;
     var initTimeDate = require("../util").initTimeDate;
     var Mixin = require('./mixin');
+    var lang = require("../../utils/lang")
     //import Icon from '../../icon/icon.vue';
     //import DateTable from '../base/date-table.vue';
     //import YearTable from '../base/year-table.vue';
@@ -52,7 +53,7 @@ define(function(require) {
                     ' <span '+
                     ' :class="[datePrefixCls + \'-header-label\']" '+
                     '  @click="showMonthPicker(\'left\')" '+
-                    ' v-show="leftCurrentView === \'date\'">{{ leftMonth + 1 }} 月</span> '+
+                    ' v-show="leftCurrentView === \'date\'">{{ leftMonth + 1 }} '+lang("gb.common.month1")+'</span> '+
                     ' <span '+
                     ' :class="iconBtnCls(\'next\', \'-double\')" '+
                     '                     @click="nextYear(\'left\')" '+
@@ -102,7 +103,7 @@ define(function(require) {
                     ' <span '+
                     '   :class="[datePrefixCls + \'-header-label\']" '+
                     '                   @click="showMonthPicker(\'right\')" '+
-                    '  v-show="rightCurrentView === \'date\'">{{ rightMonth + 1 }} 月</span> '+
+                    '  v-show="rightCurrentView === \'date\'">{{ rightMonth + 1 }} '+lang("gb.common.month1")+'</span> '+
                     ' <span '+
                     ' :class="iconBtnCls(\'next\', \'-double\')" '+
                     '                   @click="nextYear(\'right\')"><Icon type="ios-arrow-right"></Icon></span> '+
@@ -220,11 +221,11 @@ define(function(require) {
                     var year = this.leftTableYear;
                     if (!year) return '';
                     var startYear = Math.floor(year / 10) * 10;
-                    return startYear + '年' +'-'+ (startYear + 9) + '年';
+                    return startYear + this.$t('gb.common.year1') +'-'+ (startYear + 9) + this.$t('gb.common.year1');
                 } else {
                     var year = this.leftCurrentView === 'month' ? this.leftTableYear : this.leftYear;
                     if (!year) return '';
-                    return year+'年';
+                    return year+this.$t('gb.common.year1');
                 }
             },
             leftMonth :function() {
@@ -246,11 +247,11 @@ define(function(require) {
                     if (!year) return '';
                     var startYear = Math.floor(year / 10) * 10;
                     //return `${startYear}年 - ${startYear + 9}年`;
-                    return startYear + '年' +'-'+ (startYear + 9) + '年';
+                    return startYear + this.$t('gb.common.year1') +'-'+ (startYear + 9) + this.$t('gb.common.year1');
                 } else {
                     var year = this.rightCurrentView === 'month' ? this.rightTableYear : this.rightYear;
                     if (!year) return '';
-                    return year+'年';
+                    return year+this.$t('gb.common.year1');
                 }
             },
             rightMonth :function() {

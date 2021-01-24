@@ -1,6 +1,7 @@
 define(function(require) {
 
     var Vue = require("vue");
+    var lang = require("../utils/lang")
     /*
      serchFilterable:控制搜索是否显示 默认为false
      serchPlaceholder:搜索框的占位 默认为请输入搜索内容
@@ -70,7 +71,7 @@ define(function(require) {
             },
             serchPlaceholder: {
                 type: String,
-                'default': '请输入搜索内容'
+                'default': lang('gb.common.import.pesc')
             },
             dataQuery: {
                 type: String,

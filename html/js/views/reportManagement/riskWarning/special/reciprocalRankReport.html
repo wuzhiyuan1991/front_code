@@ -17,14 +17,15 @@
                 <iv-col span="5">
                     <el-form-item prop="dateRange" style="width:100%;overflow: inherit;">
                         <vi-date-picker type="daterange" :options="mainModel.datePickOpts"
-                            :value.sync="qryModel.dateRange" placeholder="选择日期范围" style="width:100%"></vi-date-picker>
+                            :value.sync="qryModel.dateRange" :placeholder="$t('gb.common.sdr')" style="width:100%">
+                        </vi-date-picker>
                     </el-form-item>
                 </iv-col>
                 <iv-col span="3">
                     <el-form-item prop="typeOfRange" style="width:100%;overflow: inherit;">
                         <i-select class="select-color" :model.sync="qryModel.typeOfRange" clearable
                             style="width:100%;font-size: 12px" v-ref:select :list="mainModel.typeOfRanges"
-                            placeholder="请选择对象范围" @on-change="changeTypeOfRange">
+                            :placeholder="$t('gb.common.psor')" @on-change="changeTypeOfRange">
                             <i-option v-for="item in mainModel.typeOfRanges" :value="item.value">{{ item.label }}
                             </i-option>
                         </i-select>
@@ -37,7 +38,7 @@
                     </el-form-item>
                 </iv-col>
                 <iv-col span="4" style="padding-top: 1px;">
-                    <iv-button @click="doQry()">查询</iv-button>
+                    <iv-button @click="doQry()">{{$t('gb.common.query')}}</iv-button>
                 </iv-col>
             </iv-row>
         </el-form>

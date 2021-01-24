@@ -60,7 +60,7 @@ define(function(require) {
                     type: [Array, Object],
                     default: ''
                 },
-                title: '选择人员'
+                title: this.$t('gb.common.title.per')
             },
             treeModel: {
                 data: [],
@@ -79,7 +79,7 @@ define(function(require) {
                     fieldName: "id",
                     fieldType: "cb"
                 }, {
-                    title: "员工姓名",
+                    title: this.$t('ri.bc.employeeName'),
                     fieldName: "username",
                     width: 120
                 },
@@ -97,7 +97,7 @@ define(function(require) {
 
                     // _.omit(LIB.tableMgr.column.dept, "filterType"),
                     {
-                        title: "岗位",
+                        title: this.$t('bs.orl.post'),
                         fieldType: "custom",
                         render: function (data) {
                             if (data.positionList) {
@@ -116,7 +116,7 @@ define(function(require) {
                     },
 
                     {
-                        title: "安全角色",
+                        title: this.$t('bc.hal.securityRole'),
                         fieldType: "custom",
                         render: function (data) {
                             if (data.positionList) {
@@ -145,7 +145,7 @@ define(function(require) {
                     LIB.tableMgr.ksColumn.cb,
                     {
                         //姓名
-                        title: "姓名",
+                        title: this.$t('bd.trm.fullName'),
                         fieldName: "name",
                         keywordFilterName: "criteria.strValue.keyWordValue_name",
                         width:70
@@ -158,7 +158,7 @@ define(function(require) {
                     //     width:60
                     // },
                     {
-                        title: "承包商",
+                        title: this.$t('ri.bc.contractor'),
                         fieldName: "contractor.deptName",
                         keywordFilterName: "criteria.strValue.keyWordValue_contractor_dept_name",
                     }]  ,
@@ -179,7 +179,7 @@ define(function(require) {
                     LIB.tableMgr.ksColumn.cb,
                     {
                         //姓名
-                        title: "承包商",
+                        title: this.$t('ri.bc.contractor'),
                         fieldName: "deptName",
                     },
                 ],
@@ -312,11 +312,11 @@ define(function(require) {
             },
             doSave: function() {
                 if (this.tableModel.selectedDatas.length === 0 && this.searchTreeleft != 3) {
-                    LIB.Msg.warning("请选择数据");
+                    LIB.Msg.warning(this.$t('gb.common.psd'));
                     return;
                 }
                 if (this.concatTableModel.selectedDatas.length===0 && this.searchTreeleft == 3) {
-                    LIB.Msg.warning("请选择数据");
+                    LIB.Msg.warning(this.$t('gb.common.psd'));
                     return;
                 }
                 this.visible = false;

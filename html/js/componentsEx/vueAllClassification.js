@@ -52,12 +52,12 @@ define(function (require) {
         '</div>' +
         '</div>' +
         '</div></div>' +
-        '</Poptip>' + '<style>'+
+        '</Poptip>' + '<style>' +
         '.showLinkColorA:hover>.showLinkColor{color:#33a6ff !important;}.showLinkColor:hover{color:#33a6ff !important;}'
-        +'</style>';
+        + '</style>';
     var opts = {
         template: temp,
-        components: {Poptip: Poptip},
+        components: { Poptip: Poptip },
         props: {
             //数据配置参数
             dataConfig: {
@@ -100,7 +100,7 @@ define(function (require) {
         data: function () {
             return {
                 // shuzu
-                orgIdList:[],
+                orgIdList: [],
 
                 //分类自定义数据源
                 model: {
@@ -357,7 +357,7 @@ define(function (require) {
                         var _this = this;
                         var resource = this.$resource(config.url);
                         resource.get().then(function (res) {
-                            config.data = [{name: "全部分类", children: _this.refreshModel(res.data)}];
+                            config.data = [{ name: "全部分类", children: _this.refreshModel(res.data) }];
                             _this.nodeChilditem = config.data;
                         });
                     } else {
@@ -438,9 +438,9 @@ define(function (require) {
                     this.showChildren(arr, 1);
                 } else {
                     //处理选中子节点
-                    if(!this.isCanSelectAll && arr.name=='所有公司'){
+                    if (!this.isCanSelectAll && arr.name == '所有公司') {
                         LIB.Msg.warning('不允许选择“所有公司”')
-                        return ;
+                        return;
                     }
                     this.Nodeval = [];
                     var topNodeId = null;
@@ -533,7 +533,7 @@ define(function (require) {
             },
             //显示分类列表事件
             doToggleCategory: function () {
-//				this.showCategory = !this.showCategory;
+                //				this.showCategory = !this.showCategory;
                 this.hideTrigger++;
             },
             //显示修改NODE值到输入框
@@ -680,23 +680,23 @@ define(function (require) {
 
                 var res = [],
                     found = false;
-                var _getNodeItems = function(items) {
+                var _getNodeItems = function (items) {
 
                     _.forEach(items, function (item) {
-                        if(found) {
+                        if (found) {
                             return false;
                         }
-                        if(item.id === id) {
+                        if (item.id === id) {
                             found = true;
                             res = item.children || [];
                             return false;
-                        } else if(_.isArray(item.children)) {
+                        } else if (_.isArray(item.children)) {
                             _getNodeItems(item.children);
                         }
                     });
                 };
 
-                if(id) {
+                if (id) {
                     _getNodeItems(this.tempTopCategory.data);
                     this.nodeChilditem = res;
                 } else {
@@ -716,21 +716,21 @@ define(function (require) {
             },
 
             //循环遍历
-            getObj:function (obj) {
+            getObj: function (obj) {
                 var _this = this;
                 var temp = null;
-                if(obj && obj.parentId){
+                if (obj && obj.parentId) {
                     _.each(_this.orgIdList, function (item) {
-                        if(item.id == obj.parentId){
+                        if (item.id == obj.parentId) {
                             temp = item;
                         }
                     })
                 }
-                if(temp){
-                    if(temp.disable == 1){
+                if (temp) {
+                    if (temp.disable == 1) {
                         return false;
                     }
-                    return  _this.getObj(temp);
+                    return _this.getObj(temp);
                 }
 
             }
@@ -743,7 +743,7 @@ define(function (require) {
             if (this.useDefaultCfg) {
                 this.dataConfig.title = this.dataConfig.title || defaultCfg.title;
                 if (this.dataConfig.config) {
-                    var result = _.findWhere(this.dataConfig.config, {type: "org"});
+                    var result = _.findWhere(this.dataConfig.config, { type: "org" });
                     if (!result) {
                         this.dataConfig.config.unshift(defaultCfg.config[0]);
                     }
@@ -784,7 +784,7 @@ define(function (require) {
                 // var defaultCfgData = defaultCfg.config[0].data;
                 var defaultCfgData = [];
                 var data = defaultCfg.config[0].data.orgList;
-                _.forEach(data,function (item) {
+                _.forEach(data, function (item) {
                     if (item.disable === '0' || item.parentId == undefined) {
                         defaultCfgData.push(item);
                     }
@@ -797,8 +797,8 @@ define(function (require) {
 
                 _this.orgIdList = data;
                 var arr = [];
-                for(var i=0; i<_this.model[0].data.length; i++){
-                    if(_this.getObj(_this.model[0].data[i]) != false){
+                for (var i = 0; i < _this.model[0].data.length; i++) {
+                    if (_this.getObj(_this.model[0].data[i]) != false) {
                         arr.push(_this.model[0].data[i])
                     }
                 }
@@ -839,8 +839,8 @@ define(function (require) {
             //左侧类别名称
             title: "组织机构",
             //数据源网址  请求优先
-//            url:"user/setting",
-//            data : require('lib').setting.orgList,
+            //            url:"user/setting",
+            //            data : require('lib').setting.orgList,
             type: "org"
         }]
     };

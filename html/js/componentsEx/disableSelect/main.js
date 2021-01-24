@@ -26,7 +26,7 @@ define(function (require) {
         },
         data: function () {
             return {
-                disableList: [{id: "0", name: "启用"}, {id: "1", name: "停用"}]
+                disableList: [{id: "0", name: this.$t('gb.common.enable')}, {id: "1", name: this.$t('gb.common.disable')}]
             }
         },
         computed: {

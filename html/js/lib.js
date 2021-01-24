@@ -3,9 +3,7 @@ define(function (require) {
     // 是否开启两重大以重点
     // window.enableMajorRiskSource = true;
 
-    var BASE = require('base'),
-        CONST = require('const');
-
+    var BASE = require('base');
     var Vue = require("vue");
     var VueRouter = require("vueRouter");
     //上传工具类
@@ -20,8 +18,8 @@ define(function (require) {
     var spinHelper = require("components/iviewSpinHelper");
 
     var artTemplate = require('artTempalte');
-
-
+    
+    var lang = require('./tools/lang')
 
 
 
@@ -41,7 +39,13 @@ define(function (require) {
 
     var formRuleMgr = {
         require: function (_name) {
-            return { required: true, message: '请输入' + _name };
+
+            if(window.localStorage.lang==='en'){
+                return { required: true, message: lang('gb.common.pleaseInput')+' ' + _name };
+            }else{
+                return { required: true, message: lang('gb.common.pleaseInput') + _name };
+            }
+
         },
         rangePositiveDecimal: function (_scale, _max, min) {
             var re = /(^$)|(^-?[1-9](\d+)?(\.\d{1,2})?$)|(^[0]$)|(^-?\d\.\d{1,2}?$)/;
@@ -1058,10 +1062,12 @@ define(function (require) {
             }
             return val;
         },
+        // 一些页面无法使用$t,所以用这个方法
         lang: function (val) {
-            var i18n = JSON.parse(window.localStorage.i18n)
+            var i18n = BASE.i18nLang
             return i18n[_.findIndex(i18n, function (o) { return o.code == val; })].zhValue
         }
+        // 一些页面无法使用$t,所以用这个方法
     };
 
     _.extend(LIB, LIB_BASE);
@@ -1175,7 +1181,7 @@ define(function (require) {
                 '$main-header-div-tag-download-excel': '<div class="uploadAport" @click="doExportExcel"><a>{{$t("gb.common.export")}}</a></div>',
                 '$main-header-condition-div-attr-default': 'span="20"',
                 '$main-header-func-div-attr-default': 'span="4"',
-                '$main-header-dropdown-item-tag-common-display': '<iv-dropdown-item><div class="uploadAport" @click="refreshMainTableData"><a>刷新</a></div></iv-dropdown-item>',
+                '$main-header-dropdown-item-tag-common-display': '<iv-dropdown-item><div class="uploadAport" @click="refreshMainTableData"><a>{{this.$t("bc.ria.refresh")}}</a></div></iv-dropdown-item>',
                 '$main-header-refresh-button': '<Icon @click="refreshMainTableData" class="main-refresh-icon" type="refresh"></Icon>'
             };
             _.extend(data, dfCfg);

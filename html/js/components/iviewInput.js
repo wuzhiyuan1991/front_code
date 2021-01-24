@@ -275,7 +275,7 @@ define(function(require) {
         },
         ready:function(){
             if(_.isEmpty(this.placeholder)&& !this.disabled){
-                this.placeholder="请输入";
+                this.placeholder=this.$t('gb.common.pleaseInput');
             }
             //if(this.textonly==true && this.placeholder=="请输入"){
             //    this.placeholder="";

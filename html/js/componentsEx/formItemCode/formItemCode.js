@@ -35,9 +35,9 @@ define(function (require) {
         computed: {
             placeholder: function () {
                 if (!this.allowEmpty) {
-                    return '系统自动生成编码'
+                    return this.$t('gb.common.import.tsgca')
                 }
-                return '请输入'
+                return this.$t('gb.common.pleaseInput')
             },
             codeClass: function () {
                 if (this.allowEmpty) {

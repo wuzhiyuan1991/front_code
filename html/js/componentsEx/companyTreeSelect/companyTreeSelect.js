@@ -62,7 +62,7 @@ define(function (require) {
             },
             placeholder: {
                 type: String,
-                default: '请选择公司'
+                default: LIB.lang('bs.bac.sp.psc')
             }
         },
         watch: {

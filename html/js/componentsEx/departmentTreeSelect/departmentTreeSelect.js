@@ -8,7 +8,7 @@ define(function(require) {
 		':placement="placement"'+
 		':list="data"'+
 		'id-attr="id"'+
-        'placeholder="请选择部门"' +
+        ':placeholder="placeholder"'+ 
 		'display-attr="name"' +
 		':disabled="disabled"' +
 		'@on-clear-single-select="doClearSingleSelect"' +
@@ -138,7 +138,8 @@ define(function(require) {
 			return {
                 selectedDatas4Tree: [],
 				treeData: null,
-				defaultOpenLayer:2
+				defaultOpenLayer:2,
+				placeholder:LIB.lang('ri.bc.psd')
 			}
         },
 		methods: {

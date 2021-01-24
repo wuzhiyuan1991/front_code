@@ -1,9 +1,10 @@
 <div class="top-menu">
     <div class="header-menu-box" v-el:box>
-        <ul class="fc-color-picker" >
-            <li v-for="item in always" id="{{item.id}}"  @click="item.routerPath === '/home' && changePath(item, item.routerPath)" :class="classes(item)" >
+        <ul class="fc-color-picker">
+            <li v-for="item in always" id="{{item.id}}"
+                @click="item.routerPath === '/home' && changePath(item, item.routerPath)" :class="classes(item)">
                 <a v-if="item.routerPath === '/home'" @click="changePath(item, item.routerPath)"></a>
-                <a v-else  class="text-blue" @click="changePath(item, item.routerPath)">{{item.name}}</a>
+                <a v-else class="text-blue" @click="changePath(item, item.routerPath)">{{item.name}}</a>
             </li>
         </ul>
         <!--更多-->
@@ -11,45 +12,59 @@
             <iv-button type="text" icon="navicon-round"></iv-button>
             <!--<iv-button type="text">更多</iv-button>-->
             <iv-dropdown-menu slot="list" v-ref:dropdown>
-                <iv-dropdown-item v-for="item in notAlways" style="max-width:138px;" :id="item.id" @click="changePath(item)">
+                <iv-dropdown-item v-for="item in notAlways" style="max-width:138px;" :id="item.id"
+                    @click="changePath(item)">
                     <div class="menu-item-name" :class="classes(item)">{{item.name}}</div>
                 </iv-dropdown-item>
             </iv-dropdown-menu>
         </iv-dropdown>
     </div>
+
     <!--自定义设置-->
     <iv-button type="text" icon="android-settings" @click="doShowModal" style="font-size: 22px;"></iv-button>
+
+
+
     <!-- 下载按钮 -->
-    <div v-if="downNumber!=0" @click="sureDownLoad"
-    id="down-load"
-    style="height: 50px;
+    <div v-if="downNumber!=0" @click="sureDownLoad" id="down-load" style="height: 50px;
     position: relative;
     cursor: pointer;
     width: 30px;
     text-align: center;
     line-height: 50px;
     margin-top: 20px;">
-    <Icon type="android-download"style="font-size: 24px;"></Icon><span 
-    style=" color: red;
+        <Icon type="android-download" style="font-size: 24px;"></Icon><span style=" color: red;
     position: absolute;
     top: -13px;
     font-size: 12px;
-    left: 20px;">{{downNumber}}</span></div>
+    left: 20px;">{{downNumber}}</span>
+    </div>
+
+
+<div>
+ <iv-dropdown trigger="hover" class="select-lang-type">
+        <iv-button type="text">{{langValue}}</iv-button>
+        <iv-dropdown-menu slot="list" >
+            <iv-dropdown-item v-for="item in langDataList" @click="changeLangType(item.value)">
+                <div class="menu-item-name">{{item.label}}</div>
+            </iv-dropdown-item>
+        </iv-dropdown-menu>
+    </iv-dropdown>
 </div>
+   
+
+</div>
+
+
 
 <Modal v-if="show" :visible.sync="show" :title="title" :footer-hide="true" class="userSelectModal">
     <div class="edit-pop-container">
         <div class="epc-content" style="padding-top:0;">
             <div style="margin-bottom:10px;margin-top:10px;font-size: 14px;">鼠标左键拖拽调整次序</div>
             <ul class="sw-menu-box">
-                <li
-                        v-for="(index, item) in sortMenus"
-                        class="sw-menu-item"
-                        v-dragging="{ item : item, list : sortMenus, group : 'menu', key : item.id}"
-                        @dragend="doDragEnd(index)"
-                        @click="activeIndex = index"
-                        :class="{'bg-color': activeIndex==index}"
-                >
+                <li v-for="(index, item) in sortMenus" class="sw-menu-item"
+                    v-dragging="{ item : item, list : sortMenus, group : 'menu', key : item.id}"
+                    @dragend="doDragEnd(index)" @click="activeIndex = index" :class="{'bg-color': activeIndex==index}">
                     <span>{{item.name}}</span>
                     <div>
                         <a href="javascript:void(0);" @click="doUp(index)">
@@ -68,62 +83,88 @@
         </div>
     </div>
 </Modal>
-<Modal title="个人下载任务" v-if="isShow" :visible.sync="isShow" width="700" :footer-hide="true" >
+<Modal title="个人下载任务" v-if="isShow" :visible.sync="isShow" width="700" :footer-hide="true">
     <div class="down-load1">
         <div style=" height: 35px;background-color: #eaf0f5;position: relative;">
             <span style="position: absolute;    left: 20px;
-            top: 5px;" >注:清除下载记录后可以消除提醒角标</span>
+            top: 5px;">注:清除下载记录后可以消除提醒角标</span>
             <span style="position: absolute;
             right: 20px;
             top: 5px;
             font-size: 14px;
             color: #307cff;
             cursor: pointer;" @click='doRefresh'>刷新</span>
-         </div>
-         <div class="box1" style="height: 441px;">
-            <vue-bootstrap-table :columns="tableModel.columns" 
-            :show-pager="true" 
-            :page-size-opts="[10,20,50]"
-             :url="tableModel.url"
-             @on-click-cell="downLoad"
-             @on-del-row="doRemoveOpMaintSteps"
-              v-ref:table>
-</vue-bootstrap-table>
-         </div>
+        </div>
+        <div class="box1" style="height: 441px;">
+            <vue-bootstrap-table :columns="tableModel.columns" :show-pager="true" :page-size-opts="[10,20,50]"
+                :url="tableModel.url" @on-click-cell="downLoad" @on-del-row="doRemoveOpMaintSteps" v-ref:table>
+            </vue-bootstrap-table>
+        </div>
         <div class="epc-footer" style="border-top:none;">
             <vi-button type="primary" @click="doClose1" class="pull-right">关闭</vi-button>
         </div>
     </div>
 </Modal>
 <style>
-  
-.down-load1 .table tbody tr{
-    height: 35px ;
-}
-.down-load1 .table-scroll-main-body{
-    border-left: 1px solid #cecfcf;
-    border-right: 1px solid #cecfcf;
-    border-bottom: 1px solid #cecfcf;
-   
-}
-.down-load1 .table-scroll-main-header{
-    border-left: 1px solid #cecfcf;
-    border-right: 1px solid #cecfcf;
-    border-top: 1px solid #cecfcf;
-   
-}
-.down-load1 .table-panel-footer{
-    border-bottom: 1px solid #fff;
-    background-color: #eaf0f5 ;
-}
-.down-load1 .table-scroll-main{
-    padding-left: 20px ;
-    padding-right: 20px ;
-}  
-.down-load1 .table-scroll-main{
-    background-color: #eaf0f5 ;
-}
-.down-load1 .table-column-setting-icon{
-    background-color: #eaf0f5 ;
-}
+    .down-load1 .table tbody tr {
+        height: 35px;
+    }
+
+    .down-load1 .table-scroll-main-body {
+        border-left: 1px solid #cecfcf;
+        border-right: 1px solid #cecfcf;
+        border-bottom: 1px solid #cecfcf;
+
+    }
+
+    .down-load1 .table-scroll-main-header {
+        border-left: 1px solid #cecfcf;
+        border-right: 1px solid #cecfcf;
+        border-top: 1px solid #cecfcf;
+
+    }
+
+    .down-load1 .table-panel-footer {
+        border-bottom: 1px solid #fff;
+        background-color: #eaf0f5;
+    }
+
+    .down-load1 .table-scroll-main {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .down-load1 .table-scroll-main {
+        background-color: #eaf0f5;
+    }
+
+    .down-load1 .table-column-setting-icon {
+        background-color: #eaf0f5;
+    }
+
+    /* 语言选择 */
+
+    .select-lang-type .ivu-btn-text {
+        font-size: 12px;
+        padding: 0px;
+        margin-left: -6px;
+    }
+
+    .select-lang-type .ivu-select-dropdown {
+        top: 60px !important;
+    }
+
+    .select-lang-type .ivu-select-dropdown .ivu-dropdown-menu {
+        width: 100px !important;
+    }
+
+    .select-lang-type .ivu-select-dropdown .ivu-dropdown-menu .ivu-dropdown-item {
+        font-size: 14px;
+    }
+
+    .select-lang-type .ivu-select-dropdown .ivu-dropdown-menu .ivu-dropdown-item:hover {
+        color: #56b5ff;
+    }
+
+    /* 语言选择 */
 </style>

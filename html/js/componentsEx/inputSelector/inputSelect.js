@@ -45,7 +45,7 @@ define(function (require) {
             },
             placeholder: {
                 type: String,
-                default: '请选择'
+                default: LIB.lang('gb.common.pleaseSelect')
             }
         },
         computed: {

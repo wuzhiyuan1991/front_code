@@ -526,7 +526,8 @@
             <ul class="version-list">
                 <li v-for="version in versions" class="version-item">
                     <div class="version-item-header">
-                        <div>版本 Ver. {{version.serialNo}} <span v-show="version.date">（{{version.date}}）</span></div>
+                        <div>{{$t('bs.bac.edit')}} Ver. {{version.serialNo}} <span
+                                v-show="version.date">（{{version.date}}）</span></div>
                         <div @click="version.show = !version.show" class="version-item-icon">
                             <Icon :type="version.show ? 'chevron-up' : 'chevron-down'"></Icon>
                         </div>

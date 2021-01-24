@@ -9,57 +9,58 @@ define(function (require) {
 
     var types = [{
             id: '1',
-            name: '属&nbsp;&nbsp;&nbsp;&nbsp;地'
+            // name: '属&nbsp;&nbsp;&nbsp;&nbsp;地'
+            name: LIB.lang('ri.bf.territory')
         },
         {
             id: '2',
-            name: '设备设施'
+            name: LIB.lang('gb.common.equipmentAndFacilities')
         },
         {
             id: '1002',
-            name: '重点化学品'
+            name: LIB.lang('ri.bf.kc')
         },
         {
             id: '1003',
-            name: '重点化学工艺'
+            name: LIB.lang('ri.bf.kcp')
         },
         {
             id: '1001',
-            name: '重大危险源'
+            name: LIB.lang('ri.bf.mhi')
         },
         {
             id: '4',
-            name: '属地标签'
+            name: LIB.lang('ri.bc.tl')
         },
     ];
 
     var checkObjTypes = [{
             id: '0',
-            name: '全部'
+            name:  LIB.lang('gb.common.whole')
         },
         {
             id: '1',
-            name: '作业活动'
+            name: LIB.lang('ri.bc.operation')
         },
         {
             id: '2',
-            name: '设备设施'
+            name: LIB.lang('gb.common.equipmentAndFacilities')
         },
         {
             id: '3',
-            name: '物品材料'
+            name: LIB.lang('ri.bc.itemm')
         },
         {
             id: '4',
-            name: '遵法合规'
+            name: LIB.lang('ri.bc.legalc')
         },
         {
             id: '5',
-            name: '作业环境'
+            name: LIB.lang('ri.bc.worke')
         },
         {
             id: '6',
-            name: '通用'
+            name: LIB.lang('bs.bac.sp.currency')
         }
     ];
 
@@ -70,12 +71,12 @@ define(function (require) {
         },
         {
             //名称
-            title: "属地名称",
+            title: LIB.lang('ri.bc.tn'), 
             fieldName: "name",
             keywordFilterName: "criteria.strValue.keyWordValue_name"
         },
         {
-            title: "所属公司",
+            title: LIB.lang('gb.common.ownedComp'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.compId) {
@@ -85,7 +86,7 @@ define(function (require) {
             keywordFilterName: "criteria.strValue.keyWordValue_comp"
         },
         {
-            title: "所属部门",
+            title: LIB.lang('gb.common.ownedDept'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.orgId) {
@@ -103,17 +104,17 @@ define(function (require) {
         },
         {
             //名称
-            title: "设备名称",
+            title: LIB.lang('ri.bc.equipmentn'),
             fieldName: "name",
             keywordFilterName: "criteria.strValue.keyWordValue_name"
         },
         {
-            title: "属地",
+            title: LIB.lang('ri.bf.territory'), 
             fieldName: "dominationArea.name",
             keywordFilterName: "criteria.strValue.keyWordValue_dominationArea_name"
         },
         {
-            title: "所属公司",
+            title: LIB.lang('gb.common.ownedComp'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.compId) {
@@ -123,7 +124,7 @@ define(function (require) {
             keywordFilterName: "criteria.strValue.keyWordValue_comp"
         },
         {
-            title: "所属部门",
+            title: LIB.lang('gb.common.ownedDept'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.orgId) {
@@ -141,17 +142,17 @@ define(function (require) {
         },
         {
             //名称
-            title: "化学品名称",
+            title: LIB.lang('ri.bc.chemicaln'), 
             fieldName: "name",
             keywordFilterName: "criteria.strValue.keyWordValue_name"
         },
         {
-            title: "属地",
+            title: LIB.lang('ri.bf.territory'), 
             fieldName: "dominationArea.name",
             keywordFilterName: "criteria.strValue.keyWordValue_dominationArea_name"
         },
         {
-            title: "所属公司",
+            title: LIB.lang('gb.common.ownedComp'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.compId) {
@@ -161,7 +162,7 @@ define(function (require) {
             keywordFilterName: "criteria.strValue.keyWordValue_comp"
         },
         {
-            title: "所属部门",
+            title: LIB.lang('gb.common.ownedDept'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.orgId) {
@@ -179,17 +180,17 @@ define(function (require) {
         },
         {
             //名称
-            title: "重大危险源",
+            title: LIB.lang('ri.bf.mhi'),  
             fieldName: "name",
             keywordFilterName: "criteria.strValue.keyWordValue_name"
         },
         {
-            title: "属地",
+            title: LIB.lang('ri.bf.territory'), 
             fieldName: "dominationArea.name",
             keywordFilterName: "criteria.strValue.keyWordValue_dominationArea_name"
         },
         {
-            title: "所属公司",
+            title: LIB.lang('gb.common.ownedComp'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.compId) {
@@ -199,7 +200,7 @@ define(function (require) {
             keywordFilterName: "criteria.strValue.keyWordValue_comp"
         },
         {
-            title: "所属部门",
+            title: LIB.lang('gb.common.ownedDept'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.orgId) {
@@ -217,17 +218,17 @@ define(function (require) {
         },
         {
             //名称
-            title: "重大化学工艺名称",
+            title: LIB.lang('ri.bc.nomcp'),  
             fieldName: "name",
             keywordFilterName: "criteria.strValue.keyWordValue_name"
         },
         {
-            title: "属地",
+            title: LIB.lang('ri.bf.territory'), 
             fieldName: "dominationArea.name",
             keywordFilterName: "criteria.strValue.keyWordValue_dominationArea_name"
         },
         {
-            title: "所属公司",
+            title: LIB.lang('gb.common.ownedComp'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.compId) {
@@ -237,7 +238,7 @@ define(function (require) {
             keywordFilterName: "criteria.strValue.keyWordValue_comp"
         },
         {
-            title: "所属部门",
+            title: LIB.lang('gb.common.ownedDept'), 
             fieldType: "custom",
             render: function (data) {
                 if (data.orgId) {
@@ -260,7 +261,7 @@ define(function (require) {
             fieldType: "cb",
         },
         {
-            title: "检查表",
+            title: LIB.lang('bd.hal.checkList'),
             fieldName: "name"
             // fieldType: "link",
             // pathCode: LIB.ModuleCode.BD_HaI_CheL,
@@ -273,7 +274,7 @@ define(function (require) {
             fieldType: "radio"
         },
         {
-            title: "属地",
+            title: LIB.lang('ri.bf.territory'), 
             fieldName: "name",
             keywordFilterName: "name"
         },
@@ -301,7 +302,7 @@ define(function (require) {
 
     var defaultModel = {
         mainModel: {
-            title: '选择检查表',
+            title: LIB.lang('gb.common.import.sc'),
             vo: newVO,
             selectedDatas: []
         },
@@ -1022,10 +1023,10 @@ define(function (require) {
             doSave: function () {
 
                 if (this.mainModel.selectedDatas.length === 0) {
-                    return LIB.Msg.warning("请选择检查对象");
+                    return LIB.Msg.warning(LIB.lang('gb.common.import.pstio'));
                 }
                 if (this.checkTableModel.selectedDatas.length === 0) {
-                    return LIB.Msg.warning("请选择检查表");
+                    return LIB.Msg.warning(LIB.lang('ri.bc.psac'));
                 }
                 this.$emit("do-save", {
                     checkObj: this.mainModel.selectedDatas,

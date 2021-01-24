@@ -1,34 +1,34 @@
-define(function(require) {	
+define(function (require) {
 
-	var Vue = require("vue");
+    var Vue = require("vue");
     var iOption = require("../select/iviewOption");
     var iSelect = require("../select/iviewSelect");
-	
 
-	
-	var template = '<div v-if="showSizer || showElevator" :class="optsClasses">'+
-					        '<div v-if="showSizer" :class="sizerClasses">'+
-					    '<i-select :model.sync="pageSize" @on-change="changeSize" :placement="placement">'+
-					        '<i-option v-for="item in pageSizeOpts" :value="item" style="text-align:center;">{{ item }} 条/页</i-option>'+
-					    '</i-select>'+
-					'</div>'+
-					'<div v-if="showElevator" :class="ElevatorClasses">'+
-					    '跳至'+
-					    '<input type="text" :value="_current" @keyup.enter="changePage">'+
-					    '页'+
-					'</div>'+
-					'</div>';
-			     
-			     
-	var prefixCls = 'ivu-page';
 
-	function isValueNumber (value) {
+
+    var template = '<div v-if="showSizer || showElevator" :class="optsClasses">' +
+        '<div v-if="showSizer" :class="sizerClasses">' +
+        '<i-select :model.sync="pageSize" @on-change="changeSize" :placement="placement">' +
+        '<i-option v-for="item in pageSizeOpts" :value="item" style="text-align:center;">{{ item + " " + $t("gb.common.strip") + "/" +  $t("gb.common.page") }}</i-option>' +
+        '</i-select>' +
+        '</div>' +
+        '<div v-if="showElevator" :class="ElevatorClasses">' +
+        '$t("gb.common.jumpTo")' +
+        '<input type="text" :value="_current" @keyup.enter="changePage">' +
+        '$t("gb.common.gb.common.page")' +
+        '</div>' +
+        '</div>';
+
+
+    var prefixCls = 'ivu-page';
+
+    function isValueNumber(value) {
         return (/^[1-9][0-9]*$/).test(value + '');
     }
-	
-	var opts = {
-		template :  template,
-		components: { iOption:iSelect, iSelect:iOption },
+
+    var opts = {
+        template: template,
+        components: { iOption: iSelect, iSelect: iOption },
         props: {
             placement: {
                 type: String,
@@ -43,27 +43,27 @@ define(function(require) {
             allPages: Number
         },
         computed: {
-            optsClasses : function() {
+            optsClasses: function () {
                 return [
                     prefixCls + '-options'
                 ]
             },
-            sizerClasses : function() {
+            sizerClasses: function () {
                 return [
                     prefixCls + '-options-sizer'
                 ]
             },
-            ElevatorClasses : function() {
+            ElevatorClasses: function () {
                 return [
                     prefixCls + '-options-elevator'
                 ]
             }
         },
         methods: {
-            changeSize : function() {
+            changeSize: function () {
                 this.$emit('on-size', this.pageSize);
             },
-            changePage : function(event) {
+            changePage: function (event) {
                 var val = event.target.value.trim();
                 var page = 0;
 
@@ -88,10 +88,10 @@ define(function(require) {
                 }
             }
         }
-	};
-	
-	
-	var component = Vue.extend(opts);
-	Vue.component('options', component);
-    
+    };
+
+
+    var component = Vue.extend(opts);
+    Vue.component('options', component);
+
 });

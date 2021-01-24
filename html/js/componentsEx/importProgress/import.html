@@ -2,55 +2,46 @@
     <div class="epc-content">
 
         <div class="mb40">
-            <p class="title">1.请根据数据模板准备好需要导入的数据。</p>
+            <p class="title">1.{{$t("gb.common.import.pptdtbiatdt")}}</p>
 
             <!--<div class="model"  :export-model-url="exportModelUrl"  :templete-url="templeteUrl"><a>下载数据模板</a></div>-->
             <div class="importButton">
-                <iv-button @click="doExportExcel" class="btn btn-default"  icon="ios-cloud-download-outline">下载数据模板</iv-button>
+                <iv-button @click="doExportExcel" class="btn btn-default" icon="ios-cloud-download-outline">
+                    {{$t("gb.common.import.ddt")}}</iv-button>
             </div>
-
             <div class="careful">
-                <p>注意事项：</p>
+                <p>{{$t("gb.common.import.mna")}}：</p>
                 <ul>
-                    <li>1.标题不可更改，标题栏不可删除</li>
-                    <li>2.字段顺序不可以更改，不需要的字段可以为空</li>
+                    <li>1.{{$t("gb.common.import.ttcbcattbcbd")}}</li>
+                    <li>2.{{$t("gb.common.import.focbc")}}</li>
                 </ul>
             </div>
             <div v-if="showHelperLink" style="padding-left: 30px;font-size: 14px;">
-                <a href="javascript:void(0);" @click="downloadHelperDocument" style="text-decoration: underline;" title="下载帮助说明">帮助说明</a>
+                <a href="javascript:void(0);" @click="downloadHelperDocument" style="text-decoration: underline;"
+                    title="下载帮助说明">{{$t("gb.common.import.helpNotes")}}</a>
             </div>
         </div>
 
         <div class="importButton">
-            <p class="title">2.请选择需要导入的文件：</p>
-            <vue-file-upload
-                    custom-style
-                    file-ext="xls,xlsx,zip"
-                    :multi-selection="false"
-                    :auto-upload="false"
-                    :url="url"
-                    :confirm-url="confirmUrl"
-                    :is-confirming="isConfirming"
-                    :events="events"
-                    :max-file-size="maxFileSize"
-                    @on-upload="doUpload"
-                    @on-success-upload="onUploadDone"
-                    @on-error-upload="onUploadError"
-                    @on-upload-complete="onUploadComplete"
-                    :params="params"
-                    v-ref:uploader
-            >
-                <iv-button class="btn btn-default" icon="ios-cloud-upload-outline">选择文件</iv-button>
+            <p class="title">2.{{$t("gb.common.import.pstfti")}}：</p>
+            <vue-file-upload custom-style file-ext="xls,xlsx,zip" :multi-selection="false" :auto-upload="false"
+                :url="url" :confirm-url="confirmUrl" :is-confirming="isConfirming" :events="events"
+                :max-file-size="maxFileSize" @on-upload="doUpload" @on-success-upload="onUploadDone"
+                @on-error-upload="onUploadError" @on-upload-complete="onUploadComplete" :params="params" v-ref:uploader>
+                <iv-button class="btn btn-default" icon="ios-cloud-upload-outline">{{$t("gb.common.import.selectFile")}}
+                </iv-button>
             </vue-file-upload>
 
             <div v-for="item in uploadData" style="margin-top: 20px;color: blue;font-size: 14px;">{{item.name}}</div>
 
-            <div  v-if="isShowImportMode" style="margin-top: 16px;">
-                <p class="title" style="margin-bottom: 4px;">3.请选择导入数据处理的方式:</p>
+            <div v-if="isShowImportMode" style="margin-top: 16px;">
+                <p class="title" style="margin-bottom: 4px;">3.{{$t("gb.common.import.pstwtp")}}:</p>
                 <iv-radio-group :model.sync="params.importType">
-                    <iv-radio value="1"><span> 新增操作</span></iv-radio><span style="color:#999;">{{createDrection}}</span>
+                    <iv-radio value="1"><span> {{$t("gb.common.import.newOperation")}}</span></iv-radio><span
+                        style="color:#999;">{{createDrection}}</span>
                     <br>
-                    <iv-radio value="2"><span> 更新操作</span></iv-radio><span style="color:#999;">{{updateDrection}}</span>
+                    <iv-radio value="2"><span> {{$t("gb.common.import.updateOperation")}}</span></iv-radio><span
+                        style="color:#999;">{{updateDrection}}</span>
                 </iv-radio-group>
             </div>
 
@@ -58,9 +49,9 @@
 
     </div>
     <div class="epc-footer">
-        <vi-button type="primary" @click="importing" class="pull-right importProgress">导入</vi-button>
+        <vi-button type="primary" @click="importing" class="pull-right importProgress">{{$t('gb.common.import')}}
+        </vi-button>
     </div>
 </div>
 
 <importingComponent :init-fun="initFun" :visible.sync="showImportingModal"></importingComponent>
-

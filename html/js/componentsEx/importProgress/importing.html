@@ -1,4 +1,4 @@
-<Modal :visible.sync="visible" title="导入" width="520" :footer-hide="true">
+<Modal :visible.sync="visible" :title="$t('gb.common.import')" width="520" :footer-hide="true">
     <div class="edit-pop-container">
         <div class="epc-content">
 
@@ -7,29 +7,29 @@
             </div>
 
             <div v-show="!bar.done">
-                <p style="line-height: 30px;margin-top: 10px;">数据正在导入中...</p>
+                <p style="line-height: 30px;margin-top: 10px;">{{$t(""gb.common.import.ing")}}</p>
                 <div style="background: #fff;padding: 15px;">
-                    <p>提示：</p>
-                    <p>1.如果导入数据过多，您可以收起该窗口、进行其他操作。</p>
+                    <p>{{$t("gb.common.tips")}}：</p>
+                    <p>1.{{$t("gb.common.import.other")}}</p>
                 </div>
             </div>
 
             <div v-show="bar.done">
                 <div v-show="hasError">
-                    <p style="line-height: 30px;margin-top: 10px;">失败原因:</p>
+                    <p style="line-height: 30px;margin-top: 10px;">{{$t("gb.common.import.rff")}}:</p>
                     <div style="background: #fff;max-height: 282px;overflow: auto;padding: 15px;">
                         <p v-for="item in rs">{{item}}</p>
                     </div>
                 </div>
 
-                <div v-show="!hasError"><p>导入成功!</p></div>
+                <div v-show="!hasError"><p>{{$t("gb.common.import.importSucceeded")}}!</p></div>
             </div>
 
         </div>
 
         <div class="epc-footer">
-            <iv-button type="primary" class="pull-right" v-show="!bar.done" @click="doHide">收起</iv-button>
-            <iv-button type="primary" class="pull-right" v-show="bar.done" @click="doClose">关闭</iv-button>
+            <iv-button type="primary" class="pull-right" v-show="!bar.done" @click="doHide">{{$t("bc.ria.packU")}}</iv-button>
+            <iv-button type="primary" class="pull-right" v-show="bar.done" @click="doClose">{{$t("gb.common.close")}}</iv-button>
         </div>
 
     </div>
