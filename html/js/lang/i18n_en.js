@@ -5093,6 +5093,69 @@ define(function (require) {
     { code: "ri.bc.ctv", zhValue: "cancel the veto" },
     { code: "ri.bc.stv", zhValue: "set to veto" },
     { code: "ri.bc.psat", zhValue: "please select a territory" },
+    { code: "hd.bc.publisher", zhValue: "publisher" },
+    { code: "hd.bc.if", zhValue: "inspection frequency" },
+
+    { code: "hd.bc.oudc", zhValue: "Only unpublished data can be edited" },
+    { code: "hd.bc.oopo", zhValue: "Only one piece of data can be deleted at a time" },
+    { code: "hd.bc.utbp", zhValue: "Unable to batch publish data" },
+    { code: "hd.bc.pap", zhValue: "Only unpublished data can be published" },
+    { code: "hd.bc.psd", zhValue: "Please add people" },
+    { code: "hd.bc.scbp", zhValue: "Publish selected data?" },
+    { code: "hd.bc.iscb", zhValue: "[published] status cannot be published, please re select!" },
+    { code: "hd.bc.iscb", zhValue: "Invalid status cannot be published, please re select!" },
+    { code: "hd.bc.published", zhValue: "published" },
+    { code: "hd.bc.invalid", zhValue: "invalid" },
+    { code: "hd.bc.isd", zhValue: "Invalid selected data" },
+    { code: "hd.bc.scbi", zhValue: "[unpublished] status cannot be invalid, please re select!" },
+    { code: "hd.bc.scbi", zhValue: "Invalid status cannot be invalid, please select again!" },
+    { code: "hd.bc.peyc", zhValue: "please enter your comments" },
+    { code: "hd.bc.ef", zhValue: "execution frequency" },
+    { code: "hd.bc.isas", zhValue: "including Saturday and Sunday" },
+    { code: "hd.bc.esas", zhValue: "Excluding Saturdays and Sundays" },
+    { code: "hd.bc.executeOnce", zhValue: "Execute once" },
+    { code: "hd.bc.exmt", zhValue: "execute more than once" },
+    { code: "hd.bc.interval", zhValue: "interval" },
+    { code: "hd.bc.everyone", zhValue: "everyone" },
+    { code: "hd.bc.tom", zhValue: "task or mode" },
+    { code: "gb.common.switch", zhValue: "switch" },
+    { code: "gb.common.pSelectDate", zhValue: "please select date" },
+    { code: "hd.bc.planName", zhValue: "plan name" },
+    { code: "hd.bc.etmbgtst", zhValue: "end time must be greater than start time" },
+    { code: "hd.bc.stmbgtct", zhValue: "start time must be greater than current time" },
+    { code: "hd.bc.frequencySetting", zhValue: "frequency setting" },
+    { code: "hd.bc.pdfs", zhValue: "Please add frequency setting" },
+    { code: "hd.bc.tiaifs", zhValue: "there is an incomplete frequency setting" },
+    { code: "hd.bc.wtftid", zhValue: "when the frequency type is day, the time span of single setting cannot exceed one day" },
+    { code: "hd.bc.tstoef", zhValue: "the start time of each frequency setting must be less than the end time" },
+    { code: "hd.bc.ttsbdfcc", zhValue: "the time set by different frequencies cannot cross " },
+    { code: "hd.bc.wtiuim30", zhValue: "when the interval unit is minutes, the interval must be > = 30" },
+    { code: "hd.bc.wtiuih1", zhValue: "when the interval unit is hour, the interval must be > = 1" },
+    { code: "hd.bc.imb1", zhValue: "interval must be > = 1" },
+    { code: "hd.bc.peaimbai", zhValue: "please enter an interval, and the interval must be an integer" },
+    { code: "hd.bc.customFrequency", zhValue: "custom frequency" },
+    { code: "gb.common.custom", zhValue: "custom " },
+    { code: "gb.common.unexpired", zhValue: "unexpired" },
+    { code: "gb.common.toBeExecuted", zhValue: "to be executed" },
+    { code: "gb.common.onSchedule", zhValue: "on schedule" },
+    { code: "gb.common.notImplemented", zhValue: "not implemented" },
+    { code: "hd.bc.eProcess", zhvalue: "equipment process" },
+    { code: "hd.bc.selfControl", zhvalue: "self control" },
+    { code: "hd.bc.communication", zhvalue: "communication" },
+    { code: "hd.bc.compressor", zhvalue: "compressor" },
+    { code: "hd.bc.saep", zhvalue: "safety and environmental protection" },
+    { code: "hd.bc.productionRun", zhvalue: "production run" },
+    { code: "hd.bc.financialAssets", zhvalue: "financial assets" },
+    { code: "hd.bc.comprehensive", zhvalue: "comprehensive" },
+    { code: "hd.bc.politicalWork", zhvalue: "political work" },
+    { code: "hd.bc.electrical", zhvalue: "electrical" },
+    { code: "hd.bc.line", zhvalue: "line" },
+    { code: "hd.bc.anticorrosion", zhvalue: "anticorrosion" },
+    { code: "hd.bc.ctsn", zhValue: "check task serial number" },
+    { code: "hd.bc.planExecutor", zhValue: "plan executor" },
+    { code: "hd.bc.pspt", zhValue: "please select plan type" },
+    { code: "gb.common.tct", zhValue: "task completion time" },
+    { code: "hd.bc.actualExecutor", zhValue: "actual executor" },
 
 
 
@@ -5105,7 +5168,15 @@ define(function (require) {
 
 
 
-    
+
+
+
+
+
+
+
+
+
 
 
 

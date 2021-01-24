@@ -1,7 +1,7 @@
 <div :class="classes" v-clickoutside="handleClose" class="datepicker_main" style="overflow:visible">
     <div class="ivu-select-selection ivu-input-customize" v-el:reference @click="toggleMenu($event)" >
         <input type="hidden" v-model="selectedDate">
-        <iv-input icon="clock" placeholder="请选择日期" :value.sync="selectedTime" readonly></iv-input>
+        <iv-input icon="clock" :placeholder="$t('gb.common.pSelectDate')" :value.sync="selectedTime" readonly></iv-input>
         <Icon type="ios-close" style="margin-top: 0;" class="ivu-input-customize-ico" v-show="showCloseIcon" @click.stop="clean"></Icon>
     </div>
     <Dropdown v-show="visible" :placement="placement" v-ref:dropdown>

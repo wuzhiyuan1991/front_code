@@ -101,7 +101,7 @@ define(function (require) {
             common: { //新增和详情
                 isNoRepeat: true, //选择执行一次
                 isRepeat: false, //执行多次
-                frequencyName: '频率设置', //根据执行频率显示频率选项
+                frequencyName: LIB.lang('hd.bc.frequencySetting'), //根据执行频率显示频率选项
             },
             add: { //新增
                 isWeekendInculedFlag: true, //是否包含周六日
@@ -564,10 +564,10 @@ define(function (require) {
                 "code": [LIB.formRuleMgr.require(""),
                     LIB.formRuleMgr.length()
                 ],
-                "name": [LIB.formRuleMgr.require("计划名"),
+                "name": [LIB.formRuleMgr.require(LIB.lang('hd.bc.planName')),
                     LIB.formRuleMgr.length()
                 ],
-                "endDate": [LIB.formRuleMgr.require("结束时间"),
+                "endDate": [LIB.formRuleMgr.require(LIB.lang('gb.common.endTime')),
                     LIB.formRuleMgr.length(),
                     {
                         validator: function (rule, value, callback) {
@@ -576,116 +576,116 @@ define(function (require) {
                             //     return callback(new Error('结束时间必须大于当前时间'))
                             // }
                             if (dataModel.mainModel.vo.startDate && value < dataModel.mainModel.vo.startDate) {
-                                return callback(new Error('结束时间必须大于开始时间'))
+                                return callback(new Error(LIB.lang('hd.bc.etmbgtst')))
                             }
                             return callback();
                         }
                     }
                 ],
-                "startDate": [LIB.formRuleMgr.require("开始时间"),
+                "startDate": [LIB.formRuleMgr.require(LIB.lang('gb.common.startTime')),
                     LIB.formRuleMgr.length(),
                     {
                         validator: function (rule, value, callback) {
                             var currentDate = new Date().Format("yyyy-MM-dd 00:00:00");
-                            return value < currentDate ? callback(new Error('开始时间必须大于当前时间')) : callback();
+                            return value < currentDate ? callback(new Error(LIB.lang('hd.bc.stmbgtct'))) : callback();
                         }
                     }
                 ],
                 "compId": [{
                     required: true,
-                    message: '请选择所属公司'
+                    message: LIB.lang('ri.bc.psyc')
                 }, LIB.formRuleMgr.length()],
                 "orgId": [{
                     required: true,
-                    message: '请选择所属部门'
+                    message: LIB.lang('ri.bc.psyd')
                 }, LIB.formRuleMgr.length()],
                 "checkLevel": [{
                     required: true,
-                    message: '请选择检查级别'
-                }, LIB.formRuleMgr.length()],
-                "specialty": [LIB.formRuleMgr.require("专业"), LIB.formRuleMgr.length()],
-                "checkType": [LIB.formRuleMgr.require("类型"), LIB.formRuleMgr.length()],
+                    message: LIB.lang('ri.bc.pscl') 
+                }, LIB.formRuleMgr.length()],  
+                "specialty": [LIB.formRuleMgr.require(LIB.lang('gb.common.profession')), LIB.formRuleMgr.length()],
+                "checkType": [LIB.formRuleMgr.require(LIB.lang('gb.common.type')), LIB.formRuleMgr.length()],
                 "disable": [LIB.formRuleMgr.length()],
                 "remarks": [LIB.formRuleMgr.length()],
                 "modifyDate": [LIB.formRuleMgr.length()],
                 "createDate": [LIB.formRuleMgr.length()],
                 "planType": [{
                     required: true,
-                    message: '请选择计划类型'
+                    message: LIB.lang('hd.bc.pspt')   
                 }, LIB.formRuleMgr.length()],
                 "checkTable.id": [{
                     required: true,
-                    message: '请选择检查表'
+                    message: LIB.lang('ri.bc.psac')    
                 }, LIB.formRuleMgr.length()]
             },
             //"0": "未到期", "1": "待执行", "2":"按期执行", "3":"超期执行","4":"未执行"};
             emptyRules: {},
             typeList: [{
-                name: '未到期',
+                name: LIB.lang('gb.common.unexpired'),
                 id: "0"
             }, {
-                name: '待执行',
+                name: LIB.lang('gb.common.toBeExecuted'),
                 id: "1"
             }, {
-                name: '按期执行',
+                name: LIB.lang('gb.common.onSchedule'),
                 id: "2"
             }, {
-                name: '超期执行',
+                name: LIB.lang('gb.common.overduee'),
                 id: "3"
             }, {
-                name: '未执行',
+                name: LIB.lang('gb.common.notImplemented'),
                 id: "4"
             }, {
-                name: '已失效',
+                name: LIB.lang('hd.bc.invalid'),
                 id: "5"
             }],
             specialtyList: [{
                     id: "1",
-                    name: "设备工艺"
+                    name: LIB.lang('hd.bc.eProcess')
                 },
                 {
                     id: "2",
-                    name: "自控"
+                    name: LIB.lang('hd.bc.selfControl')
                 },
                 {
                     id: "3",
-                    name: "通信"
+                    name: LIB.lang('hd.bc.communication')
                 },
                 {
                     id: "4",
-                    name: "压缩机"
+                    name: LIB.lang('hd.bc.compressor')
                 },
                 {
                     id: "5",
-                    name: "安全环保"
+                    name: LIB.lang('hd.bc.saep')
                 },
                 {
                     id: "6",
-                    name: "生产运行"
+                    name: LIB.lang('hd.bc.productionRun')
                 },
                 {
                     id: "7",
-                    name: "财务资产"
+                    name: LIB.lang('hd.bc.financialAssets')
                 },
                 {
                     id: "8",
-                    name: "综合"
+                    name: LIB.lang('hd.bc.comprehensive')
                 },
                 {
                     id: "9",
-                    name: "政工"
+                    name: LIB.lang('hd.bc.politicalWork')
                 },
                 {
                     id: "10",
-                    name: "电气"
+                    name: LIB.lang('hd.bc.electrical')
                 },
                 {
                     id: "11",
-                    name: "线路"
+                    name: LIB.lang('hd.bc.line')
                 },
                 {
                     id: "12",
-                    name: "防腐"
+                    name: LIB.lang('hd.bc.anticorrosion')
                 },
             ],
         },
@@ -693,13 +693,13 @@ define(function (require) {
             checkTaskTableModel: {
                 url: "checkplan/checktasks/list/{curPage}/{pageSize}",
                 columns: [{
-                    title: "检查任务序号",
+                    title: LIB.lang('hd.bc.ctsn'), 
                     width: 120,
                     render: function (data) {
                         return data.num + "." + data.childrenNum;
                     },
                 }, {
-                    title: "计划执行人",
+                    title: LIB.lang('hd.bc.planExecutor'),
                     width: 150,
                     tipRender: function (data) {
                         if (data.checkerNames) {
@@ -722,19 +722,19 @@ define(function (require) {
 
                     },
                 }, {
-                    title: "任务开始时间",
+                    title: LIB.lang('gb.common.taskStartTime'),
                     fieldName: "startDate",
                     width: 120
                 }, {
-                    title: "任务结束时间",
+                    title: LIB.lang('gb.common.taskEndTime'), 
                     fieldName: "endDate",
                     width: 120
                 }, {
-                    title: "任务完成时间",
+                    title:  LIB.lang('gb.common.tct'),  
                     fieldName: "checkDate",
                     width: 120
                 }, {
-                    title: "实际执行人",
+                    title: LIB.lang('hd.bc.actualExecutor'),   
                     fieldName: "checkUser.name",
                     visible: true,
                     render: function (data) {
@@ -745,7 +745,7 @@ define(function (require) {
                     },
                     width: 150
                 }, {
-                    title: "状态",
+                    title: LIB.lang('gb.common.state'),    
                     fieldType: "custom",
                     fieldName: "status",
                     render: function (data) {
@@ -761,13 +761,13 @@ define(function (require) {
             preCheckTaskTableModel: {
                 url: "checkplan/checktasks/view/{curPage}/{pageSize}",
                 columns: [{
-                    title: "检查任务序号",
+                    title: LIB.lang('hd.bc.ctsn'),  
                     render: function (data) {
                         return data.num + "." + data.childrenNum;
                     },
                     width: 120
                 }, {
-                    title: "执行人",
+                    title:LIB.lang('gb.common.Executor'),    
                     fieldName: "checkUser.name",
                     render: function (data) {
                         if (!!data.checkUser) {
@@ -778,19 +778,19 @@ define(function (require) {
                     },
                     width: 120
                 }, {
-                    title: "任务开始时间",
+                    title: LIB.lang('gb.common.taskStartTime'), 
                     fieldName: "startDate",
                     width: 200
                 }, {
-                    title: "任务结束时间",
+                    title: LIB.lang('gb.common.taskEndTime'),
                     fieldName: "endDate",
                     width: 200
                 }, {
-                    title: "任务完成时间",
+                    title: LIB.lang('gb.common.tct'), 
                     fieldName: "checkDate",
                     width: 200
                 }, {
-                    title: "状态",
+                    title: LIB.lang('gb.common.state'),  
                     fieldType: "custom",
                     fieldName: "status",
                     render: function (data) {
@@ -803,7 +803,7 @@ define(function (require) {
             userTableModel: {
                 url: "checkplan/users/list/{curPage}/{pageSize}",
                 columns: [{
-                        title: "姓名",
+                        title:  LIB.lang('bd.trm.fullName'),  
                         fieldName: "username",
                         width: 200
                     },
@@ -815,7 +815,7 @@ define(function (require) {
                         filterType: null
                     }),
                     {
-                        title: "手机",
+                        title: LIB.lang('das.oniu.mobile'), 
                         fieldName: "mobile",
                         width: 220
                     }, {
@@ -843,11 +843,11 @@ define(function (require) {
                         width: 70
                     },
                     {
-                        title: '检查对象',
+                        title: LIB.lang('ri.bc.io'),
                         fieldName: 'checkObjName'
                     },
                     {
-                        title: '检查表',
+                        title: LIB.lang('gb.common.check'),
                         fieldName: 'checkTableName'
                     },
                     {
@@ -918,22 +918,22 @@ define(function (require) {
         // showPlanType: false,
         // showSpecialty: false,
         tabs: [{
-            name: '未到期',
+            name: LIB.lang('gb.common.unexpired'),
             id: "0"
         }, {
-            name: '待执行',
+            name: LIB.lang('gb.common.toBeExecuted'),  
             id: "1"
         }, {
-            name: '按期执行',
+            name: LIB.lang('gb.common.onSchedule'),  
             id: "2"
         }, {
-            name: '超期执行',
+            name: LIB.lang('gb.common.overduee'),  
             id: "3"
         }, {
-            name: '未执行',
+            name: LIB.lang('gb.common.notImplemented'),  
             id: "4"
         }, {
-            name: '已失效',
+            name: LIB.lang('hd.bc.invalid'),  
             id: "5"
         }],
         timeSettingAction: {
@@ -1056,7 +1056,7 @@ define(function (require) {
                             timeSettings: _this.frequencyModel.planSetting.timeSettings
                         }
                         if (!_this.frequencyModel.planSetting.timeSettings || _this.frequencyModel.planSetting.timeSettings.length == 0) {
-                            LIB.Msg.warning("请添加频率设置");
+                            LIB.Msg.warning(LIB.lang('hd.bc.pdfs'));
                             return false;
                         }
                         var isCompleted = true; //时间设置是否填写完整
@@ -1134,15 +1134,15 @@ define(function (require) {
                             return start;
                         });
                         if (!isCompleted) {
-                            LIB.Msg.warning("有未填写完整的频率设置");
+                            LIB.Msg.warning(LIB.lang('hd.bc.tiaifs'));
                             return false;
                         }
                         if (isLongerThanDay) {
-                            LIB.Msg.warning("频率类型为天时，单条设置时间跨度不能超过一天");
+                            LIB.Msg.warning(LIB.lang('hd.bc.wtftid'));
                             return false;
                         }
                         if (!isStartBeforeEnd) {
-                            LIB.Msg.warning("每一条频率设置的起始时间必须小于结束时间");
+                            LIB.Msg.warning(LIB.lang('hd.bc.tstoef'));
                             return false;
                         }
                         //校验不同设置的时间是否交叉
@@ -1170,7 +1170,7 @@ define(function (require) {
                                 }
                             });
                             if (isCrossed) {
-                                LIB.Msg.warning("不同频率设置的时间不能交叉");
+                                LIB.Msg.warning(LIB.lang('hd.bc.ttsbdfcc'));
                                 return false;
                             }
                         }
@@ -1182,22 +1182,22 @@ define(function (require) {
                             if (parseInt(period) == period) {
                                 if (unit == 1) {
                                     if (period < 30) {
-                                        LIB.Msg.warning("间隔单位为分钟时，间隔时间必须>=30");
+                                        LIB.Msg.warning(LIB.lang('hd.bc.wtiuim30'));
                                         return;
                                     }
                                 } else if (unit == 2) {
                                     if (period < 1) {
-                                        LIB.Msg.warning("间隔单位为小时时，间隔时间必须>=1");
+                                        LIB.Msg.warning(LIB.lang('hd.bc.wtiuih1'));
                                         return;
                                     }
                                 } else {
                                     if (period < 1) {
-                                        LIB.Msg.warning("间隔时间必须>=1");
+                                        LIB.Msg.warning(LIB.lang('hd.bc.imb1'));
                                         return false;
                                     }
                                 }
                             } else {
-                                LIB.Msg.warning("请输入间隔，且间隔必须是整数");
+                                LIB.Msg.warning(LIB.lang('hd.bc.peaimbai'));
                                 return;
                             }
                             _vo.planSetting = {
@@ -1211,7 +1211,7 @@ define(function (require) {
                                 id: null
                             }
                         } else {
-                            LIB.Msg.warning("请输入间隔，且间隔必须是整数");
+                            LIB.Msg.warning(LIB.lang('hd.bc.peaimbai'));
                             return false;
                         }
                     }
@@ -1343,7 +1343,7 @@ define(function (require) {
                     }
                     if (_this.frequencyModel.planSetting.frequencyType == 1) {
                         _detail.frequencyTypeName = "天";
-                        _common.frequencyName = "频率设置";
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting');
                         _detail.definedTime = false;
                         if (_this.mainModel.vo.planSetting.isRepeatable == 1) {
                             _common.isRepeat = true;
@@ -1359,8 +1359,8 @@ define(function (require) {
                             _common.isNoRepeat = true;
                         }
                     } else if (_this.frequencyModel.planSetting.frequencyType == 5) {
-                        _detail.frequencyTypeName = "自定义";
-                        _common.frequencyName = "自定义频率";
+                        _detail.frequencyTypeName = LIB.lang('gb.common.custom');
+                        _common.frequencyName = LIB.lang('hd.bc.customFrequency');
                         _detail.definedTime = true;
                         _common.isNoRepeat = false;
                         if (_this.frequencyModel.planSetting.unit == 1) {
@@ -1383,25 +1383,25 @@ define(function (require) {
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "周";
-                        _common.frequencyName = "频率设置";
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting');
                     } else if (_this.frequencyModel.planSetting.frequencyType == 3) {
                         _detail.definedTime = false;
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "月";
-                        _common.frequencyName = "频率设置"
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting')
                     } else if (_this.frequencyModel.planSetting.frequencyType == 4) {
                         _detail.definedTime = false;
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "季";
-                        _common.frequencyName = "频率设置"
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting')
                     } else if (_this.frequencyModel.planSetting.frequencyType == 6) {
                         _detail.definedTime = false;
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "年";
-                        _common.frequencyName = "频率设置"
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting')
                     };
                 }
             },
@@ -1863,7 +1863,7 @@ define(function (require) {
                     //bug3963
                     // _this.frequencyModel.planSetting.unit = "1";
                 } else {
-                    _common.frequencyName = "频率设置";
+                    _common.frequencyName = LIB.lang('hd.bc.frequencySetting');
                     _add.isShowMy = false;
                     _add.isShowCommon = true;
                     _common.isNoRepeat = true;
@@ -2044,7 +2044,7 @@ define(function (require) {
                     };
                     if (_this.frequencyModel.planSetting.frequencyType == 1) {
                         _detail.frequencyTypeName = "天";
-                        _common.frequencyName = "频率设置";
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting');
                         _detail.definedTime = false;
                         if (_this.frequencyModel.planSetting.isRepeatable == 1) {
                             _common.isRepeat = true;
@@ -2084,25 +2084,25 @@ define(function (require) {
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "周";
-                        _common.frequencyName = "频率设置";
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting');
                     } else if (_this.frequencyModel.planSetting.frequencyType == 3) {
                         _detail.definedTime = false;
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "月";
-                        _common.frequencyName = "频率设置"
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting')
                     } else if (_this.frequencyModel.planSetting.frequencyType == 4) {
                         _detail.definedTime = false;
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "季";
-                        _common.frequencyName = "频率设置"
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting')
                     } else if (_this.frequencyModel.planSetting.frequencyType == 6) {
                         _detail.definedTime = false;
                         _common.isNoRepeat = true;
                         _common.isRepeat = false;
                         _detail.frequencyTypeName = "年";
-                        _common.frequencyName = "频率设置"
+                        _common.frequencyName = LIB.lang('hd.bc.frequencySetting')
                     }
                 }
             },

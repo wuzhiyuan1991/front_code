@@ -34,7 +34,7 @@
                     <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('edit')" @click="doUpdate">{{$t("gb.common.edition")}}</vi-button>
                     <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('publish')" @click="doPublish">{{$t("gb.common.release")}}</vi-button>
                     <vi-button v-if="hasAuth('copy')" type="text" class="mp-header-item-btn"
-                               @click="doAdd4Copy">复制
+                               @click="doAdd4Copy">{{$t("ori.rolm.copy")}}
                     </vi-button>
                     <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('delete')" @click="doDelete">{{$t("gb.common.del")}}</vi-button>
                     <vi-button type="text" class="mp-header-item-btn" v-if="hasAuth('invalid')" @click="doInvalid">{{$t("gb.common.invalid")}}</vi-button>

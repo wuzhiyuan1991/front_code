@@ -2727,9 +2727,9 @@ define(function (require) {
     { code: "ri.bc.wctttb", zhValue: "会导致清空属地并提交所有基本信息修改" },
     { code: "ri.bc.confirmO", zhValue: "确认操作" },
     { code: "ri.bc.asabim", zhValue: "并提交所有基本信息修改" },
-   
+
     { code: "gb.common.aysywtd", zhValue: "确定删除" },
-    
+
     { code: "ri.bc.dccic", zhValue: "删除当前检查项内容" },
     { code: "gb.common.moveSuccessfully", zhValue: "移动成功" },
     { code: "ri.bc.gncbe", zhValue: "分组名称不能为空" },
@@ -2748,8 +2748,94 @@ define(function (require) {
     { code: "ri.bc.ctv", zhValue: "取消该否决项" },
     { code: "ri.bc.stv", zhValue: "设置为否决项" },
     { code: "ri.bc.psat", zhValue: "请先选择属地" },
+    { code: "hd.bc.publisher", zhValue: "发布人" },
+    { code: "hd.bc.if", zhValue: "检查频率" },
 
-  
-    
+    { code: "hd.bc.oudc", zhValue: "只能编辑未发布的数据" },
+    { code: "hd.bc.oopo", zhValue: "一次只能删除一条数据" },
+    { code: "hd.bc.utbp", zhValue: "无法批量发布数据" },
+    { code: "hd.bc.pap", zhValue: "只能发布尚未发布的数据" },
+    { code: "hd.bc.psd", zhValue: "请添加人员" },
+    { code: "hd.bc.scbp", zhValue: "发布选中数据？" },
+    { code: "hd.bc.iscb", zhValue: "【已发布】状态不能发布,请重新选择!" },
+    { code: "hd.bc.iscb", zhValue: "【已失效】状态不能发布,请重新选择!" },
+    { code: "hd.bc.published", zhValue: "已发布" },
+    { code: "hd.bc.invalid", zhValue: "已失效" },
+    { code: "hd.bc.isd", zhValue: "失效选中数据" },
+    { code: "hd.bc.scbi", zhValue: "【未发布】状态不能失效,请重新选择!" },
+    { code: "hd.bc.scbi", zhValue: "【已失效】状态不能失效,请重新选择!" },
+    { code: "hd.bc.peyc", zhValue: "请输入备注" },
+    { code: "hd.bc.ef", zhValue: "执行频率" },
+    { code: "hd.bc.isas", zhValue: "包含周六日" },
+    { code: "hd.bc.esas", zhValue: "不包含周六日" },
+    { code: "hd.bc.executeOnce", zhValue: "执行一次" },
+    { code: "hd.bc.exmt", zhValue: "执行多次" },
+    { code: "hd.bc.interval", zhValue: "间隔" },
+    { code: "hd.bc.everyone", zhValue: "所有人" },
+    { code: "hd.bc.tom", zhValue: "任务或模式" },
+    { code: "gb.common.switch", zhValue: "切换" },
+    { code: "gb.common.pSelectDate", zhValue: "请选择日期" },
+
+    { code: "hd.bc.planName", zhValue: "计划名" },
+    { code: "hd.bc.etmbgtst", zhValue: "结束时间必须大于开始时间" },
+    { code: "hd.bc.stmbgtct", zhValue: "开始时间必须大于当前时间" },
+    { code: "hd.bc.frequencySetting", zhValue: "频率设置" },
+    { code: "hd.bc.pdfs", zhValue: "请添加频率设置" },
+    { code: "hd.bc.tiaifs", zhValue: "有未填写完整的频率设置" },
+    { code: "hd.bc.wtftid", zhValue: "频率类型为天时，单条设置时间跨度不能超过一天" },
+    { code: "hd.bc.tstoef", zhValue: "每一条频率设置的起始时间必须小于结束时间" },
+    { code: "hd.bc.ttsbdfcc", zhValue: "不同频率设置的时间不能交叉" },
+    { code: "hd.bc.wtiuim30", zhValue: "间隔单位为分钟时，间隔时间必须>=30" },
+    { code: "hd.bc.wtiuih1", zhValue: "间隔单位为小时时，间隔时间必须>=1" },
+    { code: "hd.bc.imb1", zhValue: "间隔时间必须>=1" },
+    { code: "hd.bc.peaimbai", zhValue: "请输入间隔，且间隔必须是整数" },
+    { code: "hd.bc.customFrequency", zhValue: "自定义频率" },
+    { code: "gb.common.custom", zhValue: "自定义" },
+
+    { code: "gb.common.unexpired", zhValue: "未到期" },
+    { code: "gb.common.toBeExecuted", zhValue: "待执行" },
+    { code: "gb.common.onSchedule", zhValue: "按期执行" },
+    { code: "gb.common.notImplemented", zhValue: "未执行" },
+
+
+    { code: "hd.bc.eProcess", zhValue: "设备工艺" },
+    { code: "hd.bc.selfControl", zhValue: "自控" },
+    { code: "hd.bc.communication", zhValue: "通信" },
+    { code: "hd.bc.compressor", zhValue: "压缩机" },
+    { code: "hd.bc.saep", zhValue: "安全环保" },
+    { code: "hd.bc.productionRun", zhValue: "生产运行" },
+    { code: "hd.bc.financialAssets", zhValue: "财务资产" },
+    { code: "hd.bc.comprehensive", zhValue: "综合" },
+    { code: "hd.bc.politicalWork", zhValue: "政工" },
+    { code: "hd.bc.electrical", zhValue: "电气" },
+    { code: "hd.bc.line", zhValue: "线路" },
+    { code: "hd.bc.anticorrosion", zhValue: "防腐" },
+    { code: "hd.bc.ctsn", zhValue: "检查任务序号" },
+    { code: "hd.bc.planExecutor", zhValue: "计划执行人" },
+    { code: "hd.bc.pspt", zhValue: "请选择计划类型" },
+
+
+    { code: "gb.common.tct", zhValue: "任务完成时间" },
+
+    { code: "hd.bc.actualExecutor", zhValue: "实际执行人" },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   ];
 });
