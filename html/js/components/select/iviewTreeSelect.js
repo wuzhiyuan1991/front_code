@@ -4,7 +4,8 @@ define(function(require) {
 	var Icon = require("../iviewIcon");
 	var Dropdown = require("./iviewDropDown");
 	var clickoutside = require("../directives/clickoutside");
-    var assist = require("../utils/assist");
+	var assist = require("../utils/assist");
+	var lang = require('../utils/lang')
 
 	
 	var template = '<div :class="classes" v-clickoutside="handleClose">'+
@@ -67,7 +68,7 @@ define(function(require) {
 	        },
 	        placeholder: {
 	            type: String,
-	            default: '请选择'
+	            default: lang('gb.common.pleaseSelect')
 	        },
 	        filterable: {
 	            type: Boolean,

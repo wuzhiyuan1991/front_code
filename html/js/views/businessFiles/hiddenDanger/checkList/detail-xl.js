@@ -32,23 +32,23 @@ define(function (require) {
 
     var tabs = [{
         id: '1',
-        name: '属地'
+        name: LIB.lang('ri.bf.territory'), // '属地'
     },
     {
         id: '2',
-        name: '设备设施'
+        name: LIB.lang('gb.common.equipmentAndFacilities'), // '设备设施'
     },
     {
         id: '1001',
-        name: '重大危险源'
+        name: LIB.lang('ri.bf.mhi'), // '重大危险源'
     },
     {
         id: '1002',
-        name: '重点化学品'
+        name: LIB.lang('ri.bf.kc'), // '重点化学品'
     },
     {
         id: '1003',
-        name: '重点化学工艺'
+        name: LIB.lang('ri.bf.kcp'), // '重点化学工艺'
     }
     ];
 
@@ -114,26 +114,26 @@ define(function (require) {
             rules: {
                 name: [{
                     required: true,
-                    message: '请输入检查表名称'
+                    message: LIB.lang('ri.bc.peacn')
                 },
                 LIB.formRuleMgr.length(100)
                 ],
                 type: [{
                     required: true,
-                    message: '请选择检查表类型'
+                    message: LIB.lang('ri.bc.psact')
                 }],
                 compId: [{
                     required: true,
-                    message: '请选择所属公司'
+                    message: LIB.lang('ri.bc.psyc')
                 }],
                 disable: [{
                     required: true,
-                    message: '请选择检查表状态'
+                    message: LIB.lang('ri.bc.pscs')
                 }],
                 "isNeedVerifyRfid": [LIB.formRuleMgr.length(0)],
                 checkObjType: [{
                     required: true,
-                    message: '请选择检查对象'
+                    message: LIB.lang('gb.common.import.pstio')
                 }],
                 "defaultResult": [LIB.formRuleMgr.allowIntEmpty],
             },
@@ -156,12 +156,12 @@ define(function (require) {
         itemModel: {
             //显示弹框
             show: false,
-            title: "选择检查项",
+            title: LIB.lang('gb.common.chioceCheck'),
             id: null
         },
         newItemModel: {
             show: false,
-            title: "新增",
+            title: LIB.lang('gb.common.add'), 
             id: null
         },
         tableModel: {
@@ -170,7 +170,7 @@ define(function (require) {
                 columns: [
                     // LIB.tableMgr.ksColumn.code,
                     {
-                        title: "课程名称",
+                        title: LIB.lang('bd.trm.courseName'), // "课程名称",
                         fieldName: "name",
                         keywordFilterName: "criteria.strValue.keyWordValue_name"
                     },
@@ -181,12 +181,12 @@ define(function (require) {
                     })(),
 
                     {
-                        title: "课程类型",
+                        title: LIB.lang('bd.trm.coursetType'), //"课程类型",
                         fieldName: "attr1",
                         width: 220
                     },
                     {
-                        title: "培训方式",
+                        title: LIB.lang('bc.hal.modeTrain'), //"培训方式",
                         fieldType: "custom",
                         render: function (data) {
                             return LIB.getDataDic("course_type", data.type);
@@ -206,7 +206,7 @@ define(function (require) {
                     width: 40
                 },
                 {
-                    title: "检查项内容",
+                    title: LIB.lang('gb.common.checkItemName'), //"检查项内容",
                     fieldName: "name",
                     'renderClass': "textarea txt-left",
                     // render:function (data) {
@@ -224,7 +224,7 @@ define(function (require) {
                     // },
                 },
                 {
-                    title: "检查对象名称",
+                    title: LIB.lang('ri.bf.con'), //"检查对象名称",
                     fieldName: "checkObjName",
                     fixed: true,
                     visible: true,
@@ -232,12 +232,12 @@ define(function (require) {
                     'renderClass': "textarea",
                 },
                 {
-                    title: "检查标准",
+                    title: LIB.lang('ri.bf.is'), //"检查标准",
                     fieldName: "checkStd",
                     visible: true
                 },
                 {
-                    title: "类型",
+                    title: LIB.lang('gb.common.type'), //"类型",
                     fieldType: "custom",
                     width: 80,
                     render: function (data) {
@@ -253,7 +253,7 @@ define(function (require) {
                 //                     //     }
                 //                     // },
                 {
-                    title: "否决项",
+                    title: LIB.lang('ri.bc.vetoItem'), //"否决项",
                     fieldType: "custom",
                     renderClass: 'text-center',
                     fieldName: 'vetoItem',
@@ -278,8 +278,8 @@ define(function (require) {
                     showTip: false,
                     fieldName: "up",
                     render: function (data) {
-                        return '<span  class="tableCustomIco_Up" title="上移" style="margin-left: 0;"><i class="ivu-icon ivu-icon-arrow-up-a"></i></span><span class="tableCustomIco_Down" title="下移"><i class="ivu-icon ivu-icon-arrow-down-a"></i></span>' +
-                            '<span class="tableCustomIco_Edit" title="编辑"><i class="ivu-icon ivu-icon-edit"></i></span><span class="tableCustomIco_Del" title="删除"><i class="ivu-icon ivu-icon-trash-a"></i></span>'
+                        return '<span  class="tableCustomIco_Up" title="'+LIB.lang('ri.bf.moveUp')+'" style="margin-left: 0;"><i class="ivu-icon ivu-icon-arrow-up-a"></i></span><span class="tableCustomIco_Down" title="'+LIB.lang('ri.bf.moveDown')+'"><i class="ivu-icon ivu-icon-arrow-down-a"></i></span>' +
+                            '<span class="tableCustomIco_Edit" title="'+LIB.lang('gb.common.edition')+'"><i class="ivu-icon ivu-icon-edit"></i></span><span class="tableCustomIco_Del" title="'+LIB.lang('gb.common.del')+'"><i class="ivu-icon ivu-icon-trash-a"></i></span>'
 
                     }
                 }
@@ -292,20 +292,20 @@ define(function (require) {
                     width: 40
                 },
                 {
-                    title: "巡检区域",
+                    title: LIB.lang('ri.bf.pa'), //"巡检区域",
                     fieldName: "groupName",
                     width: 700,
                     'renderClass': "textarea txt-left",
                     visible: true
                 },
                 {
-                    title: "属地",
+                    title: LIB.lang('ri.bf.territory'), //"属地",
                     fieldName: "dominationArea.name",
                     width: 220,
                     visible: true
                 },
                 {
-                    title: "扫码检查",
+                    title: LIB.lang('ri.bf.scc'), // "扫码检查",
                     fieldType: "custom",
                     renderClass: 'text-center',
                     fieldName: 'scanCode',
@@ -325,9 +325,9 @@ define(function (require) {
                     width: 80,
                     showTip: false,
                     fieldName: "up",
-                    render: function (data) {
-                        return '<span  class="tableCustomIco_Up" title="上移" style="margin-left: 0;"><i class="ivu-icon ivu-icon-arrow-up-a"></i></span><span class="tableCustomIco_Down" title="下移"><i class="ivu-icon ivu-icon-arrow-down-a"></i></span>' +
-                            '<span class="tableCustomIco_Edit" title="编辑"><i class="ivu-icon ivu-icon-edit"></i></span>';
+                    render: function (data) {   
+                        return '<span  class="tableCustomIco_Up" title="'+LIB.lang('ri.bf.moveUp')+'" style="margin-left: 0;"><i class="ivu-icon ivu-icon-arrow-up-a"></i></span><span class="tableCustomIco_Down" title="'+LIB.lang('ri.bf.moveDown')+'"><i class="ivu-icon ivu-icon-arrow-down-a"></i></span>' +
+                            '<span class="tableCustomIco_Edit" title="'+LIB.lang('gb.common.edition')+'"><i class="ivu-icon ivu-icon-edit"></i></span>';
                         // <span class="tableCustomIco_Del" title="删除"><i class="ivu-icon ivu-icon-trash-a"></i></span>'
 
                     }
@@ -345,11 +345,11 @@ define(function (require) {
             specialAreaModel: {
                 url: 'checktable/list/specialdominationareas/{curPage}/{pageSize}',
                 columns: [{
-                    title: '属地',
+                    title: LIB.lang('ri.bf.territory'), // '属地',
                     fieldName: 'name'
                 },
                 {
-                    title: '所属公司',
+                    title: LIB.lang('gb.common.ownedComp'), // '所属公司',
                     render: function (data) {
                         if (data.compId) {
                             return LIB.getDataDic("org", data.compId)["compName"];
@@ -358,7 +358,7 @@ define(function (require) {
                 },
 
                 {
-                    title: '所属部门',
+                    title: LIB.lang('gb.common.ownedDept'), // '所属部门',
                     render: function (data) {
                         if (data.orgId) {
                             return LIB.getDataDic("org", data.orgId)["deptName"];
@@ -373,7 +373,7 @@ define(function (require) {
                 ]
             }
         },
-        suportShow:true,
+        suportShow: true,
         suportdata: {},
         selectModel: {
             courseSelectModel: {
@@ -416,7 +416,7 @@ define(function (require) {
             },
             editGroupInfoFormModal: {
                 show: false,
-                title: "修改",
+                title: LIB.lang('gb.common.modify'),
                 groupId: null,
                 groupName: null,
                 dominationArea: null,
@@ -426,14 +426,14 @@ define(function (require) {
         columnIndex: null,
         craftTypeModel: {
             visible: false,
-            title: '选择工艺类型',
+            title: LIB.lang('ri.bc.spt'),
             items: []
         },
         checkObjModel: {
             filterKey: '',
             cacheKey: '',
             icon: 'ios-search',
-            text: '搜索',
+            text: LIB.lang('bs.orl.search'),
             showInput: false
         },
         checkObjectSelectModel: {
@@ -497,7 +497,7 @@ define(function (require) {
             }
         },
         playModel: {
-            title: "视频播放",
+            title: LIB.lang('ri.bc.videoPlayback'),
             show: false,
             id: null
         },
@@ -695,14 +695,14 @@ define(function (require) {
                 ids[0] = fileId;
                 var _this = this;
                 LIB.Modal.confirm({
-                    title: '删除选中数据?',
+                    title: LIB.lang('ri.bc.dsd')+'?',
                     onOk: function () {
                         api.deleteFile(null, ids).then(function (data) {
                             if (data.data && data.error != '0') {
-                                LIB.Msg.warning("删除失败");
+                                LIB.Msg.warning(LIB.lang('gb.common.delFailed'));
                             } else {
                                 arrays.splice(index, 1);
-                                LIB.Msg.success("删除成功");
+                                LIB.Msg.success(LIB.lang('gb.common.sd'));
                             }
                         });
                     }
@@ -756,13 +756,13 @@ define(function (require) {
                     api.batchDisable(null, [ids]).then(function (res) {
                         dataModel.mainModel.vo.disable = '1';
                         _this.$dispatch("ev_dtUpdate");
-                        LIB.Msg.info("已停用!");
+                        LIB.Msg.info(LIB.lang('gb.common.disabled')+"!");
                     });
                 } else {
                     api.batchEnable(null, [ids]).then(function (res) {
                         dataModel.mainModel.vo.disable = '0';
                         _this.$dispatch("ev_dtUpdate");
-                        LIB.Msg.info("已启用!");
+                        LIB.Msg.info(LIB.lang('gb.common.enabled')+"!");
                     });
                 }
             },
@@ -803,27 +803,27 @@ define(function (require) {
 
                 if (1 == item.vetoItem) {
                     LIB.Modal.confirm({
-                        title: '取消该否决项?',
+                        title: LIB.lang('ri.bc.ctv')+'?',
                         onOk: function () {
                             api.updateRelVetoItem({
                                 vetoItem: 0
                             }, tableItemRel1).then(function (res) {
                                 //前端更新修改数据
                                 item.vetoItem = 0;
-                                LIB.Msg.info("操作成功");
+                                LIB.Msg.info(LIB.lang('gb.common.operations'));
                             });
                         }
                     });
 
                 } else {
                     LIB.Modal.confirm({
-                        title: '设置为否决项?',
+                        title: LIB.lang('ri.bc.stv')+'?',
                         onOk: function () {
                             api.updateRelVetoItem({
                                 vetoItem: 1
                             }, tableItemRel1).then(function (res) {
                                 item.vetoItem = 1;
-                                LIB.Msg.info("操作成功");
+                                LIB.Msg.info(LIB.lang('gb.common.operations'));
                             });
                         }
                     });
@@ -838,13 +838,13 @@ define(function (require) {
                     }).then(function (res) {
                         //前端更新修改数据
                         item.scanCode = 0;
-                        LIB.Msg.info("操作成功");
+                        LIB.Msg.info(LIB.lang('gb.common.operations'));
                         _this.tableModel.groupInfoTableModel.isAllScanCode = false;
                     });
 
                 } else {
                     if (!item.dominationAreaId) {
-                        LIB.Msg.info("请先选择属地");
+                        LIB.Msg.info(LIB.lang('ri.bc.psat'));
                         return;
                     }
                     api.updateGroupInfo({
@@ -852,7 +852,7 @@ define(function (require) {
                         groupId: item.groupId
                     }).then(function (res) {
                         item.scanCode = 1;
-                        LIB.Msg.info("操作成功");
+                        LIB.Msg.info(LIB.lang('gb.common.operations'));
                         _this.tableModel.groupInfoTableModel.isAllScanCode = true;
                         _this.tableModel.groupInfoTableModel.dataList.forEach(function (it) {
                             if (it.scanCode == 0) {
@@ -877,7 +877,7 @@ define(function (require) {
                 api.updateCheckItem(null, params).then(function () {
                     var _item = _this.mainModel.vo.tirList[_this.rowIndex].itemList[_this.columnIndex];
                     Vue.set(_item, "checkObject", item);
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
             doSaveEquipmentType: function (items) {
@@ -894,7 +894,7 @@ define(function (require) {
                 api.updateCheckItem(null, params).then(function () {
                     var _item = _this.mainModel.vo.tirList[_this.rowIndex].itemList[_this.columnIndex];
                     Vue.set(_item, "checkObject", item);
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
             doSaveCheckItemCheckObj: function (obj) {
@@ -912,11 +912,11 @@ define(function (require) {
                 api.updateCheckItem(null, params).then(function () {
                     var _item = _this.mainModel.vo.tirList[_this.rowIndex].itemList[_this.columnIndex];
                     Vue.set(_item, "checkObject", obj.checkObj);
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
             doClickCell: function (data) {
-                if (data.cell.colId == 4&& this.suportShow) {
+                if (data.cell.colId == 4 && this.suportShow) {
                     this.selectModel.support.visible = true
                     this.suportdata = data.entry.data
                     return
@@ -997,14 +997,14 @@ define(function (require) {
                 };
 
                 LIB.Modal.confirm({
-                    title: '确定删除?',
+                    title: LIB.lang('gb.common.aysywtd')+'?',
                     onOk: function () {
                         api.remove(null, delObj).then(function (data) {
                             if (data.data && data.error != '0') {
                                 return;
                             }
                             _this.$dispatch("ev_dtDelete");
-                            LIB.Msg.success("删除成功");
+                            LIB.Msg.success(LIB.lang('gb.common.sd'));
                         });
                     }
                 });
@@ -1041,14 +1041,14 @@ define(function (require) {
                     var group = {};
                     group.id = res.data;
                     var len = _this.mainModel.vo.tirList.length + 1;
-                    group.groupName = "分组" + len;
+                    group.groupName = LIB.lang('bd.hal.grouping') + len;
                     while (true) {
                         var isGroupNameExist = _this.mainModel.vo.tirList.some(function (t) {
                             return t.groupName === group.groupName;
                         })
                         if (isGroupNameExist) {
                             len += 1;
-                            group.groupName = "分组" + len;
+                            group.groupName = LIB.lang('bd.hal.grouping') + len;
                         } else {
                             break;
                         }
@@ -1085,7 +1085,7 @@ define(function (require) {
                 });
 
                 LIB.Modal.confirm({
-                    title: '删除当前检查项内容?',
+                    title: LIB.lang('ri.bc.dccic')+'?',
                     onOk: function () {
                         api.delTableItem({
                             id: checkTableId
@@ -1126,7 +1126,7 @@ define(function (require) {
                         //前端更新修改数据
                         _this.mainModel.vo.tirList[groupIndex].itemList.splice(columnIndex, 1);
                         _this.mainModel.vo.tirList[groupIndex].itemList.splice(columnIndex - 1, 0, data);
-                        LIB.Msg.info("移动成功");
+                        LIB.Msg.info(LIB.lang('gb.common.moveSuccessfully'));
                     });
 
                 } else if (flag === 2) {
@@ -1147,7 +1147,7 @@ define(function (require) {
                         //前端更新修改数据
                         _this.mainModel.vo.tirList[groupIndex].itemList.splice(columnIndex, 1);
                         _this.mainModel.vo.tirList[groupIndex].itemList.splice(columnIndex + 1, 0, data);
-                        LIB.Msg.info("移动成功");
+                        LIB.Msg.info(LIB.lang('gb.common.moveSuccessfully'));
                     });
 
                 }
@@ -1156,11 +1156,11 @@ define(function (require) {
             doSaveGroupName: function (tableId, name, groupOrderNo) {
                 var _this = this;
                 if (!name) {
-                    LIB.Msg.warning("分组名称不能为空");
+                    LIB.Msg.warning(LIB.lang('ri.bc.gncbe'));
                     return;
                 }
                 if (name.length > 50) {
-                    LIB.Msg.warning("分组名称长度不能超过50个字符");
+                    LIB.Msg.warning(LIB.lang('ri.bc.gnlce50'));
                     return;
                 }
                 var groupName = _this.groupName;
@@ -1226,14 +1226,14 @@ define(function (require) {
 
                 var _vo = _.pick(_vo, 'id', 'checkItem', 'tableItemRel');
                 if (_vo.tableItemRel.groupName && _vo.tableItemRel.groupName.length > 50) {
-                    LIB.Msg.warning("分组名称长度不能超过50个字符");
+                    LIB.Msg.warning(LIB.lang('ri.bc.gnlce50'));
                     return;
                 }
                 api.createItem({
                     id: _vo.id
                 }, _vo).then(function () {
                     _this.reloadRel("checkItem", _this.mainModel.vo.id);
-                    LIB.Msg.info("新增成功");
+                    LIB.Msg.info(LIB.lang('gb.common.addeds'));
                 });
             },
             /**
@@ -1264,7 +1264,7 @@ define(function (require) {
                     // //备注
                     // item.remarks = data.remarks;
                     /*  _this.reloadRel("checkItem",_this.mainModel.vo.id);*/
-                    LIB.Msg.info("保存成功");
+                    LIB.Msg.info(LIB.lang('gb.common.saveds'));
                 });
             },
 
@@ -1322,7 +1322,7 @@ define(function (require) {
                     })
                     if (index !== -1) {
                         _this.mainModel.vo.torList.splice(index, 1);
-                        LIB.Msg.info("删除成功！");
+                        LIB.Msg.info(LIB.lang('gb.common.sd')+"！");
                     }
                 })
             },
@@ -1441,19 +1441,19 @@ define(function (require) {
 
                 if (this.$route.path.indexOf("/randomInspection") == 0 || tableType == "01") {
                     LIB.registerDataDic("checkTable_type", [
-                        ["0", "非计划检查"],
-                        ["2", "通用"]
+                        ["0", LIB.lang('bs.bac.sp.unc')],//"非计划检查"
+                        ["2", LIB.lang('bs.bac.sp.currency')],//"通用"
                     ]);
                 } else if (this.$route.path.indexOf("/emer") == 0 || tableType == "11") {
                     LIB.registerDataDic("checkTable_type", [
-                        ["0", "非计划检查"],
-                        ["1", "计划检查"],
-                        ["2", "通用"]
+                        ["0", LIB.lang('bs.bac.sp.unc')],//"非计划检查"
+                        ["1", LIB.lang('gb.common.plannedi')],//"计划检查"
+                        ["2", LIB.lang('bs.bac.sp.currency')],//"通用"
                     ]);
                 } else {
                     LIB.registerDataDic("checkTable_type", [
-                        ["1", "计划检查"],
-                        ["2", "通用"]
+                        ["1", LIB.lang('gb.common.plannedi')],//"计划检查"
+                        ["2",  LIB.lang('bs.bac.sp.currency')],//"通用"
                     ]);
                 }
 
@@ -1472,7 +1472,7 @@ define(function (require) {
 
                 var vo = this.mainModel.vo;
                 if (this.mainModel.action === 'copy' && (!this.isReadOnly)) {
-                    vo.name = vo.name + "(复制)";
+                    vo.name = vo.name + "("+LIB.lang('ori.rolm.copy')+")";
                 }
 
                 var _id = this.tabs[0].id;
@@ -1485,7 +1485,7 @@ define(function (require) {
                         Vue.set(item, 'showInput', false);
                     })
 
-               
+
 
 
 
@@ -1645,9 +1645,9 @@ define(function (require) {
 
                 // 设备、通用切换为属地类型
                 if (_.includes(group, cbt)) {
-                    title = '风险点类型由' + _tit2 + '切换为' + _tit1 + ', <br>会导致清空设备设施并提交所有基本信息修改，<br>确认操作?'
+                    title = LIB.lang('ri.bc.rptidb') + _tit2 + LIB.lang('ri.bc.switchTo') + _tit1 + ', <br>'+LIB.lang('ri.bc.wcteaf')+'，<br>'+LIB.lang('ri.bc.confirmO')+'?'
                 } else if (cbt === '2') {
-                    title = '风险点类型由' + _tit2 + '切换为' + _tit1 + ', <br>会导致清空属地并提交所有基本信息修改，<br>确认操作?'
+                    title = LIB.lang('ri.bc.rptidb') + _tit2 + LIB.lang('ri.bc.switchTo') + _tit1 + ', <br>'+LIB.lang('ri.bc.wctttb')+'，<br>'+LIB.lang('ri.bc.confirmO')+'?'
                 }
 
 
@@ -1656,7 +1656,7 @@ define(function (require) {
                     var params = _.omit(vo, ['tirList', 'torList']);
                     api.clearCheckObject(params).then(function () {
 
-                        LIB.Msg.success("修改成功");
+                        LIB.Msg.success(LIB.lang('gb.common.modifieds'));
                         _this.afterDoSave({
                             type: "U"
                         });
@@ -1706,9 +1706,9 @@ define(function (require) {
                     _tit2 = this.getDataDic('special_type', beforeVo.focusType);
 
                 if (ft) {
-                    title = '重点关注类型由' + _tit2 + '切换为' + _tit1 + ', <br>会导致清空' + _tit2 + '并提交所有基本信息修改，<br>确认操作?';
+                    title = LIB.lang('ri.bc.ftidb') + _tit2 + LIB.lang('ri.bc.switchTo') + _tit1 + ', <br>'+LIB.lang('ri.bc.wctbc') + _tit2 + LIB.lang('ri.bc.asabim')+'，<br>'+LIB.lang('ri.bc.confirmO')+'?';
                 } else {
-                    title = '删除重点关注类型' + _tit2 + ', <br>会导致清空' + _tit2 + '并提交所有基本信息修改，<br>确认操作?';
+                    title = LIB.lang('ri.bc.dft') + _tit2 + ', <br>'+LIB.lang('ri.bc.wctbc') + _tit2 + LIB.lang('ri.bc.asabim')+'，<br>'+LIB.lang('ri.bc.confirmO')+'?';
                 }
 
                 var sureCallback = function () {
@@ -1716,7 +1716,7 @@ define(function (require) {
                     var params = _.omit(vo, ['tirList', 'torList']);
                     api.clearCheckObject(params).then(function () {
 
-                        LIB.Msg.success("修改成功");
+                        LIB.Msg.success(LIB.lang('gb.common.modifieds'));
                         _this.afterDoSave({
                             type: "U"
                         });
@@ -1750,7 +1750,7 @@ define(function (require) {
                     beforeVo = this.mainModel.beforeEditVo;
 
                 if (!vo.checkObjType) {
-                    return LIB.Msg.warning("请选择检查对象");
+                    return LIB.Msg.warning(LIB.lang('gb.common.import.pstio'));
                 }
                 if (this.tabSelectId === '1003') {
                     this.craftTypeModel.visible = true;
@@ -1784,7 +1784,7 @@ define(function (require) {
                 api.delCheckObj({
                     id: this.mainModel.vo.id
                 }, params).then(function () {
-                    LIB.Msg.success("删除成功");
+                    LIB.Msg.success(LIB.lang('gb.common.sd'));
                     // 刷新当前检查列表
                     _this.$parent.$parent.$refs.mainTable.doRefresh()
                     _this.getCheckObjects();
@@ -1832,7 +1832,7 @@ define(function (require) {
                 api.saveCheckObject({
                     id: this.mainModel.vo.id
                 }, params).then(function (res) {
-                    LIB.Msg.success("保存成功");
+                    LIB.Msg.success(LIB.lang('gb.common.saveds'));
                     _this.getCheckObjects();
                 })
             },
@@ -1882,10 +1882,10 @@ define(function (require) {
                 if (this.checkObjModel.showInput === false) {
                     this.checkObjModel.filterKey = '';
                     this.checkObjModel.cacheKey = '';
-                    this.checkObjModel.text = "搜索";
+                    this.checkObjModel.text = LIB.lang('bs.orl.search');
                     this.checkObjModel.icon = "ios-search";
                 } else {
-                    this.checkObjModel.text = "折叠";
+                    this.checkObjModel.text = LIB.lang('ri.bf.fold');
                     this.checkObjModel.icon = "power";
                 }
             },
@@ -1920,7 +1920,7 @@ define(function (require) {
                 api.delSpecialDominationArea({
                     checkTableId: this.mainModel.vo.id
                 }, params).then(function () {
-                    LIB.Msg.success("删除成功");
+                    LIB.Msg.success(LIB.lang('gb.common.sd'));
                     _this.getSpecialDominationAreas();
                 })
             },
@@ -1954,7 +1954,7 @@ define(function (require) {
                     orgId: this.mainModel.vo.compId,
                     checkObjType: this.mainModel.vo.checkObjType
                 }).then(function () {
-                    LIB.Msg.success("保存成功");
+                    LIB.Msg.success(LIB.lang('gb.common.saveds'));
                 })
             },
             doClickCOCell: function (data) {
@@ -2017,7 +2017,7 @@ define(function (require) {
                         scanCode: scanCode,
                         checkTableId: datas[0].checkTableId
                     }).then(function () {
-                        LIB.Msg.success("保存成功");
+                        LIB.Msg.success(LIB.lang('gb.common.saveds'));
                         datas.forEach(function (item) {
                             item.scanCode = scanCode;
                         })
@@ -2069,7 +2069,7 @@ define(function (require) {
                     api.batchCreateTableObjectRel(null, addCheckObjRelList).then(function () {
                         //curCheckObjRelList.push(addCheckObjList[0]);
                         _this.reloadRel("checkObject", _this.mainModel.vo.id);
-                        LIB.Msg.info("保存成功");
+                        LIB.Msg.info(LIB.lang('gb.common.saveds'));
                     });
                 }
                 //刷新
@@ -2107,7 +2107,7 @@ define(function (require) {
                         }
                     });
                     if (addCheckObjRelList.groupName && addCheckObjRelList.groupName.length > 50) {
-                        LIB.Msg.warning("分组名称长度不能超过50个字符");
+                        LIB.Msg.warning(LIB.lang('ri.bc.gnlce50'));
                         return;
                     }
                     var selectedItemOrderNo = _.propertyOf(this.mainModel.selectedGroupItemMap)(data.mainModel.vo.groupId);
@@ -2118,12 +2118,12 @@ define(function (require) {
                         },
                             addCheckObjRelList).then(function () {
                                 _this.reloadRel("checkItem", _this.mainModel.vo.id);
-                                LIB.Msg.info("保存成功");
+                                LIB.Msg.info(LIB.lang('gb.common.saveds'));
                             });
                     } else {
                         api.batchCreateTableItemRel(null, addCheckObjRelList).then(function () {
                             _this.reloadRel("checkItem", _this.mainModel.vo.id);
-                            LIB.Msg.info("保存成功");
+                            LIB.Msg.info(LIB.lang('gb.common.saveds'));
                         });
                     }
                 }
@@ -2206,25 +2206,25 @@ define(function (require) {
             }
             var companyBusinessSetState = LIB.getBusinessSetByNamePath('checkItem.expertSupportForCheckItem');
             if (companyBusinessSetState) {
-                
-                if (companyBusinessSetState.result == 2&& this.tableModel.checkItemTableModel.columns[this.tableModel.checkItemTableModel.columns.length - 2].title!="专家支持") {
-                    this.suportShow =true
+
+                if (companyBusinessSetState.result == 2 && this.tableModel.checkItemTableModel.columns[this.tableModel.checkItemTableModel.columns.length - 2].title != "专家支持") {
+                    this.suportShow = true
                     this.tableModel.checkItemTableModel.columns.splice(this.tableModel.checkItemTableModel.columns.length - 1, 0, {
-                        title: "专家支持",
+                        title: LIB.lang('ri.bc.expertS'),
                         width: "100px",
                         render: function (data) {
                             if (parseInt(data.accidentcaseNum) > 0 || parseInt(data.checkbasisNum) > 0 || parseInt(data.checkmethodNum) > 0) {
-                                return '<div style="cursor:pointer;"><i class="ivu-icon ivu-icon-checkmark-circled" style="color:#aacd03"></i>已配置</div>'
+                                return '<div style="cursor:pointer;"><i class="ivu-icon ivu-icon-checkmark-circled" style="color:#aacd03"></i>'+LIB.lang('ri.bc.configured')+'</div>'
                             }
-                            return '<div style="cursor:pointer;" title="请配置">未配置</div>';
+                            return '<div style="cursor:pointer;" title="'+LIB.lang('ri.bc.pConfigure')+'">'+LIB.lang('ri.bc.notConfigured')+'</div>';
                         },
 
                     })
-                }else{
-                    this.suportShow =false
+                } else {
+                    this.suportShow = false
                 }
-            }else{
-                this.suportShow =false
+            } else {
+                this.suportShow = false
             }
             // this.isShowCheckArea = companyBusinessSetState['checkSubmit.isShowCheckArea'].result === '2';
             this.isEmer = false;

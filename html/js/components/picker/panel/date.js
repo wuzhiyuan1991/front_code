@@ -134,9 +134,9 @@ define(function(require) {
                 if (!year) return '';
                 if (this.currentView === 'year') {
                     var startYear = Math.floor(year / 10) * 10;
-                    return startYear + '年' +  '-' + (startYear + 9) + '年';
+                    return startYear + this.$t('gb.common.year1') +  '-' + (startYear + 9) + this.$t('gb.common.year1');
                 }
-                return [year]+'年';
+                return [year]+this.$t('gb.common.year1');
             }
         },
         watch: {

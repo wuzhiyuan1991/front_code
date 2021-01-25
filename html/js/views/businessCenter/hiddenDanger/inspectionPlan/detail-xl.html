@@ -24,7 +24,7 @@
                 <iv-row class="bip-content-item">
 
                     <el-form-item class="small-info-box" :label="$t('gb.common.checkPlanName')" prop="name">
-                        <iv-input placeholder="请输入名称" :value.sync="mainModel.vo.name" :show-tip="true"
+                        <iv-input :placeholder="$t('em.ms.pean')" :value.sync="mainModel.vo.name" :show-tip="true"
                             :textonly="mainModel.isReadOnly"></iv-input>
                     </el-form-item>
 
@@ -39,7 +39,7 @@
                             :comp-id.sync="mainModel.vo.compId"></department-tree-select>
                         <iv-input v-else :value="getDataDic('org', mainModel.vo.orgId)['deptName']" textonly></iv-input>
                     </el-form-item>
-                    <el-form-item v-if="enableCheckLevel" label="检查级别" prop="checkLevel" class="small-info-box">
+                    <el-form-item v-if="enableCheckLevel" :label="$t('ri.bc.il')" prop="checkLevel" class="small-info-box">
                         <i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.checkLevel"
                             :list="getDataDicList('checkLevel')" clearable>
                             <i-option v-for="type in getDataDicList('checkLevel')" :value="type.id">{{type.value}}
@@ -67,7 +67,7 @@
                     </el-form-item>
 
                     <el-form-item :label="$t('gb.common.remarks')" prop="remarks" class="small-info-box">
-                        <iv-input placeholder="请输入备注" v-else :value.sync="mainModel.vo.remarks"
+                        <iv-input :placeholder="$t('hd.bc.peyc')" v-else :value.sync="mainModel.vo.remarks"
                             :textonly="mainModel.isReadOnly"></iv-input>
                     </el-form-item>
                     <!--<el-form-item  label="类型" prop="checkType" class="small-info-box" >-->
@@ -84,7 +84,7 @@
                         <span v-if="mainModel.isReadOnly">{{getDataDic('check_type', mainModel.vo.checkType)}}</span>
                     </el-form-item>
 
-                    <el-form-item class="small-info-box" label="检查表" prop="checkTable.id"
+                    <el-form-item class="small-info-box" :label="$t('bd.hal.checkList')" prop="checkTable.id"
                         v-if="mainModel.bizType == 'investigate'">
                         <input-select :value="mainModel.vo.checkTable" id-field="id" display-field="name"
                             :textonly="mainModel.isReadOnly"
@@ -107,46 +107,46 @@
                     <el-form-item v-if="mainModel.isReadOnly" :label="$t('gb.common.founder')" class="small-info-box">
                         <iv-input :value="mainModel.vo.creator.name" :textonly="mainModel.isReadOnly"></iv-input>
                     </el-form-item>
-                    <el-form-item v-if="mainModel.isReadOnly && mainModel.vo.disable != 0 && !showSpecialty" label="发布人"
+                    <el-form-item v-if="mainModel.isReadOnly && mainModel.vo.disable != 0 && !showSpecialty" :label="$t('hd.bc.publisher')"
                         class="small-info-box">
                         <iv-input :value="mainModel.vo.publisher.name" :textonly="mainModel.isReadOnly"></iv-input>
                     </el-form-item>
                 </iv-row>
                 <div v-if="showFrequencyText">
                     <iv-row class="bip-content-item" style="border-top:1px solid  #e9e9e9">
-                        <span class="spanTips" style="padding-left: 40px">执行频率</span>
+                        <span class="spanTips" style="padding-left: 40px">{{$t("hd.bc.ef")}}</span>
                         <span class="spanCon">{{frequencyModel.detail.frequencyTypeName}}</span>
                         <span class="spanTips"
-                            v-if="frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">包含周六日</span>
+                            v-if="frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">{{$t("hd.bc.isas")}}</span>
                         <span class="spanTips"
-                            v-if="!frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">不包含周六日</span>
+                            v-if="!frequencyModel.detail.isIncludeWeek && frequencyModel.planSetting.frequencyType == 1">{{$t("hd.bc.esas")}}</span>
                     </iv-row>
                     <iv-row class="bip-content-item" v-if="frequencyModel.common.isNoRepeat">
                         <span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
-                        <span class="spanCon">执行一次</span>
+                        <span class="spanCon">{{$t("hd.bc.executeOnce")}}</span>
                     </iv-row>
                     <iv-row class="bip-content-item"
                         v-if="frequencyModel.common.isRepeat && !frequencyModel.detail.definedTime">
                         <span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
-                        <span class="spanCon">执行多次</span>
-                        <span class="spanTips">间隔</span>
+                        <span class="spanCon">{{$t('hd.bc.exmt')}}</span>
+                        <span class="spanTips">{{$t('hd.bc.interval')}}</span>
                         <span class="spanCon">{{frequencyModel.planSetting.period}}</span>
                         <span class="spanCon">{{frequencyModel.detail.unitName}}</span>
-                        <span class="spanTips">开始时间</span>
+                        <span class="spanTips">{{$t('gb.common.startTime')}}</span>
                         <span class="spanCon">{{frequencyModel.planSetting.startTime}}</span>
-                        <span class="spanTips">结束时间</span>
+                        <span class="spanTips">{{$t('gb.common.endTime')}}</span>
                         <span class="spanCon">{{frequencyModel.planSetting.endTime}}</span>
                     </iv-row>
                     <iv-row class="bip-content-item" v-if="frequencyModel.detail.definedTime">
                         <span class="spanTips" style="padding-left: 40px">{{frequencyModel.common.frequencyName}}</span>
-                        <span class="spanTips">间隔</span>
+                        <span class="spanTips">{{$t('hd.bc.interval')}}</span>
                         <span class="spanCon">{{frequencyModel.planSetting.period}}</span>
                         <span class="spanCon">{{frequencyModel.detail.unitName}}</span>
                     </iv-row>
                 </div>
                 <div v-if="showFrequencyInput">
                     <iv-row class="bip-content-item" style="border-top:1px solid  #e9e9e9">
-                        <span style="float: left;line-height: 80px;padding-left: 40px;">执行频率</span>
+                        <span style="float: left;line-height: 80px;padding-left: 40px;">{{$t("hd.bc.ef")}}</span>
                         <el-form-item label="&nbsp;" class="small-info-box" style="width: 150px;padding-top: 6px;">
                             <i-select :disabled="mainModel.isReadOnly" style="width:100px"
                                 @on-change="dochangefrequencyType"
@@ -159,7 +159,7 @@
                         <el-form-item label="&nbsp;" class="small-info-box" style="padding: 0 20px;padding-top: 10px;">
                             <iv-checkbox class="radios" v-if="frequencyModel.planSetting.frequencyType == 1"
                                 :checked.sync="frequencyModel.add.isWeekendInculedFlag"
-                                :disabled="mainModel.isReadOnly">包含周六日</iv-checkbox>
+                                :disabled="mainModel.isReadOnly">{{$t("hd.bc.isas")}}</iv-checkbox>
                         </el-form-item>
                     </iv-row>
                     <iv-row class="bip-content-item">
@@ -204,7 +204,7 @@
                                     </div>
                                 </div>
                                 <vi-button v-if="!mainModel.isReadOnly" type="dashed" @click="doAddTimeSetting"
-                                    class="add-more" style="width:462px;margin-top:5px">添加</vi-button>
+                                    class="add-more" style="width:462px;margin-top:5px">{{$t('bc.ria.append')}}</vi-button>
                             </div>
                             <div style="padding-left: 40px;float: left;"
                                 v-if="frequencyModel.planSetting.frequencyType == 2">
@@ -247,7 +247,7 @@
                                     </div>
                                 </div>
                                 <vi-button v-if="!mainModel.isReadOnly" type="dashed" @click="doAddTimeSetting"
-                                    class="add-more" style="width:602px;margin-top:5px">添加</vi-button>
+                                    class="add-more" style="width:602px;margin-top:5px">{{$t('bc.ria.append')}}</vi-button>
                             </div>
                             <div style="padding-left: 40px;float: left;"
                                 v-if="frequencyModel.planSetting.frequencyType == 3">
@@ -289,7 +289,7 @@
                                     </div>
                                 </div>
                                 <vi-button v-if="!mainModel.isReadOnly" type="dashed" @click="doAddTimeSetting"
-                                    class="add-more" style="width:613px;margin-top:5px">添加</vi-button>
+                                    class="add-more" style="width:613px;margin-top:5px">{{$t('bc.ria.append')}}</vi-button>
                             </div>
                             <div style="padding-left: 40px;float: left;"
                                 v-if="frequencyModel.planSetting.frequencyType == 4">
@@ -347,7 +347,7 @@
                                     </div>
                                 </div>
                                 <vi-button v-if="!mainModel.isReadOnly" type="dashed" @click="doAddTimeSetting"
-                                    class="add-more" style="width:832px;margin-top:5px">添加</vi-button>
+                                    class="add-more" style="width:832px;margin-top:5px">{{$t('bc.ria.append')}}</vi-button>
                             </div>
                             <div style="padding-left: 40px;float: left;"
                                 v-if="frequencyModel.planSetting.frequencyType == 6">
@@ -409,17 +409,17 @@
                                     </div>
                                 </div>
                                 <vi-button v-if="!mainModel.isReadOnly" type="dashed" @click="doAddTimeSetting"
-                                    class="add-more" style="width:832px;margin-top:5px">添加</vi-button>
+                                    class="add-more" style="width:832px;margin-top:5px">{{$t('bc.ria.append')}}</vi-button>
                             </div>
                         </div>
                         <div class="peroidCon" v-if="frequencyModel.add.isShowMy  && !frequencyModel.add.isShowCommon">
                             <span
                                 style="position:absolute;left:0;top:0;padding-left: 40px;line-height: 63px;">{{frequencyModel.common.frequencyName}}</span>
                             <el-form-item class="doMuchStyle" style="width:244px">
-                                <span class="requireTip" style="float: left;">间隔</span>
+                                <span class="requireTip" style="float: left;">{{$t('hd.bc.interval')}}</span>
                                 <span style="float: left">
                                     <iv-input v-if="!mainModel.isReadOnly" style="width:70px;margin: 0 10px;"
-                                        placeholder="请输入" :value.sync="frequencyModel.planSetting.period"></iv-input>
+                                        :placeholder="$t('gb.common.pleaseInput')" :value.sync="frequencyModel.planSetting.period"></iv-input>
                                     <i-select v-if="!mainModel.isReadOnly" style="width:100px;"
                                         :model.sync="frequencyModel.planSetting.unit" :list="mainModel.unitList">
                                         <i-option v-for="type in mainModel.unitList" :value="type.id">{{type.name}}
@@ -439,7 +439,7 @@
         <div class="rel-info-panel" v-show="mainModel.bizType !== 'investigate'">
             <div class="rip-item">
                 <simple-card :show-content.sync="cardModel.taskDetailModel.showContent">
-                    <p slot="title"><i class="basicPng"></i><span>任务明细</span></p>
+                    <p slot="title"><i class="basicPng"></i><span>{{$t('ri.bc.td')}}</span></p>
                     <a slot="extra"
                         @click.prevent="cardModel.taskDetailModel.showContent = !cardModel.taskDetailModel.showContent;">
                         <span v-if="cardModel.taskDetailModel.showContent">
@@ -477,7 +477,7 @@
                     </a>
                     <a slot="extra" v-show="mainModel.opType != 'create'">
                         <iv-checkbox :checked.sync="!isDefaultTaskPattern" @on-change="doChangeTaskPattern"
-                            :disabled="mainModel.vo.disable != 0">任务或模式</iv-checkbox>
+                            :disabled="mainModel.vo.disable != 0">{{$t('hd.bc.tom')}}</iv-checkbox>
                     </a>
                     <a slot="extra"
                         @click.prevent="cardModel.userCardModel.showContent = !cardModel.userCardModel.showContent;">
@@ -509,7 +509,7 @@
             <div class="rip-item" style="padding-bottom: 50px;">
                 <simple-card :show-content.sync="cardModel.checkTaskCardModel.showContent">
                     <p slot="title"><i class="basicPng"></i><span>{{$t('gb.common.inspectTask')}}</span></p>
-                    <a slot="extra"><span @click='selectPattern'>切换</span></a>
+                    <a slot="extra"><span @click='selectPattern'>{{$t('gb.common.switch')}}</span></a>
                     <a slot="extra"
                         @click.prevent="cardModel.checkTaskCardModel.showContent = !cardModel.checkTaskCardModel.showContent;">
                         <span v-if="cardModel.checkTaskCardModel.showContent">
@@ -548,7 +548,7 @@
                         <div class="lr-layout-r" style="padding: 0;position: relative">
                             <i-select v-if='!isTaskmodel&&isDefaultTaskPattern' :model.sync="mainModel.vo.selectUser"
                                 style="width: 200px;margin-bottom: 10px;">
-                                <i-option value="所有人">所有人</i-option>
+                                <i-option value="所有人">{{$t('hd.bc.everyone')}}</i-option>
                                 <i-option v-for="(index,qstType) in inspectTaskModel.taskUsers" :value="index">
                                     {{qstType.name}}</i-option>
                             </i-select>

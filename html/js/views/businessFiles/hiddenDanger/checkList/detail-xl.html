@@ -8,7 +8,7 @@
           <span style="margin-left: 10px;color: orange;">
             <Icon type="card"></Icon>
           </span>
-          <div slot="content">RFID编码：{{mainModel.vo.rfid}}</div>
+          <div slot="content">RFID{{$t("gb.common.code")}}：{{mainModel.vo.rfid}}</div>
         </poptip>
       </div>
 
@@ -22,7 +22,8 @@
           @click="doEnableDisable">
           {{$t("gb.common.EnableDisable")}}
         </vi-button>
-        <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy">复制</iv-button>
+        <iv-button v-if="mainModel.isReadOnly && hasAuth('copy')" type="ghost" @click="doAdd4Copy">
+          {{$t("ori.rolm.copy")}}</iv-button>
         <iv-button v-if="hasAuth('delete') && mainModel.opType != 'create' && mainModel.isReadOnly " type="ghost"
           @click="doDelete">
           {{$t("gb.common.del")}}
@@ -34,7 +35,8 @@
                 <iv-button v-if="mainModel.isReadOnly && showCheckTablePointButton && isShowBindGPS" type="ghost" @click="doSetCheckTablePoint">设置坐标点</iv-button>
                 <iv-button v-if="mainModel.isReadOnly && showCheckTableUnPointButton" type="ghost" @click="doDeleteCheckTablePoint">删除坐标点</iv-button>
 -->
-        <iv-button v-if="isEmer && hasAuth('removeFromEmer') " type="ghost" @click="doRemoveFromEmer">移除</iv-button>
+        <iv-button v-if="isEmer && hasAuth('removeFromEmer') " type="ghost" @click="doRemoveFromEmer">
+          {{$t("gb.common.remove")}}</iv-button>
         <iv-button type="ghost" @click="doClose">{{$t("gb.common.close")}}</iv-button>
       </div>
     </div>
@@ -51,7 +53,8 @@
 
           <el-form-item class="small-info-box" :label="$t('bd.hal.checkTableClass')" prop="checkTableTypeId">
             <iv-tree-select :model.sync="mainModel.vo.checkTableTypeId" :list="checkTableTypeList" id-attr="id"
-              display-attr="name" clearable placeholder="请选择" :readonly="mainModel.isReadOnly">
+              display-attr="name" clearable :placeholder="$t('gb.common.pleaseSelect')"
+              :readonly="mainModel.isReadOnly">
               <iv-tree :model="checkTableTypeList" :selected-datas.sync="selectedCheckTableType"
                 :serch-filterable="true" id-attr="id" pid-attr="parentId" display-attr="name" :single-select="true"
                 :allow-parent-checked="true"></iv-tree>
@@ -75,7 +78,7 @@
 
         <iv-row class="bip-content-item">
           <!-- 检查对象 -->
-          <el-form-item class="small-info-box" label="风险点类型" prop="checkObjType">
+          <el-form-item class="small-info-box" :label="$t('gb.common.torp')" prop="checkObjType">
             <i-select :model.sync="mainModel.vo.checkObjType" :list="getDataDicList('check_obj_risk_type')"
               v-if="!mainModel.isReadOnly" @on-change="changeCheckObjectType">
               <i-option v-for="item in getDataDicList('check_obj_risk_type')" :value="item.id">{{ item.value }}
@@ -84,7 +87,7 @@
             <span v-if="mainModel.isReadOnly">{{getDataDic('check_obj_risk_type', mainModel.vo.checkObjType)}}</span>
           </el-form-item>
 
-          <el-form-item class="small-info-box" label="重点关注类型" prop="focusType" v-if="enableMajorRiskSource">
+          <el-form-item class="small-info-box" :label="$t('ri.bf.fot')" prop="focusType" v-if="enableMajorRiskSource">
             <i-select :model.sync="mainModel.vo.focusType" :list="getDataDicList('special_type')" clearable
               v-if="!mainModel.isReadOnly" @on-change="changeFocusType">
               <i-option v-for="item in getDataDicList('special_type')" :value="item.id">{{ item.value }}</i-option>
@@ -101,11 +104,11 @@
           <el-form-item label="" class="small-info-box"
             style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
             <iv-checkbox class="radios" :checked.sync="mainModel.vo.isNeedVerifyRfid" :disabled="mainModel.isReadOnly">
-              是否需要校验RFID</iv-checkbox>
+              {{$t("ri.bf.ntvr")}}</iv-checkbox>
           </el-form-item>
         </iv-row>
         <iv-row class="bip-content-item">
-          <el-form-item v-if="isShowBusinessType" label="检查类型" class="small-info-box">
+          <el-form-item v-if="isShowBusinessType" :label="$t('gb.common.checkedType')" class="small-info-box">
             <i-select :model.sync="mainModel.vo.bizTypeSc1" :list="getDataDicList('table_business_type')"
               v-if="mainModel.opType === 'create'" @on-change="changeBusinessType">
               <i-option v-for="item in getDataDicList('table_business_type')" :value="item.id">{{ item.value }}
@@ -114,7 +117,8 @@
             <span v-else>{{getDataDic('table_business_type', mainModel.vo.bizTypeSc1)}}</span>
           </el-form-item>
 
-          <el-form-item v-if="isCheckTableSetDefaultResult" class="small-info-box" label="默认结果" prop="defaultResult">
+          <el-form-item v-if="isCheckTableSetDefaultResult" class="small-info-box" :label="$t('ri.bf.dr')"
+            prop="defaultResult">
             <i-select :model.sync="mainModel.vo.defaultResult" :list="getDataDicList('icpe_check_table_result')"
               clearable v-if="!mainModel.isReadOnly">
               <i-option v-for="item in getDataDicList('icpe_check_table_result')" :value="item.id">{{ item.value }}
@@ -131,7 +135,7 @@
           <el-form-item label="" class="small-info-box"
             style="display: inline-flex;align-items: center;line-height: normal;height: 60px;">
             <iv-checkbox class="radios" :checked.sync="mainModel.vo.isSignature" :disabled="mainModel.isReadOnly">
-              是否需要电子签名</iv-checkbox>
+              {{$t("ri.bf.dynes")}}</iv-checkbox>
           </el-form-item>
         </iv-row>
       </el-form>
@@ -143,7 +147,7 @@
     <div class="rel-info-panel">
       <div class="rip-item rip-tableFirst">
         <simple-card class="fip-content-item">
-          <p slot="title"><i class="basicPng"></i><span>检查对象</span></p>
+          <p slot="title"><i class="basicPng"></i><span>{{$t("ri.bc.io")}}</span></p>
 
           <div class="rel-info-panel-content-tabs">
             <div class="el-tabs" active-key="relTab" style="padding-bottom: 20px;">
@@ -157,7 +161,7 @@
                 <div style="padding: 10px;text-align: right;height: 40px;">
                   <div class="simple-card-input-box" style="margin-right: 15px;" v-if="tabSelectId === '1'">
                     <iv-checkbox :checked.sync="isAllDomination" @on-change="doChangeAllDomination"
-                      :disabled="!shouldShowBtn">适用于所有属地</iv-checkbox>
+                      :disabled="!shouldShowBtn">{{$t("ri.bf.atat")}}</iv-checkbox>
                   </div>
                   <a v-show="shouldShowBtn" @click.prevent="doShowCommonSelectModal()">
                     <span>
@@ -181,7 +185,7 @@
     <div class="rel-info-panel" v-if="isShowCheckArea">
       <div class="rip-item rip-tableFirst" style="padding-bottom: 80px;">
         <simple-card :show-content.sync="isShowGroupInfo">
-          <p slot="title"><i class="itemPng"></i>巡检区域</p>
+          <p slot="title"><i class="itemPng"></i>{{$t("ri.bf.pa")}}</p>
           <!--                    <div slot="extra" class="simple-card-input-box" style="margin-right: 15px;">-->
           <!--                        <iv-checkbox :checked.sync="tableModel.groupInfoTableModel.isAllScanCode" @on-change="doChangeAllScanCode">批量设置扫码检查</iv-checkbox>-->
           <!--                    </div>-->
@@ -294,39 +298,40 @@
                 <iv-input class="simple-card-input-box" icon="ios-search" cleanable
                   @on-remove="setFilterValue(tir._keyWord, index)" @on-click="setFilterValue(tir._keyWord, index)"
                   @on-enter="setFilterValue(tir._keyWord, index)" :value.sync="tir._keyWord"
-                  style="width:200px;height: 27px;line-height: 28px;" placeholder="请输入" v-show="tir.showInput">
+                  style="width:200px;height: 27px;line-height: 28px;" :placeholder="$t('gb.common.pleaseInput')"
+                  v-show="tir.showInput">
                 </iv-input>
 
                 <vi-button type="text" icon="ios-search" @click="toggleItemInput(tir, true)"
-                  v-show="isEditRel && !tir.showInput">搜索</vi-button>
+                  v-show="isEditRel && !tir.showInput">{{$t("bs.orl.search")}}</vi-button>
                 <vi-button type="text" icon="power" @click="toggleItemInput(tir, false)"
-                  v-show="isEditRel && tir.showInput">折叠</vi-button>
+                  v-show="isEditRel && tir.showInput">{{$t("ri.bf.fold")}}</vi-button>
                 <vi-button type="text" icon="plus" @click="doNewCheckItem(tir)" v-show="isEditRel && hasAuth('edit')">新增
                 </vi-button>
                 <vi-button type="text" icon="plus" @click="doAddCheckItem(index, tir)"
                   v-show="isEditRel && hasAuth('edit')">{{$t('bc.ria.append')}}</vi-button>
 
                 <iv-dropdown trigger="click" placement="bottom-end" v-if="hasAuth('edit')">
-                  <vi-button type="text" icon="more">更多</vi-button>
+                  <vi-button type="text" icon="more">{{$t("gb.common.more")}}</vi-button>
                   <iv-dropdown-menu slot="list">
                     <iv-dropdown-item @click="doUpdateGroupName(index,tir.groupName, $event)">
                       <a href="javascript:void(0);" style="margin-right:5px;">
                         <Icon type="edit"></Icon>
-                        编辑分组名称
+                        {{$t("gb.common.EditGroupName")}}
                       </a>
                     </iv-dropdown-item>
 
                     <iv-dropdown-item @click="doMoveGroup('up',index)">
                       <a href="javascript:void(0);" style="margin-right:5px;">
                         <Icon type="arrow-up-a"></Icon>
-                        上移
+                        {{$t("ri.bf.moveUp")}}
                       </a>
                     </iv-dropdown-item>
 
                     <iv-dropdown-item @click="doMoveGroup('down',index)">
                       <a href="javascript:void(0);">
                         <Icon type="arrow-down-a"></Icon>
-                        下移
+                        {{$t("ri.bf.moveDown")}}
                       </a>
                     </iv-dropdown-item>
 
@@ -352,20 +357,20 @@
     <!--岗位培训-->
     <div class="rip-item" v-show="isShowTrainModule">
       <simple-card :show-content.sync="cardModel.courseCardModel.showContent">
-        <p slot="title"><i class="basicPng"></i><span>岗位培训</span></p>
+        <p slot="title"><i class="basicPng"></i><span>{{$t("ri.bf.otjt")}}</span></p>
         <a slot="extra"
           @click.prevent="cardModel.courseCardModel.showContent = !cardModel.courseCardModel.showContent;">
           <span v-if="cardModel.courseCardModel.showContent">
-            <Icon type="arrow-up-b"></Icon>收起
+            <Icon type="arrow-up-b"></Icon>{{$t("bc.ria.packUp")}}
           </span>
           <span v-else>
-            <Icon type="arrow-down-b"></Icon>展开
+            <Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}
           </span>
         </a>
         <a slot="extra" v-show="mainModel.opType != 'create' && hasAuth('edit')"
           @click.prevent="doShowCourseSelectModal()">
           <span>
-            <Icon type="plus"></Icon>添加
+            <Icon type="plus"></Icon>{{$t("bc.ria.append")}}
           </span>
         </a>
         <vue-bootstrap-table :setting="tableModel.courseTableModel" @on-del-row="doRemoveCourses" v-ref:course-table>
@@ -377,20 +382,20 @@
     <div class="rel-info-panel" v-show="isShowRiskKnowledge">
       <div class="rip-item rip-tableFirst">
         <simple-card class="fip-content-item">
-          <p slot="title"><i class="basicPng"></i><span>风险点知识库</span></p>
+          <p slot="title"><i class="basicPng"></i><span>{{$t("ri.bf.rpkb")}}</span></p>
 
           <div class="rel-info-panel-content-tabs">
 
             <el-tabs active-key="relTab">
-              <el-tab-pane :label="'相关标准规范(' + fileModel.file.data.length + ')'" key="fileTab">
+              <el-tab-pane :label="$t('ri.bf.rsas') + '(' + fileModel.file.data.length + ')'" key="fileTab">
                 <file-list-simple-card :data="fileModel.file.data" :config="fileModel.file.cfg">
                 </file-list-simple-card>
               </el-tab-pane>
-              <el-tab-pane :label="'相关图片案例(' + fileModel.pic.data.length + ')'" key="picTab">
+              <el-tab-pane :label="$t('ri.bf.rpc')  +'(' + fileModel.pic.data.length + ')'" key="picTab">
                 <image-list-simple-card :data="fileModel.pic.data" :config="fileModel.pic.cfg">
                 </image-list-simple-card>
               </el-tab-pane>
-              <el-tab-pane :label="'相关视频(' + fileModel.video.data.length + ')'" key="videoTab">
+              <el-tab-pane :label="$t('ri.bf.rv') + '(' + fileModel.video.data.length + ')'" key="videoTab">
                 <video-list-simple-card :data="fileModel.video.data" :config="fileModel.video.cfg">
                 </video-list-simple-card>
               </el-tab-pane>

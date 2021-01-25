@@ -83,14 +83,14 @@
 						<!--<input-select :value.sync="mainModel.vo.equipment" @do-clear-input="doClearInput" :clearable="true" id-field="id" display-field="name" :textonly="mainModel.isReadOnly" @click="(!mainModel.isReadOnly) && (doShowEquipmentSelectModel())" ></input-select>-->
 					<!--</el-form-item>-->
 
-					<el-form-item label="隐患等级"  class="small-info-box" v-if="!mainModel.disableHiddenDangerLevel">
+					<el-form-item :label="$t('hag.hazc.hiddenGrade')"  class="small-info-box" v-if="!mainModel.disableHiddenDangerLevel">
 						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.hiddenDangerLevel" :list="getDataDicList('risk_type')" clearable>
 							<i-option v-for="type in getDataDicList('risk_type')" :value="type.id">{{type.value}}</i-option>
 						</i-select>
 						<span v-if="mainModel.isReadOnly">{{getDataDic('risk_type', mainModel.vo.hiddenDangerLevel)}}</span>
 					</el-form-item>
 
-					<el-form-item label="隐患类别"  class="small-info-box" v-if="!mainModel.disableHiddenDangerType">
+					<el-form-item :label="$t('gb.common.hdc')"  class="small-info-box" v-if="!mainModel.disableHiddenDangerType">
 						<i-select v-if="!mainModel.isReadOnly" :model.sync="mainModel.vo.hiddenDangerType" :list="getDataDicList('hidden_danger_type')" clearable>
 							<i-option v-for="type in getDataDicList('hidden_danger_type')" :value="type.id">{{type.value}}</i-option>
 						</i-select>
@@ -115,7 +115,7 @@
 					<span v-else><Icon type="arrow-down-b"></Icon>{{$t("bd.ria.open")}}</span>
 					</a>
 				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowCheckMethodFormModel" >
-					<span><Icon type="plus"></Icon>新增</span>
+					<span><Icon type="plus"></Icon>{{$t('gb.common.add')}}</span>
 				</a>
 				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowCheckMethodSelectModel" >
 					<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>
@@ -145,7 +145,7 @@
 					</span>
 				</a>
 				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowCheckBasisFormModel" >
-					<span><Icon type="plus"></Icon>新增</span>
+					<span><Icon type="plus"></Icon>{{$t('gb.common.add')}}</span>
 				</a>
 				<a  slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowCheckBasisSelectModel">
 					<Icon type="plus"></Icon>{{$t("bc.ria.append")}}
@@ -174,7 +174,7 @@
 					 </span>
 				</a>
 				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowAccidentCaseFormModel" >
-					<span><Icon type="plus"></Icon>新增</span>
+					<span><Icon type="plus"></Icon>{{$t('gb.common.add')}}</span>
 				</a>
 				<a slot="extra" v-show="mainModel.opType !== 'create' && hasAuth('edit')" @click.prevent="doShowAccidentCaseSelectModel" >
 					<span><Icon type="plus"></Icon>{{$t("bc.ria.append")}}</span>

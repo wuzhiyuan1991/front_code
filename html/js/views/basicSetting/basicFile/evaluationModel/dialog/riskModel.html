@@ -4,7 +4,7 @@
     <img src="./images/fx.png" class="fxIco" @click="showModel" style="cursor: pointer">
 </div>
 
-<Modal :visible.sync="show" title="风险等级" width="800" :footer-hide="true" class="riskModelLevel" @on-cancel="doClose">
+<Modal :visible.sync="show" :title="$t('gb.common.riskGrade')" width="800" :footer-hide="true" class="riskModelLevel" @on-cancel="doClose">
     <div class="edit-pop-container epc-riskmodel">
         <div class="epc-content ">
             <el-form :model="modelVO" style="width:760px;" v-ref:ruleform>

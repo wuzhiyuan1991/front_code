@@ -35,15 +35,15 @@
 
         <div class="timer">
             <input type="text" v-model="hour" value="{{hour}}" min="0" max="23" maxlength="2">
-            时
+           {{$t('gb.common.hour1')}}
             <input type="text" v-model="minute" value="{{minute}}" min="0" max="59" maxlength="2">
-            分
+            {{$t('gb.common.minute1')}}
             <input type="text" v-model="second" value="{{second}}" min="0" max="59" maxlength="2">
-            秒
+            {{$t('gb.common.second1')}}
         </div>
     </div>
     <div class="calendar-button" v-show="type=='datetime'||type=='time'||range">
-        <span @click="ok">确定</span>
-        <span @click="cancel" class="cancel">取消</span>
+        <span @click="ok">{{$t('gb.common.ok')}}</span>
+        <span @click="cancel" class="cancel">{{$t('gb.common.cancel')}}</span>
     </div>
 </div>

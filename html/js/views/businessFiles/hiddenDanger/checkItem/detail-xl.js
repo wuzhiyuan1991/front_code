@@ -83,7 +83,7 @@ define(function (require) {
           LIB.formRuleMgr.length()
         ],
         "name": [
-          LIB.formRuleMgr.require("检查项内容"),
+          LIB.formRuleMgr.require(LIB.lang('gb.common.checkItemName')),
           LIB.formRuleMgr.length(500)
         ],
         "riskModel": [{
@@ -92,20 +92,20 @@ define(function (require) {
             var errors = [];
             var riskModel = JSON.parse(value);
             if (_.isNull(riskModel) || _.isNull(_.propertyOf(riskModel)("id"))) {
-              errors.push("请选择风险等级");
+              errors.push(LIB.lang('ri.bc.pSelectRiskLevel'));
             }
             callback(errors);
           }
         }],
         "type": [{
             required: true,
-            message: '请选择类型'
+            message: LIB.lang('ri.bc.pSelectType')
           },
           LIB.formRuleMgr.length()
         ],
         "disable": [{
             required: true,
-            message: '请选择状态'
+            message: LIB.lang('ri.bc.pSelectStatus') 
           },
           LIB.formRuleMgr.length()
         ],
@@ -114,7 +114,7 @@ define(function (require) {
         //],
         "compId": [{
             required: true,
-            message: '请选择所属公司'
+            message: LIB.lang('ri.bc.psyc') 
           },
           LIB.formRuleMgr.length()
         ],
@@ -137,7 +137,7 @@ define(function (require) {
         columns: [
           LIB.tableMgr.ksColumn.code,
           {
-            title: "名称",
+            title: LIB.lang('gb.common.name'),
             fieldName: "name"
           },
           {
@@ -152,7 +152,7 @@ define(function (require) {
         columns: [
           LIB.tableMgr.ksColumn.code,
           {
-            title: "内容说明",
+            title: LIB.lang('gb.common.contentExplain'),
             fieldName: "name"
           }, {
             title: "",
@@ -187,13 +187,13 @@ define(function (require) {
           //
           // },
           {
-            title: "分类",
+            title: LIB.lang('bd.hal.classInfo'),
             fieldName: "attr4",
             // filterType: "text",
             'renderClass': "textarea",
           },
           {
-            title: "依据内容",
+            title: LIB.lang('ri.bc.byBontent'),
             fieldName: "name",
             'renderClass': "textarea",
           },
@@ -293,11 +293,11 @@ define(function (require) {
       type: function () {
         var edu = this.mainModel.vo.type;
         if (edu == 0) {
-          return "行为类";
+          return LIB.lang('gb.common.behavior');
         } else if (edu == 1) {
-          return "状态类";
-        } else if (edu == 2) {
-          return "管理类";
+          return LIB.lang('gb.common.statec');
+        } else if (edu == 2) { 
+          return LIB.lang('gb.common.management');
         }
       }
     },
@@ -507,7 +507,7 @@ define(function (require) {
         var _this = this;
         var data = item.entry.data;
         LIB.Modal.confirm({
-          title: '确定删除数据?',
+          title: LIB.lang('ri.bc.aysywtdtd')+'?',
           onOk: function () {
             api.removeCheckMethods({
               id: _this.mainModel.vo.id
@@ -524,7 +524,7 @@ define(function (require) {
         var _this = this;
         var data = item.entry.data;
         LIB.Modal.confirm({
-          title: '确定删除数据?',
+          title: LIB.lang('ri.bc.aysywtdtd')+'?',
           onOk: function () {
             api.removeLegalregulation({
               id: _this.mainModel.vo.id
@@ -540,7 +540,7 @@ define(function (require) {
         var _this = this;
         var data = item.entry.data;
         LIB.Modal.confirm({
-          title: '确定删除数据?',
+          title: LIB.lang('ri.bc.aysywtdtd')+'?',
           onOk: function () {
             api.removeAccidentCase({
               id: _this.mainModel.vo.id
@@ -624,7 +624,7 @@ define(function (require) {
           bizType = this.$route.query.bizType;
         }
         if (!_vo.riskAssessmentId) {
-          LIB.Msg.info("该检查项没有风险信息");
+          LIB.Msg.info(LIB.lang('ri.bc.tcihnri'));
           return;
         }
         if (bizType != 'default') {

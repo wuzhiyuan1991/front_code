@@ -9,7 +9,7 @@ define(function (require) {
     var prefixCls = 'ivu-transfer';
     var showFixIco;
     var dataModel = {
-        titles: ["已选择"],
+        titles: [LIB.lang('gb.common.selected')],
         CheckedKeys: [],
         prefixCls: prefixCls,
         //选中的数据
@@ -20,12 +20,12 @@ define(function (require) {
             id: null
         },
         backupsFlag: true,
-        openstatus:-2,
+        openstatus: -2,
         // params:2
     }
     var opts = {
         template: template,
-        components: {"List": List, "Operation": Operation},
+        components: { "List": List, "Operation": Operation },
         props: {
             //select数据源
             selectmodel: {
@@ -170,8 +170,8 @@ define(function (require) {
                 type: String,
                 default: ''
             },
-            params:{
-                default:-2
+            params: {
+                default: -2
             }
         },
         data: function () {
@@ -221,25 +221,25 @@ define(function (require) {
 
         },
         methods: {
-            changeOpenDeep:function (val) {
-                if(this.openstatus >=0 && val>0){
-                    this.openstatus =parseInt(this.openstatus) + 2;
-                }else if(this.openstatus >=0 && val==0){
+            changeOpenDeep: function (val) {
+                if (this.openstatus >= 0 && val > 0) {
+                    this.openstatus = parseInt(this.openstatus) + 2;
+                } else if (this.openstatus >= 0 && val == 0) {
                     this.openstatus = - 2;
-                }else if(this.openstatus<0  && val>0){
+                } else if (this.openstatus < 0 && val > 0) {
                     this.openstatus = 2;
-                }else if(this.openstatus<0  && val==0){
+                } else if (this.openstatus < 0 && val == 0) {
                     this.openstatus = parseInt(this.openstatus) - 2;
                 }
-                if(this.openstatus > 0){
+                if (this.openstatus > 0) {
                     this.params = -2;
-                }else{
+                } else {
                     this.params = 2;
                 }
             },
 
-            beforeDoSave:function () {
-                if(this.transferData && this.transferData.length == 0){
+            beforeDoSave: function () {
+                if (this.transferData && this.transferData.length == 0) {
                     LIB.Msg.info("当前没有选择任何数据");
                     return false;
                 }

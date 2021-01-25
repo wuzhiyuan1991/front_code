@@ -6,6 +6,19 @@ define(function (require) {
 
     var Vue = require("vue");
     var langSets = require('./langSets');
+
+
+    if (window.localStorage.lang === undefined) {
+        this.lang = "zh";
+      } else if (window.localStorage.lang === "cn") {
+        this.lang = "zh";
+      } else if (window.localStorage.lang === "en") {
+        this.lang = "en";
+      }
+
+
+
+
     var dateFunc = require("./dateFunc");
 
     var template = '<div class="comp-full-calendar"> ' +
@@ -64,6 +77,7 @@ define(function (require) {
             titleFormat: {
                 type: String,
                 default: function () {
+                   
                     return langSets[this.lang].titleFormat
                 }
             },

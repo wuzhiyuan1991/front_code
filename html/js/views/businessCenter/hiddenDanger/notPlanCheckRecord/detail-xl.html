@@ -22,7 +22,7 @@
 
         <iv-row class="bip-content-item">
           <el-form-item class="small-info-box" :label="$t('gb.common.type')">
-            <iv-input v-if="!mainModel.isReadOnly" value="非计划检查" disabled></iv-input>
+            <iv-input v-if="!mainModel.isReadOnly" :value="$t('bs.bac.sp.unc')" disabled></iv-input>
             <span v-else>{{getDataDic('checkTable_type',mainModel.vo.type)}}</span>
           </el-form-item>
 

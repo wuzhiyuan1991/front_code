@@ -91,21 +91,21 @@ define(function (require) {
                 LIB.tableMgr.column.dept,
                 {
                     //创建人
-                    title: "创建人",
+                    title: this.$t("gb.common.founder"), //"创建人",
                     fieldName: "creator.name",
                     orderName: "createBy",
                     filterType: "text",
                 },
                 {
                     //发布人
-                    title: "发布人",
+                    title: this.$t("hd.bc.publisher"), // "发布人",
                     fieldName: "publisher.name",
                     orderName: "attr1",
                     filterType: "text",
                 },
                 {
                     //检查频率
-                    title: "检查频率",
+                    title: this.$t("hd.bc.if"), // "检查频率",
                     fieldName: "frequencyType",
                     orderName: "frequencyType",
                     fieldType: "custom",
@@ -162,7 +162,7 @@ define(function (require) {
                 if (!_.isEmpty(rows)) {
                     var row = rows[0];
                     if (row.disable !== '0') {
-                        LIB.Msg.warning("只能编辑未发布的数据");
+                        LIB.Msg.warning(this.$t('hd.bc.oudc'));
                         return;
                     }
                     this.showDetail(rows[0], {
@@ -179,7 +179,7 @@ define(function (require) {
             //删除
             beforeDoDelete: function () {
                 if (this.tableModel.selectedDatas.length > 1) {
-                    LIB.Msg.warning("一次只能删除一条数据");
+                    LIB.Msg.warning(this.$t('hd.bc.oopo'));
                     return false;
                 }
                 // if (this.tableModel.selectedDatas[0].disable == 1) {
@@ -192,15 +192,15 @@ define(function (require) {
                 var _this = this;
                 var rows = this.tableModel.selectedDatas;
                 if (rows.length == 0) {
-                    LIB.Msg.warning("请选择数据!");
+                    LIB.Msg.warning(this.$t('gb.common.psd'));
                     return;
                 }
                 if (rows.length > 1) {
-                    LIB.Msg.warning("无法批量发布数据");
+                    LIB.Msg.warning(this.$t('hd.bc.utbp'));
                     return;
                 }
                 if (rows[0].disable !== '0') {
-                    LIB.Msg.warning("只能发布尚未发布的数据");
+                    LIB.Msg.warning(this.$t('hd.bc.pap'));
                     return;
                 }
                 //为了获取关联人员的长度
@@ -208,21 +208,21 @@ define(function (require) {
                     id: rows[0].id
                 }).then(function (res) {
                     if (res.body.purList.length == 0) {
-                        LIB.Msg.warning("请添加人员!");
+                        LIB.Msg.warning(this.$t('hd.bc.psd'));
                         return;
                     } else if (res.body) {
                         LIB.Modal.confirm({
-                            title: '发布选中数据?',
+                            title: this.$t('hd.bc.scbp'),
                             onOk: function () {
                                 //判断是否已发布
                                 if (_.some(rows, function (row) {
                                     return row.disable == 1;
                                 })) {
-                                    LIB.Msg.warning("【已发布】状态不能发布,请重新选择!");
+                                    LIB.Msg.warning(this.$t("hd.bc.iscb"));
                                 } else if (_.some(rows, function (row) {
                                     return row.disable == 2;
                                 })) {
-                                    LIB.Msg.warning("【已失效】状态不能发布,请重新选择!");
+                                    LIB.Msg.warning(this.$t("hd.bc.iscb"));
                                 } else {
                                     var ids = _.map(rows, function (row) {
                                         return row.id
@@ -231,7 +231,7 @@ define(function (require) {
                                         _.each(rows, function (row) {
                                             row.disable = 1;
                                         });
-                                        LIB.Msg.info("已发布!");
+                                        LIB.Msg.info(this.$t("hd.bc.published"));
                                         // _this.emitMainTableEvent("do_update_row_data", { opType: "update", value: rows });
                                         _this.refreshMainTable();
                                     });
@@ -247,31 +247,31 @@ define(function (require) {
                 var _this = this;
                 var rows = this.tableModel.selectedDatas;
                 if (rows.length == 0) {
-                    LIB.Msg.warning("请选择数据!");
+                    LIB.Msg.warning(this.$t('gb.common.psd'));
                     return;
                 }
                 if (rows.length > 1) {
-                    LIB.Msg.warning("无法批量发布数据");
+                    LIB.Msg.warning(this.$t("hd.bc.utbp"));
                     return;
                 }
                 LIB.Modal.confirm({
-                    title: '失效选中数据?',
+                    title: this.$t("hd.bc.isd"),
                     onOk: function () {
                         //判断是否已发布
                         if (_.some(rows, function (row) {
                             return row.disable == 0;
                         })) {
-                            LIB.Msg.warning("【未发布】状态不能失效,请重新选择!");
+                            LIB.Msg.warning(this.$t("hd.bc.scbi"));
                         } else if (_.some(rows, function (row) {
                             return row.disable == 2;
                         })) {
-                            LIB.Msg.warning("【已失效】状态不能失效,请重新选择!");
+                            LIB.Msg.warning(this.$t("hd.bc.scbi"));
                         } else {
                             api.invalid(null, _.pick(rows[0], "id", "disable")).then(function (res) {
                                 _.each(rows, function (row) {
                                     row.disable = 2;
                                 });
-                                LIB.Msg.info("已失效!");
+                                LIB.Msg.info(this.$t("hd.bc.invalid"));
                                 _this.emitMainTableEvent("do_update_row_data", {
                                     opType: "update",
                                     value: rows
@@ -341,7 +341,7 @@ define(function (require) {
             var _this = this;
             if (LIB.getBusinessSetByNamePath('common.enableCheckLevel').result === '2') {
                 _this.tableModel.columns.push({
-                    title: "检查级别",
+                    title: this.$t("ri.bc.il"),
                     fieldName: "checkLevel",
                     orderName: "checkLevel",
                     fieldType: "custom",

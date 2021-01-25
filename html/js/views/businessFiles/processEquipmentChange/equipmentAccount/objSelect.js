@@ -50,7 +50,7 @@ define(function (require) {
                     "course": "选择课程",
                     "equipitem": "选择设备设施子件"
                 };
-                if(_.includes(_.keys(titles), this.type)) {
+                if (_.includes(_.keys(titles), this.type)) {
                     return titles[this.type];
                 }
                 return '选择';
@@ -88,7 +88,7 @@ define(function (require) {
                     qryParam['disable'] = 0;
                     api.listOrg(qryParam).then(function (res) {
                         _this.treeData = _.map(res.data, function (d) {
-                            return {key: d.id, label: d.name, parentKey: d.parentId, type: d.type};
+                            return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                         });
                     });
                 }
@@ -97,7 +97,7 @@ define(function (require) {
                     this.mechanismType = false;
                     api.listDep().then(function (res) {
                         _this.treeData = _.map(res.data, function (d) {
-                            return {key: d.id, label: d.name, parentKey: d.parentId, type: d.type};
+                            return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                         });
                     });
                 }
@@ -109,16 +109,16 @@ define(function (require) {
                     if (window.PERSON_ARRAY_DATA) {
                         // 不使用setTimeout页面会卡顿
                         setTimeout(function () {
-                            _this.treeData = _.map(window.PERSON_ARRAY_DATA,function(d){
-                                return {key:d.id, label:d.name, parentKey:d.parentId,type: d.type};
+                            _this.treeData = _.map(window.PERSON_ARRAY_DATA, function (d) {
+                                return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                             });
                         }, 50)
 
                     } else {
                         api.listPerson(qryParam).then(function (res) {
                             window.PERSON_ARRAY_DATA = res.data;
-                            _this.treeData = _.map(res.data,function(d){
-                                return {key:d.id, label:d.name, parentKey:d.parentId,type: d.type};
+                            _this.treeData = _.map(res.data, function (d) {
+                                return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                             });
                         });
                     }
@@ -127,8 +127,8 @@ define(function (require) {
                     this.subjectMatterType = false;
                     this.mechanismType = false;
                     api.listEquip(qryParam).then(function (res) {
-                        _this.treeData = _.map(res.data,function(d){
-                        	return {key:d.id, label:d.name, parentKey:d.parentId,type: d.type};
+                        _this.treeData = _.map(res.data, function (d) {
+                            return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                         });
                     });
                 }
@@ -136,8 +136,8 @@ define(function (require) {
                     this.subjectMatterType = false;
                     this.mechanismType = false;
                     api.listTeacher(qryParam).then(function (res) {
-                        _this.treeData = _.map(res.data,function(d){
-                            return {key:d.id, label:d.name, parentKey:d.parentId,type: d.type};
+                        _this.treeData = _.map(res.data, function (d) {
+                            return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                         });
                     });
                 }
@@ -145,18 +145,18 @@ define(function (require) {
                     this.subjectMatterType = false;
                     this.mechanismType = false;
                     api.listCourse(qryParam).then(function (res) {
-                        _this.treeData = _.map(res.data,function(d){
-                            return {key:d.id, label:d.name, parentKey:d.parentId,type: d.type};
+                        _this.treeData = _.map(res.data, function (d) {
+                            return { key: d.id, label: d.name, parentKey: d.parentId, type: d.type };
                         });
                     });
-                } else if("equipitem" === type) {
+                } else if ("equipitem" === type) {
                     this.subjectMatterType = false;
                     this.mechanismType = false;
                     qryParam = {
-                        "criteria.intValue": {"selectEquipWithItem": 1}
+                        "criteria.intValue": { "selectEquipWithItem": 1 }
                     };
                     api.listEquip(qryParam).then(function (res) {
-                        _this.treeData = _.map(res.data,function(d){
+                        _this.treeData = _.map(res.data, function (d) {
                             return {
                                 key: d.id,
                                 label: d.name,

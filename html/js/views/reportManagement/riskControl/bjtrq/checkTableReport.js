@@ -1,6 +1,5 @@
 define(function (require) {
     var LIB = require('lib');
-    console.log(LIB)
     var template = require("text!./checkTableReport.html");
     var dateUtils = require("../../tools/dateUtils");
     var dataUtils = require("../../tools/dataUtils");

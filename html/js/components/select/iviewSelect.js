@@ -7,6 +7,8 @@ define(function(require) {
     var assist = require("../utils/assist");
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver || false;
 
+    var lang = require('../utils/lang')
+
     var template = '<div :class="classes" v-clickoutside="handleClose">' +
         '<div ' +
         ':class="prefixCls+\'-selection\'" ' +
@@ -68,7 +70,7 @@ define(function(require) {
             },
             placeholder: {
                 type: String,
-                default: '请选择'
+                default: lang('gb.common.pleaseSelect')
             },
             filterable: {
                 type: Boolean,

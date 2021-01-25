@@ -18,7 +18,7 @@ define(function (require) {
 
     var rules = {
         name: [
-            {required: true, message: '请输入名称'},
+            {required: true, message: LIB.lang('em.ms.pean')},
             LIB.formRuleMgr.length(200, 1)
         ]
     };

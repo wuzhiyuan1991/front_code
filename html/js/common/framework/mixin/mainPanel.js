@@ -131,7 +131,7 @@ define(function (require) {
             doExportExcel: function () {
                 var _this = this;
                 LIB.Modal.confirm({
-                    title: '导出数据?',
+                    title: this.$t('ri.bc.exportData')+'?',
                     onOk: function () {
                         window.open(_this._getExportURL());
                     }
@@ -273,7 +273,7 @@ define(function (require) {
             //--------------------------------------------------------------------------------------------------------------------------------------------------
             //刷新table数据,保持当前页
             refreshMainTableData: function () {
-                LIB.Msg.info("刷新成功!");
+                LIB.Msg.info(this.$t('gb.common.import.rs')+"!");
                 this.$refs.mainTable && this.$refs.mainTable.doRefresh();
             },
             //刷新table数据,回到第一页

@@ -8,10 +8,10 @@
         <!--</iv-col>-->
 
         <iv-col  v-if="!isSupperAdmin && showOnlyType==-1" style="background-color: #eaf0f5;display: flex;padding-left: 3px;padding-right: 20px;padding-top: 10px;" span="24" >
-            <span v-if="!isConcatLogin" class="selectBtnOrgStyle"  :class="searchTreeleft==0?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 0?'color:#33a6ff':''" @click="changeOrg(0)">本部门</span> <span v-if="!isConcatLogin">|</span>
-            <span  class="selectBtnOrgStyle" :class="searchTreeleft==1?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 1?'color:#33a6ff':''" @click="changeOrg(1)">本公司</span> <span v-if="!emptyAll">|</span>
-            <span v-if="!emptyAll" class="selectBtnOrgStyle" :class="searchTreeleft==2?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 2?'color:#33a6ff':''" @click="changeOrg(2)">所有</span> <span v-if="!emptyAll && isShowConcator">|</span>
-            <span v-if="isShowConcator" class="selectBtnOrgStyle" :class="searchTreeleft==3?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 3?'color:#33a6ff':''" @click="changeOrg(3)">承包商</span>
+            <span v-if="!isConcatLogin" class="selectBtnOrgStyle"  :class="searchTreeleft==0?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 0?'color:#33a6ff':''" @click="changeOrg(0)">{{$t('ri.bc.tdepartment')}}</span> <span v-if="!isConcatLogin">|</span>
+            <span  class="selectBtnOrgStyle" :class="searchTreeleft==1?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 1?'color:#33a6ff':''" @click="changeOrg(1)">{{$t('ri.bc.tcompany')}}</span> <span v-if="!emptyAll">|</span>
+            <span v-if="!emptyAll" class="selectBtnOrgStyle" :class="searchTreeleft==2?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 2?'color:#33a6ff':''" @click="changeOrg(2)">{{$t('ri.bc.all')}}</span> <span v-if="!emptyAll && isShowConcator">|</span>
+            <span v-if="isShowConcator" class="selectBtnOrgStyle" :class="searchTreeleft==3?'selectBtnOrgStyleColor':''" :style="searchTreeleft == 3?'color:#33a6ff':''" @click="changeOrg(3)">{{$t('ri.bc.contractor')}}</span>
         </iv-col>
 
         <templete></templete>
@@ -60,7 +60,7 @@
 
         <iv-col :span="(searchTreeleft==3 || filterTreeType)?16:24" style="background-color: #eaf0f5;padding-top: 10px;">
             <div style="padding: 0 10px;width: 300px;">
-                <iv-input :value.sync="tableModel.keyword" placeholder="姓名、公司、部门、岗位、安全角色" icon="ios-search" @on-click="doFilterRight"
+                <iv-input :value.sync="tableModel.keyword" :placeholder="$t('ri.bc.ncdpsr')" icon="ios-search" @on-click="doFilterRight"
                           @on-enter="doFilterRight"></iv-input>
             </div>
             <div class="edit-pop-container member-select-right-table">

@@ -19,7 +19,7 @@ define(function (require) {
             },
             title: {
                 type: String,
-                default: "导入"
+                default: LIB.lang("gb.common.import")
             },
             url: {
                 type: String,

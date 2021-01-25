@@ -82,7 +82,7 @@ define(function (require) {
                     this.showImportingModal = true;
                     this.$broadcast("doUploadStart");
                 } else {
-                    LIB.Msg.info("请选择文件!")
+                    LIB.Msg.info(this.$t('gb.common.import.psf')+"!")
                 }
             },
             // 下载模板

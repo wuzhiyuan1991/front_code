@@ -1,4 +1,4 @@
-<Modal :visible.sync="visible" :title="'选择属地'" width="400" :footer-hide="true" class="userSelectModal">
+<Modal :visible.sync="visible" :title="$t('ri.bc.selectTerritory')" width="400" :footer-hide="true" class="userSelectModal">
     <div class="edit-pop-container dependency-tree-container">
         <div class="epc-content sw-co-condition" style="position: relative;width: 400px;height: 400px;" id="dependency-tree">
             <!--<iv-tree-select :popper-fixed="popperFixed" :model.sync="id" :list="data" id-attr="id" placeholder="请选择属地"-->
@@ -15,11 +15,11 @@
                      :default-open-layer="defaultOpenLayer" pid-attr="parentId" :serch-filterable="true"
                      display-attr="name" :single-select="singleSelect" :allow-parent-checked="true"
                      class="treeDepartment"></iv-tree>
-                     <div v-if="treeData.length==0" style="position: relative;top: 150px;left: -30px;height: 20px;">暂无属地</div>
+                     <div v-if="treeData.length==0" style="position: relative;top: 150px;left: -30px;height: 20px;">{{$t('ri.bc.noTerritory')}}</div>
         </div>
         <div class="epc-footer">
-            <vi-button type="primary" @click="doConfrim" class="pull-right">确定</vi-button>
-            <vi-button type="primary" @click="doCancel" class="pull-right">取消</vi-button>
+            <vi-button type="primary" @click="doConfrim" class="pull-right">{{$t('gb.common.ok')}}</vi-button>
+            <vi-button type="primary" @click="doCancel" class="pull-right">{{$t('gb.common.cancel')}}</vi-button>
         </div>
     </div>
 </Modal>
